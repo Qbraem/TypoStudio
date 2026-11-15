@@ -2,11 +2,16 @@
 <html lang="nl">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Typo Studio</title>
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="Typo Studio">
 <meta name="theme-color" content="#17110d">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="mobile-web-app-capable" content="yes">
+<link rel="manifest" href="/manifest.webmanifest">
+<link rel="icon" href="/icons/icon-192.png">
+<link rel="apple-touch-icon" href="/icons/apple-touch-icon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&display=swap">
@@ -19,7 +24,7 @@
 html,body{margin:0;background:var(--bg);color:var(--text);font-family:"DM Sans",system-ui,sans-serif;-webkit-tap-highlight-color:transparent}
 button,input,select,textarea{font:inherit;color:inherit}
 button{cursor:pointer}
-.app{max-width:1180px;margin:0 auto;padding:14px 14px 96px;display:grid;gap:16px}
+.app{max-width:1180px;margin:0 auto;padding:calc(14px + env(safe-area-inset-top)) calc(14px + env(safe-area-inset-right)) 96px calc(14px + env(safe-area-inset-left));display:grid;gap:16px}
 @media(min-width:900px){.app{grid-template-columns:minmax(300px,400px) 1fr;align-items:start;padding-bottom:30px}.stageCol{position:sticky;top:14px}}
 .app>div{min-width:0}
 header{display:flex;align-items:baseline;justify-content:space-between;gap:10px}
@@ -43,6 +48,9 @@ header h1 span{font-family:"Yellowtail",cursive;font-weight:400;color:var(--acce
 .bg-light{background:#efe7dc}
 .bg-check{background:repeating-conic-gradient(#3a3a3a 0 25%,#2a2a2a 0 50%) 0 0/24px 24px}
 .stage canvas.sticker{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);cursor:grab;filter:none}
+.chipbtn.photo{padding:0;width:34px;height:34px;overflow:hidden;border-width:2px}
+.chipbtn.photo img{width:100%;height:100%;object-fit:cover;display:block}
+.chipbtn.photo.on{border-color:var(--accent);background:none}
 .stageTools{display:flex;gap:6px;justify-content:center;flex-wrap:wrap}
 .chipbtn{border:1px solid var(--line);background:var(--panel);border-radius:999px;padding:7px 12px;font-size:13px;color:var(--text)}
 .chipbtn.on{background:var(--text);color:#1b130e;border-color:var(--text)}
@@ -62,7 +70,7 @@ header h1 span{font-family:"Yellowtail",cursive;font-weight:400;color:var(--acce
 .cats::-webkit-scrollbar{display:none}
 .cats .chipbtn{white-space:nowrap;flex:none}
 .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:10px;margin-top:10px}
-.card{position:relative;border:2px solid transparent;border-radius:12px;overflow:hidden;background:#2a1d16;aspect-ratio:1/1;padding:0;display:flex;align-items:center;justify-content:center}
+.card{background-size:cover!important;background-position:center!important;position:relative;border:2px solid transparent;border-radius:12px;overflow:hidden;background:#2a1d16;aspect-ratio:1/1;padding:0;display:flex;align-items:center;justify-content:center}
 .card.light{background:#efe7dc}
 .card.sel{border-color:var(--accent)}
 .card canvas{max-width:86%;max-height:80%}
@@ -130,11 +138,14 @@ input[type=range]{accent-color:var(--accent)}
       <div class="status" id="status"></div>
     </header>
     <div class="stage" id="stage">
-      <div class="bg bg-warm" id="stageBg"></div>
+      <div class="bg" id="stageBg" style="background-image:url('/img/bg-beans.jpg')"></div>
       <canvas class="sticker" id="sticker"></canvas>
     </div>
     <div class="stageTools" id="bgTools">
-      <button class="chipbtn on" data-bg="warm">Warm</button>
+      <button class="chipbtn photo on" data-photo="beans" title="Koffiebonen"><img src="/img/th-beans.jpg" alt=""></button>
+      <button class="chipbtn photo" data-photo="sunset" title="Zonsondergang"><img src="/img/th-sunset.jpg" alt=""></button>
+      <button class="chipbtn photo" data-photo="pier" title="Golfbreker"><img src="/img/th-pier.jpg" alt=""></button>
+      <button class="chipbtn" data-bg="warm">Warm</button>
       <button class="chipbtn" data-bg="dark">Donker</button>
       <button class="chipbtn" data-bg="light">Licht</button>
       <button class="chipbtn" data-bg="check">Transparant</button>
@@ -454,14 +465,16 @@ window.addEventListener("resize",layoutSticker);
   ["pointerup","pointercancel"].forEach(ev=>s.addEventListener(ev,()=>on=false));
 })();
 $("bgTools").addEventListener("click",e=>{
-  const b=e.target.closest("[data-bg]"); if(!b) return;
-  document.querySelectorAll("#bgTools [data-bg]").forEach(x=>x.classList.toggle("on",x===b));
-  const bg=$("stageBg"); bg.style.backgroundImage=""; bg.className="bg bg-"+b.dataset.bg;
+  const b=e.target.closest("[data-bg],[data-photo]"); if(!b) return;
+  document.querySelectorAll("#bgTools [data-bg],#bgTools [data-photo]").forEach(x=>x.classList.toggle("on",x===b));
+  const bg=$("stageBg");
+  if(b.dataset.photo){ bg.className="bg"; bg.style.background=""; bg.style.backgroundImage=`url('/img/bg-${b.dataset.photo}.jpg')`; bg.style.backgroundSize="cover"; bg.style.backgroundPosition="center"; }
+  else { bg.style.backgroundImage=""; bg.className="bg bg-"+b.dataset.bg; }
 });
 $("photoIn").addEventListener("change",e=>{
   const f=e.target.files[0]; if(!f) return; const url=URL.createObjectURL(f);
   const bg=$("stageBg"); bg.className="bg"; bg.style.background=""; bg.style.backgroundImage=`url("${url}")`; bg.style.backgroundSize="cover"; bg.style.backgroundPosition="center";
-  document.querySelectorAll("#bgTools [data-bg]").forEach(x=>x.classList.remove("on"));
+  document.querySelectorAll("#bgTools [data-bg],#bgTools [data-photo]").forEach(x=>x.classList.remove("on"));
 });
 
 /* ---------------- Tabs ---------------- */
@@ -490,9 +503,10 @@ function renderLibrary(){
   $("catActions").classList.toggle("hidden",!(activeCat!=="Alles"&&activeCat!=="★"&&isCustomCat(activeCat)));
   $("catDel").textContent="Categorie verwijderen"; $("catDel").dataset.armed="";
   if(!list.length){grid.innerHTML=`<div class="empty" style="grid-column:1/-1">Nog leeg. Maak ontwerpen met ✨ of sla er een op in deze categorie.</div>`;return}
-  const job=++thumbJob;
+  const job=++thumbJob; let cards_i=0;
   const cards=list.map(d=>{
     const b=document.createElement("button"); b.className="card"+(d.id===curSourceId?" sel":"")+(lum(d.colors.main)<0.45?" light":"");
+    if(!b.classList.contains("light")) b.style.backgroundImage=`linear-gradient(rgba(0,0,0,.22),rgba(0,0,0,.35)),url('/img/sq-${["beans","sunset","pier"][cards_i++%3]}.jpg')`;
     b.innerHTML=`<span class="lbl">${esc(d.name)}</span>${d.seed?"":'<span class="mine">★</span>'}`;
     b.onclick=()=>{cur=clone(d);curSourceId=d.id;document.querySelectorAll(".card").forEach(x=>x.classList.remove("sel"));b.classList.add("sel");schedulePreview();toast(d.name)};
     grid.appendChild(b); return [b,d];
@@ -874,6 +888,9 @@ function setupGenerator(){
     toast(`${made.length} ontwerpen in ${cat}`);
   };
 }
+
+/* ---------------- Webapp (offline) ---------------- */
+if("serviceWorker" in navigator && location.protocol==="https:"){ window.addEventListener("load",()=>navigator.serviceWorker.register("/sw.js").catch(()=>{})) }
 
 /* ---------------- Boot ---------------- */
 loadLocal();
