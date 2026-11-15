@@ -70,15 +70,35 @@ button{cursor:pointer;touch-action:manipulation;-webkit-user-select:none;user-se
 .tabs svg{width:24px;height:24px}
 .tabs button.on{color:var(--accent)}
 
-/* desktop / iPad liggend */
-@media(min-width:900px){
-  .shell{grid-template-columns:minmax(0,1fr) 440px;grid-template-rows:auto auto minmax(0,1fr);grid-template-areas:"top top" "stage tabs" "stage sheet"}
+/* breed scherm: iPhone Duo ingeklapt (liggend), uitgeklapt liggend, iPad, computer
+   -> foto links over de volle hoogte, paneel rechts */
+@media (min-aspect-ratio: 1/1), (min-width: 900px){
+  .shell{grid-template-columns:minmax(0,1fr) clamp(300px,44vw,440px);grid-template-rows:auto auto minmax(0,1fr);grid-template-areas:"stage top" "stage tabs" "stage sheet"}
+  .top{padding:calc(var(--sat) + 4px) calc(10px + var(--sar)) 4px 12px;min-height:48px;border-left:1px solid var(--line);background:var(--panel)}
+  .stageArea{padding:calc(var(--sat) + 8px) 8px calc(var(--sab) + 8px) calc(8px + var(--sal))}
   .sheet{height:auto!important;border-radius:0;box-shadow:none;border-left:1px solid var(--line)}
   .grab{display:none}
+  .tabs{border-top:0;border-left:1px solid var(--line);border-bottom:1px solid var(--line);padding:0 var(--sar) 0 0}
+  .tabs button{flex-direction:row;justify-content:center;gap:6px;font-size:13px;min-height:44px;padding:0}
+  .tabs svg{width:20px;height:20px}
+  .sheetBody{padding:12px calc(14px + var(--sar)) calc(14px + var(--sab)) 14px}
+  .chips,.toolbar{margin-left:-14px;margin-right:calc(-14px - var(--sar))}
+  .chips{padding-left:14px}
+}
+/* laag scherm (bv. iPhone Duo ingeklapt): alles compacter */
+@media (max-height: 560px){
+  .brand{font-size:15px}.brand span{font-size:19px}
+  .iconbtn{height:40px;min-width:40px}
+  .iconbtn.pri{padding:0 12px}
+  .bgBtn{width:30px;height:30px}
+  .coach{font-size:12px;padding:6px 10px}
+  .fontBtn{min-height:54px}.fontBtn .s{font-size:20px}
+}
+@media (max-height: 560px) and (max-aspect-ratio: 1/1){ .brand{display:none} }
+/* groot scherm: 9:16-kader zoals een Instagram-story */
+@media (min-width: 1100px) and (min-height: 700px){
   .stage{width:auto;max-width:100%;aspect-ratio:9/16}
-  .tabs{border-top:0;border-left:1px solid var(--line);border-bottom:1px solid var(--line);padding:0}
-  .tabs button{flex-direction:row;justify-content:center;gap:8px;font-size:14px}
-  .sheetBody{padding-top:14px}
+  .shell{grid-template-columns:minmax(0,1fr) 440px}
 }
 
 /* ---------- Gedeelde controls ---------- */
