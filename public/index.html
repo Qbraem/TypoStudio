@@ -17,7 +17,7 @@
 :root{
   --bg:#120d0a; --panel:#1f1712; --panel2:#2a2019; --line:#3a2c22; --text:#f6ece0; --muted:#b39d89;
   --accent:#f26b50; --accent2:#e9b77c;
-  --sat:env(safe-area-inset-top); --sab:env(safe-area-inset-bottom); --sal:env(safe-area-inset-left); --sar:env(safe-area-inset-right);
+  --sat:env(safe-area-inset-top); --sab:env(safe-area-inset-bottom); --sal:env(safe-area-inset-left); --sar:env(safe-area-inset-right); --sarL:var(--sar);
   --app-h:100dvh;
 }
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
@@ -30,7 +30,7 @@ button{cursor:pointer;touch-action:manipulation;-webkit-user-select:none;user-se
 .shell{position:fixed;left:0;right:0;top:0;height:var(--app-h);display:grid;
   grid-template-columns:minmax(0,1fr);grid-template-rows:auto minmax(0,1fr) auto auto;grid-template-areas:"top" "stage" "sheet" "tabs"}
 .shell>*{min-width:0}
-.top{grid-area:top;display:flex;align-items:center;gap:8px;padding:calc(var(--sat) + 6px) calc(12px + var(--sar)) 6px calc(12px + var(--sal));min-height:52px}
+.top{grid-area:top;display:flex;align-items:center;gap:8px;padding:calc(max(var(--sat), 8px) + 6px) calc(12px + var(--sar)) 6px calc(12px + var(--sal));min-height:52px}
 .brand{font-weight:700;font-size:17px;flex:1;white-space:nowrap}
 .brand span{font-family:"Yellowtail",cursive;font-weight:400;color:var(--accent2);font-size:22px;margin-left:3px}
 .iconbtn{min-width:44px;height:44px;border-radius:22px;border:0;background:var(--panel2);display:inline-flex;align-items:center;justify-content:center;gap:6px;padding:0 12px;font-weight:700;font-size:15px}
@@ -46,7 +46,7 @@ button{cursor:pointer;touch-action:manipulation;-webkit-user-select:none;user-se
 .bg-dark{background:#141414}.bg-light{background:#efe7dc}
 .bg-check{background:repeating-conic-gradient(#3a3a3a 0 25%,#2a2a2a 0 50%) 0 0/22px 22px}
 #sticker{position:absolute;left:0;top:0;width:100%;height:100%;pointer-events:none}
-.bgRow{position:absolute;left:calc(8px + var(--sal));right:8px;bottom:calc(8px + var(--under,0px));display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;padding:4px calc(4px + var(--sar)) 4px 4px;border-radius:24px;background:rgba(20,14,10,.45);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px)}
+.bgRow{position:absolute;left:calc(8px + var(--sal));right:8px;bottom:calc(8px + var(--under,0px));display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;padding:4px calc(4px + var(--sarL)) 4px 4px;border-radius:24px;background:rgba(20,14,10,.45);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px)}
 .bgRow::-webkit-scrollbar{display:none}
 .bgBtn{flex:none;width:36px;height:36px;border-radius:50%;border:2px solid rgba(255,255,255,.25);padding:0;overflow:hidden;background:#333;position:relative}
 .bgBtn img{width:100%;height:100%;object-fit:cover;display:block}
@@ -55,17 +55,17 @@ button{cursor:pointer;touch-action:manipulation;-webkit-user-select:none;user-se
 .bgBtn.bg-dark{background:#141414}.bgBtn.bg-light{background:#efe7dc}
 .bgBtn.bg-check{background:repeating-conic-gradient(#666 0 25%,#333 0 50%) 0 0/12px 12px}
 .bgBtn .lab{font-size:15px;line-height:32px}
-.credit{position:absolute;top:10px;right:12px;z-index:3;display:inline-flex;align-items:center;gap:6px;padding:4px 2px;color:rgba(255,255,255,.92);font-size:14px;font-weight:500;letter-spacing:.2px;text-decoration:none;text-shadow:0 1px 4px rgba(0,0,0,.55)}
+.credit{position:absolute;top:10px;right:calc(12px + var(--sar));z-index:3;display:inline-flex;align-items:center;gap:6px;padding:4px 2px;color:rgba(255,255,255,.92);font-size:14px;font-weight:500;letter-spacing:.2px;text-decoration:none;text-shadow:0 1px 4px rgba(0,0,0,.55)}
 .credit svg{width:17px;height:17px;flex:none;filter:drop-shadow(0 1px 3px rgba(0,0,0,.5))}
 .igOv{position:absolute;inset:0;pointer-events:none;z-index:2;color:#fff;transition:opacity .25s}
 .stage:not(.ig) .igOv{opacity:0}
-.igTop{position:absolute;left:0;right:0;top:0;padding:8px 10px 26px;background:linear-gradient(rgba(0,0,0,.38),transparent)}
+.igTop{position:absolute;left:0;right:0;top:0;padding:8px calc(10px + var(--sar)) 26px 10px;background:linear-gradient(rgba(0,0,0,.38),transparent)}
 .igBars{display:flex;gap:3px}.igBars i{flex:1;height:2px;border-radius:1px;background:rgba(255,255,255,.4)}.igBars i.done{background:#fff}.igBars i.cur{background:linear-gradient(90deg,#fff 55%,rgba(255,255,255,.4) 55%)}
 .igHead{display:flex;align-items:center;gap:7px;margin-top:8px;font-size:12.5px}
 .igHead b{font-weight:600}.igTime{opacity:.7}.igFlex{flex:1}
 .igHead svg{width:18px;height:18px;margin-left:6px}
 .igAv{width:26px;height:26px;border-radius:13px;background:linear-gradient(135deg,#e9b77c,#7a4a2c);border:1.5px solid #fff;flex:none}
-.igBottom{position:absolute;left:0;right:0;bottom:var(--under,0px);padding:24px calc(12px + var(--sar)) 12px calc(12px + var(--sal));display:flex;align-items:center;gap:12px;background:linear-gradient(transparent,rgba(0,0,0,.35))}
+.igBottom{position:absolute;left:0;right:0;bottom:var(--under,0px);padding:24px calc(12px + var(--sarL)) 12px calc(12px + var(--sal));display:flex;align-items:center;gap:12px;background:linear-gradient(transparent,rgba(0,0,0,.35))}
 .igMsg{flex:1;height:36px;border:1.3px solid rgba(255,255,255,.75);border-radius:18px;display:flex;align-items:center;padding:0 14px;font-size:13px;opacity:.95}
 .igBottom svg{width:24px;height:24px;flex:none}
 .stage.ig .bgRow{bottom:calc(62px + var(--under,0px))}
@@ -80,9 +80,9 @@ button{cursor:pointer;touch-action:manipulation;-webkit-user-select:none;user-se
 .sheet.dragging{transition:none}
 .grab{flex:none;height:22px;display:flex;align-items:center;justify-content:center;touch-action:none;cursor:grab}
 .grab i{width:38px;height:5px;border-radius:3px;background:#5a4636}
-.sheetBody{flex:1;min-height:0;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;padding:0 calc(14px + var(--sar)) 14px calc(14px + var(--sal))}
+.sheetBody{flex:1;min-height:0;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;padding:0 calc(14px + var(--sarL)) 14px calc(14px + var(--sal))}
 
-.tabs{grid-area:tabs;display:flex;background:var(--panel);border-top:1px solid var(--line);padding:0 var(--sar) var(--sab) var(--sal)}
+.tabs{grid-area:tabs;display:flex;background:var(--panel);border-top:1px solid var(--line);padding:0 var(--sarL) var(--sab) var(--sal)}
 .tabs button{flex:1;border:0;background:none;color:var(--muted);display:flex;flex-direction:column;align-items:center;gap:2px;padding:7px 0 6px;font-size:11px;font-weight:700;min-height:50px}
 .tabs svg{width:24px;height:24px}
 .tabs button.on{color:var(--accent)}
@@ -113,9 +113,10 @@ button{cursor:pointer;touch-action:manipulation;-webkit-user-select:none;user-se
    -> foto links over de volle hoogte, paneel rechts */
 @media (min-aspect-ratio: 1/1), (min-width: 900px){
   .shell{grid-template-columns:minmax(0,1fr) clamp(300px,44vw,440px);grid-template-rows:auto minmax(0,1fr) auto;grid-template-areas:"stage top" "stage sheet" "stage tabs"}
-  .top{padding:calc(var(--sat) + 4px) calc(10px + var(--sar)) 4px 12px;min-height:48px;border-left:1px solid var(--line);background:var(--panel)}
+  .top{padding:calc(max(var(--sat), 8px) + 4px) calc(10px + var(--sar)) 4px 12px;min-height:48px;border-left:1px solid var(--line);background:var(--panel)}
   .stageArea{padding:0;margin:0;--under:0px}
-  .stage .credit{top:calc(var(--sat) + 10px)}
+  .stage .credit{top:calc(var(--sat) + 10px);right:12px}
+  .stage .igTop{padding-right:10px}
   .stage .igTop{padding-top:calc(var(--sat) + 8px);padding-left:calc(10px + var(--sal))}
   .stage.ig .credit{top:calc(var(--sat) + 58px)}
   .stage .bgRow{bottom:calc(8px + var(--sab))}.stage.ig .bgRow{bottom:calc(62px + var(--sab))}
@@ -130,12 +131,13 @@ button{cursor:pointer;touch-action:manipulation;-webkit-user-select:none;user-se
   .grpC{padding-bottom:10px}
   .sheet{height:auto!important;border-radius:0;box-shadow:none;border-left:1px solid var(--line)}
   .grab{display:none}
-  .tabs{border-top:1px solid var(--line);border-left:1px solid var(--line);padding:0 var(--sar) var(--sab) 0}
+  .tabs{border-top:1px solid var(--line);border-left:1px solid var(--line);padding:0 var(--sarL) var(--sab) 0}
   .tabs button{flex-direction:row;justify-content:center;gap:6px;font-size:13px;min-height:44px;padding:0}
   .tabs svg{width:20px;height:20px}
-  .sheetBody{padding:10px calc(14px + var(--sar)) 14px 14px}
-  .chips,.toolbar{margin-left:-14px;margin-right:calc(-14px - var(--sar))}
-  .chips{padding-left:14px;padding-right:calc(14px + var(--sar))}
+  .sheetBody{padding:10px calc(14px + var(--sarL)) 14px 14px}
+  .sheetBody .stickyTop{top:-10px;margin-top:-10px;padding-top:12px}
+  .chips,.toolbar{margin-left:-14px;margin-right:calc(-14px - var(--sarL))}
+  .chips{padding-left:14px;padding-right:calc(14px + var(--sarL))}
 }
 /* iPhone Duo open (liggend, ~4:3): foto links en paneel rechts van de vouw, precies 50/50 */
 @media (min-aspect-ratio: 6/5) and (max-aspect-ratio: 3/2) and (max-width: 1000px) and (min-height: 561px){
@@ -158,7 +160,7 @@ button{cursor:pointer;touch-action:manipulation;-webkit-user-select:none;user-se
 }
 
 /* ---------- Gedeelde controls ---------- */
-.chips{display:flex;gap:8px;overflow-x:auto;scrollbar-width:none;padding:2px 0 10px;margin:0 calc(-14px - var(--sar)) 0 calc(-14px - var(--sal));padding-left:calc(14px + var(--sal));padding-right:calc(14px + var(--sar))}
+.chips{display:flex;gap:8px;overflow-x:auto;scrollbar-width:none;padding:2px 0 10px;margin:0 calc(-14px - var(--sarL)) 0 calc(-14px - var(--sal));padding-left:calc(14px + var(--sal));padding-right:calc(14px + var(--sarL))}
 .chips::-webkit-scrollbar{display:none}
 .chip{flex:none;min-height:40px;border:1px solid var(--line);background:var(--panel2);border-radius:20px;padding:0 14px;font-size:14px;font-weight:500;white-space:nowrap;display:inline-flex;align-items:center;gap:6px}
 .chip.on{background:var(--text);color:#1b130e;border-color:var(--text)}
@@ -202,7 +204,7 @@ input[type=range]::-moz-range-thumb{width:28px;height:28px;border-radius:50%;bac
 
 /* editor */
 .layerChip{max-width:150px;overflow:hidden;text-overflow:ellipsis;font-size:17px}
-.toolbar{display:flex;gap:4px;overflow-x:auto;scrollbar-width:none;border-bottom:1px solid var(--line);margin:0 calc(-14px - var(--sar)) 10px calc(-14px - var(--sal));padding:0 calc(14px + var(--sar)) 0 calc(14px + var(--sal))}
+.toolbar{display:flex;gap:4px;overflow-x:auto;scrollbar-width:none;border-bottom:1px solid var(--line);margin:0 calc(-14px - var(--sarL)) 10px calc(-14px - var(--sal));padding:0 calc(14px + var(--sarL)) 0 calc(14px + var(--sal))}
 .toolbar::-webkit-scrollbar{display:none}
 .toolbar button{flex:none;border:0;background:none;min-height:44px;padding:0 10px;font-size:14px;font-weight:700;color:var(--muted);border-bottom:2px solid transparent}
 .toolbar button.on{color:var(--text);border-bottom-color:var(--accent)}
@@ -215,7 +217,7 @@ input[type=range]::-moz-range-thumb{width:28px;height:28px;border-radius:50%;bac
 .chips.wrap{flex-wrap:wrap;overflow:visible;margin:0;padding:0 0 8px}
 .chip.sm{min-height:34px;font-size:13px;padding:0 12px}
 .chip .dot{width:14px;height:14px;border-radius:50%;border:1px solid #777;display:inline-block}
-.fontRow{display:flex;gap:8px;overflow-x:auto;scrollbar-width:none;padding-bottom:4px;margin:0 calc(-14px - var(--sar)) 0 calc(-14px - var(--sal));padding-left:calc(14px + var(--sal));padding-right:calc(14px + var(--sar))}
+.fontRow{display:flex;gap:8px;overflow-x:auto;scrollbar-width:none;padding-bottom:4px;margin:0 calc(-14px - var(--sarL)) 0 calc(-14px - var(--sal));padding-left:calc(14px + var(--sal));padding-right:calc(14px + var(--sarL))}
 .fontRow::-webkit-scrollbar{display:none}
 .fontRow .fontBtn{flex:none;width:132px}
 .fontGrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
@@ -234,6 +236,9 @@ input[type=range]::-moz-range-thumb{width:28px;height:28px;border-radius:50%;bac
 @media (max-width:430px){#viewBtn{display:none}.brand{font-size:16px}.brand span{font-size:20px}#proBtnLabel{display:none}#proBtn{padding:0 9px}}
 .uw-narrow #viewBtn{display:none}.uw-narrow .brand{font-size:16px}.uw-narrow .brand span{font-size:20px}.uw-narrow #proBtnLabel{display:none}.uw-narrow #proBtn{padding:0 9px}
 .uw-tiny .brand{display:none}
+/* iPhone Duo buitenscherm: statusbalk staat bovenaan aan de zijkant; daaronder mag de inhoud tot de rand */
+.side-status{--sarL:0px}
+.side-status .tabs{padding-bottom:max(calc(var(--sab) - 14px), 6px)}
 #saProbe{position:fixed;left:0;top:0;width:0;height:0;visibility:hidden;pointer-events:none;padding:0 var(--sar) 0 var(--sal)}
 @media (min-aspect-ratio:1/1) and (max-width:1000px){.brand{display:none}#viewBtn{display:none}#proBtnLabel{display:none}#proBtn{padding:0 9px}}
 /* ---------- Splash & onboarding ---------- */
@@ -932,7 +937,7 @@ function layer(){return cur.layers[sel]}
 /* ---------------- iPhone: hoogte & toetsenbord ---------------- */
 function fitStage(){const st=$("stage");if(st)st.style.maxWidth=""}
 if(window.ResizeObserver)new ResizeObserver(()=>{fitStage();schedulePreview(true)}).observe(document.querySelector(".stageArea"));
-function applyUsable(){const p=document.getElementById("saProbe");if(!p)return;const cs=getComputedStyle(p),uw=innerWidth-parseFloat(cs.paddingLeft)-parseFloat(cs.paddingRight),h=document.documentElement;h.classList.toggle("uw-narrow",uw<=430);h.classList.toggle("uw-tiny",uw<=360)}
+function applyUsable(){const p=document.getElementById("saProbe");if(!p)return;const cs=getComputedStyle(p),uw=innerWidth-parseFloat(cs.paddingLeft)-parseFloat(cs.paddingRight),h=document.documentElement;h.classList.toggle("uw-narrow",uw<=430);h.classList.toggle("uw-tiny",uw<=360);const sr=parseFloat(cs.paddingRight)||0,ar=innerWidth/innerHeight;h.classList.toggle("side-status",sr>20&&(ar<1||ar<1.7))}
 function setAppH(){applyUsable();const h=window.visualViewport?visualViewport.height:innerHeight;document.documentElement.style.setProperty("--app-h",h+"px");if(typeof applySheetH==="function")applySheetH();requestAnimationFrame(()=>{fitStage();layoutSticker()})}
 if(window.visualViewport){visualViewport.addEventListener("resize",setAppH);visualViewport.addEventListener("scroll",()=>window.scrollTo(0,0))}
 window.addEventListener("resize",setAppH);
