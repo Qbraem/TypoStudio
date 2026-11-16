@@ -91,15 +91,15 @@ button{cursor:pointer;touch-action:manipulation;-webkit-user-select:none;user-se
 /* breed scherm: iPhone Duo ingeklapt (liggend), uitgeklapt liggend, iPad, computer
    -> foto links over de volle hoogte, paneel rechts */
 @media (min-aspect-ratio: 1/1), (min-width: 900px){
-  .shell{grid-template-columns:minmax(0,1fr) clamp(300px,44vw,440px);grid-template-rows:auto auto minmax(0,1fr);grid-template-areas:"stage top" "stage tabs" "stage sheet"}
+  .shell{grid-template-columns:minmax(0,1fr) clamp(300px,44vw,440px);grid-template-rows:auto minmax(0,1fr) auto;grid-template-areas:"stage top" "stage sheet" "stage tabs"}
   .top{padding:calc(var(--sat) + 4px) calc(10px + var(--sar)) 4px 12px;min-height:48px;border-left:1px solid var(--line);background:var(--panel)}
   .stageArea{padding:calc(var(--sat) + 8px) 8px calc(var(--sab) + 8px) calc(8px + var(--sal))}
   .sheet{height:auto!important;border-radius:0;box-shadow:none;border-left:1px solid var(--line)}
   .grab{display:none}
-  .tabs{border-top:0;border-left:1px solid var(--line);border-bottom:1px solid var(--line);padding:0 var(--sar) 0 0}
+  .tabs{border-top:1px solid var(--line);border-left:1px solid var(--line);padding:0 var(--sar) var(--sab) 0}
   .tabs button{flex-direction:row;justify-content:center;gap:6px;font-size:13px;min-height:44px;padding:0}
   .tabs svg{width:20px;height:20px}
-  .sheetBody{padding:12px calc(14px + var(--sar)) calc(14px + var(--sab)) 14px}
+  .sheetBody{padding:10px calc(14px + var(--sar)) 14px 14px}
   .chips,.toolbar{margin-left:-14px;margin-right:calc(-14px - var(--sar))}
   .chips{padding-left:14px}
 }
@@ -146,9 +146,8 @@ input[type=range]::-moz-range-track{height:4px;border-radius:2px;background:#4a3
 input[type=range]::-moz-range-thumb{width:28px;height:28px;border-radius:50%;background:#fff;border:0}
 
 /* library */
-.grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
-@media(min-width:600px){.grid{grid-template-columns:repeat(auto-fill,minmax(120px,1fr))}}
-.card{position:relative;border:1.5px solid #3d3733;background-clip:padding-box;border-radius:12px;overflow:hidden;background:#2a1d16 center/cover;aspect-ratio:1/1;padding:0;display:flex;align-items:center;justify-content:center}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(104px,1fr));gap:7px}
+.card{position:relative;border:1.5px solid #3d3733;background-clip:padding-box;border-radius:12px;overflow:hidden;background:#2a1d16 center/cover;aspect-ratio:4/3;padding:0;display:flex;align-items:center;justify-content:center}
 .card{background:radial-gradient(120% 90% at 20% 10%,#5a3d2b 0%,#2b1d15 55%,#1d140f 100%)}
 .chip.xmas{background:linear-gradient(135deg,#C62E2E,#8E1B1B);border-color:#E9C46A;color:#fff;font-weight:700;box-shadow:0 0 0 1px rgba(233,196,106,.35),0 4px 14px rgba(198,46,46,.35)}
 .chip.xmas.on{background:linear-gradient(135deg,#E9C46A,#d9a93f);color:#7a1414;border-color:#fff}
@@ -159,7 +158,7 @@ input[type=range]::-moz-range-thumb{width:28px;height:28px;border-radius:50%;bac
 .chip.fall.on{background:linear-gradient(135deg,#F2B266,#D98236);color:#4a1f08;border-color:#fff}
 .card.fall{background:radial-gradient(120% 90% at 20% 10%,#a3532a 0%,#5e2a14 55%,#33160b 100%)!important;border-color:#E9B77C44}
 .card.sel{border:2px solid #fff}
-.card canvas{max-width:86%;max-height:72%}
+.card canvas{max-width:74%;max-height:70%}
 .card .mine{position:absolute;top:4px;right:7px;font-size:11px;color:var(--accent2)}
 .empty{color:var(--muted);font-size:14px;padding:18px 4px;text-align:center;grid-column:1/-1}
 
@@ -267,8 +266,8 @@ input[type=range]::-moz-range-thumb{width:28px;height:28px;border-radius:50%;bac
 .proPill.static{height:26px;padding:0 10px;font-size:11px;vertical-align:middle;box-shadow:none}
 .proTag{display:inline-flex;align-items:center;gap:3px;height:20px;padding:0 7px;border-radius:10px;background:rgba(20,14,10,.62);color:#F3D58A;font-size:10px;font-weight:800;letter-spacing:.6px;backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);border:1px solid rgba(243,213,138,.35)}
 .proTag svg{width:10px;height:10px}
-.favBtn{position:absolute;bottom:5px;right:5px;width:30px;height:30px;border-radius:15px;display:flex;align-items:center;justify-content:center;color:rgba(255,255,255,.85);background:rgba(20,14,10,.35);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px)}
-.favBtn svg{width:16px;height:16px}.favBtn.on{color:#FF6B7F}
+.favBtn{position:absolute;bottom:2px;right:2px;width:26px;height:26px;border-radius:13px;display:flex;align-items:center;justify-content:center;color:rgba(255,255,255,.85);background:rgba(20,14,10,.35);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px)}
+.favBtn svg{width:14px;height:14px}.favBtn.on{color:#FF6B7F}
 .freeSw{gap:8px;padding:0 12px 0 8px}
 .freeSw .sw{width:34px;height:20px;border-radius:10px;background:#4a3a2e;position:relative;transition:background .2s;display:inline-block;flex:none}
 .freeSw .sw i{position:absolute;top:2px;left:2px;width:16px;height:16px;border-radius:8px;background:#fff;transition:left .2s}
@@ -547,6 +546,7 @@ const FONTS = [
   {n:"Mrs Saint Delafield",g:"Script",w:[400]},
 ];
 const FONT_BY = Object.fromEntries(FONTS.map(f=>[f.n,f]));
+const FONT_CSS={}; // family -> promise that resolves when its stylesheet has loaded
 FONTS.forEach(f=>{
   if(f.n==="DM Sans") return;
   let spec = f.n.replace(/ /g,"+");
@@ -554,7 +554,7 @@ FONTS.forEach(f=>{
   else if(!(f.w.length===1 && f.w[0]===400)) spec += ":wght@" + f.w.join(";");
   const l=document.createElement("link"); l.rel="stylesheet";
   l.href="https://fonts.googleapis.com/css2?family="+spec+"&display=block";
-  l.onload=()=>{clearTimeout(window._fr);window._fr=setTimeout(()=>{fontCache.clear();schedulePreview();renderLibrary()},400)};
+  FONT_CSS[f.n]=new Promise(res=>{l.onload=()=>{res();clearTimeout(window._fr);window._fr=setTimeout(()=>{fontCache.clear();schedulePreview();renderLibrary();if(typeof refreshOnb==="function")refreshOnb()},400)};l.onerror=()=>res();setTimeout(res,6000)});
   document.head.appendChild(l);
 });
 
@@ -825,7 +825,8 @@ const FRAME=1100, QUALITY=1.4;
 function fontStr(Ly,px){return `${Ly.italic?"italic ":""}${Ly.weight||400} ${px}px "${Ly.font}", sans-serif`}
 const fontCache=new Set();
 async function ensureFonts(d){
-  await Promise.all(d.layers.map(Ly=>{const k=fontStr(Ly,40);if(fontCache.has(k))return;
+  await Promise.all(d.layers.map(async Ly=>{if(Ly.kind==="shape")return;const k=fontStr(Ly,40);if(fontCache.has(k))return;
+    if(FONT_CSS[Ly.font])await FONT_CSS[Ly.font];
     return document.fonts.load(k,Ly.text||"a").then(r=>{if(r&&r.length)fontCache.add(k)}).catch(()=>{})}));
 }
 function colorOf(d,c){return c==="main"?d.colors.main:c==="accent"?d.colors.accent:(c||d.colors.main)}
@@ -1415,9 +1416,13 @@ function updateProUI(){
 let onbSeen=false;try{onbSeen=!!localStorage.getItem("typoStudio.onboarded")}catch(e){}
 function hideSplash(){$("splash").classList.add("out");setTimeout(()=>$("splash").remove(),500)}
 async function openOnb(){
-  $("onb").classList.remove("hidden");
-  const stack=$("onbStack");stack.innerHTML="";const pick=["cf4","xm1","tv1"].map(id=>SEEDS.find(d=>d.id===id)).filter(Boolean);
-  for(let i=0;i<pick.length;i++){const d=pick[i];await ensureFonts(d);const c=document.createElement("div");c.className="pwCard card c"+[1,0,2][i]+(d.cat==="Holidays"?" xmas":"");c.appendChild(drawExport(d,.2));stack.appendChild(c)}
+  $("onb").classList.remove("hidden");openOnbArt()}
+let onbJob=0;
+async function openOnbArt(){
+  const job=++onbJob;const pick=["cf4","xm1","tv1"].map(id=>SEEDS.find(d=>d.id===id)).filter(Boolean);
+  await Promise.all(pick.map(ensureFonts));if(job!==onbJob)return;
+  const stack=$("onbStack");stack.innerHTML="";
+  for(let i=0;i<pick.length;i++){const d=pick[i];const c=document.createElement("div");c.className="pwCard card c"+[1,0,2][i]+(d.cat==="Holidays"?" xmas":"");c.appendChild(drawExport(d,.2));stack.appendChild(c)}
   startEditDemo();
 }
 let demoT=null;
@@ -1434,6 +1439,7 @@ async function startEditDemo(){
 function onbIndex(){const t=$("onbTrack");return Math.round(t.scrollLeft/t.clientWidth)}
 function onbGo(i){const t=$("onbTrack");t.scrollTo({left:i*t.clientWidth,behavior:"smooth"})}
 $("onbTrack").addEventListener("scroll",()=>{const i=onbIndex();document.querySelectorAll("#onbDots i").forEach((d,j)=>d.classList.toggle("on",j===i));$("onbNext").textContent=i===2?"Start creating":"Continue"},{passive:true});
+function refreshOnb(){if(!$("onb").classList.contains("hidden")){fontCache.clear();openOnbArt()}}
 function closeOnb(){$("onb").classList.add("hidden");clearInterval(demoT);try{localStorage.setItem("typoStudio.onboarded","1")}catch(e){}}
 $("onbNext").onclick=()=>{const i=onbIndex();if(i<2)onbGo(i+1);else closeOnb()};
 $("onbSkip").onclick=closeOnb;
