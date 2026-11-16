@@ -58,6 +58,22 @@ button{cursor:pointer;touch-action:manipulation;-webkit-user-select:none;user-se
 .bgBtn .lab{font-size:15px;line-height:32px}
 .credit{position:absolute;top:10px;right:12px;z-index:3;display:inline-flex;align-items:center;gap:6px;padding:4px 2px;color:rgba(255,255,255,.92);font-size:14px;font-weight:500;letter-spacing:.2px;text-decoration:none;text-shadow:0 1px 4px rgba(0,0,0,.55)}
 .credit svg{width:17px;height:17px;flex:none;filter:drop-shadow(0 1px 3px rgba(0,0,0,.5))}
+.igOv{position:absolute;inset:0;pointer-events:none;z-index:2;color:#fff;transition:opacity .25s}
+.stage:not(.ig) .igOv{opacity:0}
+.igTop{position:absolute;left:0;right:0;top:0;padding:8px 10px 26px;background:linear-gradient(rgba(0,0,0,.38),transparent)}
+.igBars{display:flex;gap:3px}.igBars i{flex:1;height:2px;border-radius:1px;background:rgba(255,255,255,.4)}.igBars i.done{background:#fff}.igBars i.cur{background:linear-gradient(90deg,#fff 55%,rgba(255,255,255,.4) 55%)}
+.igHead{display:flex;align-items:center;gap:7px;margin-top:8px;font-size:12.5px}
+.igHead b{font-weight:600}.igTime{opacity:.7}.igFlex{flex:1}
+.igHead svg{width:18px;height:18px;margin-left:6px}
+.igAv{width:26px;height:26px;border-radius:13px;background:linear-gradient(135deg,#e9b77c,#7a4a2c);border:1.5px solid #fff;flex:none}
+.igBottom{position:absolute;left:0;right:0;bottom:0;padding:24px 12px 12px;display:flex;align-items:center;gap:12px;background:linear-gradient(transparent,rgba(0,0,0,.35))}
+.igMsg{flex:1;height:36px;border:1.3px solid rgba(255,255,255,.75);border-radius:18px;display:flex;align-items:center;padding:0 14px;font-size:13px;opacity:.95}
+.igBottom svg{width:24px;height:24px;flex:none}
+.stage.ig .bgRow{bottom:62px}
+.stage.ig .credit{top:58px}
+.stage.ig .coach{top:84px}
+.igToggle{display:flex;align-items:center;justify-content:center;background:rgba(255,255,255,.14)!important;color:#fff}
+.igToggle svg{width:19px;height:19px}.igToggle.on{background:#fff!important;color:#1b130e;border-color:#fff}
 .coach{position:absolute;left:10px;right:10px;top:40px;padding:8px 12px;border-radius:12px;background:rgba(20,14,10,.6);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);font-size:13px;text-align:center;transition:opacity .4s;pointer-events:none}
 
 /* sheet */
@@ -332,10 +348,20 @@ input[type=range]::-moz-range-thumb{width:28px;height:28px;border-radius:50%;bac
   <main class="stageArea">
     <div class="stage" id="stage">
       <div class="bg" id="stageBg" style="background-image:url('/img/bg-golden.jpg?v=2')"></div>
+      <div class="igOv" id="igOv" aria-hidden="true">
+        <div class="igTop"><div class="igBars"><i class="done"></i><i class="cur"></i><i></i></div>
+          <div class="igHead"><span class="igAv"></span><b>yourname</b><span class="igTime">2h</span><span class="igFlex"></span>
+            <svg viewBox="0 0 24 24" fill="currentColor"><circle cx="5" cy="12" r="1.8"/><circle cx="12" cy="12" r="1.8"/><circle cx="19" cy="12" r="1.8"/></svg>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg></div></div>
+        <div class="igBottom"><div class="igMsg">Send message</div>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M12 20.5s-7.5-4.6-9.2-9.4C1.6 7.6 3.9 4.5 7.2 4.5c2 0 3.6 1.1 4.8 2.8 1.2-1.7 2.8-2.8 4.8-2.8 3.3 0 5.6 3.1 4.4 6.6-1.7 4.8-9.2 9.4-9.2 9.4z"/></svg>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M21.5 3 3 10.2l7.2 2.6L21.5 3zM10.2 12.8l2.6 8.2L21.5 3"/></svg></div>
+      </div>
       <canvas id="sticker"></canvas>
       <a class="credit" id="credit" href="https://www.instagram.com/myx100vi/" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="2.5" y="2.5" width="19" height="19" rx="5.5"/><circle cx="12" cy="12" r="4.3"/><circle cx="17.4" cy="6.6" r="1.1" fill="currentColor" stroke="none"/></svg><span id="creditName">© myx100vi</span></a>
       <div class="coach hidden" id="coach">Tap a text · drag to move · pinch to resize and rotate</div>
       <div class="bgRow" id="bgRow">
+        <button class="bgBtn igToggle" id="igToggle" aria-label="Show Story layout" aria-pressed="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"><rect x="6" y="2.5" width="12" height="19" rx="3"/><path d="M8.5 5.5h7M8.5 18.5h4.5"/><circle cx="15.5" cy="18.5" r=".6" fill="currentColor"/></svg></button>
         <button class="bgBtn on" data-photo="golden" aria-label="Golden hour"><img src="/img/th-golden.jpg?v=2" alt=""></button>
         <button class="bgBtn" data-photo="sunset" aria-label="Sunset"><img src="/img/th-sunset.jpg" alt=""></button>
         <button class="bgBtn" data-photo="pier" aria-label="Breakwater"><img src="/img/th-pier.jpg" alt=""></button>
@@ -1027,6 +1053,10 @@ function hideCoach(){const c=$("coach");if(c.classList.contains("hidden"))return
 const PHOTO_CREDIT={sunset:"myx100vi",xmas:"myx100vi",pool:"myx100vi",golden:"myx100vi",agave:"myx100vi",pier:"max.on.the.moveee"};
 function setCredit(photo){const h=PHOTO_CREDIT[photo];$("credit").classList.toggle("hidden",!h);if(h){$("credit").href=`https://www.instagram.com/${h}/`;$("creditName").textContent="© "+h}}
 function setPhoto(photo){const b=document.querySelector(`#bgRow [data-photo="${photo}"]`);if(b)b.click()}
+let igOn=true;try{igOn=localStorage.getItem("typoStudio.ig")!=="0"}catch(e){}
+function applyIg(){$("stage").classList.toggle("ig",igOn);$("igToggle").classList.toggle("on",igOn);$("igToggle").setAttribute("aria-pressed",igOn)}
+$("igToggle").addEventListener("click",e=>{e.stopPropagation();igOn=!igOn;try{localStorage.setItem("typoStudio.ig",igOn?"1":"0")}catch(err){}applyIg();toast(igOn?"Story layout on":"Story layout off")});
+applyIg();
 /* ---------------- Sheet (bottom sheet met grijper) ---------------- */
 const DETENTS=[.40,.70];let detent=0;
 function setDetent(i){detent=i;applySheetH();$("sheet").style.height="";setTimeout(layoutSticker,280)}
