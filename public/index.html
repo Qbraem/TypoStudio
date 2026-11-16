@@ -134,6 +134,9 @@ input[type=range]::-moz-range-thumb{width:28px;height:28px;border-radius:50%;bac
 @media(min-width:600px){.grid{grid-template-columns:repeat(auto-fill,minmax(120px,1fr))}}
 .card{position:relative;border:1.5px solid #3d3733;background-clip:padding-box;border-radius:12px;overflow:hidden;background:#2a1d16 center/cover;aspect-ratio:1/1;padding:0;display:flex;align-items:center;justify-content:center}
 .card.light{background:#efe7dc}
+.chip.xmas{background:linear-gradient(135deg,#C62E2E,#8E1B1B);border-color:#E9C46A;color:#fff;font-weight:700;box-shadow:0 0 0 1px rgba(233,196,106,.35),0 4px 14px rgba(198,46,46,.35)}
+.chip.xmas.on{background:linear-gradient(135deg,#E9C46A,#d9a93f);color:#7a1414;border-color:#fff}
+.card.xmas{background:radial-gradient(circle at 18% 22%,rgba(255,255,255,.9) 0 1.2px,transparent 2px) 0 0/34px 34px,radial-gradient(circle at 62% 70%,rgba(255,255,255,.7) 0 1px,transparent 1.8px) 0 0/27px 27px,radial-gradient(circle at 40% 30%,#2f6b4f,#123726 75%)!important;border-color:#E9C46A55}
 .card.sel{border:2px solid #fff}
 .card canvas{max-width:86%;max-height:72%}
 .card .mine{position:absolute;top:4px;right:7px;font-size:11px;color:var(--accent2)}
@@ -145,7 +148,7 @@ input[type=range]::-moz-range-thumb{width:28px;height:28px;border-radius:50%;bac
 .toolbar::-webkit-scrollbar{display:none}
 .toolbar button{flex:none;border:0;background:none;min-height:44px;padding:0 10px;font-size:14px;font-weight:700;color:var(--muted);border-bottom:2px solid transparent}
 .toolbar button.on{color:var(--text);border-bottom-color:var(--accent)}
-.ornGrid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
+.ornGrid{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:8px}
 .ornBtn{border:1px solid var(--line);background:var(--panel2);border-radius:12px;padding:6px 2px;display:flex;flex-direction:column;align-items:center;gap:2px;font-size:11px;color:var(--muted)}
 .ornBtn canvas{width:40px;height:40px}
 .ornBtn.on{border-color:var(--accent);background:#3a2419;color:var(--text)}
@@ -383,28 +386,50 @@ const SEEDS = [
   D("wk7","Weekend","Do Not Disturb",[L("do not","Homemade Apple",110,-150,-150,{rotate:-10,color:"accent"}),L("DISTURB","Bebas Neue",320,0,40)],C(W,"#7FC8E8")),
 
   // ---------- Holidays ----------
-  D("hd1","Holidays","Merry & Bright",[O("sparkles",120,300,-200,{color:"accent"}),L("Merry","Sansita Swashed",250,0,-80,{rotate:-5}),L("& bright","Sansita Swashed",200,40,105,{rotate:-5,color:"accent"})],C(W,"#E9C46A")),
-  D("hd2","Holidays","Let It Snow",T.arch("winter is here","Let it","snow"),C(W,"#BFE3F2")),
+  D("hd1","Holidays","Merry & Bright",[O("snowflake",120,320,-200,{color:"accent"}),L("Merry","Sansita Swashed",250,0,-80,{rotate:-5}),L("& bright","Sansita Swashed",200,40,105,{rotate:-5,color:"accent"})],C(W,"#E9C46A")),
+  D("hd2","Holidays","Let It Snow",[...T.arch("winter is here","Let it","snow"),O("snowflake",90,-330,120,{color:"accent"}),O("snowflake",60,330,40,{color:"accent"})],C(W,"#BFE3F2")),
   D("hd3","Holidays","Happy Holidays",[L("Happy","Pinyon Script",260,0,-110,{rotate:-6}),L("HOLIDAYS","Bodoni Moda",110,0,150,{spacing:30})],C("#D7263D","#D7263D")),
-  D("hd4","Holidays","Hello Summer",[O("burst",140,280,-210,{color:"accent"}),L("hello","Pacifico",200,-60,-90,{rotate:-6}),L("SUMMER","Bagel Fat One",230,0,95,{color:"accent"})],C(W,"#F6C445")),
-  D("hd5","Holidays","Bon Voyage",T.serifClean("Bon","voyage","DM Serif Display")),
-  D("hd6","Holidays","Holiday Mode",[L("HOLIDAY","Titan One",200,0,-100),L("MODE","Titan One",200,-60,80),L("on","Caveat",190,310,90,{rotate:-10,color:"accent"})],C(W,"#7FC8E8")),
-  D("hd7","Holidays","Trick or Treat",[L("trick","Shrikhand",210,-90,-110,{rotate:-6}),L("or","Yellowtail",130,-260,60,{rotate:-6,color:"accent"}),L("treat","Shrikhand",210,60,110,{rotate:-6})],{...C("#F0923A",W),texture:20}),
+  D("hd4","Travel","Hello Summer",[O("burst",140,280,-210,{color:"accent"}),L("hello","Pacifico",200,-60,-90,{rotate:-6}),L("SUMMER","Bagel Fat One",230,0,95,{color:"accent"})],C(W,"#F6C445")),
+  D("hd5","Travel","Bon Voyage",T.serifClean("Bon","voyage","DM Serif Display")),
+  D("hd6","Travel","Holiday Mode",[L("HOLIDAY","Titan One",200,0,-100),L("MODE","Titan One",200,-60,80),L("on","Caveat",190,310,90,{rotate:-10,color:"accent"})],C(W,"#7FC8E8")),
+  D("hd7","Monthly","Trick or Treat",[L("trick","Shrikhand",210,-90,-110,{rotate:-6}),L("or","Yellowtail",130,-260,60,{rotate:-6,color:"accent"}),L("treat","Shrikhand",210,60,110,{rotate:-6})],{...C("#F0923A",W),texture:20}),
+
+
+  D("xm1","Holidays","Merry Christmas",[O("holly",130,330,-230,{color:"accent"}),L("Merry","Pinyon Script",290,0,-90,{rotate:-6}),L("CHRISTMAS","Bodoni Moda",115,0,140,{spacing:24,color:"accent"})],C(W,"#E9C46A")),
+  D("xm2","Holidays","Ho Ho Ho!",T.bubble("Ho ho","ho!"),{...C("#F6ECD2","#D7263D"),texture:20}),
+  D("xm3","Holidays","Cosy Christmas",[O("tree",150,-330,-60,{color:"accent"}),L("cosy","Satisfy",230,60,-80,{rotate:-6}),L("CHRISTMAS","Archivo Black",120,30,110,{spacing:18,color:"accent"})],C(W,"#7FBF8F")),
+  D("xm4","Holidays","Jingle All the Way",[O("bauble",120,330,-230,{color:"accent",rotate:10}),L("jingle","Shrikhand",250,-20,-90,{rotate:-6}),L("all the way","Yellowtail",190,60,105,{rotate:-6,color:"accent"})],{...C(W,"#E9C46A"),texture:12}),
+  D("xm5","Holidays","Deck the Halls",[L("DECK","Gloock",220,0,-190),L("the","Mrs Saint Delafield",210,40,-15,{rotate:-8,color:"accent"}),L("HALLS","Gloock",220,0,170),O("holly",100,-330,-10,{color:"accent"})],C("#D7263D","#2E7D4F")),
+  D("xm6","Holidays","Hot Cocoa Season",[O("steam",120,0,-300,{color:"accent"}),L("hot cocoa","Cherry Bomb One",210,0,-120,{rotate:-4}),L("SEASON","Bebas Neue",180,0,70,{spacing:40,color:"accent"})],{...C("#F7EFE2","#C98A4B"),texture:20}),
+  D("xm7","Holidays","Silent Night",[O("star",90,0,-250,{color:"accent"}),L("silent","Cormorant Garamond",230,0,-60,{italic:true}),L("NIGHT","DM Sans",90,0,105,{spacing:60,weight:700,upper:true})],C(W,"#E9C46A")),
+  D("xm8","Holidays","Naughty or Nice?",[L("naughty","Bagel Fat One",220,-30,-140,{rotate:-5}),L("or","Caveat",150,-260,10,{rotate:-8,color:"accent"}),L("nice?","Bagel Fat One",240,60,120,{rotate:-5,color:"accent"})],C(W,"#D7263D")),
+  D("xm9","Holidays","Under the Mistletoe",[O("holly",120,0,-280,{color:"accent"}),L("under the","Caveat",150,0,-130,{rotate:-4,color:"accent"}),L("mistletoe","Sansita Swashed",240,0,60,{rotate:-5})],C(W,"#7FBF8F")),
+  D("xm10","Holidays","Season's Greetings",[...T.arch("from our home to yours","Season's","greetings","Bodoni Moda","Pinyon Script"),O("snowflake",80,400,150,{color:"accent"})],C(W,"#E9C46A")),
+  D("xm11","Holidays","Christmas Eve",[L("Christmas","Fraunces",250,0,-90,{weight:900}),L("Eve","Fraunces",250,-120,130,{weight:900}),L("24.12","Fraunces",110,300,170,{weight:900,italic:true,color:"accent",rotate:-4}),O("sparkles",120,330,-250,{color:"accent"})],C("#FBF3E2","#E9C46A")),
+  D("xm12","Holidays","Wrapping Season",[O("gift",130,-390,-230,{color:"accent",rotate:-8}),L("WRAPPING","Titan One",190,30,-60),L("season","Yellowtail",220,90,110,{rotate:-6,color:"accent"})],C(W,"#D7263D")),
+  D("xm13","Holidays","Let's Get Lit",[O("tree",140,0,-260,{color:"accent"}),L("let's get","Caveat",150,-60,-140,{rotate:-6}),L("LIT","Bowlby One",300,0,90,{spacing:10,color:"accent"})],C(W,"#E9C46A")),
+  D("xm14","Holidays","Merry Everything",[L("merry","Lobster",240,0,-140,{rotate:-5}),L("EVERYTHING","Anton",170,0,90,{spacing:8,color:"accent"}),O("snowflake",80,-360,-200,{color:"accent"}),O("snowflake",60,370,200,{color:"accent"})],C(W,"#BFE3F2")),
 
   // ---------- Travel ----------
-  D("tv1","Travel","Wanderlust",[L("wanderlust","Yellowtail",230,0,-40,{rotate:-6}),L("EXPLORE MORE","DM Sans",58,-90,120,{spacing:36,weight:700,color:"accent"}),O("arrow",120,390,105,{rotate:8,color:"accent"})],C(W,"#F2B33D")),
-  D("tv2","Travel","Passport Ready",[L("PASSPORT","Titan One",190,0,-110),L("READY","Titan One",190,-80,70),L("let's go","Caveat",150,340,165,{rotate:-10,color:"accent"})],C(W,"#7FC8E8")),
+  D("tv1","Travel","Wanderlust",[O("globe",110,-360,-200,{color:"accent"}),L("wanderlust","Yellowtail",230,0,-40,{rotate:-6}),L("EXPLORE MORE","DM Sans",58,-90,120,{spacing:36,weight:700,color:"accent"}),O("arrow",120,390,105,{rotate:8,color:"accent"})],C(W,"#F2B33D")),
+  D("tv2","Travel","Passport Ready",[O("plane",150,350,-260,{color:"accent"}),L("PASSPORT","Titan One",190,0,-110),L("READY","Titan One",190,-80,70),L("let's go","Caveat",150,340,165,{rotate:-10,color:"accent"})],C(W,"#7FC8E8")),
   D("tv3","Travel","Take Me Somewhere Warm",[L("TAKE ME","Anton",220,0,-170,{spacing:4}),L("WARM","Anton",260,0,160,{spacing:6}),L("somewhere","Yellowtail",230,0,-5,{rotate:-5,cutout:14,color:"accent"})],C(W,"#F6C445")),
-  D("tv4","Travel","Travel Diaries",[L("TRAVEL","Bodoni Moda",210,0,-150,{spacing:6}),L("diaries","Pinyon Script",260,20,20,{rotate:-8,cutout:10}),L("VOL. 01","Young Serif",54,0,190,{spacing:30,color:"accent"})],C(W,"#E9B77C")),
-  D("tv5","Travel","Greetings from Paris",T.arch("greetings from","Hello","Paris"),C(W,"#F28BA0")),
+  D("tv4","Travel","Travel Diaries",[O("ticket",130,0,-390,{color:"accent",rotate:-8}),L("TRAVEL","Bodoni Moda",210,0,-150,{spacing:6}),L("diaries","Pinyon Script",260,20,20,{rotate:-8,cutout:10}),L("VOL. 01","Young Serif",54,0,190,{spacing:30,color:"accent"})],C(W,"#E9B77C")),
+  D("tv5","Travel","Greetings from Paris",[...T.arch("greetings from","Hello","Paris"),O("pin",110,-300,140,{color:"accent"})],C(W,"#F28BA0")),
   D("tv6","Travel","Road Trip",T.bubble("Road","Trip!","Bagel Fat One"),{...C("#F6ECD2",CORAL),texture:22}),
   D("tv7","Travel","Beach Please",[O("burst",130,330,-200,{color:"accent"}),L("beach","Cherry Bomb One",230,-60,-80,{rotate:-6}),L("please","Cherry Bomb One",230,50,100,{rotate:-6})],{...C(W,"#F6C445"),texture:15}),
   D("tv8","Travel","Jet Lag Is Real",[L("Jet","Fraunces",280,-120,-110,{weight:900}),L("Lag","Fraunces",280,40,120,{weight:900}),L("is real","Fraunces",100,330,-60,{weight:900,italic:true,color:"accent",rotate:-4})],C("#FBF3E2","#E2CF9C")),
-  D("tv9","Travel","Catch Flights Not Feelings",[L("catch flights","Yellowtail",190,0,-120,{rotate:-6}),L("NOT FEELINGS","Anton",170,0,70,{spacing:6,color:"accent"})],C(W,"#7FC8E8")),
+  D("tv9","Travel","Catch Flights Not Feelings",[O("plane",130,-360,-250,{color:"accent"}),L("catch flights","Yellowtail",190,0,-120,{rotate:-6}),L("NOT FEELINGS","Anton",170,0,70,{spacing:6,color:"accent"})],C(W,"#7FC8E8")),
   D("tv10","Travel","Weekend Getaway",[L("Weekend","Fraunces",220,0,-90,{weight:900,italic:true}),L("getaway","Mrs Saint Delafield",230,60,90,{rotate:-8,color:"accent"})],C(W,"#F2B33D")),
   D("tv11","Travel","Adventure Awaits",[O("star",70,-420,-210,{color:"accent"}),L("ADVENTURE","Archivo Black",130,0,-80,{spacing:16}),L("awaits","Satisfy",240,40,80,{rotate:-6,color:"accent"})],C(W,"#F2B33D")),
-  D("tv12","Travel","Ciao Italia",T.arch("wish you were here","Ciao","Italia","Gloock","Pinyon Script"),C(W,"#E0332A")),
-  D("tv13","Travel","Out of Office",[O("sparkle",80,380,-200,{color:"accent"}),L("out of","Caveat",150,-170,-140,{rotate:-8,color:"accent"}),L("OFFICE","Bowlby One",220,0,40)],C(W,"#7FC8E8")),
+  D("tv12","Travel","Ciao Italia",[...T.arch("wish you were here","Ciao","Italia","Gloock","Pinyon Script"),O("pin",100,330,-60,{color:"accent"})],C(W,"#E0332A")),
+  D("tv13","Travel","Out of Office",[O("suitcase",140,330,-180,{color:"accent",rotate:6}),L("out of","Caveat",150,-170,-140,{rotate:-8,color:"accent"}),L("OFFICE","Bowlby One",220,0,40)],C(W,"#7FC8E8")),
+
+  D("tv15","Travel","Pack Your Bags",[O("suitcase",160,0,-290,{color:"accent"}),L("pack your","Caveat",150,-80,-110,{rotate:-6}),L("BAGS","Bagel Fat One",280,20,70,{color:"accent"})],C(W,"#F2B33D")),
+  D("tv16","Travel","Boarding Pass",[O("ticket",180,0,-250,{color:"accent",rotate:-6}),L("BOARDING","Anton",210,0,-40,{spacing:8}),L("pass","Yellowtail",220,90,120,{rotate:-6,color:"accent"})],C(W,"#7FC8E8")),
+  D("tv17","Travel","Next Stop: Anywhere",[L("next stop:","Caveat",150,-120,-150,{rotate:-6,color:"accent"}),L("ANYWHERE","Fraunces",200,0,20,{weight:900}),O("plane",130,320,-220,{color:"accent"}),O("pin",90,-370,140,{color:"accent"})],C("#FBF3E2","#F26B50")),
+  D("tv18","Travel","Window Seat",[O("plane",140,330,-200,{color:"accent"}),L("window","Pacifico",230,-30,-70,{rotate:-6}),L("SEAT","Bebas Neue",210,40,110,{spacing:30,color:"accent"})],C(W,"#7FC8E8")),
+  D("tv19","Travel","Around the World",[O("globe",150,0,-260,{color:"accent"}),L("around the","Mrs Saint Delafield",200,-60,-90,{rotate:-8,color:"accent"}),L("WORLD","Gloock",250,0,80)],C(W,"#E9B77C")),
   D("tv14","Travel","Island Time",[L("island","Pacifico",230,0,-70,{rotate:-6}),L("TIME","Bebas Neue",200,0,110,{spacing:25,color:"accent"}),O("sparkles",120,320,-160,{color:"accent"})],C(W,"#5FD3C6")),
 
   // ---------- Cosy ----------
@@ -472,9 +497,9 @@ const SEEDS = [
   D("y6","2026","Class of 2026",T.classicClub("Class","of","2026","Bodoni Moda","Great Vibes"),C(W,W)),
 ];
 // per design: [scale, centreX, centreY], measured with the real fonts so every design is centred and fills the frame evenly
-const SEED_FIX={"cf1":[1.007,-1,10],"cf2":[1.135,0,6],"cf3":[1.2,1,-51],"cf4":[1.082,2,-44],"cf5":[1.16,-1,-41],"cf6":[1.141,2,-29],"cf7":[0.95,2,-34],"cf8":[1.2,18,4],"cf9":[1.12,-1,-75],"cf10":[1.2,-8,26],"bf1":[0.917,4,58],"bf2":[1.154,4,-92],"bf3":[0.977,-32,17],"bf4":[1.0,10,-35],"bf5":[0.754,1,6],"bf6":[1.151,-5,-32],"bf7":[1.091,29,-22],"wk1":[0.803,39,-43],"wk2":[1.132,5,27],"wk3":[0.952,-1,-49],"wk4":[1.053,49,9],"wk5":[0.961,-3,-14],"wk6":[1.01,10,-15],"wk7":[1.061,2,-78],"hd1":[1.05,24,-24],"hd2":[1.2,-1,-52],"hd3":[1.019,-2,-30],"hd4":[0.87,-1,-49],"hd5":[1.2,-2,-24],"hd6":[0.961,1,-12],"hd7":[1.193,-10,-33],"tv1":[0.948,27,-14],"tv2":[0.812,1,24],"tv3":[1.017,11,-33],"tv4":[0.892,-1,-29],"tv5":[1.2,1,-53],"tv6":[1.066,-2,22],"tv7":[1.132,21,-8],"tv8":[1.061,96,23],"tv9":[0.897,0,-58],"tv10":[0.944,25,28],"tv11":[0.791,-3,-53],"tv12":[0.946,-2,-64],"tv13":[1.0,0,-73],"tv14":[1.2,54,-51],"cs1":[1.2,16,-22],"cs2":[0.597,0,20],"cs3":[1.069,-5,12],"cs4":[1.2,11,-56],"cs5":[1.2,-24,-45],"cs6":[1.2,0,-14],"gl1":[1.2,-33,-61],"gl2":[1.1,-3,-69],"gl3":[1.197,3,-43],"gl4":[0.94,5,-39],"gl5":[1.094,-4,-10],"gl6":[1.2,1,8],"gl7":[1.129,2,-83],"mv1":[1.102,-27,-7],"mv2":[0.616,-2,20],"mv3":[1.2,32,-41],"mv4":[1.2,5,-22],"mv5":[0.838,1,-85],"mv6":[1.12,27,34],"mo1":[1.047,-5,-16],"mo2":[0.892,3,-25],"mo3":[1.151,31,-11],"mo4":[1.091,-1,-33],"mo5":[1.108,-7,-76],"mo6":[1.085,35,24],"mo7":[1.2,-7,38],"mo8":[0.966,-3,-6],"mo9":[0.795,0,-106],"mo10":[1.094,0,19],"mo11":[0.913,0,9],"mo12":[0.679,-1,22],"cm1":[1.2,-45,-86],"cm2":[1.2,2,-38],"cm3":[1.2,9,-21],"cm4":[1.047,35,39],"cm5":[0.852,-1,-22],"cm6":[1.082,20,-8],"tr1":[1.167,0,-33],"tr2":[1.045,6,-84],"tr3":[1.2,-49,-37],"tr4":[1.043,5,-52],"tr5":[0.873,-3,-56],"tr6":[0.87,-1,-132],"tr7":[1.012,19,23],"y1":[1.176,33,-52],"y2":[1.173,-2,-34],"y3":[0.817,34,15],"y4":[0.917,2,-57],"y5":[1.053,-1,-53],"y6":[1.141,-2,-42]};
+const SEED_FIX={"cf1":[1.007,-1,10],"cf2":[1.135,0,6],"cf3":[1.2,1,-51],"cf4":[1.082,2,-44],"cf5":[1.16,-1,-41],"cf6":[1.141,2,-29],"cf7":[0.95,2,-34],"cf8":[1.2,18,4],"cf9":[1.12,-1,-75],"cf10":[1.2,-8,26],"bf1":[0.917,4,58],"bf2":[1.154,4,-92],"bf3":[0.977,-32,17],"bf4":[1.0,10,-35],"bf5":[0.754,1,6],"bf6":[1.151,-5,-32],"bf7":[1.091,29,-22],"wk1":[0.803,39,-43],"wk2":[1.132,5,27],"wk3":[0.952,-1,-49],"wk4":[1.053,49,9],"wk5":[0.961,-3,-14],"wk6":[1.01,10,-15],"wk7":[1.061,2,-78],"hd1":[1.05,24,-27],"hd2":[1.16,-8,-52],"hd3":[1.019,-2,-30],"hd4":[0.87,-1,-49],"hd5":[1.2,-2,-24],"hd6":[0.961,1,-12],"hd7":[1.193,-10,-33],"xm1":[0.907,-1,-53],"xm2":[1.01,0,-33],"xm3":[0.873,29,-8],"xm4":[1.007,-1,-45],"xm5":[1.183,-17,-25],"xm6":[0.903,1,-122],"xm7":[1.2,1,-83],"xm8":[1.027,-31,-2],"xm9":[0.832,3,-64],"xm10":[0.758,-2,-10],"xm11":[0.757,-1,-46],"xm12":[0.788,27,-40],"xm13":[1.2,9,-85],"xm14":[0.995,0,-6],"tv1":[0.948,27,-57],"tv2":[0.812,1,-41],"tv3":[1.017,11,-33],"tv4":[0.892,-1,-113],"tv5":[1.2,1,-53],"tv6":[1.066,-2,22],"tv7":[1.132,21,-8],"tv8":[1.061,96,23],"tv9":[0.897,0,-88],"tv10":[0.944,25,28],"tv11":[0.791,-3,-53],"tv12":[0.946,-2,-64],"tv13":[1.0,0,-72],"tv15":[1.144,19,-89],"tv16":[0.972,0,-16],"tv17":[0.72,-3,-42],"tv18":[1.117,0,-43],"tv19":[0.881,-9,-84],"tv14":[1.2,54,-51],"cs1":[1.2,16,-22],"cs2":[0.597,0,20],"cs3":[1.069,-5,12],"cs4":[1.2,11,-56],"cs5":[1.2,-24,-45],"cs6":[1.2,0,-14],"gl1":[1.2,-33,-61],"gl2":[1.1,-3,-69],"gl3":[1.197,3,-43],"gl4":[0.94,5,-39],"gl5":[1.094,-4,-10],"gl6":[1.2,1,8],"gl7":[1.129,2,-83],"mv1":[1.102,-27,-7],"mv2":[0.616,-2,20],"mv3":[1.2,32,-41],"mv4":[1.2,5,-22],"mv5":[0.838,1,-85],"mv6":[1.12,27,34],"mo1":[1.047,-5,-16],"mo2":[0.892,3,-25],"mo3":[1.151,31,-11],"mo4":[1.091,-1,-33],"mo5":[1.108,-7,-76],"mo6":[1.085,35,24],"mo7":[1.2,-7,38],"mo8":[0.966,-3,-6],"mo9":[0.795,0,-106],"mo10":[1.094,0,19],"mo11":[0.913,0,9],"mo12":[0.679,-1,22],"cm1":[1.2,-45,-86],"cm2":[1.2,2,-38],"cm3":[1.2,9,-21],"cm4":[1.047,35,39],"cm5":[0.852,-1,-22],"cm6":[1.082,20,-8],"tr1":[1.167,0,-33],"tr2":[1.045,6,-84],"tr3":[1.2,-49,-37],"tr4":[1.043,5,-52],"tr5":[0.873,-3,-56],"tr6":[0.87,-1,-132],"tr7":[1.012,19,23],"y1":[1.176,33,-52],"y2":[1.173,-2,-34],"y3":[0.817,34,15],"y4":[0.917,2,-57],"y5":[1.053,-1,-53],"y6":[1.141,-2,-42]};
 SEEDS.forEach(d=>{const f=SEED_FIX[d.id];if(!f)return;const [k,cx,cy]=f;d.layers.forEach(Ly=>{Ly.size=Math.round(Ly.size*k);Ly.x=Math.round((Ly.x-cx)*k);Ly.y=Math.round((Ly.y-cy)*k);if(Ly.cutout)Ly.cutout=Math.round(Ly.cutout*k*10)/10})});
-const NEW_CATS=["Coffee","Breakfast","Weekend","Holidays","Travel","Cosy","Girly","Movie Night","Monthly","Camera","Trending","2026"];
+const NEW_CATS=["Holidays","Coffee","Breakfast","Weekend","Travel","Cosy","Girly","Movie Night","Monthly","Camera","Trending","2026"];
 const SEED_CATS=[...new Set([...NEW_CATS,...SEEDS.map(d=>d.cat)])];
 
 
@@ -482,7 +507,7 @@ const SEED_CATS=[...new Set([...NEW_CATS,...SEEDS.map(d=>d.cat)])];
 /* ---------------- State ---------------- */
 let custom=[], customCats=[];
 let cur=clone(SEEDS[0]), curSourceId=SEEDS[0].id;
-let activeCat="All", tab="lib", tool="text", sel=0, fontGroup="All";
+let activeCat=([10,11].includes(new Date().getMonth())?"Holidays":"All"), tab="lib", tool="text", sel=0, fontGroup="All";
 let hist=[];
 const $=id=>document.getElementById(id);
 function clone(o){return JSON.parse(JSON.stringify(o))}
@@ -509,8 +534,9 @@ async function ensureFonts(d){
 }
 function colorOf(d,c){return c==="main"?d.colors.main:c==="accent"?d.colors.accent:(c||d.colors.main)}
 /* ---------- Ornamenten ---------- */
-const ORNAMENTS={drops:"Drops",sparkle:"Sparkle",sparkles:"Sparkles",star:"Star",heart:"Heart",bean:"Coffee bean",steam:"Steam",dot:"Dot",burst:"Sunburst",swash:"Swash",line:"Line",arrow:"Arrow"};
-const STROKE_SHAPES=new Set(["steam","swash","line","arrow"]);
+const ORNAMENTS={drops:"Drops",sparkle:"Sparkle",sparkles:"Sparkles",star:"Star",heart:"Heart",bean:"Coffee bean",steam:"Steam",dot:"Dot",burst:"Sunburst",swash:"Swash",line:"Line",arrow:"Arrow",suitcase:"Suitcase",plane:"Plane",ticket:"Ticket",pin:"Map pin",globe:"Globe",snowflake:"Snowflake",tree:"Xmas tree",bauble:"Bauble",gift:"Gift",holly:"Holly"};
+const STROKE_SHAPES=new Set(["steam","swash","line","arrow","globe","snowflake"]);
+function rr(ctx,x,y,w,h,r){ctx.moveTo(x+r,y);ctx.arcTo(x+w,y,x+w,y+h,r);ctx.arcTo(x+w,y+h,x,y+h,r);ctx.arcTo(x,y+h,x,y,r);ctx.arcTo(x,y,x+w,y,r);ctx.closePath()}
 function teardrop(ctx,r,h){ // ronde kant boven, punt naar onder (naar het midden)
   const cy=-h/2+r;ctx.moveTo(0,h/2);ctx.quadraticCurveTo(r*1.25,cy+r*1.3,r,cy);ctx.arc(0,cy,r,0,Math.PI,true);ctx.quadraticCurveTo(-r*1.25,cy+r*1.3,0,h/2);ctx.closePath();
 }
@@ -532,10 +558,37 @@ function drawShape(ctx,shape,u,outline){
     case "swash":ctx.moveTo(-u,u*.15);ctx.bezierCurveTo(-u*.35,-u*.4,u*.25,u*.5,u,-u*.18);break;
     case "line":ctx.moveTo(-u,0);ctx.lineTo(u,0);break;
     case "arrow":ctx.moveTo(-u,u*.45);ctx.quadraticCurveTo(-u*.1,-u*.65,u*.82,-u*.12);ctx.moveTo(u*.82,-u*.12);ctx.lineTo(u*.46,-u*.38);ctx.moveTo(u*.82,-u*.12);ctx.lineTo(u*.5,u*.2);break;
+    case "suitcase":rr(ctx,-u*.85,-u*.38,u*1.7,u*1.18,u*.18);break;
+    case "plane":ctx.save();ctx.rotate(Math.PI/4);ctx.ellipse(0,0,u*.13,u*.95,0,0,Math.PI*2);
+      ctx.moveTo(0,-u*.22);ctx.lineTo(u*.95,u*.22);ctx.lineTo(u*.95,u*.38);ctx.lineTo(0,u*.1);ctx.lineTo(-u*.95,u*.38);ctx.lineTo(-u*.95,u*.22);ctx.closePath();
+      ctx.moveTo(0,u*.55);ctx.lineTo(u*.38,u*.82);ctx.lineTo(u*.38,u*.94);ctx.lineTo(0,u*.8);ctx.lineTo(-u*.38,u*.94);ctx.lineTo(-u*.38,u*.82);ctx.closePath();ctx.restore();break;
+    case "ticket":rr(ctx,-u*.95,-u*.5,u*1.9,u,u*.1);break;
+    case "pin":ctx.moveTo(0,u*.95);ctx.bezierCurveTo(-u*.22,u*.55,-u*.62,u*.18,-u*.62,-u*.28);ctx.arc(0,-u*.28,u*.62,Math.PI,0);ctx.bezierCurveTo(u*.62,u*.18,u*.22,u*.55,0,u*.95);ctx.closePath();break;
+    case "globe":ctx.arc(0,0,u*.85,0,Math.PI*2);ctx.moveTo(u*.38,0);ctx.ellipse(0,0,u*.38,u*.85,0,0,Math.PI*2);ctx.moveTo(-u*.85,0);ctx.lineTo(u*.85,0);ctx.moveTo(-u*.72,-u*.44);ctx.lineTo(u*.72,-u*.44);ctx.moveTo(-u*.72,u*.44);ctx.lineTo(u*.72,u*.44);break;
+    case "snowflake":for(let k=0;k<6;k++){ctx.save();ctx.rotate(k*Math.PI/3);ctx.moveTo(0,0);ctx.lineTo(0,-u*.95);ctx.moveTo(0,-u*.55);ctx.lineTo(u*.24,-u*.78);ctx.moveTo(0,-u*.55);ctx.lineTo(-u*.24,-u*.78);ctx.moveTo(0,-u*.3);ctx.lineTo(u*.14,-u*.44);ctx.moveTo(0,-u*.3);ctx.lineTo(-u*.14,-u*.44);ctx.restore()}break;
+    case "tree":ctx.moveTo(0,-u*.95);ctx.lineTo(u*.42,-u*.38);ctx.lineTo(-u*.42,-u*.38);ctx.closePath();ctx.moveTo(0,-u*.62);ctx.lineTo(u*.62,u*.12);ctx.lineTo(-u*.62,u*.12);ctx.closePath();
+      ctx.moveTo(0,-u*.22);ctx.lineTo(u*.82,u*.62);ctx.lineTo(-u*.82,u*.62);ctx.closePath();ctx.rect(-u*.12,u*.6,u*.24,u*.32);break;
+    case "bauble":ctx.arc(0,u*.18,u*.7,0,Math.PI*2);ctx.rect(-u*.18,-u*.66,u*.36,u*.2);break;
+    case "gift":rr(ctx,-u*.72,-u*.1,u*1.44,u*.98,u*.06);rr(ctx,-u*.86,-u*.42,u*1.72,u*.28,u*.06);
+      ctx.save();ctx.translate(-u*.22,-u*.6);ctx.rotate(-.45);ctx.ellipse(0,0,u*.26,u*.14,0,0,Math.PI*2);ctx.restore();
+      ctx.save();ctx.translate(u*.22,-u*.6);ctx.rotate(.45);ctx.ellipse(0,0,u*.26,u*.14,0,0,Math.PI*2);ctx.restore();break;
+    case "holly":ctx.save();ctx.translate(-u*.4,u*.2);ctx.rotate(-.55);ctx.ellipse(0,0,u*.5,u*.22,0,0,Math.PI*2);ctx.restore();
+      ctx.save();ctx.translate(u*.4,u*.2);ctx.rotate(.55);ctx.ellipse(0,0,u*.5,u*.22,0,0,Math.PI*2);ctx.restore();
+      ctx.moveTo(u*.2,-u*.18);ctx.arc(0,-u*.18,u*.2,0,Math.PI*2);ctx.moveTo(-u*.02,-u*.48);ctx.arc(-u*.2,-u*.48,u*.18,0,Math.PI*2);ctx.moveTo(u*.38,-u*.48);ctx.arc(u*.2,-u*.48,u*.18,0,Math.PI*2);break;
   }
   if(STROKE_SHAPES.has(shape)){ctx.lineWidth=shape==="line"?u*.09:lw*1.05;ctx.stroke()}
   else if(outline){ctx.lineWidth=lw*.8;ctx.stroke()}
   else ctx.fill();
+  // details: uitsparingen en hengsels
+  const cut=fn=>{ctx.save();ctx.shadowColor="transparent";ctx.globalCompositeOperation="destination-out";ctx.beginPath();fn();ctx.fill();ctx.restore()};
+  if(shape==="suitcase"){ctx.beginPath();rr(ctx,-u*.3,-u*.72,u*.6,u*.42,u*.12);ctx.lineWidth=u*.12;ctx.stroke();
+    if(!outline)cut(()=>{ctx.rect(-u*.48,-u*.38,u*.1,u*1.18);ctx.rect(u*.38,-u*.38,u*.1,u*1.18)})}
+  if(shape==="ticket"&&!outline)cut(()=>{ctx.arc(-u*.95,0,u*.18,0,Math.PI*2);ctx.moveTo(u*1.13,0);ctx.arc(u*.95,0,u*.18,0,Math.PI*2);for(let k=-3;k<=3;k++){ctx.moveTo(u*.47,k*u*.13);ctx.arc(u*.42,k*u*.13,u*.045,0,Math.PI*2)}
+    ctx.rect(-u*.68,-u*.2,u*.8,u*.09);ctx.rect(-u*.68,u*.02,u*.55,u*.09)});
+  if(shape==="pin"&&!outline)cut(()=>{ctx.arc(0,-u*.28,u*.24,0,Math.PI*2)});
+  if(shape==="bauble"){ctx.beginPath();ctx.arc(0,-u*.8,u*.14,0,Math.PI*2);ctx.lineWidth=u*.07;ctx.stroke();
+    if(!outline){ctx.save();ctx.shadowColor="transparent";ctx.globalCompositeOperation="destination-out";ctx.beginPath();ctx.arc(0,u*.18,u*.48,Math.PI*1.1,Math.PI*1.45);ctx.lineWidth=u*.09;ctx.lineCap="round";ctx.stroke();ctx.restore()}}
+  if(shape==="gift"&&!outline)cut(()=>{ctx.rect(-u*.07,-u*.42,u*.14,u*1.3);ctx.rect(-u*.86,-u*.16,u*1.72,u*.06)});
   if(shape==="bean"&&!outline){ // groef in de boon
     ctx.save();ctx.shadowColor="transparent";ctx.globalCompositeOperation="destination-out";ctx.rotate(-.5);ctx.beginPath();
     ctx.moveTo(0,-u*.78);ctx.bezierCurveTo(u*.32,-u*.3,-u*.32,u*.3,0,u*.78);ctx.lineWidth=u*.12;ctx.stroke();ctx.restore();
@@ -721,7 +774,7 @@ function loadDesign(d){cur=clone(d);curSourceId=d.id;sel=0;hist=[];updUndo();sch
 function renderLibrary(){
   if(!$("cats"))return;
   const cats=$("cats");cats.innerHTML="";
-  const mk=(label,val)=>{const b=document.createElement("button");b.className="chip"+(activeCat===val?" on":"");b.textContent=label;b.onclick=()=>{activeCat=val;renderLibrary()};cats.appendChild(b)};
+  const mk=(label,val)=>{const b=document.createElement("button");b.className="chip"+(activeCat===val?" on":"")+(val==="Holidays"?" xmas":"");if(val==="Holidays")label="❄ Holidays";b.textContent=label;b.onclick=()=>{activeCat=val;renderLibrary()};cats.appendChild(b)};
   mk("All","All");if(custom.length)mk("★ My designs","★");
   allCats().forEach(c=>mk(c+(isCustomCat(c)?" ★":""),c));
   const plus=document.createElement("button");plus.className="chip";plus.textContent="+ Category";
@@ -735,7 +788,8 @@ function renderLibrary(){
   const cards=list.map(d=>{
     const b=document.createElement("button");const light=lum(d.colors.main)<.45;
     b.className="card"+(d.id===curSourceId?" sel":"")+(light?" light":"");b.setAttribute("aria-label",d.name);
-    if(!light)b.style.backgroundImage=`linear-gradient(rgba(0,0,0,.22),rgba(0,0,0,.35)),url('/img/sq-${["beans","sunset","pier"][n++%3]}.jpg')`;
+    if(d.cat==="Holidays"&&!light)b.classList.add("xmas");
+    else if(!light)b.style.backgroundImage=`linear-gradient(rgba(0,0,0,.22),rgba(0,0,0,.35)),url('/img/sq-${["beans","sunset","pier"][n++%3]}.jpg')`;
     if(!d.seed)b.innerHTML='<span class="mine">★</span>';
     b.onclick=()=>{
       if(d.id===curSourceId){showTab("edit");return}
@@ -916,7 +970,7 @@ const PHRASES={
   "Coffee":["Coffee First","But first, coffee","Espresso Yourself","Coffee Date","Stay Grounded","Daily Grind","Extra Shot","Oat Latte","Coffee O'Clock","Mug Life","Bean There","Sip Happens"],
   "Breakfast":["Brunch Club","Rise & Shine","Pancake Party","Breakfast in Bed","Croissant Club","Eggs Benedict","Sunny Side Up","Toast & Jam","Morning Glory","Bagels & Bliss"],
   "Weekend":["Hello Weekend","Sunday Club","Saturday Mood","Lazy Sunday","Weekend Mode","Out of Office","Do Not Disturb","Sunday Funday","Friday Feeling","Weekend Getaway"],
-  "Holidays":["Merry & Bright","Let It Snow","Happy Holidays","Hello Summer","Bon Voyage","Beach Please","Holiday Mode","Trick or Treat","Jingle All the Way","Passport Ready"],
+  "Holidays":["Merry & Bright","Let It Snow","Happy Holidays","Merry Christmas","Ho Ho Ho!","Cosy Christmas","Jingle All the Way","Deck the Halls","Hot Cocoa Season","Silent Night","Naughty or Nice?","Under the Mistletoe","Season's Greetings","Christmas Eve","Wrapping Season","Merry Everything","Snow Day","Baby It's Cold Outside","Joy to the World","Home for the Holidays"],
   "Travel":["Wanderlust","Passport Ready","Take Me Somewhere Warm","Travel Diaries","Greetings from Paris","Road Trip","Beach Please","Jet Lag Is Real","Catch Flights Not Feelings","Weekend Getaway","Adventure Awaits","Ciao Italia","Island Time","Out of Office","Bon Voyage","Window Seat","Lost in Lisbon","Summer in the City","Home Is Elsewhere","Next Stop: Anywhere"],
   "Cosy":["Cosy Season","Sweater Weather","Hygge Days","Books & Blankets","Candle Season","Stay Home","Rainy Days","Soup Season","Slow Living","Warm & Fuzzy"],
   "Girly":["The Girls Club","Pretty in Pink","Self Care Sunday","Girls Night","That Girl","XOXO","Hot Girl Walk","Babe","Glow Up","Pink Era"],
