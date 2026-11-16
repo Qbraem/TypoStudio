@@ -56,8 +56,9 @@ button{cursor:pointer;touch-action:manipulation;-webkit-user-select:none;user-se
 .bgBtn.bg-warm{background:linear-gradient(135deg,#e9a35a,#5a3420)}.bgBtn.bg-dark{background:#141414}.bgBtn.bg-light{background:#efe7dc}
 .bgBtn.bg-check{background:repeating-conic-gradient(#666 0 25%,#333 0 50%) 0 0/12px 12px}
 .bgBtn .lab{font-size:15px;line-height:32px}
-.credit{position:absolute;top:10px;right:12px;z-index:3;color:rgba(255,255,255,.85);font-size:11px;letter-spacing:.2px;text-decoration:none;text-shadow:0 1px 3px rgba(0,0,0,.5)}
-.coach{position:absolute;left:10px;right:10px;top:32px;padding:8px 12px;border-radius:12px;background:rgba(20,14,10,.6);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);font-size:13px;text-align:center;transition:opacity .4s;pointer-events:none}
+.credit{position:absolute;top:10px;right:12px;z-index:3;display:inline-flex;align-items:center;gap:6px;padding:4px 2px;color:rgba(255,255,255,.92);font-size:14px;font-weight:500;letter-spacing:.2px;text-decoration:none;text-shadow:0 1px 4px rgba(0,0,0,.55)}
+.credit svg{width:17px;height:17px;flex:none;filter:drop-shadow(0 1px 3px rgba(0,0,0,.5))}
+.coach{position:absolute;left:10px;right:10px;top:40px;padding:8px 12px;border-radius:12px;background:rgba(20,14,10,.6);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);font-size:13px;text-align:center;transition:opacity .4s;pointer-events:none}
 
 /* sheet */
 .sheet{grid-area:sheet;height:var(--sheet-h,42%);background:var(--panel);border-radius:18px 18px 0 0;display:flex;flex-direction:column;min-height:0;box-shadow:0 -6px 24px rgba(0,0,0,.35);transition:height .25s ease}
@@ -186,7 +187,7 @@ input[type=range]::-moz-range-thumb{width:28px;height:28px;border-radius:50%;bac
     <div class="stage" id="stage">
       <div class="bg" id="stageBg" style="background-image:url('/img/bg-beans.jpg')"></div>
       <canvas id="sticker"></canvas>
-      <a class="credit hidden" id="credit" href="https://www.instagram.com/max.on.the.moveee/" target="_blank" rel="noopener">© max.on.the.moveee</a>
+      <a class="credit hidden" id="credit" href="https://www.instagram.com/max.on.the.moveee/" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="2.5" y="2.5" width="19" height="19" rx="5.5"/><circle cx="12" cy="12" r="4.3"/><circle cx="17.4" cy="6.6" r="1.1" fill="currentColor" stroke="none"/></svg>© max.on.the.moveee</a>
       <div class="coach hidden" id="coach">Tik op een tekst · sleep om te verplaatsen · knijp om te schalen en draaien</div>
       <div class="bgRow" id="bgRow">
         <button class="bgBtn on" data-photo="beans" aria-label="Koffiebonen"><img src="/img/th-beans.jpg" alt=""></button>
