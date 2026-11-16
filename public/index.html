@@ -136,6 +136,9 @@ input[type=range]::-moz-range-thumb{width:28px;height:28px;border-radius:50%;bac
 .chip.xmas{background:linear-gradient(135deg,#C62E2E,#8E1B1B);border-color:#E9C46A;color:#fff;font-weight:700;box-shadow:0 0 0 1px rgba(233,196,106,.35),0 4px 14px rgba(198,46,46,.35)}
 .chip.xmas.on{background:linear-gradient(135deg,#E9C46A,#d9a93f);color:#7a1414;border-color:#fff}
 .card.xmas{background:radial-gradient(circle at 30% 40%,rgba(255,255,255,.35) 0 .9px,transparent 1.4px) 0 0/58px 58px,radial-gradient(120% 90% at 20% 10%,#b3262b 0%,#6e1418 55%,#3f0b0e 100%)!important;border-color:#E9C46A55}
+.chip.fall{background:linear-gradient(135deg,#C9652B,#8A3A17);border-color:#E9B77C88;color:#fff;font-weight:700}
+.chip.fall.on{background:linear-gradient(135deg,#F2B266,#D98236);color:#4a1f08;border-color:#fff}
+.card.fall{background:radial-gradient(120% 90% at 20% 10%,#a3532a 0%,#5e2a14 55%,#33160b 100%)!important;border-color:#E9B77C44}
 .card.sel{border:2px solid #fff}
 .card canvas{max-width:86%;max-height:72%}
 .card .mine{position:absolute;top:4px;right:7px;font-size:11px;color:var(--accent2)}
@@ -602,6 +605,23 @@ const SEEDS = [
   D("xm13","Holidays","Let's Get Lit",[O("tree",140,0,-260,{color:"accent"}),L("let's get","Caveat",150,-60,-140,{rotate:-6}),L("LIT","Bowlby One",300,0,90,{spacing:10,color:"accent"})],C(W,"#E9C46A")),
   D("xm14","Holidays","Merry Everything",[L("merry","Lobster",240,0,-140,{rotate:-5}),L("EVERYTHING","Anton",170,0,90,{spacing:8,color:"accent"}),O("snowflake",80,-360,-200,{color:"accent"}),O("snowflake",60,370,200,{color:"accent"})],C(W,"#BFE3F2")),
 
+
+  // ---------- Thanksgiving ----------
+  D("tg1","Thanksgiving","Happy Thanksgiving",[O("leaf",110,330,-220,{color:"accent",rotate:20}),L("Happy","Pinyon Script",270,0,-90,{rotate:-6}),L("THANKSGIVING","Bodoni Moda",95,0,130,{spacing:18,color:"accent"})],C(W,"#E8913A")),
+  D("tg2","Thanksgiving","Thankful & Grateful",[L("thankful","Sansita Swashed",230,0,-90,{rotate:-5}),L("& GRATEFUL","Montserrat",90,0,100,{spacing:30,weight:800,color:"accent"})],C(W,"#E8913A")),
+  D("tg3","Thanksgiving","Gobble Gobble",T.bubble("Gobble","Gobble"),{...C("#F6E2C2","#C9552B"),texture:22}),
+  D("tg4","Thanksgiving","Give Thanks",[L("give","Yellowtail",230,-120,-160,{rotate:-6,color:"accent"}),L("THANKS","Gloock",270,0,90)],C("#FBF0DF","#E8913A")),
+  D("tg5","Thanksgiving","Pumpkin Pie Season",[O("pie",200,0,-300,{color:"accent"}),L("pumpkin pie","Cherry Bomb One",190,0,-90,{rotate:-4}),L("SEASON","Bebas Neue",190,0,90,{spacing:40,color:"accent"})],{...C("#F7EFE2","#E8913A"),texture:18}),
+  D("tg6","Thanksgiving","Friendsgiving",[O("pumpkin",130,-330,-260,{color:"accent"}),L("Friends","Fraunces",230,30,-80,{weight:900,italic:true}),L("giving","Mrs Saint Delafield",220,90,110,{rotate:-8,color:"accent"})],C(W,"#E8913A")),
+  D("tg7","Thanksgiving","Grateful Heart",[O("heart",90,0,-250,{color:"accent"}),L("grateful","Satisfy",250,0,-60,{rotate:-6}),L("HEART","Archivo Black",140,0,170,{spacing:30,color:"accent"})],C(W,"#C9552B")),
+  D("tg8","Thanksgiving","Let's Get Stuffed",[L("let's get","Caveat",160,-100,-150,{rotate:-8,color:"accent"}),L("STUFFED","Bowlby One",210,0,40)],C(W,"#E8913A")),
+  D("tg9","Thanksgiving","Hello Fall",[O("leaf",100,-330,-170,{color:"accent",rotate:-25}),O("leaf",70,340,140,{color:"accent",rotate:40}),L("hello","Pacifico",210,-30,-80,{rotate:-6}),L("FALL","Titan One",230,20,100,{color:"accent"})],C(W,"#E8913A")),
+  D("tg10","Thanksgiving","Gather Together",[...T.arch("thanksgiving 2026","Gather","together","Gloock","Pinyon Script")],C(W,"#E8913A")),
+  D("tg11","Thanksgiving","Turkey Day",[L("TURKEY","Anton",280,0,-90,{spacing:6}),L("day","Yellowtail",240,90,100,{rotate:-6,cutout:12,color:"accent"})],C(W,"#E8913A")),
+  D("tg12","Thanksgiving","Thanks a Latte",[O("steam",110,330,-200,{color:"accent"}),L("thanks a","Caveat",160,-90,-120,{rotate:-6,color:"accent"}),L("LATTE","Fraunces",250,0,60,{weight:900})],C("#FBF0DF","#E8913A")),
+  D("tg13","Thanksgiving","Blessed",[O("sparkles",120,330,-170,{color:"accent"}),L("blessed","Great Vibes",300,0,-10,{rotate:-6})],C(W,"#E9C46A")),
+  D("tg14","Thanksgiving","Pass the Pie",T.bouncy("pass the","pie!","Cherry Bomb One"),{...C("#F7EFE2","#E8913A"),texture:20}),
+
   // ---------- Travel ----------
   D("tv1","Travel","Wanderlust",[O("globe",110,-360,-200,{color:"accent"}),L("wanderlust","Yellowtail",230,0,-40,{rotate:-6}),L("EXPLORE MORE","DM Sans",58,-90,120,{spacing:36,weight:700,color:"accent"}),O("arrow",120,390,105,{rotate:8,color:"accent"})],C(W,"#F2B33D")),
   D("tv2","Travel","Passport Ready",[O("plane",150,350,-260,{color:"accent"}),L("PASSPORT","Titan One",190,0,-110),L("READY","Titan One",190,-80,70),L("let's go","Caveat",150,340,165,{rotate:-10,color:"accent"})],C(W,"#7FC8E8")),
@@ -689,9 +709,9 @@ const SEEDS = [
   D("y6","2026","Class of 2026",T.classicClub("Class","of","2026","Bodoni Moda","Great Vibes"),C(W,W)),
 ];
 // per design: [scale, centreX, centreY], measured with the real fonts so every design is centred and fills the frame evenly
-const SEED_FIX={"cf1":[1.007,-1,10],"cf2":[1.135,0,6],"cf3":[1.2,1,-51],"cf4":[1.082,2,-44],"cf5":[1.16,-1,-41],"cf6":[1.141,2,-29],"cf7":[0.95,2,-34],"cf8":[1.2,18,4],"cf9":[1.12,-1,-75],"cf10":[1.2,-8,26],"bf1":[0.917,4,58],"bf2":[1.154,4,-92],"bf3":[0.977,-32,17],"bf4":[1.0,10,-35],"bf5":[0.754,1,6],"bf6":[1.151,-5,-32],"bf7":[1.091,29,-22],"wk1":[0.803,39,-43],"wk2":[1.132,5,27],"wk3":[0.952,-1,-49],"wk4":[1.053,49,9],"wk5":[0.961,-3,-14],"wk6":[1.01,10,-15],"wk7":[1.061,2,-78],"hd1":[1.05,24,-27],"hd2":[1.16,-8,-52],"hd3":[1.019,-2,-30],"hd4":[0.87,-1,-49],"hd5":[1.2,-2,-24],"hd6":[0.961,1,-12],"hd7":[1.193,-10,-33],"xm1":[0.907,-1,-53],"xm2":[1.01,0,-33],"xm3":[0.873,29,-8],"xm4":[1.007,-1,-45],"xm5":[1.183,-17,-25],"xm6":[0.903,1,-122],"xm7":[1.2,1,-83],"xm8":[1.027,-31,-2],"xm9":[0.832,3,-64],"xm10":[0.758,-2,-10],"xm11":[0.757,-1,-46],"xm12":[0.788,27,-40],"xm13":[1.2,9,-85],"xm14":[0.995,0,-6],"tv1":[0.948,27,-57],"tv2":[0.812,1,-41],"tv3":[1.017,11,-33],"tv4":[0.892,-1,-113],"tv5":[1.2,1,-53],"tv6":[1.066,-2,22],"tv7":[1.132,21,-8],"tv8":[1.061,96,23],"tv9":[0.897,0,-88],"tv10":[0.944,25,28],"tv11":[0.791,-3,-53],"tv12":[0.946,-2,-64],"tv13":[1.0,0,-72],"tv15":[1.144,19,-89],"tv16":[0.972,0,-16],"tv17":[0.72,-3,-42],"tv18":[1.117,0,-43],"tv19":[0.881,-9,-84],"tv14":[1.2,54,-51],"cs1":[1.2,16,-22],"cs2":[0.597,0,20],"cs3":[1.069,-5,12],"cs4":[1.2,11,-56],"cs5":[1.2,-24,-45],"cs6":[1.2,0,-14],"gl1":[1.2,-33,-61],"gl2":[1.1,-3,-69],"gl3":[1.197,3,-43],"gl4":[0.94,5,-39],"gl5":[1.094,-4,-10],"gl6":[1.2,1,8],"gl7":[1.129,2,-83],"mv1":[1.102,-27,-7],"mv2":[0.616,-2,20],"mv3":[1.2,32,-41],"mv4":[1.2,5,-22],"mv5":[0.838,1,-85],"mv6":[1.12,27,34],"mo1":[1.047,-5,-16],"mo2":[0.892,3,-25],"mo3":[1.151,31,-11],"mo4":[1.091,-1,-33],"mo5":[1.108,-7,-76],"mo6":[1.085,35,24],"mo7":[1.2,-7,38],"mo8":[0.966,-3,-6],"mo9":[0.795,0,-106],"mo10":[1.094,0,19],"mo11":[0.913,0,9],"mo12":[0.679,-1,22],"cm1":[1.2,-45,-86],"cm2":[1.2,2,-38],"cm3":[1.2,9,-21],"cm4":[1.047,35,39],"cm5":[0.852,-1,-22],"cm6":[1.082,20,-8],"tr1":[1.167,0,-33],"tr2":[1.045,6,-84],"tr3":[1.2,-49,-37],"tr4":[1.043,5,-52],"tr5":[0.873,-3,-56],"tr6":[0.87,-1,-132],"tr7":[1.012,19,23],"y1":[1.176,33,-52],"y2":[1.173,-2,-34],"y3":[0.817,34,15],"y4":[0.917,2,-57],"y5":[1.053,-1,-53],"y6":[1.141,-2,-42]};
+const SEED_FIX={"cf1":[1.007,-1,10],"cf2":[1.135,0,6],"cf3":[1.2,1,-51],"cf4":[1.082,2,-44],"cf5":[1.16,-1,-41],"cf6":[1.141,2,-29],"cf7":[0.95,2,-34],"cf8":[1.2,18,4],"cf9":[1.12,-1,-75],"cf10":[1.2,-8,26],"bf1":[0.917,4,58],"bf2":[1.154,4,-92],"bf3":[0.977,-32,17],"bf4":[1.0,10,-35],"bf5":[0.754,1,6],"bf6":[1.151,-5,-32],"bf7":[1.091,29,-22],"wk1":[0.803,39,-43],"wk2":[1.132,5,27],"wk3":[0.952,-1,-49],"wk4":[1.053,49,9],"wk5":[0.961,-3,-14],"wk6":[1.01,10,-15],"wk7":[1.061,2,-78],"hd1":[1.05,24,-27],"hd2":[1.16,-8,-52],"hd3":[1.019,-2,-30],"hd4":[0.87,-1,-49],"hd5":[1.2,-2,-24],"hd6":[0.961,1,-12],"hd7":[1.193,-10,-33],"xm1":[0.907,-1,-53],"xm2":[1.01,0,-33],"xm3":[0.873,29,-8],"xm4":[1.007,-1,-45],"xm5":[1.183,-17,-25],"xm6":[0.903,1,-122],"xm7":[1.2,1,-83],"xm8":[1.027,-31,-2],"xm9":[0.832,3,-64],"xm10":[0.758,-2,-10],"xm11":[0.757,-1,-46],"xm12":[0.788,27,-40],"xm13":[1.2,9,-85],"xm14":[0.995,0,-6],"tg1":[0.87,-3,-60],"tg2":[0.944,1,-48],"tg3":[0.775,2,-33],"tg4":[0.759,-1,-24],"tg5":[0.828,1,-100],"tg6":[1.034,20,-32],"tg7":[1.148,-8,-31],"tg8":[0.835,1,-65],"tg9":[1.154,-6,-30],"tg10":[0.927,5,-20],"tg11":[1.014,0,-10],"tg12":[1.058,1,-60],"tg13":[1.2,55,-76],"tg14":[0.966,-59,24],"tv1":[0.948,27,-57],"tv2":[0.812,1,-41],"tv3":[1.017,11,-33],"tv4":[0.892,-1,-113],"tv5":[1.2,1,-53],"tv6":[1.066,-2,22],"tv7":[1.132,21,-8],"tv8":[1.061,96,23],"tv9":[0.897,0,-88],"tv10":[0.944,25,28],"tv11":[0.791,-3,-53],"tv12":[0.946,-2,-64],"tv13":[1.0,0,-72],"tv15":[1.144,19,-89],"tv16":[0.972,0,-16],"tv17":[0.72,-3,-42],"tv18":[1.117,0,-43],"tv19":[0.881,-9,-84],"tv14":[1.2,54,-51],"cs1":[1.2,16,-22],"cs2":[0.597,0,20],"cs3":[1.069,-5,12],"cs4":[1.2,11,-56],"cs5":[1.2,-24,-45],"cs6":[1.2,0,-14],"gl1":[1.2,-33,-61],"gl2":[1.1,-3,-69],"gl3":[1.197,3,-43],"gl4":[0.94,5,-39],"gl5":[1.094,-4,-10],"gl6":[1.2,1,8],"gl7":[1.129,2,-83],"mv1":[1.102,-27,-7],"mv2":[0.616,-2,20],"mv3":[1.2,32,-41],"mv4":[1.2,5,-22],"mv5":[0.838,1,-85],"mv6":[1.12,27,34],"mo1":[1.047,-5,-16],"mo2":[0.892,3,-25],"mo3":[1.151,31,-11],"mo4":[1.091,-1,-33],"mo5":[1.108,-7,-76],"mo6":[1.085,35,24],"mo7":[1.2,-7,38],"mo8":[0.966,-3,-6],"mo9":[0.795,0,-106],"mo10":[1.094,0,19],"mo11":[0.913,0,9],"mo12":[0.679,-1,22],"cm1":[1.2,-45,-86],"cm2":[1.2,2,-38],"cm3":[1.2,9,-21],"cm4":[1.047,35,39],"cm5":[0.852,-1,-22],"cm6":[1.082,20,-8],"tr1":[1.167,0,-33],"tr2":[1.045,6,-84],"tr3":[1.2,-49,-37],"tr4":[1.043,5,-52],"tr5":[0.873,-3,-56],"tr6":[0.87,-1,-132],"tr7":[1.012,19,23],"y1":[1.176,33,-52],"y2":[1.173,-2,-34],"y3":[0.817,34,15],"y4":[0.917,2,-57],"y5":[1.053,-1,-53],"y6":[1.141,-2,-42]};
 SEEDS.forEach(d=>{const f=SEED_FIX[d.id];if(!f)return;const [k,cx,cy]=f;d.layers.forEach(Ly=>{Ly.size=Math.round(Ly.size*k);Ly.x=Math.round((Ly.x-cx)*k);Ly.y=Math.round((Ly.y-cy)*k);if(Ly.cutout)Ly.cutout=Math.round(Ly.cutout*k*10)/10})});
-const NEW_CATS=["Holidays","Coffee","Breakfast","Weekend","Travel","Cosy","Girly","Movie Night","Monthly","Camera","Trending","2026"];
+const NEW_CATS=["Thanksgiving","Holidays","Coffee","Breakfast","Weekend","Travel","Cosy","Girly","Movie Night","Monthly","Camera","Trending","2026"];
 const SEED_CATS=[...new Set([...NEW_CATS,...SEEDS.map(d=>d.cat)])];
 
 
@@ -726,7 +746,7 @@ async function ensureFonts(d){
 }
 function colorOf(d,c){return c==="main"?d.colors.main:c==="accent"?d.colors.accent:(c||d.colors.main)}
 /* ---------- Ornamenten ---------- */
-const ORNAMENTS={drops:"Drops",sparkle:"Sparkle",sparkles:"Sparkles",star:"Star",heart:"Heart",bean:"Coffee bean",steam:"Steam",dot:"Dot",burst:"Sunburst",swash:"Swash",line:"Line",arrow:"Arrow",suitcase:"Suitcase",plane:"Plane",ticket:"Ticket",pin:"Map pin",globe:"Globe",snowflake:"Snowflake",tree:"Xmas tree",bauble:"Bauble",gift:"Gift",holly:"Holly"};
+const ORNAMENTS={drops:"Drops",sparkle:"Sparkle",sparkles:"Sparkles",star:"Star",heart:"Heart",bean:"Coffee bean",steam:"Steam",dot:"Dot",burst:"Sunburst",swash:"Swash",line:"Line",arrow:"Arrow",suitcase:"Suitcase",plane:"Plane",ticket:"Ticket",pin:"Map pin",globe:"Globe",snowflake:"Snowflake",tree:"Xmas tree",bauble:"Bauble",gift:"Gift",holly:"Holly",leaf:"Leaf",pumpkin:"Pumpkin",pie:"Pie"};
 const STROKE_SHAPES=new Set(["steam","swash","line","arrow","globe","snowflake"]);
 function rr(ctx,x,y,w,h,r){ctx.moveTo(x+r,y);ctx.arcTo(x+w,y,x+w,y+h,r);ctx.arcTo(x+w,y+h,x,y+h,r);ctx.arcTo(x,y+h,x,y,r);ctx.arcTo(x,y,x+w,y,r);ctx.closePath()}
 function teardrop(ctx,r,h){ // ronde kant boven, punt naar onder (naar het midden)
@@ -764,6 +784,10 @@ function drawShape(ctx,shape,u,outline){
     case "gift":rr(ctx,-u*.72,-u*.1,u*1.44,u*.98,u*.06);rr(ctx,-u*.86,-u*.42,u*1.72,u*.28,u*.06);
       ctx.save();ctx.translate(-u*.22,-u*.6);ctx.rotate(-.45);ctx.ellipse(0,0,u*.26,u*.14,0,0,Math.PI*2);ctx.restore();
       ctx.save();ctx.translate(u*.22,-u*.6);ctx.rotate(.45);ctx.ellipse(0,0,u*.26,u*.14,0,0,Math.PI*2);ctx.restore();break;
+    case "leaf":ctx.save();ctx.rotate(-.5);ctx.moveTo(0,-u*.95);ctx.bezierCurveTo(u*.75,-u*.55,u*.7,u*.35,0,u*.72);ctx.bezierCurveTo(-u*.7,u*.35,-u*.75,-u*.55,0,-u*.95);ctx.closePath();ctx.rect(-u*.05,u*.6,u*.1,u*.38);ctx.restore();break;
+    case "pumpkin":ctx.ellipse(-u*.42,u*.12,u*.42,u*.62,0,0,Math.PI*2);ctx.moveTo(u*.84,u*.12);ctx.ellipse(u*.42,u*.12,u*.42,u*.62,0,0,Math.PI*2);ctx.moveTo(u*.42,u*.12);ctx.ellipse(0,u*.12,u*.42,u*.68,0,0,Math.PI*2);
+      ctx.moveTo(-u*.08,-u*.5);ctx.rect(-u*.08,-u*.82,u*.16,u*.34);break;
+    case "pie":ctx.moveTo(-u*.95,u*.05);ctx.lineTo(u*.95,u*.05);ctx.lineTo(u*.78,u*.55);ctx.lineTo(-u*.78,u*.55);ctx.closePath();ctx.moveTo(-u*.9,u*.02);ctx.bezierCurveTo(-u*.75,-u*.5,u*.75,-u*.5,u*.9,u*.02);ctx.closePath();break;
     case "holly":ctx.save();ctx.translate(-u*.4,u*.2);ctx.rotate(-.55);ctx.ellipse(0,0,u*.5,u*.22,0,0,Math.PI*2);ctx.restore();
       ctx.save();ctx.translate(u*.4,u*.2);ctx.rotate(.55);ctx.ellipse(0,0,u*.5,u*.22,0,0,Math.PI*2);ctx.restore();
       ctx.moveTo(u*.2,-u*.18);ctx.arc(0,-u*.18,u*.2,0,Math.PI*2);ctx.moveTo(-u*.02,-u*.48);ctx.arc(-u*.2,-u*.48,u*.18,0,Math.PI*2);ctx.moveTo(u*.38,-u*.48);ctx.arc(u*.2,-u*.48,u*.18,0,Math.PI*2);break;
@@ -780,6 +804,9 @@ function drawShape(ctx,shape,u,outline){
   if(shape==="pin"&&!outline)cut(()=>{ctx.arc(0,-u*.28,u*.24,0,Math.PI*2)});
   if(shape==="bauble"){ctx.beginPath();ctx.arc(0,-u*.8,u*.14,0,Math.PI*2);ctx.lineWidth=u*.07;ctx.stroke();
     if(!outline){ctx.save();ctx.shadowColor="transparent";ctx.globalCompositeOperation="destination-out";ctx.beginPath();ctx.arc(0,u*.18,u*.48,Math.PI*1.1,Math.PI*1.45);ctx.lineWidth=u*.09;ctx.lineCap="round";ctx.stroke();ctx.restore()}}
+  if(shape==="leaf"&&!outline){ctx.save();ctx.shadowColor="transparent";ctx.globalCompositeOperation="destination-out";ctx.rotate(-.5);ctx.beginPath();ctx.moveTo(0,-u*.7);ctx.lineTo(0,u*.6);ctx.lineWidth=u*.07;ctx.stroke();ctx.restore()}
+  if(shape==="pumpkin"&&!outline){ctx.save();ctx.shadowColor="transparent";ctx.globalCompositeOperation="destination-out";ctx.lineWidth=u*.06;ctx.beginPath();ctx.ellipse(0,u*.12,u*.42,u*.68,0,0,Math.PI*2);ctx.stroke();ctx.restore()}
+  if(shape==="pie"&&!outline)cut(()=>{for(let k=-2;k<=2;k++){ctx.rect(k*u*.3-u*.04,-u*.28+Math.abs(k)*u*.06,u*.08,u*.22)}ctx.rect(-u*.8,u*.24,u*1.6,u*.05)});
   if(shape==="gift"&&!outline)cut(()=>{ctx.rect(-u*.07,-u*.42,u*.14,u*1.3);ctx.rect(-u*.86,-u*.16,u*1.72,u*.06)});
   if(shape==="bean"&&!outline){ // groef in de boon
     ctx.save();ctx.shadowColor="transparent";ctx.globalCompositeOperation="destination-out";ctx.rotate(-.5);ctx.beginPath();
@@ -972,8 +999,9 @@ function toggleFav(id){if(favs.has(id)){favs.delete(id);toast("Removed from favo
 function updateFavChip(){const c=document.querySelector(".favChip");if(c)c.innerHTML=heartSvg(true)+(favs.size?`<span>${favs.size}</span>`:"")}
 function suggestions(){
   const m=new Date().getMonth(),by={};SEEDS.forEach(d=>(by[d.cat]=by[d.cat]||[]).push(d));
-  const season=[10,11].includes(m)?"Holidays":m===0?"2026":[5,6,7].includes(m)?"Travel":null;
-  const out=[];if(season&&by[season])out.push(...by[season].slice(0,4));
+  const now=new Date(),tgDay=(()=>{const f=new Date(now.getFullYear(),10,1);return 1+((11-f.getDay())%7)+21})();
+  const season=(m===10&&now.getDate()<=tgDay)?"Thanksgiving":[10,11].includes(m)?"Holidays":m===0?"2026":[5,6,7].includes(m)?"Travel":null;
+  const out=[];if(season&&by[season])out.push(...by[season].slice(0,4));if(season==="Thanksgiving"&&by.Holidays)out.push(...by.Holidays.slice(0,2));
   const order=["Coffee","Weekend","Travel","Girly","Cosy","Breakfast","Trending","Movie Night","Camera","Monthly","2026","Holidays"].filter(c=>c!==season&&by[c]);
   for(let r=0;r<2;r++)order.forEach(c=>{const d=by[c][r];if(d&&!out.includes(d))out.push(d)});
   return out.slice(0,21);
@@ -981,11 +1009,14 @@ function suggestions(){
 function renderLibrary(){
   if(!$("cats"))return;
   const cats=$("cats");cats.innerHTML="";
-  const mk=(label,val)=>{const b=document.createElement("button");b.className="chip"+(activeCat===val?" on":"")+(val==="Holidays"?" xmas":"");if(val==="Holidays")label="❄ Holidays";b.textContent=label;b.onclick=()=>{activeCat=val;renderLibrary()};cats.appendChild(b)};
+  const mk=(label,val)=>{const b=document.createElement("button");b.className="chip"+(activeCat===val?" on":"")+(val==="Holidays"?" xmas":val==="Thanksgiving"?" fall":"");if(val==="Holidays")label="❄ Holidays";if(val==="Thanksgiving")label="🍂 Thanksgiving";b.textContent=label;b.onclick=()=>{activeCat=val;renderLibrary()};cats.appendChild(b)};
   mk("Suggestions","Suggestions");
   const fv=document.createElement("button");fv.className="chip favChip"+(activeCat==="♥"?" on":"");fv.setAttribute("aria-label","Favourites");fv.innerHTML=heartSvg(true)+(favs.size?`<span>${favs.size}</span>`:"");fv.onclick=()=>{activeCat="♥";renderLibrary()};cats.appendChild(fv);
   mk("All","All");if(custom.length)mk("★ My designs","★");
-  allCats().forEach(c=>mk(c+(isCustomCat(c)?" ★":""),c));
+  const now=new Date(),m=now.getMonth(),tgDay=(()=>{const f=new Date(now.getFullYear(),10,1);return 1+((11-f.getDay())%7)+21})();
+  const tgSeason=m===9||(m===10&&now.getDate()<=tgDay);
+  let cl=allCats();if(!tgSeason)cl=[...cl.filter(c=>c!=="Thanksgiving"),"Thanksgiving"];
+  cl.forEach(c=>mk(c+(isCustomCat(c)?" ★":""),c));
   const plus=document.createElement("button");plus.className="chip";plus.textContent="+ Category";
   plus.onclick=()=>{$("newCatRow").classList.toggle("hidden");$("newCatName").focus()};cats.appendChild(plus);
   let list=allDesigns();if(activeCat==="★")list=custom;else if(activeCat==="Suggestions")list=suggestions();else if(activeCat==="♥")list=list.filter(d=>favs.has(d.id));else if(activeCat!=="All")list=list.filter(d=>d.cat===activeCat);
@@ -997,7 +1028,7 @@ function renderLibrary(){
   const cards=list.map(d=>{
     const b=document.createElement("button");const light=lum(d.colors.main)<.45;
     b.className="card"+(d.id===curSourceId?" sel":"");b.setAttribute("aria-label",d.name);
-    if(d.cat==="Holidays")b.classList.add("xmas");
+    if(d.cat==="Holidays")b.classList.add("xmas");else if(d.cat==="Thanksgiving")b.classList.add("fall");
     if(!d.seed)b.innerHTML='<span class="mine">★</span>';
     else if(d.pro&&!isPro())b.innerHTML=proLabel();
     const h=document.createElement("span");h.className="favBtn"+(favs.has(d.id)?" on":"");h.setAttribute("role","button");h.setAttribute("aria-label","Favourite");h.innerHTML=heartSvg(favs.has(d.id));
@@ -1188,7 +1219,7 @@ const PRO={yearly:{price:"€12.99",perMonth:"€1.08",trialDays:7},lifetime:{pr
 const FREE_PER_CAT=3;
 const FREE_IDS=new Set(NEW_CATS.flatMap(c=>SEEDS.filter(d=>d.cat===c).slice(0,FREE_PER_CAT).map(d=>d.id)));
 SEEDS.forEach(d=>{d.pro=!FREE_IDS.has(d.id)});
-const PRO_ORN=new Set(["suitcase","plane","ticket","pin","globe","snowflake","tree","bauble","gift","holly"]);
+const PRO_ORN=new Set(["suitcase","plane","ticket","pin","globe","snowflake","tree","bauble","gift","holly","leaf","pumpkin","pie"]);
 // Web version: the owner's own tool, so Pro is unlocked. "Simulate free version" shows the app as a free user sees it.
 function simFree(){try{return localStorage.getItem("typoStudio.simFree")==="1"}catch(e){return false}}
 function isPro(){return !simFree()}
