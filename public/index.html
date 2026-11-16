@@ -194,12 +194,13 @@ input[type=range]::-moz-range-thumb{width:28px;height:28px;border-radius:50%;bac
     <div class="stage" id="stage">
       <div class="bg" id="stageBg" style="background-image:url('/img/bg-beans.jpg')"></div>
       <canvas id="sticker"></canvas>
-      <a class="credit hidden" id="credit" href="https://www.instagram.com/max.on.the.moveee/" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="2.5" y="2.5" width="19" height="19" rx="5.5"/><circle cx="12" cy="12" r="4.3"/><circle cx="17.4" cy="6.6" r="1.1" fill="currentColor" stroke="none"/></svg>© max.on.the.moveee</a>
+      <a class="credit" id="credit" href="https://www.instagram.com/myx100vi/" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="2.5" y="2.5" width="19" height="19" rx="5.5"/><circle cx="12" cy="12" r="4.3"/><circle cx="17.4" cy="6.6" r="1.1" fill="currentColor" stroke="none"/></svg><span id="creditName">© myx100vi</span></a>
       <div class="coach hidden" id="coach">Tap a text · drag to move · pinch to resize and rotate</div>
       <div class="bgRow" id="bgRow">
         <button class="bgBtn on" data-photo="beans" aria-label="Coffee beans"><img src="/img/th-beans.jpg" alt=""></button>
         <button class="bgBtn" data-photo="sunset" aria-label="Sunset"><img src="/img/th-sunset.jpg" alt=""></button>
         <button class="bgBtn" data-photo="pier" aria-label="Breakwater"><img src="/img/th-pier.jpg" alt=""></button>
+        <button class="bgBtn" data-photo="xmas" aria-label="Christmas market"><img src="/img/th-xmas.jpg" alt=""></button>
         <button class="bgBtn bg-warm" data-bg="warm" aria-label="Warm"></button>
         <button class="bgBtn bg-dark" data-bg="dark" aria-label="Dark"></button>
         <button class="bgBtn bg-light" data-bg="light" aria-label="Light"></button>
@@ -731,18 +732,21 @@ function schedulePreview(noExport){
 $("bgRow").addEventListener("click",e=>{
   const b=e.target.closest("[data-bg],[data-photo]");if(!b)return;
   document.querySelectorAll("#bgRow .bgBtn").forEach(x=>x.classList.toggle("on",x===b));
-  const bg=$("stageBg");$("credit").classList.toggle("hidden",b.dataset.photo!=="pier");
+  const bg=$("stageBg");setCredit(b.dataset.photo);
   if(b.dataset.photo){bg.className="bg";bg.style.background="";bg.style.backgroundImage=`url('/img/bg-${b.dataset.photo}.jpg')`;bg.style.backgroundSize="cover";bg.style.backgroundPosition="center"}
   else{bg.style.backgroundImage="";bg.className="bg bg-"+b.dataset.bg}
 });
 $("photoIn").addEventListener("change",e=>{
   const f=e.target.files[0];if(!f)return;const url=URL.createObjectURL(f),bg=$("stageBg");
   bg.className="bg";bg.style.background="";bg.style.backgroundImage=`url("${url}")`;bg.style.backgroundSize="cover";bg.style.backgroundPosition="center";
-  document.querySelectorAll("#bgRow .bgBtn").forEach(x=>x.classList.remove("on"));e.target.closest(".bgBtn").classList.add("on");$("credit").classList.add("hidden");
+  document.querySelectorAll("#bgRow .bgBtn").forEach(x=>x.classList.remove("on"));e.target.closest(".bgBtn").classList.add("on");setCredit(null);
 });
 function showCoach(){try{if(localStorage.getItem("typoStudio.coach"))return}catch(e){}$("coach").classList.remove("hidden");$("coach").style.opacity=1;clearTimeout(showCoach._t);showCoach._t=setTimeout(hideCoach,6000)}
 function hideCoach(){const c=$("coach");if(c.classList.contains("hidden"))return;c.style.opacity=0;setTimeout(()=>c.classList.add("hidden"),400);try{localStorage.setItem("typoStudio.coach","1")}catch(e){}}
 
+const PHOTO_CREDIT={beans:"myx100vi",sunset:"myx100vi",xmas:"myx100vi",pier:"max.on.the.moveee"};
+function setCredit(photo){const h=PHOTO_CREDIT[photo];$("credit").classList.toggle("hidden",!h);if(h){$("credit").href=`https://www.instagram.com/${h}/`;$("creditName").textContent="© "+h}}
+function setPhoto(photo){const b=document.querySelector(`#bgRow [data-photo="${photo}"]`);if(b)b.click()}
 /* ---------------- Sheet (bottom sheet met grijper) ---------------- */
 const DETENTS=[.40,.70];let detent=0;
 function setDetent(i){detent=i;applySheetH();$("sheet").style.height="";setTimeout(layoutSticker,280)}
@@ -770,7 +774,7 @@ $("tabs").addEventListener("click",e=>{const b=e.target.closest("button");if(b)s
 
 /* ---------------- Bibliotheek ---------------- */
 let thumbJob=0;
-function loadDesign(d){cur=clone(d);curSourceId=d.id;sel=0;hist=[];updUndo();schedulePreview()}
+function loadDesign(d){const onPhoto=document.querySelector("#bgRow .bgBtn.on[data-photo]");if(onPhoto){if(d.cat==="Holidays"&&onPhoto.dataset.photo!=="xmas")setPhoto("xmas");else if(d.cat!=="Holidays"&&onPhoto.dataset.photo==="xmas")setPhoto("beans")}cur=clone(d);curSourceId=d.id;sel=0;hist=[];updUndo();schedulePreview()}
 function renderLibrary(){
   if(!$("cats"))return;
   const cats=$("cats");cats.innerHTML="";
@@ -788,9 +792,8 @@ function renderLibrary(){
   const cards=list.map(d=>{
     const b=document.createElement("button");const light=lum(d.colors.main)<.45;
     b.className="card"+(d.id===curSourceId?" sel":"")+(light?" light":"");b.setAttribute("aria-label",d.name);
-    const photo=`url('/img/sq-${["beans","sunset","pier"][n++%3]}.jpg')`;
-    if(d.cat==="Holidays"&&!light)b.classList.add("xmas");
-    else if(light)b.style.backgroundImage=`linear-gradient(rgba(250,244,234,.5),rgba(250,244,234,.58)),${photo}`; // donkere tekst: foto met lichte waas
+    const photo=d.cat==="Holidays"?`url('/img/sq-xmas.jpg')`:`url('/img/sq-${["beans","sunset","pier"][n++%3]}.jpg')`;
+    if(light)b.style.backgroundImage=`linear-gradient(rgba(250,244,234,.5),rgba(250,244,234,.58)),${photo}`; // donkere tekst: foto met lichte waas
     else b.style.backgroundImage=`linear-gradient(rgba(0,0,0,.22),rgba(0,0,0,.35)),${photo}`;
     if(!d.seed)b.innerHTML='<span class="mine">★</span>';
     b.onclick=()=>{

@@ -1,7 +1,7 @@
 // Typo Studio service worker: app werkt ook offline
-const VERSION = "typo-v14";
+const VERSION = "typo-v15";
 const SHELL = ["/", "/manifest.webmanifest", "/icons/icon-192.png", "/icons/icon-512.png", "/icons/apple-touch-icon.png",
-  "/img/bg-beans.jpg", "/img/bg-sunset.jpg", "/img/bg-pier.jpg", "/img/th-beans.jpg", "/img/th-sunset.jpg", "/img/th-pier.jpg", "/img/sq-beans.jpg", "/img/sq-sunset.jpg", "/img/sq-pier.jpg"];
+  "/img/bg-beans.jpg", "/img/bg-sunset.jpg", "/img/bg-pier.jpg", "/img/th-beans.jpg", "/img/th-sunset.jpg", "/img/th-pier.jpg", "/img/sq-beans.jpg", "/img/sq-sunset.jpg", "/img/sq-pier.jpg", "/img/bg-xmas.jpg", "/img/th-xmas.jpg", "/img/sq-xmas.jpg"];
 
 self.addEventListener("install", e => {
   e.waitUntil(caches.open(VERSION).then(c => c.addAll(SHELL)).then(() => self.skipWaiting()));
