@@ -44,7 +44,6 @@ button{cursor:pointer;touch-action:manipulation;-webkit-user-select:none;user-se
 .stageArea{grid-area:stage;min-height:0;display:flex;align-items:center;justify-content:center;padding:4px calc(12px + var(--sar)) 8px calc(12px + var(--sal))}
 .stage{position:relative;width:100%;height:100%;border-radius:18px;overflow:hidden;background:#2a1b12;touch-action:none;box-shadow:0 8px 30px rgba(0,0,0,.5)}
 .stage .bg{position:absolute;inset:0;background-size:cover;background-position:center}
-.bg-warm{background:radial-gradient(circle at 30% 30%,rgba(255,196,120,.85) 0 6%,transparent 14%),radial-gradient(ellipse at 70% 75%,#7a3a12 0,transparent 55%),radial-gradient(ellipse at 40% 70%,#a0521b 0,transparent 50%),linear-gradient(180deg,#3b2a20 0%,#5a3420 45%,#3a1d0e 100%)}
 .bg-dark{background:#141414}.bg-light{background:#efe7dc}
 .bg-check{background:repeating-conic-gradient(#3a3a3a 0 25%,#2a2a2a 0 50%) 0 0/22px 22px}
 #sticker{position:absolute;left:0;top:0;width:100%;height:100%;pointer-events:none}
@@ -53,7 +52,7 @@ button{cursor:pointer;touch-action:manipulation;-webkit-user-select:none;user-se
 .bgBtn{flex:none;width:36px;height:36px;border-radius:50%;border:2px solid rgba(255,255,255,.25);padding:0;overflow:hidden;background:#333;position:relative}
 .bgBtn img{width:100%;height:100%;object-fit:cover;display:block}
 .bgBtn.on{border-color:#fff}
-.bgBtn.bg-warm{background:linear-gradient(135deg,#e9a35a,#5a3420)}.bgBtn.bg-dark{background:#141414}.bgBtn.bg-light{background:#efe7dc}
+.bgBtn.bg-dark{background:#141414}.bgBtn.bg-light{background:#efe7dc}
 .bgBtn.bg-check{background:repeating-conic-gradient(#666 0 25%,#333 0 50%) 0 0/12px 12px}
 .bgBtn .lab{font-size:15px;line-height:32px}
 .credit{position:absolute;top:10px;right:12px;z-index:3;display:inline-flex;align-items:center;gap:6px;padding:4px 2px;color:rgba(255,255,255,.92);font-size:14px;font-weight:500;letter-spacing:.2px;text-decoration:none;text-shadow:0 1px 4px rgba(0,0,0,.55)}
@@ -260,7 +259,9 @@ input[type=range]::-moz-range-thumb{width:28px;height:28px;border-radius:50%;bac
         <button class="bgBtn" data-photo="sunset" aria-label="Sunset"><img src="/img/th-sunset.jpg" alt=""></button>
         <button class="bgBtn" data-photo="pier" aria-label="Breakwater"><img src="/img/th-pier.jpg" alt=""></button>
         <button class="bgBtn" data-photo="xmas" aria-label="Christmas market"><img src="/img/th-xmas.jpg" alt=""></button>
-        <button class="bgBtn bg-warm" data-bg="warm" aria-label="Warm"></button>
+        <button class="bgBtn" data-photo="pool" aria-label="Pool"><img src="/img/th-pool.jpg" alt=""></button>
+        <button class="bgBtn" data-photo="golden" aria-label="Golden hour"><img src="/img/th-golden.jpg" alt=""></button>
+        <button class="bgBtn" data-photo="agave" aria-label="Agave"><img src="/img/th-agave.jpg" alt=""></button>
         <button class="bgBtn bg-dark" data-bg="dark" aria-label="Dark"></button>
         <button class="bgBtn bg-light" data-bg="light" aria-label="Light"></button>
         <button class="bgBtn bg-check" data-bg="check" aria-label="Transparent"></button>
@@ -830,7 +831,7 @@ $("photoIn").addEventListener("change",e=>{
 function showCoach(){try{if(localStorage.getItem("typoStudio.coach"))return}catch(e){}$("coach").classList.remove("hidden");$("coach").style.opacity=1;clearTimeout(showCoach._t);showCoach._t=setTimeout(hideCoach,6000)}
 function hideCoach(){const c=$("coach");if(c.classList.contains("hidden"))return;c.style.opacity=0;setTimeout(()=>c.classList.add("hidden"),400);try{localStorage.setItem("typoStudio.coach","1")}catch(e){}}
 
-const PHOTO_CREDIT={beans:"myx100vi",sunset:"myx100vi",xmas:"myx100vi",pier:"max.on.the.moveee"};
+const PHOTO_CREDIT={beans:"myx100vi",sunset:"myx100vi",xmas:"myx100vi",pool:"myx100vi",golden:"myx100vi",agave:"myx100vi",pier:"max.on.the.moveee"};
 function setCredit(photo){const h=PHOTO_CREDIT[photo];$("credit").classList.toggle("hidden",!h);if(h){$("credit").href=`https://www.instagram.com/${h}/`;$("creditName").textContent="© "+h}}
 function setPhoto(photo){const b=document.querySelector(`#bgRow [data-photo="${photo}"]`);if(b)b.click()}
 /* ---------------- Sheet (bottom sheet met grijper) ---------------- */
@@ -878,7 +879,7 @@ function renderLibrary(){
   const cards=list.map(d=>{
     const b=document.createElement("button");const light=lum(d.colors.main)<.45;
     b.className="card"+(d.id===curSourceId?" sel":"")+(light?" light":"");b.setAttribute("aria-label",d.name);
-    const photo=d.cat==="Holidays"?`url('/img/sq-xmas.jpg')`:`url('/img/sq-${["beans","sunset","pier"][n++%3]}.jpg')`;
+    const photo=d.cat==="Holidays"?`url('/img/sq-xmas.jpg')`:`url('/img/sq-${["beans","golden","pool","sunset","agave","pier"][n++%6]}.jpg')`;
     if(light)b.style.backgroundImage=`linear-gradient(rgba(250,244,234,.5),rgba(250,244,234,.58)),${photo}`; // donkere tekst: foto met lichte waas
     else b.style.backgroundImage=`linear-gradient(rgba(0,0,0,.22),rgba(0,0,0,.35)),${photo}`;
     if(!d.seed)b.innerHTML='<span class="mine">★</span>';
