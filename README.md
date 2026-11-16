@@ -1,15 +1,13 @@
 # Typo Studio
 
-Maak transparante typografie-PNG's voor Instagram (Morning Coffee, Coffee Break, …).
+Make transparent typography PNGs for Instagram stories and posts.
 
-- **Bibliotheek** met kant-en-klare ontwerpen per categorie
-- **Bewerken**: tekst, lettertype, grootte, positie, draaiing, spatiëring, boog, kleuren, schaduw
-- **✨ Nieuw**: typ je eigen zinnen (of tik op 💡 Inspiratie) en de app maakt er automatisch varianten van – volledig gratis, zonder AI-dienst
-- **Download PNG** (transparant, automatisch bijgesneden) of op iPhone "Bewaar in Foto's"
+- **Library** with ready-made designs in categories: Coffee, Breakfast, Weekend, Holidays, Cosy, Girly, Movie Night, Monthly, Camera, Trending, 2026
+- **Edit**: text, font, size, position, rotation, spacing, arc, colours, shadow, knock-out, texture, and ornaments (drops, sparkles, hearts, stars, …) — or drag, pinch and rotate directly on the photo
+- **Create**: type your own phrases (or tap 💡 Inspiration) and the app generates variations — free, no AI service
+- **Save**: transparent, auto-cropped PNG, or "Save to Photos" on iPhone
 
-Eigen ontwerpen worden bewaard in de browser van het toestel.
-
-## Draaien
+Your own designs are stored in the browser on your device.
 
 ```
 npm start

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="nl">
+<html lang="en">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
@@ -182,9 +182,9 @@ input[type=range]::-moz-range-thumb{width:28px;height:28px;border-radius:50%;bac
 <div class="shell">
   <header class="top">
     <div class="brand">Typo <span>Studio</span></div>
-    <button class="iconbtn hidden" id="undoBtn" aria-label="Ongedaan maken" disabled><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 14 4 9l5-5"/><path d="M4 9h10.5a5.5 5.5 0 0 1 0 11H11"/></svg></button>
-    <button class="iconbtn" id="viewBtn" aria-label="Bekijk PNG"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg></button>
-    <button class="iconbtn pri" id="saveImgBtn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12"/><path d="m7 10 5 5 5-5"/><path d="M5 21h14"/></svg>Bewaar</button>
+    <button class="iconbtn hidden" id="undoBtn" aria-label="Undo" disabled><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 14 4 9l5-5"/><path d="M4 9h10.5a5.5 5.5 0 0 1 0 11H11"/></svg></button>
+    <button class="iconbtn" id="viewBtn" aria-label="Preview PNG"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg></button>
+    <button class="iconbtn pri" id="saveImgBtn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12"/><path d="m7 10 5 5 5-5"/><path d="M5 21h14"/></svg>Save</button>
   </header>
 
   <main class="stageArea">
@@ -192,30 +192,30 @@ input[type=range]::-moz-range-thumb{width:28px;height:28px;border-radius:50%;bac
       <div class="bg" id="stageBg" style="background-image:url('/img/bg-beans.jpg')"></div>
       <canvas id="sticker"></canvas>
       <a class="credit hidden" id="credit" href="https://www.instagram.com/max.on.the.moveee/" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="2.5" y="2.5" width="19" height="19" rx="5.5"/><circle cx="12" cy="12" r="4.3"/><circle cx="17.4" cy="6.6" r="1.1" fill="currentColor" stroke="none"/></svg>© max.on.the.moveee</a>
-      <div class="coach hidden" id="coach">Tik op een tekst · sleep om te verplaatsen · knijp om te schalen en draaien</div>
+      <div class="coach hidden" id="coach">Tap a text · drag to move · pinch to resize and rotate</div>
       <div class="bgRow" id="bgRow">
-        <button class="bgBtn on" data-photo="beans" aria-label="Koffiebonen"><img src="/img/th-beans.jpg" alt=""></button>
-        <button class="bgBtn" data-photo="sunset" aria-label="Zonsondergang"><img src="/img/th-sunset.jpg" alt=""></button>
-        <button class="bgBtn" data-photo="pier" aria-label="Golfbreker"><img src="/img/th-pier.jpg" alt=""></button>
+        <button class="bgBtn on" data-photo="beans" aria-label="Coffee beans"><img src="/img/th-beans.jpg" alt=""></button>
+        <button class="bgBtn" data-photo="sunset" aria-label="Sunset"><img src="/img/th-sunset.jpg" alt=""></button>
+        <button class="bgBtn" data-photo="pier" aria-label="Breakwater"><img src="/img/th-pier.jpg" alt=""></button>
         <button class="bgBtn bg-warm" data-bg="warm" aria-label="Warm"></button>
-        <button class="bgBtn bg-dark" data-bg="dark" aria-label="Donker"></button>
-        <button class="bgBtn bg-light" data-bg="light" aria-label="Licht"></button>
-        <button class="bgBtn bg-check" data-bg="check" aria-label="Transparant"></button>
-        <label class="bgBtn" aria-label="Eigen foto" style="display:flex;align-items:center;justify-content:center;cursor:pointer"><span class="lab">📷</span><input type="file" accept="image/*" id="photoIn" hidden></label>
+        <button class="bgBtn bg-dark" data-bg="dark" aria-label="Dark"></button>
+        <button class="bgBtn bg-light" data-bg="light" aria-label="Light"></button>
+        <button class="bgBtn bg-check" data-bg="check" aria-label="Transparent"></button>
+        <label class="bgBtn" aria-label="Your own photo" style="display:flex;align-items:center;justify-content:center;cursor:pointer"><span class="lab">📷</span><input type="file" accept="image/*" id="photoIn" hidden></label>
       </div>
     </div>
   </main>
 
   <section class="sheet" id="sheet">
-    <div class="grab" id="grab" aria-label="Paneel groter of kleiner"><i></i></div>
+    <div class="grab" id="grab" aria-label="Resize panel"><i></i></div>
     <div class="sheetBody" id="sheetBody">
       <!-- Bibliotheek -->
       <div id="tab-lib">
         <div class="stickyTop"><div class="chips" id="cats"></div>
-          <div class="row hidden" id="newCatRow" style="margin-bottom:10px;flex-wrap:nowrap"><input class="inp" id="newCatName" placeholder="Naam nieuwe categorie" maxlength="40"><button class="btn pri" id="newCatOk">Maak</button></div>
+          <div class="row hidden" id="newCatRow" style="margin-bottom:10px;flex-wrap:nowrap"><input class="inp" id="newCatName" placeholder="New category name" maxlength="40"><button class="btn pri" id="newCatOk">Create</button></div>
         </div>
         <div class="grid" id="grid"></div>
-        <div class="row hidden" id="catActions" style="margin-top:14px"><button class="btn" id="catGen">✨ Ontwerpen bijmaken</button><button class="btn warn" id="catDel">Categorie verwijderen</button></div>
+        <div class="row hidden" id="catActions" style="margin-top:14px"><button class="btn" id="catGen">✨ Create more designs</button><button class="btn warn" id="catDel">Delete category</button></div>
       </div>
 
       <!-- Bewerken -->
@@ -229,36 +229,36 @@ input[type=range]::-moz-range-thumb{width:28px;height:28px;border-radius:50%;bac
 
       <!-- Nieuw -->
       <div id="tab-gen" class="hidden">
-        <label class="lab" for="genText" style="margin-top:4px">Je tekst <span style="opacity:.7">(één zin per regel)</span></label>
-        <textarea class="inp" id="genText" placeholder="Cozy Christmas&#10;Hot Cocoa Season"></textarea>
-        <div class="chips" style="margin-top:8px"><button class="chip" id="genInspire">💡 Inspiratie</button><button class="chip" id="genInspireNL">💡 Nederlands</button></div>
-        <label class="lab">Stijl</label>
-        <div class="chips" id="genStyle"><button class="chip on" data-s="mix">Mix</button><button class="chip" data-s="script">Sierlijk</button><button class="chip" data-s="bold">Speels & bold</button><button class="chip" data-s="clean">Strak</button><button class="chip" data-s="retro">Retro</button></div>
-        <label class="lab">Kleuren</label>
+        <label class="lab" for="genText" style="margin-top:4px">Your text <span style="opacity:.7">(one phrase per line)</span></label>
+        <textarea class="inp" id="genText" placeholder="Cosy Christmas&#10;Hot Cocoa Season"></textarea>
+        <div class="chips" style="margin-top:8px"><button class="chip" id="genInspire">💡 Inspiration</button></div>
+        <label class="lab">Style</label>
+        <div class="chips" id="genStyle"><button class="chip on" data-s="mix">Mix</button><button class="chip" data-s="script">Elegant</button><button class="chip" data-s="bold">Playful & bold</button><button class="chip" data-s="clean">Clean</button><button class="chip" data-s="retro">Retro</button></div>
+        <label class="lab">Colours</label>
         <div class="chips" id="genColors"></div>
-        <label class="lab" for="genCat">In categorie</label>
-        <input class="inp" id="genCat" list="catList" placeholder="Bv. Kerst"><datalist id="catList"></datalist>
-        <label class="lab">Varianten per zin</label>
+        <label class="lab" for="genCat">Category</label>
+        <input class="inp" id="genCat" list="catList" placeholder="e.g. Christmas"><datalist id="catList"></datalist>
+        <label class="lab">Variations per phrase</label>
         <div class="chips" id="genCount"><button class="chip" data-n="2">2</button><button class="chip on" data-n="4">4</button><button class="chip" data-n="6">6</button></div>
-        <button class="btn pri" id="genGo" style="width:100%;margin-top:8px">✨ Maak ontwerpen</button>
+        <button class="btn pri" id="genGo" style="width:100%;margin-top:8px">✨ Create designs</button>
         <div class="err" id="genErr"></div>
       </div>
     </div>
   </section>
 
   <nav class="tabs" id="tabs">
-    <button data-tab="lib" class="on"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><rect x="3" y="3" width="7.5" height="7.5" rx="2"/><rect x="13.5" y="3" width="7.5" height="7.5" rx="2"/><rect x="3" y="13.5" width="7.5" height="7.5" rx="2"/><rect x="13.5" y="13.5" width="7.5" height="7.5" rx="2"/></svg>Bibliotheek</button>
-    <button data-tab="edit"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 7h10M18 7h2M4 17h4M12 17h8"/><circle cx="16" cy="7" r="2.2"/><circle cx="10" cy="17" r="2.2"/></svg>Bewerken</button>
-    <button data-tab="gen"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8z"/><path d="M19 15l.8 2.2L22 18l-2.2.8L19 21l-.8-2.2L16 18l2.2-.8z"/></svg>Nieuw</button>
+    <button data-tab="lib" class="on"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><rect x="3" y="3" width="7.5" height="7.5" rx="2"/><rect x="13.5" y="3" width="7.5" height="7.5" rx="2"/><rect x="3" y="13.5" width="7.5" height="7.5" rx="2"/><rect x="13.5" y="13.5" width="7.5" height="7.5" rx="2"/></svg>Library</button>
+    <button data-tab="edit"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 7h10M18 7h2M4 17h4M12 17h8"/><circle cx="16" cy="7" r="2.2"/><circle cx="10" cy="17" r="2.2"/></svg>Edit</button>
+    <button data-tab="gen"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8z"/><path d="M19 15l.8 2.2L22 18l-2.2.8L19 21l-.8-2.2L16 18l2.2-.8z"/></svg>Create</button>
   </nav>
 </div>
 
 <div class="modal hidden" id="modal">
   <div class="box">
-    <div class="row" style="justify-content:space-between"><b>Je PNG</b><button class="btn" id="modalClose" style="min-height:36px">Sluit</button></div>
-    <img id="modalImg" alt="Voorbeeld van de PNG">
-    <div class="hint">Tip: houd de afbeelding ingedrukt → ‘Bewaar in Foto's’. Of gebruik de knoppen.</div>
-    <div class="row"><button class="btn pri hidden" id="modalShare">Bewaar in Foto's</button><button class="btn" id="modalDl">Download</button></div>
+    <div class="row" style="justify-content:space-between"><b>Your PNG</b><button class="btn" id="modalClose" style="min-height:36px">Close</button></div>
+    <img id="modalImg" alt="PNG preview">
+    <div class="hint">Tip: press and hold the image → ‘Save to Photos’. Or use the buttons.</div>
+    <div class="row"><button class="btn pri hidden" id="modalShare">Save to Photos</button><button class="btn" id="modalDl">Download</button></div>
   </div>
 </div>
 <div class="toast" id="toast"></div>
@@ -277,22 +277,22 @@ const FONTS = [
   {n:"Kaushan Script",g:"Script",w:[400]},
   {n:"Lobster",g:"Script",w:[400]},
   {n:"Dancing Script",g:"Script",w:[700]},
-  {n:"Homemade Apple",g:"Handgeschreven",w:[400]},
-  {n:"Caveat",g:"Handgeschreven",w:[400,700]},
-  {n:"Nanum Pen Script",g:"Handgeschreven",w:[400]},
-  {n:"Reenie Beanie",g:"Handgeschreven",w:[400]},
-  {n:"Gochi Hand",g:"Handgeschreven",w:[400]},
-  {n:"Shadows Into Light",g:"Handgeschreven",w:[400]},
-  {n:"Luckiest Guy",g:"Bold & speels",w:[400]},
-  {n:"Titan One",g:"Bold & speels",w:[400]},
-  {n:"Bowlby One",g:"Bold & speels",w:[400]},
-  {n:"Lilita One",g:"Bold & speels",w:[400]},
-  {n:"Chewy",g:"Bold & speels",w:[400]},
-  {n:"Fredoka",g:"Bold & speels",w:[700]},
-  {n:"Shrikhand",g:"Bold & speels",w:[400]},
-  {n:"Bungee",g:"Bold & speels",w:[400]},
-  {n:"Rubik Mono One",g:"Bold & speels",w:[400]},
-  {n:"Righteous",g:"Bold & speels",w:[400]},
+  {n:"Homemade Apple",g:"Handwritten",w:[400]},
+  {n:"Caveat",g:"Handwritten",w:[400,700]},
+  {n:"Nanum Pen Script",g:"Handwritten",w:[400]},
+  {n:"Reenie Beanie",g:"Handwritten",w:[400]},
+  {n:"Gochi Hand",g:"Handwritten",w:[400]},
+  {n:"Shadows Into Light",g:"Handwritten",w:[400]},
+  {n:"Luckiest Guy",g:"Bold & playful",w:[400]},
+  {n:"Titan One",g:"Bold & playful",w:[400]},
+  {n:"Bowlby One",g:"Bold & playful",w:[400]},
+  {n:"Lilita One",g:"Bold & playful",w:[400]},
+  {n:"Chewy",g:"Bold & playful",w:[400]},
+  {n:"Fredoka",g:"Bold & playful",w:[700]},
+  {n:"Shrikhand",g:"Bold & playful",w:[400]},
+  {n:"Bungee",g:"Bold & playful",w:[400]},
+  {n:"Rubik Mono One",g:"Bold & playful",w:[400]},
+  {n:"Righteous",g:"Bold & playful",w:[400]},
   {n:"Playfair Display",g:"Serif",w:[400,700],it:true},
   {n:"DM Serif Display",g:"Serif",w:[400],it:true},
   {n:"Abril Fatface",g:"Serif",w:[400]},
@@ -306,10 +306,10 @@ const FONTS = [
   {n:"Bebas Neue",g:"Sans",w:[400]},
   {n:"Anton",g:"Sans",w:[400]},
   {n:"Archivo Black",g:"Sans",w:[400]},
-  {n:"Modak",g:"Bubbel & groovy",w:[400]},
-  {n:"Bagel Fat One",g:"Bubbel & groovy",w:[400]},
-  {n:"Cherry Bomb One",g:"Bubbel & groovy",w:[400]},
-  {n:"Grandstander",g:"Bubbel & groovy",w:[800]},
+  {n:"Modak",g:"Bubble & groovy",w:[400]},
+  {n:"Bagel Fat One",g:"Bubble & groovy",w:[400]},
+  {n:"Cherry Bomb One",g:"Bubble & groovy",w:[400]},
+  {n:"Grandstander",g:"Bubble & groovy",w:[800]},
   {n:"Sansita Swashed",g:"Script",w:[800]},
   {n:"Mrs Saint Delafield",g:"Script",w:[400]},
 ];
@@ -330,136 +330,138 @@ const W="#FFFFFF", CORAL="#F26B50";
 function L(text,font,size,x,y,o={}){return Object.assign({text,font,weight:FONT_BY[font]?FONT_BY[font].w[FONT_BY[font].w.length-1]:400,italic:false,size,x,y,rotate:0,spacing:0,curve:0,upper:false,color:"main",style:"fill"},o)}
 function O(shape,size,x,y,o={}){return Object.assign({kind:"shape",shape,text:"",size,x,y,rotate:0,color:"main",style:"fill"},o)}
 function D(id,cat,name,layers,o={}){return Object.assign({id,cat,name,layers,colors:{main:W,accent:CORAL},shadow:0,seed:true},o)}
+const C=(main,accent)=>({colors:{main,accent}});
+/* ---- reusable layouts (units: 1000-wide space, origin at centre) ---- */
+const T={
+  scriptStack:(a,b,f="Yellowtail",o={})=>[L(a,f,270,30,-115,{rotate:-6}),L(b,f,270,0,120,{rotate:-6})],
+  theScript:(a,b,f="Yellowtail")=>[L("the","DM Serif Display",95,-330,-95),L(a,f,270,70,-115,{rotate:-6}),L(b,f,270,0,120,{rotate:-6})],
+  scriptCaps:(a,b,sf="Great Vibes",cf="Montserrat",o={})=>[L(a,sf,250,0,-60,o),L(b,cf,105,0,115,{spacing:45,upper:true})],
+  handTop:(a,b,hf="Caveat",bf="Bebas Neue")=>[L(a,hf,130,-120,-150,{rotate:-8,color:"accent"}),L(b,bf,320,0,40,{upper:true})],
+  boldHand:(a,b,c,bf="Luckiest Guy",hf="Homemade Apple")=>[L(a,bf,215,0,-140,{upper:true,spacing:3}),L(b,bf,215,0,65,{upper:true,spacing:3}),L(c,hf,105,40,225,{rotate:-12,color:"accent"})],
+  statementCut:(a,mid,b,cf="Anton",sf="Great Vibes")=>[L(a,cf,330,0,-140,{upper:true}),L(b,cf,330,0,170,{upper:true}),L(mid,sf,240,0,25,{rotate:-4,cutout:16})],
+  classicClub:(a,mid,b,cf="Bodoni Moda",sf="Pinyon Script")=>[L(a,cf,230,0,-215,{upper:true}),L(b,cf,230,0,195,{upper:true}),L(mid,sf,300,10,-5,{rotate:-8,cutout:10})],
+  retro:(a,b,c)=>[L(a,"Fraunces",300,0,-95,{weight:900}),L(b,"Fraunces",300,-175,150,{weight:900}),...(c?[L(c,"Fraunces",112,250,140,{weight:900,italic:true,color:"accent"})]:[])],
+  italicStack:(a,b,c)=>[L(a,"Fraunces",270,-150,-95,{weight:900,italic:true,rotate:-4}),L(b,"Fraunces",130,175,-70,{weight:900,italic:true,rotate:-4}),L(c,"Fraunces",255,0,115,{weight:900,italic:true,rotate:-4})],
+  bubble:(a,b,f="Modak")=>[L(a,f,300,0,-105,{upper:true}),L(b,f,300,0,135,{upper:true})],
+  groovy:(a,b,c,f="Shrikhand")=>[O("drops",120,-215,-330,{rotate:-12}),L(a,f,230,-60,-185,{rotate:-6}),L(b,f,190,30,-15,{rotate:-6}),L(c,f,230,0,165,{rotate:-6})],
+  bouncy:(a,b,f="Cherry Bomb One")=>[L(a,f,230,-60,-85,{rotate:-6}),L(b,f,230,50,95,{rotate:-6})],
+  serifClean:(a,b,f="Playfair Display")=>[L(a,f,210,0,-70,{italic:true,weight:400}),L(b,"DM Sans",90,0,85,{spacing:55,weight:700,upper:true})],
+  arch:(small,a,b,bf="DM Serif Display",sf="Yellowtail")=>[L(small,"DM Sans",58,0,-215,{spacing:40,curve:35,weight:700,upper:true,color:"accent"}),L(a,bf,230,0,-55,{upper:true}),L(b,sf,230,40,115,{rotate:-6,color:"accent"})],
+  signature:(the,a,b,f="Gloock")=>[L(the,"Mrs Saint Delafield",230,-215,-175,{rotate:-8}),L(a,f,210,10,-20),L(b,f,210,60,150)],
+  bigScriptBold:(a,b,sf="Pacifico",bf="Titan One")=>[L(a,sf,230,0,-75,{rotate:-6}),L(b,bf,185,0,125,{spacing:14,upper:true,color:"accent"})],
+  dailyGrind:(the,a,b)=>[L(the,"Yellowtail",210,-30,-195,{rotate:-6}),L(a,"Fredoka",300,0,-15,{upper:true}),L(b,"Yellowtail",240,30,165,{rotate:-6,cutout:12})],
+};
 const SEEDS = [
-  // Ochtend
-  D("s1","Ochtend","The Slow Mornings",[L("the","DM Serif Display",95,-330,-95),L("Slow","Yellowtail",270,70,-115,{rotate:-6}),L("Mornings","Yellowtail",270,0,120,{rotate:-6})]),
-  D("s2","Ochtend","Morning Coffee",[L("Morning","Great Vibes",250,0,-60),L("COFFEE","Montserrat",105,0,115,{spacing:45})]),
-  D("s3","Ochtend","But first, coffee",[L("but first,","Caveat",130,-110,-150,{rotate:-8,color:"accent"}),L("COFFEE","Bebas Neue",330,0,40)]),
-  D("s4","Ochtend","Rise & Grind",[L("RISE","Shrikhand",210,0,-140),L("&","Yellowtail",170,0,0,{color:"accent"}),L("GRIND","Shrikhand",210,0,140)]),
-  D("s5","Ochtend","Good Morning",[L("good","Pacifico",190,-90,-90,{rotate:-8}),L("MORNING","Titan One",165,0,95,{spacing:6})]),
-  D("s6","Ochtend","Wake up & smell the coffee",[L("wake up &","Caveat",120,0,-165,{rotate:-4}),L("SMELL THE","Archivo Black",105,0,-55,{spacing:12}),L("coffee","Yellowtail",250,0,105,{rotate:-6,color:"accent"})]),
-  // Coffee break
-  D("s7","Coffee break","Coffee Break",[L("Coffee","Pacifico",230,0,-75,{rotate:-6}),L("BREAK","Titan One",185,0,125,{spacing:14,color:"accent"})]),
-  D("s8","Coffee break","It's Coffee Time",[L("it's","Homemade Apple",95,-250,-150,{rotate:-12,color:"accent"}),L("COFFEE","Anton",250,0,-20),L("time","Yellowtail",230,40,150,{rotate:-6})]),
-  D("s9","Coffee break","Pause & Sip",[L("pause","Playfair Display",210,0,-70,{italic:true,weight:400}),L("& SIP","DM Sans",90,0,85,{spacing:55,weight:700})]),
-  D("s10","Coffee break","Refill please",[L("REFILL","Bowlby One",190,0,-50),L("please","Caveat",150,140,95,{rotate:-8,color:"accent"})]),
-  D("s11","Coffee break","Coffee O'Clock",[L("COFFEE","Lilita One",200,0,-80,{spacing:4}),L("o'clock","Yellowtail",210,20,95,{rotate:-6,color:"accent"})]),
-  // Gezellig
-  D("s12","Gezellig","Coffee Lovers club",[L("COFFEE","Luckiest Guy",215,0,-140,{spacing:3}),L("LOVERS","Luckiest Guy",215,0,65,{spacing:3}),L("club","Homemade Apple",105,40,225,{rotate:-12,color:"accent",weight:400})]),
-  D("s13","Gezellig","Cozy Vibes Only",[L("cozy","Pacifico",220,0,-90,{rotate:-5}),L("VIBES ONLY","Montserrat",88,0,85,{spacing:32,weight:800})]),
-  D("s14","Gezellig","Home Barista",[L("HOME","Archivo Black",115,0,-120,{spacing:60}),L("barista","Yellowtail",280,0,55,{rotate:-6})]),
-  D("s15","Gezellig","Sip Happens",[L("Sip","Shrikhand",230,-120,-60,{rotate:-6}),L("happens","Caveat",170,110,95,{rotate:-6,color:"accent"})]),
-  D("s16","Gezellig","Coffee & Chill",[L("coffee","Great Vibes",240,0,-70),L("& CHILL","Bebas Neue",190,0,105,{spacing:22})]),
-  // Brew & recept
-  D("s17","Brew & recept","Pour Over",[L("slow brewed","DM Sans",58,0,-205,{spacing:40,curve:35,weight:700,upper:true,color:"accent"}),L("POUR","DM Serif Display",230,0,-55),L("over","Yellowtail",230,40,115,{rotate:-6,color:"accent"})]),
-  D("s18","Brew & recept","Brew Day",[L("BREW","Bungee",220,0,-60),L("day","Pacifico",180,110,95,{rotate:-8,color:"accent"})]),
-  D("s19","Brew & recept","Latte Art",[L("latte","Sacramento",280,0,-60),L("ART","Abril Fatface",190,0,110,{spacing:22})]),
-  D("s20","Brew & recept","Fresh Beans",[L("FRESH","Rubik Mono One",135,0,-75),L("beans","Kaushan Script",200,0,85,{rotate:-6,color:"accent"})]),
-  D("s21","Brew & recept","Recipe – Iced Latte",[L("RECIPE","DM Sans",70,0,-110,{spacing:80,weight:700,color:"accent"}),L("Iced Latte","Playfair Display",175,0,25,{italic:true,weight:700})]),
-  // Weekdagen
-  D("s22","Weekdagen","Monday Fuel",[L("MONDAY","Anton",215,0,-65),L("fuel","Yellowtail",230,60,95,{rotate:-8,color:"accent"})]),
-  D("s23","Weekdagen","Hello Weekend",[L("hello","Caveat",150,-170,-115,{rotate:-10,color:"accent"}),L("WEEKEND","Luckiest Guy",200,0,40,{spacing:3})]),
-  D("s24","Weekdagen","Sunday Brew",[L("Sunday","Allura",270,0,-55),L("BREW","Montserrat",100,0,115,{spacing:55,weight:800})]),
-  D("s25","Weekdagen","Friday Fika",[L("FRIDAY","Bowlby One",170,0,-60),L("fika","Pacifico",200,40,95,{rotate:-6,color:"accent"})]),
-  // Seizoenen
-  D("s26","Seizoenen","Autumn Brew",[L("autumn","Satisfy",240,0,-60),L("BREW","Fraunces",160,0,105,{spacing:12,weight:800})],{colors:{main:"#F6E9D7",accent:"#C98A4B"}}),
-  D("s27","Seizoenen","Iced Coffee Weather",[L("ICED COFFEE","Titan One",140,0,-65),L("weather","Yellowtail",210,30,90,{rotate:-6,color:"accent"})],{colors:{main:W,accent:"#7FC8E8"}}),
-  D("s28","Seizoenen","Winter Warmer",[L("Winter","DM Serif Display",220,0,-55,{italic:true}),L("WARMER","DM Sans",88,0,100,{spacing:60,weight:700,color:"accent"})]),
-  D("s29","Seizoenen","Pumpkin Spice",[L("pumpkin","Lobster",220,0,-60,{rotate:-4}),L("SPICE","Bungee",150,0,100,{spacing:8,color:"accent"})],{colors:{main:W,accent:"#F0923A"}}),
-  // ---- Retro serif ----
-  D("r1","Retro serif","Sunday Coffee Club",[
-    L("THE NEIGHBOURHOOD","Young Serif",44,-205,-262,{spacing:22}),
-    L("Est. 2026","Young Serif",62,300,-262),
-    L("Sunday","Fraunces",300,0,-95,{weight:900}),
-    L("Club","Fraunces",300,-175,150,{weight:900}),
-    L("Coffee &","Fraunces",112,250,105,{weight:900,italic:true,color:"accent"}),
-    L("Slow Living","Fraunces",112,250,200,{weight:900,italic:true,color:"accent"}),
-  ],{colors:{main:"#FBF3E2",accent:"#E2CF9C"}}),
-  D("r2","Retro serif","Out of Coffee!",[
-    L("Out","Fraunces",270,-150,-95,{weight:900,italic:true,rotate:-4}),
-    L("of","Fraunces",130,175,-70,{weight:900,italic:true,rotate:-4}),
-    L("Coffee!","Fraunces",255,0,115,{weight:900,italic:true,rotate:-4}),
-  ],{colors:{main:"#2F6FE0",accent:"#2F6FE0"},texture:40}),
-  D("r3","Retro serif","Good Things Brewing",[
-    L("GOOD THINGS","Young Serif",70,0,-175,{spacing:30,color:"accent"}),
-    L("Brewing","Fraunces",270,0,-10,{weight:900,italic:true}),
-    O("swash",420,40,140,{rotate:-4,color:"accent"}),
-  ],{colors:{main:"#FBF3E2",accent:"#F26B50"}}),
+  // ---------- Coffee ----------
+  D("cf1","Coffee","Slow Mornings",T.theScript("Slow","Mornings")),
+  D("cf2","Coffee","Coffee Lovers Club",T.boldHand("Coffee","Lovers","club")),
+  D("cf3","Coffee","But first, coffee",T.handTop("but first,","coffee")),
+  D("cf4","Coffee","More Coffee Please",T.statementCut("More","coffee","Please"),C("#FFFBD6","#FFFBD6")),
+  D("cf5","Coffee","The Coffee Club",T.classicClub("The","Coffee","Club"),C("#B3261E","#B3261E")),
+  D("cf6","Coffee","Coffee Break",T.bigScriptBold("Coffee","Break")),
+  D("cf7","Coffee","Holy Brew!",T.bubble("Holy","Brew!"),{...C("#F6ECD2",CORAL),texture:25}),
+  D("cf8","Coffee","Home Barista",[L("HOME","Archivo Black",115,0,-120,{spacing:60}),L("barista","Yellowtail",280,0,55,{rotate:-6})]),
+  D("cf9","Coffee","But First Espresso",[L("BUT FIRST","Anton",160,0,-175,{spacing:6}),L("ESPRESSO","Anton",230,0,5),O("steam",130,0,-330,{color:"accent"}),L("always","Caveat",150,170,165,{rotate:-8,color:"accent"})],C(W,"#F2B33D")),
+  D("cf10","Coffee","Bean Happy",[O("sparkles",130,-300,-150,{color:"accent"}),L("bean","Bagel Fat One",240,0,-85),L("happy","Bagel Fat One",240,0,120,{color:"accent"}),O("bean",110,310,-130,{rotate:20})],C(W,"#F2B33D")),
 
-  // ---- Bubbel & groovy ----
-  D("g1","Bubbel & groovy","Holy Brew!",[
-    L("HOLY","Modak",300,0,-105),
-    L("BREW!","Modak",300,0,135),
-  ],{colors:{main:"#F6ECD2",accent:"#F26B50"},texture:25}),
-  D("g2","Bubbel & groovy","I'm the barista",[
-    O("drops",120,-215,-330,{rotate:-12}),
-    L("I'm","Shrikhand",230,-60,-185,{rotate:-6}),
-    L("the","Shrikhand",190,30,-15,{rotate:-6}),
-    L("barista","Shrikhand",230,0,165,{rotate:-6}),
-  ],{colors:{main:"#F2392B",accent:"#F2392B"},texture:22}),
-  D("g3","Bubbel & groovy","Lazy Latte",[
-    L("lazy","Cherry Bomb One",230,-60,-85,{rotate:-6}),
-    L("latte","Cherry Bomb One",230,50,95,{rotate:-6}),
-  ],{colors:{main:"#F7EFE2",accent:"#F26B50"},texture:30}),
-  D("g4","Bubbel & groovy","Bean Happy",[
-    O("sparkles",130,-300,-150,{color:"accent"}),
-    L("bean","Bagel Fat One",240,0,-85),
-    L("happy","Bagel Fat One",240,0,120,{color:"accent"}),
-    O("bean",110,310,-130,{rotate:20}),
-  ],{colors:{main:"#FFFFFF",accent:"#F2B33D"}}),
-  D("g5","Bubbel & groovy","Coffee Time!",[
-    O("drops",110,0,-300),
-    L("coffee","Grandstander",210,0,-110,{rotate:-5}),
-    L("TIME!","Bagel Fat One",230,10,85,{rotate:-5,color:"accent"}),
-  ],{colors:{main:"#FFFFFF",accent:"#F26B50"},texture:15}),
+  // ---------- Breakfast ----------
+  D("bf1","Breakfast","Brunch Club",T.retro("Brunch","Club","& mimosas"),C("#FBF3E2","#F6C445")),
+  D("bf2","Breakfast","Rise & Shine",[O("burst",150,0,-300,{color:"accent"}),L("RISE","Shrikhand",210,0,-120),L("&","Yellowtail",170,0,20,{color:"accent"}),L("SHINE","Shrikhand",210,0,150)],C(W,"#F6C445")),
+  D("bf3","Breakfast","Pancake Sunday",T.bouncy("pancake","sunday"),{...C("#F7EFE2",CORAL),texture:25}),
+  D("bf4","Breakfast","Breakfast in Bed",T.scriptCaps("Breakfast","in bed","Great Vibes","Montserrat")),
+  D("bf5","Breakfast","Good Eggs Only",[L("GOOD EGGS","Bowlby One",190,0,-60),L("only","Caveat",150,150,95,{rotate:-8,color:"accent"}),O("sparkle",70,-330,-170,{color:"accent"})],C(W,"#F6C445")),
+  D("bf6","Breakfast","Avocado Toast",T.serifClean("avocado","toast"),C(W,"#A8C686")),
+  D("bf7","Breakfast","The Breakfast Club",T.classicClub("The","Breakfast","Club","Gloock","Pinyon Script"),C("#E0332A","#E0332A")),
 
-  // ---- Klassiek & script ----
-  D("k1","Klassiek & script","The Coffee Club",[
-    L("THE","Bodoni Moda",230,0,-215),
-    L("CLUB","Bodoni Moda",230,0,195),
-    L("Coffee","Pinyon Script",300,10,-5,{rotate:-8,cutout:10}),
-  ],{colors:{main:"#B3261E",accent:"#B3261E"}}),
-  D("k2","Klassiek & script","The Morning Club",[
-    L("The","Mrs Saint Delafield",230,-215,-175,{rotate:-8}),
-    L("Morning","Gloock",210,10,-20),
-    L("Club","Gloock",210,60,150),
-  ],{colors:{main:"#D7263D",accent:"#D7263D"}}),
-  D("k3","Klassiek & script","Vintage Brews",[
-    L("SLOW ROASTED · SINCE 2026","Young Serif",46,0,-275,{spacing:28,curve:28,color:"accent"}),
-    L("Vintage","Sansita Swashed",250,0,-80,{rotate:-5}),
-    L("Brews","Sansita Swashed",260,20,115,{rotate:-5}),
-  ],{colors:{main:"#E0332A",accent:"#3B2416"},texture:30}),
-  D("k4","Klassiek & script","Coffee & Kisses",[
-    L("Coffee","Gloock",230,0,-90),
-    O("heart",90,0,40,{color:"accent"}),
-    L("& Kisses","Mrs Saint Delafield",220,30,130,{rotate:-6,color:"accent"}),
-  ],{colors:{main:"#FFFFFF",accent:"#F28BA0"}}),
+  // ---------- Weekend ----------
+  D("wk1","Weekend","Sunday Club",[L("THE WEEKEND EDIT","Young Serif",44,-215,-262,{spacing:22}),L("Est. 2026","Young Serif",62,300,-262),...T.retro("Sunday","Club"),L("Brunch &","Fraunces",112,250,105,{weight:900,italic:true,color:"accent"}),L("Bubbles","Fraunces",112,250,200,{weight:900,italic:true,color:"accent"})],C("#FBF3E2","#E2CF9C")),
+  D("wk2","Weekend","Out of Office!",T.italicStack("Out","of","Office!"),{...C("#2F6FE0","#2F6FE0"),texture:40}),
+  D("wk3","Weekend","Hello Weekend",[L("hello","Caveat",150,-170,-115,{rotate:-10,color:"accent"}),L("WEEKEND","Luckiest Guy",200,0,40,{spacing:3})]),
+  D("wk4","Weekend","Lazy Sunday",T.bouncy("lazy","sunday","Grandstander"),C(W,CORAL)),
+  D("wk5","Weekend","Weekend Mode",T.statementCut("Weekend","mode","On","Anton","Yellowtail"),C(W,W)),
+  D("wk6","Weekend","Saturday Mood",T.scriptCaps("Saturday","mood","Allura","Montserrat")),
+  D("wk7","Weekend","Do Not Disturb",[L("do not","Homemade Apple",110,-150,-150,{rotate:-10,color:"accent"}),L("DISTURB","Bebas Neue",320,0,40)],C(W,"#7FC8E8")),
 
-  // ---- Statement ----
-  D("t1","Statement","More Coffee Please",[
-    L("MORE","Anton",330,0,-140),
-    L("PLEASE","Anton",330,0,170),
-    L("coffee","Great Vibes",240,0,25,{rotate:-4,cutout:16}),
-  ],{colors:{main:"#FFFBD6",accent:"#FFFBD6"}}),
-  D("t2","Statement","The Daily Grind",[
-    L("The","Yellowtail",210,-30,-195,{rotate:-6}),
-    L("DAILY","Fredoka",300,0,-15),
-    L("Grind","Yellowtail",240,30,165,{rotate:-6,cutout:12}),
-  ],{colors:{main:"#FFF4E8",accent:"#FFF4E8"}}),
-  D("t3","Statement","But First Espresso",[
-    L("BUT FIRST","Anton",160,0,-175,{spacing:6}),
-    L("ESPRESSO","Anton",230,0,5),
-    O("steam",130,0,-330,{color:"accent"}),
-    L("always","Caveat",150,170,165,{rotate:-8,color:"accent"}),
-  ],{colors:{main:"#FFFFFF",accent:"#F2B33D"}}),
-  D("t4","Statement","Stay Grounded",[
-    O("sparkle",80,-330,-170,{color:"accent"}),
-    L("STAY","Archivo Black",210,0,-90,{spacing:10}),
-    L("grounded","Great Vibes",230,0,70,{rotate:-6,cutout:12,color:"accent"}),
-    O("sparkle",55,330,160,{color:"accent"}),
-  ],{colors:{main:"#FFFFFF",accent:"#E9B77C"}}),
+  // ---------- Holidays ----------
+  D("hd1","Holidays","Merry & Bright",[O("sparkles",120,300,-200,{color:"accent"}),L("Merry","Sansita Swashed",250,0,-80,{rotate:-5}),L("& bright","Sansita Swashed",200,40,105,{rotate:-5,color:"accent"})],C(W,"#E9C46A")),
+  D("hd2","Holidays","Let It Snow",T.arch("winter is here","Let it","snow"),C(W,"#BFE3F2")),
+  D("hd3","Holidays","Happy Holidays",T.scriptCaps("Happy","holidays","Pinyon Script","Bodoni Moda"),C("#D7263D","#D7263D")),
+  D("hd4","Holidays","Hello Summer",[O("burst",140,280,-210,{color:"accent"}),L("hello","Pacifico",200,-60,-90,{rotate:-6}),L("SUMMER","Bagel Fat One",230,0,95,{color:"accent"})],C(W,"#F6C445")),
+  D("hd5","Holidays","Bon Voyage",T.serifClean("Bon","voyage","DM Serif Display")),
+  D("hd6","Holidays","Holiday Mode",T.boldHand("Holiday","Mode","on","Titan One","Caveat"),C(W,"#7FC8E8")),
+  D("hd7","Holidays","Trick or Treat",[L("trick","Shrikhand",210,-60,-100,{rotate:-6}),L("or","Yellowtail",140,140,-10,{rotate:-6,color:"accent"}),L("treat","Shrikhand",210,30,110,{rotate:-6})],{...C("#F0923A",W),texture:20}),
+
+  // ---------- Cosy ----------
+  D("cs1","Cosy","Cosy Season",[L("COSY","Archivo Black",150,0,-110,{spacing:40}),L("season","Satisfy",250,0,55,{rotate:-6,color:"accent"})],C("#F6E9D7","#E9B77C")),
+  D("cs2","Cosy","Sweater Weather",T.bubble("Sweater","Weather","Bagel Fat One"),{...C("#F6E9D7",CORAL),texture:20}),
+  D("cs3","Cosy","Hygge",[L("hygge","Gloock",300,0,-30),L("the art of slowing down","Caveat",95,0,130,{color:"accent"})],C("#F6E9D7","#E9B77C")),
+  D("cs4","Cosy","Books & Blankets",T.scriptCaps("Books","& blankets","Sacramento","DM Sans")),
+  D("cs5","Cosy","Candle Season",[O("sparkle",80,-300,-160,{color:"accent"}),...T.serifClean("candle","season","Cormorant Garamond")],C("#F6E9D7","#E9B77C")),
+  D("cs6","Cosy","Stay Home",T.dailyGrind("let's","stay","home"),C("#FFF4E8","#FFF4E8")),
+
+  // ---------- Girly ----------
+  D("gl1","Girly","The Girls Club",T.signature("The","Girls","Club"),C("#D7263D","#D7263D")),
+  D("gl2","Girly","I'm the Boss",T.groovy("I'm","the","boss"),{...C("#F2392B","#F2392B"),texture:22}),
+  D("gl3","Girly","Pretty in Pink",[O("heart",90,300,-170,{color:"accent"}),L("Pretty","Great Vibes",270,0,-60,{rotate:-4}),L("IN PINK","Montserrat",100,0,115,{spacing:50,weight:800,color:"accent"})],C(W,"#F28BA0")),
+  D("gl4","Girly","Self Care Sunday",[L("self care","Mrs Saint Delafield",220,-40,-110,{rotate:-8,color:"accent"}),L("SUNDAY","Gloock",230,0,60,{upper:true})],C(W,"#F28BA0")),
+  D("gl5","Girly","XOXO",[L("XOXO","Bowlby One",260,0,-20,{spacing:6}),O("heart",80,330,-150,{color:"accent",rotate:12}),O("heart",55,-330,130,{color:"accent",rotate:-12})],C(W,"#F28BA0")),
+  D("gl6","Girly","Girls Night",T.bigScriptBold("girls","night","Lobster","Bagel Fat One"),C(W,"#F28BA0")),
+  D("gl7","Girly","That Girl",[L("that","Mrs Saint Delafield",210,-170,-110,{rotate:-10,color:"accent"}),L("GIRL","Bodoni Moda",300,0,40,{italic:true})],C(W,"#F28BA0")),
+
+  // ---------- Movie Night ----------
+  D("mv1","Movie Night","Movie Night",[O("star",70,-330,-170,{color:"accent"}),L("MOVIE","Bebas Neue",330,0,-80,{spacing:8}),L("night","Yellowtail",240,30,110,{rotate:-6,color:"accent",cutout:12})],C(W,"#F2C94C")),
+  D("mv2","Movie Night","Popcorn & Chill",T.bubble("Popcorn","& chill","Bagel Fat One"),C(W,"#F2C94C")),
+  D("mv3","Movie Night","Now Showing",T.arch("tonight only","Now","showing","Bodoni Moda","Yellowtail"),C(W,"#F2C94C")),
+  D("mv4","Movie Night","Lights Camera Action",[L("LIGHTS","Anton",200,0,-170,{spacing:10}),L("CAMERA","Anton",200,0,10,{spacing:10}),L("action!","Yellowtail",200,40,175,{rotate:-6,color:"accent"})],C(W,"#F2C94C")),
+  D("mv5","Movie Night","Binge Mode",T.handTop("currently in","binge mode","Caveat","Bebas Neue"),C(W,"#F2C94C")),
+  D("mv6","Movie Night","Couch Potato",T.bouncy("couch","potato","Cherry Bomb One"),{...C("#F7EFE2","#F2C94C"),texture:25}),
+
+  // ---------- Monthly ----------
+  D("mo1","Monthly","Hello January",T.scriptCaps("hello","January","Great Vibes","Bodoni Moda")),
+  D("mo2","Monthly","February",[O("heart",80,0,-210,{color:"accent"}),L("February","Gloock",230,0,-20),L("month of love","Caveat",110,60,130,{rotate:-6,color:"accent"})],C(W,"#F28BA0")),
+  D("mo3","Monthly","Hello March",T.bouncy("hello","march","Grandstander"),C(W,"#A8C686")),
+  D("mo4","Monthly","April Showers",T.scriptCaps("April","showers","Sacramento","DM Sans"),C(W,"#7FC8E8")),
+  D("mo5","Monthly","May",[L("may","Shrikhand",330,0,-30,{rotate:-6}),O("sparkles",130,260,-170,{color:"accent"})],{...C("#F28BA0","#F6C445"),texture:15}),
+  D("mo6","Monthly","June",[L("JUNE","Rubik Mono One",210,0,-40),L("summer starts","Yellowtail",150,60,100,{rotate:-6,color:"accent"})],C(W,"#F6C445")),
+  D("mo7","Monthly","Late July",T.bouncy("late","july","Cherry Bomb One"),{...C("#F7EFE2",CORAL),texture:30}),
+  D("mo8","Monthly","August",T.retro("Hello","August"),C("#FBF3E2","#F6C445")),
+  D("mo9","Monthly","Hello September",T.handTop("hello","September","Caveat","Anton"),C(W,"#E9B77C")),
+  D("mo10","Monthly","October",[L("October","Lobster",260,0,-40,{rotate:-4}),L("pumpkin season","Caveat",110,60,110,{rotate:-6,color:"accent"})],C(W,"#F0923A")),
+  D("mo11","Monthly","November",T.serifClean("November","cosy days ahead","Cormorant Garamond"),C("#F6E9D7","#E9B77C")),
+  D("mo12","Monthly","December",[O("sparkles",120,330,-180,{color:"accent"}),L("DECEMBER","Bodoni Moda",200,0,-30,{spacing:8}),L("magic","Pinyon Script",210,40,110,{rotate:-6,color:"accent"})],C(W,"#E9C46A")),
+
+  // ---------- Camera ----------
+  D("cm1","Camera","Shot on Film",[L("shot on","Homemade Apple",110,-160,-140,{rotate:-10,color:"accent"}),L("FILM","Bebas Neue",360,0,30,{spacing:10})],{...C(W,"#F2B33D"),texture:30}),
+  D("cm2","Camera","Golden Hour",T.scriptCaps("Golden","hour","Great Vibes","Montserrat"),C(W,"#F2B33D")),
+  D("cm3","Camera","Film Is Not Dead",T.italicStack("Film","is not","Dead"),{...C(W,W),texture:35}),
+  D("cm4","Camera","Say Cheese",T.bouncy("say","cheese!","Bagel Fat One"),C(W,"#F2B33D")),
+  D("cm5","Camera","Through My Lens",T.arch("35mm diaries","Through","my lens"),C(W,"#F2B33D")),
+  D("cm6","Camera","Photo Dump",[L("PHOTO","Archivo Black",170,0,-100,{spacing:20}),L("dump","Shrikhand",250,30,70,{rotate:-6,color:"accent"}),O("sparkle",70,-330,90,{color:"accent"})],C(W,"#F2B33D")),
+
+  // ---------- Trending ----------
+  D("tr1","Trending","Holy Cow!",T.bubble("Holy","Cow!"),{...C("#F6ECD2",CORAL),texture:25}),
+  D("tr2","Trending","Main Character Energy",[L("main character","Yellowtail",180,0,-110,{rotate:-6,color:"accent"}),L("ENERGY","Anton",280,0,60)]),
+  D("tr3","Trending","Soft Life",T.signature("the","soft","life","Gloock"),C(W,"#F28BA0")),
+  D("tr4","Trending","It's Giving",T.groovy("it's","giving","vibes","Bagel Fat One"),{...C(W,W),texture:15}),
+  D("tr5","Trending","Romanticize Your Life",[L("romanticize","Yellowtail",230,0,-85,{rotate:-6,color:"accent"}),L("YOUR LIFE","Anton",250,0,95,{spacing:4})],C(W,"#F28BA0")),
+  D("tr6","Trending","Mood",[L("mood","Modak",380,0,-20),O("drops",120,-230,-260,{rotate:-15})],{...C("#2F6FE0","#2F6FE0"),texture:20}),
+  D("tr7","Trending","Not Today",T.boldHand("Not","Today","thanks","Bowlby One","Caveat"),C(W,CORAL)),
+
+  // ---------- 2026 ----------
+  D("y1","2026","Hello 2026",[O("sparkles",130,300,-200,{color:"accent"}),L("hello","Yellowtail",220,-80,-100,{rotate:-6}),L("2026","Fraunces",280,20,100,{weight:900,color:"accent"})],C(W,"#E9C46A")),
+  D("y2","2026","Cheers to 2026",T.scriptCaps("Cheers","to 2026","Pinyon Script","Bodoni Moda"),C(W,"#E9C46A")),
+  D("y3","2026","2026 Dump",[L("2026","Rubik Mono One",230,0,-80),L("photo dump","Shrikhand",170,40,90,{rotate:-6,color:"accent"})],C(W,"#E9C46A")),
+  D("y4","2026","New Year New Me",T.statementCut("New year","new","Me","Anton","Yellowtail"),C(W,W)),
+  D("y5","2026","Best of 2026",T.arch("a year in review","Best of","2026"),C(W,"#E9C46A")),
+  D("y6","2026","Class of 2026",T.classicClub("Class","of","2026","Bodoni Moda","Great Vibes"),C(W,W)),
 ];
-const NEW_CATS=["Retro serif","Bubbel & groovy","Klassiek & script","Statement"];
+// keep every line within the frame width (rough letter widths per font, in em)
+const SEED_EM={"Anton":.46,"Bebas Neue":.40,"Modak":.62,"Bagel Fat One":.64,"Cherry Bomb One":.6,"Grandstander":.58,"Shrikhand":.64,"Luckiest Guy":.62,"Titan One":.64,"Bowlby One":.72,"Fredoka":.6,"Fraunces":.6,"Bodoni Moda":.62,"Gloock":.56,"Young Serif":.62,"Archivo Black":.72,"DM Serif Display":.52,"Playfair Display":.5,"Cormorant Garamond":.42,"Montserrat":.66,"DM Sans":.6,"Rubik Mono One":.95,"Bungee":.78,"Lilita One":.52,"Chewy":.5,"Lobster":.45,"Pacifico":.55,"Sansita Swashed":.52,"Righteous":.6,"Abril Fatface":.55};
+SEEDS.forEach(d=>d.layers.forEach(Ly=>{if(Ly.kind==="shape"||!Ly.text)return;
+  const em=SEED_EM[Ly.font]||.4,n=[...Ly.text].length,caps=Ly.upper||Ly.text===Ly.text.toUpperCase()?1.12:1;
+  const w=Ly.size*(n*em*caps+(n-1)*(Ly.spacing||0)/100);const max=Ly.curve?900:880;
+  if(w>max)Ly.size=Math.round(Ly.size*max/w);}));
+const NEW_CATS=["Coffee","Breakfast","Weekend","Holidays","Cosy","Girly","Movie Night","Monthly","Camera","Trending","2026"];
 const SEED_CATS=[...new Set([...NEW_CATS,...SEEDS.map(d=>d.cat)])];
 
 
@@ -467,7 +469,7 @@ const SEED_CATS=[...new Set([...NEW_CATS,...SEEDS.map(d=>d.cat)])];
 /* ---------------- State ---------------- */
 let custom=[], customCats=[];
 let cur=clone(SEEDS[0]), curSourceId=SEEDS[0].id;
-let activeCat="Alles", tab="lib", tool="text", sel=0, fontGroup="Alle";
+let activeCat="All", tab="lib", tool="text", sel=0, fontGroup="All";
 let hist=[];
 const $=id=>document.getElementById(id);
 function clone(o){return JSON.parse(JSON.stringify(o))}
@@ -494,7 +496,7 @@ async function ensureFonts(d){
 }
 function colorOf(d,c){return c==="main"?d.colors.main:c==="accent"?d.colors.accent:(c||d.colors.main)}
 /* ---------- Ornamenten ---------- */
-const ORNAMENTS={drops:"Druppels",sparkle:"Glinster",sparkles:"Glinsters",star:"Ster",heart:"Hartje",bean:"Koffieboon",steam:"Stoom",dot:"Bolletje",burst:"Zonnetje",swash:"Krul",line:"Lijn",arrow:"Pijl"};
+const ORNAMENTS={drops:"Drops",sparkle:"Sparkle",sparkles:"Sparkles",star:"Star",heart:"Heart",bean:"Coffee bean",steam:"Steam",dot:"Dot",burst:"Sunburst",swash:"Swash",line:"Line",arrow:"Arrow"};
 const STROKE_SHAPES=new Set(["steam","swash","line","arrow"]);
 function teardrop(ctx,r,h){ // ronde kant boven, punt naar onder (naar het midden)
   const cy=-h/2+r;ctx.moveTo(0,h/2);ctx.quadraticCurveTo(r*1.25,cy+r*1.3,r,cy);ctx.arc(0,cy,r,0,Math.PI,true);ctx.quadraticCurveTo(-r*1.25,cy+r*1.3,0,h/2);ctx.closePath();
@@ -707,15 +709,15 @@ function renderLibrary(){
   if(!$("cats"))return;
   const cats=$("cats");cats.innerHTML="";
   const mk=(label,val)=>{const b=document.createElement("button");b.className="chip"+(activeCat===val?" on":"");b.textContent=label;b.onclick=()=>{activeCat=val;renderLibrary()};cats.appendChild(b)};
-  mk("Alles","Alles");if(custom.length)mk("★ Alles van mij","★");
+  mk("All","All");if(custom.length)mk("★ My designs","★");
   allCats().forEach(c=>mk(c+(isCustomCat(c)?" ★":""),c));
-  const plus=document.createElement("button");plus.className="chip";plus.textContent="+ Categorie";
+  const plus=document.createElement("button");plus.className="chip";plus.textContent="+ Category";
   plus.onclick=()=>{$("newCatRow").classList.toggle("hidden");$("newCatName").focus()};cats.appendChild(plus);
-  let list=allDesigns();if(activeCat==="★")list=custom;else if(activeCat!=="Alles")list=list.filter(d=>d.cat===activeCat);
+  let list=allDesigns();if(activeCat==="★")list=custom;else if(activeCat!=="All")list=list.filter(d=>d.cat===activeCat);
   const grid=$("grid");grid.innerHTML="";
-  $("catActions").classList.toggle("hidden",!(activeCat!=="Alles"&&activeCat!=="★"&&isCustomCat(activeCat)));
-  $("catDel").textContent="Categorie verwijderen";$("catDel").dataset.armed="";
-  if(!list.length){grid.innerHTML=`<div class="empty">Nog leeg. Maak ontwerpen bij ✨ Nieuw, of sla er een op in deze categorie.</div>`;return}
+  $("catActions").classList.toggle("hidden",!(activeCat!=="All"&&activeCat!=="★"&&isCustomCat(activeCat)));
+  $("catDel").textContent="Delete category";$("catDel").dataset.armed="";
+  if(!list.length){grid.innerHTML=`<div class="empty">Nothing here yet. Create designs in ✨ Create, or save one to this category.</div>`;return}
   const job=++thumbJob;let n=0;
   const cards=list.map(d=>{
     const b=document.createElement("button");const light=lum(d.colors.main)<.45;
@@ -724,7 +726,7 @@ function renderLibrary(){
     if(!d.seed)b.innerHTML='<span class="mine">★</span>';
     b.onclick=()=>{
       if(d.id===curSourceId){showTab("edit");return}
-      loadDesign(d);document.querySelectorAll(".card").forEach(x=>x.classList.remove("sel"));b.classList.add("sel");toast("Tik nog eens om te bewerken");
+      loadDesign(d);document.querySelectorAll(".card").forEach(x=>x.classList.remove("sel"));b.classList.add("sel");toast("Tap again to edit");
     };
     grid.appendChild(b);return [b,d];
   });
@@ -734,8 +736,8 @@ $("newCatOk").onclick=()=>{const n=$("newCatName").value.trim();if(!n)return;if(
   $("newCatName").value="";$("newCatRow").classList.add("hidden");activeCat=n;renderLibrary()};
 $("newCatName").addEventListener("keydown",e=>{if(e.key==="Enter")$("newCatOk").click()});
 $("catGen").onclick=()=>{$("genCat").value=activeCat;showTab("gen")};
-$("catDel").onclick=()=>{const b=$("catDel");if(!b.dataset.armed){b.dataset.armed="1";b.textContent="Zeker? Tik nogmaals";return}
-  const c=activeCat;custom=custom.filter(d=>d.cat!==c);customCats=customCats.filter(x=>x!==c);saveLocal();activeCat="Alles";renderLibrary();toast("Categorie verwijderd")};
+$("catDel").onclick=()=>{const b=$("catDel");if(!b.dataset.armed){b.dataset.armed="1";b.textContent="Sure? Tap again";return}
+  const c=activeCat;custom=custom.filter(d=>d.cat!==c);customCats=customCats.filter(x=>x!==c);saveLocal();activeCat="All";renderLibrary();toast("Category deleted")};
 
 /* ---------------- Bewerken ---------------- */
 function snap(){const s=JSON.stringify(cur);if(hist[hist.length-1]!==s){hist.push(s);if(hist.length>60)hist.shift()}updUndo()}
@@ -748,8 +750,8 @@ function renderLayerChips(){
   cur.layers.forEach((Ly,i)=>{const b=document.createElement("button");b.className="chip layerChip"+(i===sel?" on":"");
     if(Ly.kind==="shape"){b.textContent="✦ "+(ORNAMENTS[Ly.shape]||"Ornament");b.style.fontSize="15px"}
     else{b.style.fontFamily=`'${Ly.font}'`;b.style.fontWeight=Ly.weight;b.style.fontStyle=Ly.italic?"italic":"normal";
-    b.textContent=(Ly.upper?Ly.text.toUpperCase():Ly.text)||"(leeg)";}b.onclick=()=>{sel=i;renderLayerChips();renderTool();schedulePreview(true)};box.appendChild(b)});
-  const add=document.createElement("button");add.className="chip acc";add.textContent="+ Tekst";
+    b.textContent=(Ly.upper?Ly.text.toUpperCase():Ly.text)||"(empty)";}b.onclick=()=>{sel=i;renderLayerChips();renderTool();schedulePreview(true)};box.appendChild(b)});
+  const add=document.createElement("button");add.className="chip acc";add.textContent="+ Text";
   add.onclick=()=>{snap();const last=cur.layers[cur.layers.length-1];cur.layers.push(L("tekst","Caveat",140,0,last?Math.min(450,last.y+last.size*.9):0,{color:"accent"}));sel=cur.layers.length-1;tool="text";syncToolbar();renderLayerChips();renderTool();schedulePreview();setTimeout(()=>{const i=document.querySelector("#toolBody input.inp");if(i){i.focus();i.select()}},50)};
   box.appendChild(add);
   const orn=document.createElement("button");orn.className="chip acc";orn.textContent="+ Ornament";
@@ -775,40 +777,40 @@ function renderTool(light){
   let h="";
   if(Ly&&Ly.kind==="shape"){
     h+=sec("Ornament")+`<div class="ornGrid">${Object.entries(ORNAMENTS).map(([k,n])=>`<button class="ornBtn ${k===Ly.shape?"on":""}" data-o="${k}"><canvas width="96" height="96"></canvas><span>${n}</span></button>`).join("")}</div>`;
-    h+=sec("Grootte &amp; positie")+rng("Grootte","size",20,480,Ly.size)+rng("Draaien","rotate",-180,180,Ly.rotate||0)+rng("Links/rechts","x",-700,700,Ly.x)+rng("Hoogte","y",-900,900,Ly.y)
-      +`<div class="hint" style="margin:2px 0 4px">Of: sleep het ornament op de foto · knijp en draai met twee vingers.</div>`;
-    h+=sec("Stijl")+`<div class="chips wrap">
-      <button class="chip ${Ly.color==="main"?"on":""}" data-c="main"><span class="dot" style="background:${cur.colors.main}"></span>Hoofdkleur</button>
+    h+=sec("Size &amp; position")+rng("Size","size",20,480,Ly.size)+rng("Rotate","rotate",-180,180,Ly.rotate||0)+rng("Left/right","x",-700,700,Ly.x)+rng("Up/down","y",-900,900,Ly.y)
+      +`<div class="hint" style="margin:2px 0 4px">Or: drag the ornament on the photo · pinch and twist with two fingers.</div>`;
+    h+=sec("Style")+`<div class="chips wrap">
+      <button class="chip ${Ly.color==="main"?"on":""}" data-c="main"><span class="dot" style="background:${cur.colors.main}"></span>Main colour</button>
       <button class="chip ${Ly.color==="accent"?"on":""}" data-c="accent"><span class="dot" style="background:${cur.colors.accent}"></span>Accent</button>
-      ${STROKE_SHAPES.has(Ly.shape)?"":`<button class="chip ${Ly.style==="outline"?"on":""}" data-t="outline">Contour</button>`}</div>
-      <div class="chips wrap"><button class="chip" data-a="center">Centreer</button><button class="chip" data-a="straight">Recht</button><button class="chip" data-a="up">Naar voren</button><button class="chip" data-a="down">Naar achter</button><button class="chip" data-a="dup">Dupliceer</button><button class="chip" data-a="del" style="color:#ff9b87">Verwijder</button></div>`;
+      ${STROKE_SHAPES.has(Ly.shape)?"":`<button class="chip ${Ly.style==="outline"?"on":""}" data-t="outline">Outline</button>`}</div>
+      <div class="chips wrap"><button class="chip" data-a="center">Centre</button><button class="chip" data-a="straight">Straighten</button><button class="chip" data-a="up">Bring forward</button><button class="chip" data-a="down">Send back</button><button class="chip" data-a="dup">Duplicate</button><button class="chip" data-a="del" style="color:#ff9b87">Delete</button></div>`;
   }else if(Ly){
     const f=FONT_BY[Ly.font]||{w:[400]};
-    const groups=["Alle",...new Set(FONTS.map(x=>x.g))];
+    const groups=["All",...new Set(FONTS.map(x=>x.g))];
     const sample=((Ly.upper?Ly.text.toUpperCase():Ly.text)||"Aa").slice(0,14);
-    const list=FONTS.filter(x=>fontGroup==="Alle"||x.g===fontGroup);
-    h+=sec("Tekst")+`<input class="inp" id="tText" value="${esc(Ly.text)}" autocomplete="off" autocorrect="off" spellcheck="false" enterkeyhint="done">`;
-    h+=sec("Lettertype")+`<div class="chips">${groups.map(g=>`<button class="chip sm ${g===fontGroup?"on":""}" data-g="${g}">${g}</button>`).join("")}</div>
+    const list=FONTS.filter(x=>fontGroup==="All"||x.g===fontGroup);
+    h+=sec("Text")+`<input class="inp" id="tText" value="${esc(Ly.text)}" autocomplete="off" autocorrect="off" spellcheck="false" enterkeyhint="done">`;
+    h+=sec("Font")+`<div class="chips">${groups.map(g=>`<button class="chip sm ${g===fontGroup?"on":""}" data-g="${g}">${g}</button>`).join("")}</div>
       <div class="fontRow" id="fontRow">${list.map(x=>`<button class="fontBtn ${x.n===Ly.font?"on":""}" data-f="${esc(x.n)}"><span class="s" style="font-family:'${x.n}';font-weight:${x.w[x.w.length-1]}">${esc(sample)}</span><span class="n">${x.n}</span></button>`).join("")}</div>`;
-    h+=sec("Grootte &amp; positie")+rng("Grootte","size",20,480,Ly.size)+rng("Spatiëring","spacing",0,100,Ly.spacing||0)+rng("Draaien","rotate",-45,45,Ly.rotate||0)+rng("Boog","curve",-100,100,Ly.curve||0)+rng("Links/rechts","x",-700,700,Ly.x)+rng("Hoogte","y",-900,900,Ly.y)
-      +`<div class="hint" style="margin:2px 0 4px">Of: sleep de tekst op de foto · knijp en draai met twee vingers.</div>`;
-    h+=sec("Stijl")+`<div class="chips wrap">
-      <button class="chip ${Ly.color==="main"?"on":""}" data-c="main"><span class="dot" style="background:${cur.colors.main}"></span>Hoofdkleur</button>
+    h+=sec("Size &amp; position")+rng("Size","size",20,480,Ly.size)+rng("Spacing","spacing",0,100,Ly.spacing||0)+rng("Rotate","rotate",-45,45,Ly.rotate||0)+rng("Arc","curve",-100,100,Ly.curve||0)+rng("Left/right","x",-700,700,Ly.x)+rng("Up/down","y",-900,900,Ly.y)
+      +`<div class="hint" style="margin:2px 0 4px">Or: drag the text on the photo · pinch and twist with two fingers.</div>`;
+    h+=sec("Style")+`<div class="chips wrap">
+      <button class="chip ${Ly.color==="main"?"on":""}" data-c="main"><span class="dot" style="background:${cur.colors.main}"></span>Main colour</button>
       <button class="chip ${Ly.color==="accent"?"on":""}" data-c="accent"><span class="dot" style="background:${cur.colors.accent}"></span>Accent</button>
-      <button class="chip ${Ly.upper?"on":""}" data-t="upper">HOOFDLETTERS</button>
-      ${f.it?`<button class="chip ${Ly.italic?"on":""}" data-t="italic">Cursief</button>`:""}
-      ${f.w.length>1?`<button class="chip ${Ly.weight===Math.max(...f.w)?"on":""}" data-t="bold">Vet</button>`:""}
-      <button class="chip ${Ly.style==="outline"?"on":""}" data-t="outline">Contour</button></div>
-      ${rng("Uitsparing","cutout",0,40,Ly.cutout||0)}<div class="hint" style="margin:-4px 0 8px">Snijdt een rand uit in de tekst eronder (zoals ‘More coffee please’). Zet deze tekst dan ‘Naar voren’.</div>
-      <div class="chips wrap"><button class="chip" data-a="center">Centreer</button><button class="chip" data-a="straight">Recht</button><button class="chip" data-a="up">Naar voren</button><button class="chip" data-a="down">Naar achter</button><button class="chip" data-a="dup">Dupliceer</button><button class="chip" data-a="del" style="color:#ff9b87">Verwijder tekst</button></div>`;
-  }else h+=`<div class="empty">Geen tekst. Tik op “+ Tekst”.</div>`;
-  h+=sec("Kleuren &amp; afwerking")+`<div class="lab" style="margin-top:0">Hoofdkleur</div><div class="sw" id="swMain"></div><div class="lab">Accentkleur</div><div class="sw" id="swAccent"></div>`+rng("Schaduw","shadow",0,80,cur.shadow||0,1,true)+rng("Textuur","texture",0,100,cur.texture||0,1,true)+`<div class="hint" style="margin-top:-4px">Textuur geeft een gedrukte, verweerde retro-look.</div>`;
+      <button class="chip ${Ly.upper?"on":""}" data-t="upper">CAPS</button>
+      ${f.it?`<button class="chip ${Ly.italic?"on":""}" data-t="italic">Italic</button>`:""}
+      ${f.w.length>1?`<button class="chip ${Ly.weight===Math.max(...f.w)?"on":""}" data-t="bold">Bold</button>`:""}
+      <button class="chip ${Ly.style==="outline"?"on":""}" data-t="outline">Outline</button></div>
+      ${rng("Knock-out","cutout",0,40,Ly.cutout||0)}<div class="hint" style="margin:-4px 0 8px">Cuts a gap into the text underneath (like ‘More coffee please’). Make sure this text is in front.</div>
+      <div class="chips wrap"><button class="chip" data-a="center">Centre</button><button class="chip" data-a="straight">Straighten</button><button class="chip" data-a="up">Bring forward</button><button class="chip" data-a="down">Send back</button><button class="chip" data-a="dup">Duplicate</button><button class="chip" data-a="del" style="color:#ff9b87">Delete text</button></div>`;
+  }else h+=`<div class="empty">No text. Tap “+ Text”.</div>`;
+  h+=sec("Colours &amp; finish")+`<div class="lab" style="margin-top:0">Main colour</div><div class="sw" id="swMain"></div><div class="lab">Accent colour</div><div class="sw" id="swAccent"></div>`+rng("Shadow","shadow",0,80,cur.shadow||0,1,true)+rng("Texture","texture",0,100,cur.texture||0,1,true)+`<div class="hint" style="margin-top:-4px">Texture gives a printed, worn retro look.</div>`;
   const isMine=custom.some(d=>d.id===curSourceId);
-  h+=sec("Opslaan")+`<input class="inp" id="sName" value="${esc(cur.name)}" placeholder="Naam">
-    <select class="inp" id="sCat" style="margin-top:8px">${allCats().map(c=>`<option ${c===cur.cat?"selected":""}>${esc(c)}</option>`).join("")}<option value="__new">+ Nieuwe categorie…</option></select>
-    <input class="inp hidden" id="sCatNew" placeholder="Naam nieuwe categorie" style="margin-top:8px">
-    <div class="row" style="margin-top:10px"><button class="btn pri" id="sSave">${isMine?"Opslaan":"Opslaan bij mijn ontwerpen"}</button>${isMine?`<button class="btn" id="sCopy">Als kopie</button><button class="btn warn" id="sDel">Verwijder</button>`:""}</div>
-    <div class="hint" style="margin-top:8px">Je ontwerpen worden bewaard op dit toestel.</div>`;
+  h+=sec("Save")+`<input class="inp" id="sName" value="${esc(cur.name)}" placeholder="Name">
+    <select class="inp" id="sCat" style="margin-top:8px">${allCats().map(c=>`<option ${c===cur.cat?"selected":""}>${esc(c)}</option>`).join("")}<option value="__new">+ New category…</option></select>
+    <input class="inp hidden" id="sCatNew" placeholder="New category name" style="margin-top:8px">
+    <div class="row" style="margin-top:10px"><button class="btn pri" id="sSave">${isMine?"Save":"Save to my designs"}</button>${isMine?`<button class="btn" id="sCopy">Save as copy</button><button class="btn warn" id="sDel">Delete</button>`:""}</div>
+    <div class="hint" style="margin-top:8px">Your designs are stored on this device.</div>`;
   const keep=$("sheetBody").scrollTop,fr=$("fontRow")?$("fontRow").scrollLeft:0;
   body.innerHTML=h;$("sheetBody").scrollTop=keep;if($("fontRow"))$("fontRow").scrollLeft=fr;
 
@@ -823,7 +825,7 @@ function renderTool(light){
       if(a==="up"&&sel<arr.length-1){[arr[sel],arr[sel+1]]=[arr[sel+1],arr[sel]];sel++}
       if(a==="down"&&sel>0){[arr[sel],arr[sel-1]]=[arr[sel-1],arr[sel]];sel--}
       if(a==="dup"){arr.splice(sel+1,0,Object.assign(clone(Ly),{x:Ly.kind==="shape"?Math.min(650,Ly.x+Ly.size*.8):Ly.x,y:Ly.kind==="shape"?Ly.y:Math.min(450,Ly.y+Ly.size*.9)}));sel++}
-      if(a==="del"){arr.splice(sel,1);sel=Math.max(0,sel-1);toast("Verwijderd · ↶ om terug te zetten")}
+      if(a==="del"){arr.splice(sel,1);sel=Math.max(0,sel-1);toast("Deleted · tap ↶ to undo")}
       change(()=>{},{chips:true,tool:true})});
   }
   if(Ly&&Ly.kind==="shape"){
@@ -850,8 +852,8 @@ function renderTool(light){
   $("sName").oninput=e=>cur.name=e.target.value;
   $("sCat").onchange=()=>$("sCatNew").classList.toggle("hidden",$("sCat").value!=="__new");
   $("sSave").onclick=()=>doSave(false);if($("sCopy"))$("sCopy").onclick=()=>doSave(true);
-  if($("sDel"))$("sDel").onclick=()=>{const b=$("sDel");if(!b.dataset.armed){b.dataset.armed="1";b.textContent="Zeker?";return}
-    custom=custom.filter(d=>d.id!==curSourceId);saveLocal();loadDesign(custom[0]||SEEDS[0]);renderLibrary();renderLayerChips();renderTool();toast("Verwijderd")};
+  if($("sDel"))$("sDel").onclick=()=>{const b=$("sDel");if(!b.dataset.armed){b.dataset.armed="1";b.textContent="Sure?";return}
+    custom=custom.filter(d=>d.id!==curSourceId);saveLocal();loadDesign(custom[0]||SEEDS[0]);renderLibrary();renderLayerChips();renderTool();toast("Deleted")};
 }
 let _lcd;function renderLayerChipsDebounced(){clearTimeout(_lcd);_lcd=setTimeout(renderLayerChips,250)}
 function doSave(asCopy){
@@ -859,12 +861,12 @@ function doSave(asCopy){
   const isMine=custom.some(d=>d.id===curSourceId);const d=clone(cur);d.cat=cat;d.seed=false;d.t=Date.now();d.name=d.name||"Zonder naam";
   if(!isMine||asCopy){d.id=uid();if(asCopy)d.name+=" (kopie)";custom.unshift(d)}else{d.id=curSourceId;custom=custom.map(x=>x.id===d.id?d:x)}
   if(isCustomCat(cat)&&!customCats.includes(cat))customCats.unshift(cat);
-  cur=clone(d);curSourceId=d.id;saveLocal();activeCat=cat;renderLibrary();renderTool();toast("Opgeslagen in "+cat);
+  cur=clone(d);curSourceId=d.id;saveLocal();activeCat=cat;renderLibrary();renderTool();toast("Saved to "+cat);
 }
 
 /* ---------------- Opslag (dit toestel) ---------------- */
 const LS="typoStudio.v1";
-function saveLocal(){try{localStorage.setItem(LS,JSON.stringify({custom,customCats}))}catch(e){toast("Opslaan lukte niet")}}
+function saveLocal(){try{localStorage.setItem(LS,JSON.stringify({custom,customCats}))}catch(e){toast("Could not save")}}
 function loadLocal(){try{const v=JSON.parse(localStorage.getItem(LS)||"null");if(v){custom=v.custom||[];customCats=v.customCats||[]}}catch(e){}}
 
 /* ---------------- PNG bewaren ---------------- */
@@ -881,7 +883,7 @@ function pngFile(ex){return new File([ex.blob],fileName(),{type:"image/png"})}
 function canShare(ex){try{return !!(navigator.canShare&&navigator.canShare({files:[pngFile(ex)]}))}catch(e){return false}}
 async function shareOrDownload(ex){
   if(canShare(ex)){try{await navigator.share({files:[pngFile(ex)]});return true}catch(e){if(e&&e.name==="AbortError")return true;return false}}
-  const a=document.createElement("a");a.href=ex.url;a.download=fileName();document.body.appendChild(a);a.click();a.remove();toast("PNG gedownload ✓");return true;
+  const a=document.createElement("a");a.href=ex.url;a.download=fileName();document.body.appendChild(a);a.click();a.remove();toast("PNG downloaded ✓");return true;
 }
 $("saveImgBtn").onclick=async()=>{
   const key=JSON.stringify(cur);
@@ -897,8 +899,20 @@ $("modalClose").onclick=()=>$("modal").classList.add("hidden");
 $("modal").addEventListener("click",e=>{if(e.target.id==="modal")$("modal").classList.add("hidden")});
 
 /* ---------------- Gratis generator (zonder AI) ---------------- */
-const PHRASES_EN=["Morning Coffee","Coffee Break","But first, coffee","Slow Mornings","Coffee Lovers club","Rise & Grind","Sip Happens","Coffee O'Clock","Espresso Yourself","Brew Day","Pour Over","Latte Art","Home Barista","Fresh Beans","Cozy Vibes","Coffee & Chill","Weekend Brew","Sunday Mornings","Hello Weekend","Monday Fuel","Caffeine Queen","Bean There","Daily Grind","Good Vibes & Coffee","Coffee Date","Iced Coffee Weather","Autumn Brew","Pumpkin Spice","Cozy Christmas","Hot Cocoa Season","Winter Warmer","Spring Sips","Brunch Club","Coffee Time","Refill please","Coffee is my love language","Life happens, coffee helps","Stay Grounded","Mug Life","Flat White","Cappuccino Hour","Matcha Mood","Chemex Mornings","V60 Club","Extra Shot","Oat Latte","Slow Sundays","Sip & Relax","Rainy Day Brew","Barista Mode"];
-const PHRASES_NL=["Koffietijd","Eerst koffie","Trage ochtenden","Koffiepauze","Goeiemorgen","Thuisbarista","Zondagskoffie","Gezellig","Nog een tasje?","Verse bonen","Koffie & taart","Koffieklets","Weekendkoffie","Even pauze","Koffie met een koekje","Warme chocomelk","Herfstkoffie","Kerstkoffie","Ochtendritueel","Bakje troost","Koffie op bed","Dag van de koffie","Liefde in een kopje","Maandag? Koffie!","Slow living"];
+const PHRASES={
+  "Coffee":["Coffee First","But first, coffee","Espresso Yourself","Coffee Date","Stay Grounded","Daily Grind","Extra Shot","Oat Latte","Coffee O'Clock","Mug Life","Bean There","Sip Happens"],
+  "Breakfast":["Brunch Club","Rise & Shine","Pancake Party","Breakfast in Bed","Croissant Club","Eggs Benedict","Sunny Side Up","Toast & Jam","Morning Glory","Bagels & Bliss"],
+  "Weekend":["Hello Weekend","Sunday Club","Saturday Mood","Lazy Sunday","Weekend Mode","Out of Office","Do Not Disturb","Sunday Funday","Friday Feeling","Weekend Getaway"],
+  "Holidays":["Merry & Bright","Let It Snow","Happy Holidays","Hello Summer","Bon Voyage","Beach Please","Holiday Mode","Trick or Treat","Jingle All the Way","Passport Ready"],
+  "Cosy":["Cosy Season","Sweater Weather","Hygge Days","Books & Blankets","Candle Season","Stay Home","Rainy Days","Soup Season","Slow Living","Warm & Fuzzy"],
+  "Girly":["The Girls Club","Pretty in Pink","Self Care Sunday","Girls Night","That Girl","XOXO","Hot Girl Walk","Babe","Glow Up","Pink Era"],
+  "Movie Night":["Movie Night","Popcorn & Chill","Now Showing","Lights Camera Action","Binge Mode","Couch Potato","Double Feature","Rom-Com Night","Snack Attack","The End"],
+  "Monthly":["Hello January","February","Hello March","April Showers","May Days","June","Late July","Hello August","September","October","November","December"],
+  "Camera":["Shot on Film","Golden Hour","Film Is Not Dead","Say Cheese","Through My Lens","Photo Dump","Point & Shoot","35mm","Snapshots","Behind the Scenes"],
+  "Trending":["Holy Cow!","Main Character Energy","Soft Life","It's Giving","Romanticize Your Life","Mood","Not Today","Core Memory","Plot Twist","Delulu Is the Solulu"],
+  "2026":["Hello 2026","Cheers to 2026","2026 Dump","New Year New Me","Best of 2026","Class of 2026","2026 Era","Goals 2026","Year in Review","Made in 2026"]
+};
+const PHRASES_EN=Object.values(PHRASES).flat();
 const POOLS={
   script:["Yellowtail","Great Vibes","Pinyon Script","Allura","Sacramento","Satisfy","Playball","Pacifico","Kaushan Script","Lobster","Dancing Script"],
   hand:["Homemade Apple","Caveat","Nanum Pen Script","Reenie Beanie","Gochi Hand","Shadows Into Light"],
@@ -910,7 +924,7 @@ const POOLS={
 };
 // gemiddelde letterbreedte (in em) per lettertype, voor de automatische grootte
 const EMW={script:.40,hand:.40,bold:.66,serif:.52,sans:.60,"Bebas Neue":.40,"Anton":.46,"Rubik Mono One":.95,"Bungee":.78,"Sacramento":.32,"Allura":.34,"Pinyon Script":.42,"Great Vibes":.36,"Reenie Beanie":.30,"Nanum Pen Script":.30,"Homemade Apple":.55,groovy:.62,signature:.36,"Modak":.62,"Bagel Fat One":.64,"Cherry Bomb One":.6,"Grandstander":.58,"Bodoni Moda":.6,"Gloock":.55,"Young Serif":.6,"Mrs Saint Delafield":.32,"Sansita Swashed":.52,"Fraunces":.58};
-const GEN_COLORS=[{n:"Wit + koraal",main:"#FFFFFF",accent:"#F26B50"},{n:"Crème + karamel",main:"#F6E9D7",accent:"#C98A4B"},{n:"Wit + ijsblauw",main:"#FFFFFF",accent:"#7FC8E8"},{n:"Wit + salie",main:"#FFFFFF",accent:"#A8B89A"},{n:"Volledig wit",main:"#FFFFFF",accent:"#FFFFFF"},{n:"Espresso + koraal",main:"#3B2416",accent:"#F26B50"}];
+const GEN_COLORS=[{n:"White + coral",main:"#FFFFFF",accent:"#F26B50"},{n:"Cream + caramel",main:"#F6E9D7",accent:"#C98A4B"},{n:"White + ice blue",main:"#FFFFFF",accent:"#7FC8E8"},{n:"White + sage",main:"#FFFFFF",accent:"#A8B89A"},{n:"All white",main:"#FFFFFF",accent:"#FFFFFF"},{n:"Espresso + coral",main:"#3B2416",accent:"#F26B50"}];
 let genStyle="mix", genColor=0;
 const pick=a=>a[Math.floor(Math.random()*a.length)];
 function poolOf(font){for(const k in POOLS)if(POOLS[k].includes(font))return k;return "sans"}
@@ -1007,14 +1021,14 @@ let aiN=4;
   const pickOne=(id,attr,fn)=>$(id).addEventListener("click",e=>{const b=e.target.closest(`[${attr}]`);if(!b)return;fn(b.getAttribute(attr));$(id).querySelectorAll("button").forEach(x=>x.classList.toggle("on",x===b))});
   pickOne("genColors","data-c",v=>genColor=+v);pickOne("genStyle","data-s",v=>genStyle=v);pickOne("genCount","data-n",v=>aiN=+v);
   const inspire=list=>{$("genText").value=[...list].sort(()=>Math.random()-.5).slice(0,3).join("\n")};
-  $("genInspire").onclick=()=>inspire(PHRASES_EN);$("genInspireNL").onclick=()=>inspire(PHRASES_NL);
+  $("genInspire").onclick=()=>{const c=$("genCat").value.trim();inspire(PHRASES[c]||PHRASES_EN)};
   $("genGo").onclick=()=>{
     const lines=$("genText").value.split("\n").map(x=>x.trim()).filter(Boolean).slice(0,8),err=$("genErr");err.textContent="";
-    if(!lines.length){err.textContent="Typ eerst een tekst, of tik op 💡 Inspiratie.";return}
+    if(!lines.length){err.textContent="Type some text first, or tap 💡 Inspiration.";return}
     $("genText").blur();
-    const cat=$("genCat").value.trim()||"Nieuwe ontwerpen";const made=lines.flatMap(p=>generateFor(p,aiN,cat));
+    const cat=$("genCat").value.trim()||"New designs";const made=lines.flatMap(p=>generateFor(p,aiN,cat));
     custom=[...made,...custom];if(isCustomCat(cat)&&!customCats.includes(cat))customCats.unshift(cat);saveLocal();
-    loadDesign(made[0]);activeCat=cat;renderLibrary();showTab("lib");toast(`${made.length} ontwerpen in ${cat}`);
+    loadDesign(made[0]);activeCat=cat;renderLibrary();showTab("lib");toast(`${made.length} designs in ${cat}`);
   };
 })();
 
