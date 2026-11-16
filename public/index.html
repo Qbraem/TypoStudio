@@ -252,6 +252,10 @@ input[type=range]::-moz-range-thumb{width:28px;height:28px;border-radius:50%;bac
 .proTag svg{width:10px;height:10px}
 .favBtn{position:absolute;bottom:5px;right:5px;width:30px;height:30px;border-radius:15px;display:flex;align-items:center;justify-content:center;color:rgba(255,255,255,.85);background:rgba(20,14,10,.35);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px)}
 .favBtn svg{width:16px;height:16px}.favBtn.on{color:#FF6B7F}
+.freeSw{gap:8px;padding:0 12px 0 8px}
+.freeSw .sw{width:34px;height:20px;border-radius:10px;background:#4a3a2e;position:relative;transition:background .2s;display:inline-block;flex:none}
+.freeSw .sw i{position:absolute;top:2px;left:2px;width:16px;height:16px;border-radius:8px;background:#fff;transition:left .2s}
+.freeSw.on{background:var(--panel2);color:var(--text);border-color:#6FCF97}.freeSw.on .sw{background:#4CB782}.freeSw.on .sw i{left:16px}
 .favChip{color:#FF6B7F;gap:5px;padding:0 13px}.favChip svg{width:17px;height:17px}.favChip span{font-size:13px;color:var(--text)}
 .favChip.on{background:#FF6B7F;border-color:#FF6B7F;color:#fff}.favChip.on span{color:#fff}
 .favEmpty{display:flex;flex-direction:column;align-items:center;gap:6px;padding:26px 10px}.favEmpty svg{width:30px;height:30px;color:#FF6B7F}.favEmpty b{color:var(--text);font-size:16px}
@@ -1050,6 +1054,7 @@ $("tabs").addEventListener("click",e=>{const b=e.target.closest("button");if(b)s
 let thumbJob=0;
 function loadDesign(d){const onPhoto=document.querySelector("#bgRow .bgBtn.on[data-photo]");if(onPhoto){if(d.cat==="Holidays"&&onPhoto.dataset.photo!=="xmas")setPhoto("xmas");else if(d.cat!=="Holidays"&&onPhoto.dataset.photo==="xmas")setPhoto("golden")}cur=clone(d);curSourceId=d.id;sel=0;hist=[];updUndo();schedulePreview()}
 /* ---------------- Favourites & suggestions ---------------- */
+let freeOnly=false;try{freeOnly=localStorage.getItem("typoStudio.freeOnly")==="1"}catch(e){}
 let favs=new Set();try{favs=new Set(JSON.parse(localStorage.getItem("typoStudio.favs")||"[]"))}catch(e){}
 function heartSvg(fill){return `<svg viewBox="0 0 24 24" fill="${fill?"currentColor":"none"}" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M12 20.5s-7.5-4.6-9.2-9.4C1.6 7.6 3.9 4.5 7.2 4.5c2 0 3.6 1.1 4.8 2.8 1.2-1.7 2.8-2.8 4.8-2.8 3.3 0 5.6 3.1 4.4 6.6-1.7 4.8-9.2 9.4-9.2 9.4z"/></svg>`}
 function toggleFav(id){if(favs.has(id)){favs.delete(id);toast("Removed from favourites")}else{favs.add(id);toast("Added to favourites ♥")}try{localStorage.setItem("typoStudio.favs",JSON.stringify([...favs]))}catch(e){}}
@@ -1068,6 +1073,8 @@ function renderLibrary(){
   if(!$("cats"))return;
   const cats=$("cats");cats.innerHTML="";
   const mk=(label,val)=>{const b=document.createElement("button");b.className="chip"+(activeCat===val?" on":"")+(val==="Holidays"?" xmas":val==="Thanksgiving"?" fall":"");const ic=val==="Holidays"?"snowflake":val==="Thanksgiving"?"turkey":null;if(ic){b.innerHTML=`<img class="catIco" src="${catIcon(ic)}" alt="">`;b.appendChild(document.createTextNode(label))}else b.textContent=label;b.onclick=()=>{activeCat=val;renderLibrary()};cats.appendChild(b)};
+  const fr=document.createElement("button");fr.className="chip freeSw"+(freeOnly?" on":"");fr.setAttribute("role","switch");fr.setAttribute("aria-checked",freeOnly);
+  fr.innerHTML='<span class="sw"><i></i></span>Free';fr.onclick=()=>{freeOnly=!freeOnly;try{localStorage.setItem("typoStudio.freeOnly",freeOnly?"1":"0")}catch(e){}renderLibrary()};cats.appendChild(fr);
   mk("Suggestions","Suggestions");
   const fv=document.createElement("button");fv.className="chip favChip"+(activeCat==="♥"?" on":"");fv.setAttribute("aria-label","Favourites");fv.innerHTML=heartSvg(true)+(favs.size?`<span>${favs.size}</span>`:"");fv.onclick=()=>{activeCat="♥";renderLibrary()};cats.appendChild(fv);
   mk("All","All");if(custom.length)mk("★ My designs","★");
@@ -1075,13 +1082,13 @@ function renderLibrary(){
   const tgSeason=m===9||(m===10&&now.getDate()<=tgDay);
   let cl=allCats();if(!tgSeason)cl=[...cl.filter(c=>c!=="Thanksgiving"),"Thanksgiving"];
   cl.forEach(c=>mk(c+(isCustomCat(c)?" ★":""),c));
-  const plus=document.createElement("button");plus.className="chip";plus.textContent="+ Category";
-  plus.onclick=()=>{$("newCatRow").classList.toggle("hidden");$("newCatName").focus()};cats.appendChild(plus);
+
   let list=allDesigns();if(activeCat==="★")list=custom;else if(activeCat==="Suggestions")list=suggestions();else if(activeCat==="♥")list=list.filter(d=>favs.has(d.id));else if(activeCat!=="All")list=list.filter(d=>d.cat===activeCat);
+  if(freeOnly)list=list.filter(d=>!d.pro);
   const grid=$("grid");grid.innerHTML="";
   $("catActions").classList.toggle("hidden",!(!["All","★","Suggestions","♥"].includes(activeCat)&&isCustomCat(activeCat)));
   $("catDel").textContent="Delete category";$("catDel").dataset.armed="";
-  if(!list.length){grid.innerHTML=activeCat==="♥"?`<div class="empty favEmpty">${heartSvg(false)}<b>No favourites yet</b>Tap the heart on any design to save it here.</div>`:`<div class="empty">Nothing here yet. Edit a design and save it to this category.</div>`;return}
+  if(!list.length){grid.innerHTML=activeCat==="♥"?`<div class="empty favEmpty">${heartSvg(false)}<b>No favourites yet</b>Tap the heart on any design to save it here.</div>`:(freeOnly?`<div class="empty">No free designs here. Turn off <b>Free</b> to see all designs.</div>`:`<div class="empty">Nothing here yet. Edit a design and save it to this category.</div>`);return}
   const job=++thumbJob;let n=0;
   const cards=list.map(d=>{
     const b=document.createElement("button");const light=lum(d.colors.main)<.45;
