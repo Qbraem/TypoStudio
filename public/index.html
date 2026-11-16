@@ -240,6 +240,8 @@ input[type=range]::-moz-range-thumb{width:28px;height:28px;border-radius:50%;bac
 .htTip b{display:block;color:#F3D58A;font-size:12px;letter-spacing:1px;text-transform:uppercase;margin-bottom:3px}.htTip em{font-style:normal;color:var(--text);font-weight:600}
 .htFoot{padding:18px calc(22px + var(--sar)) calc(24px + var(--sab)) calc(22px + var(--sal))}
 .htLink{background:none;border:0;color:var(--accent2);font-weight:700;font-size:13px;padding:6px 0;text-decoration:underline}
+.paraInp{min-height:130px;line-height:1.45;font-size:16px}
+.alignChips .chip{min-width:52px;justify-content:center}
 /* ---------- Pro ---------- */
 .proPill{display:inline-flex;align-items:center;gap:5px;height:34px;padding:0 12px;border:0;border-radius:17px;background:linear-gradient(135deg,#F6DE9C,#C9963A);color:#3a2408;font-weight:800;font-size:12px;letter-spacing:.8px;box-shadow:0 2px 10px rgba(201,150,58,.35)}
 .proPill svg{width:15px;height:15px}
@@ -526,6 +528,7 @@ FONTS.forEach(f=>{
 /* ---------------- Seed designs ---------------- */
 const W="#FFFFFF", CORAL="#F26B50";
 function L(text,font,size,x,y,o={}){return Object.assign({text,font,weight:FONT_BY[font]?FONT_BY[font].w[FONT_BY[font].w.length-1]:400,italic:false,size,x,y,rotate:0,spacing:0,curve:0,upper:false,color:"main",style:"fill"},o)}
+function P(text,font,size,x,y,o={}){return Object.assign({kind:"para",text,font,weight:FONT_BY[font]?FONT_BY[font].w[FONT_BY[font].w.length-1]:400,italic:false,size,x,y,width:760,lh:1.35,align:"center",rotate:0,spacing:0,upper:false,color:"main",style:"fill"},o)}
 function O(shape,size,x,y,o={}){return Object.assign({kind:"shape",shape,text:"",size,x,y,rotate:0,color:"main",style:"fill"},o)}
 function D(id,cat,name,layers,o={}){return Object.assign({id,cat,name,layers,colors:{main:W,accent:CORAL},shadow:0,seed:true},o)}
 const C=(main,accent)=>({colors:{main,accent}});
@@ -605,6 +608,21 @@ const SEEDS = [
   D("xm13","Holidays","Let's Get Lit",[O("tree",140,0,-260,{color:"accent"}),L("let's get","Caveat",150,-60,-140,{rotate:-6}),L("LIT","Bowlby One",300,0,90,{spacing:10,color:"accent"})],C(W,"#E9C46A")),
   D("xm14","Holidays","Merry Everything",[L("merry","Lobster",240,0,-140,{rotate:-5}),L("EVERYTHING","Anton",170,0,90,{spacing:8,color:"accent"}),O("snowflake",80,-360,-200,{color:"accent"}),O("snowflake",60,370,200,{color:"accent"})],C(W,"#BFE3F2")),
 
+
+
+  // ---------- Quotes & Notes (paragraphs) ----------
+  D("qt1","Quotes & Notes","Quote – Slow Down",[L("“","Gloock",300,0,-300,{color:"accent"}),P("Some days are not meant for doing more, but for noticing more. Slow down, the good things will wait for you.","Cormorant Garamond",68,0,-20,{italic:true,weight:600,width:800,lh:1.3}),L("— NOTE TO SELF","DM Sans",36,0,210,{spacing:40,weight:700,color:"accent"})],C(W,"#E9B77C")),
+  D("qt2","Quotes & Notes","Did You Know?",[L("Did you know?","Fraunces",120,0,-230,{weight:900,italic:true,color:"accent"}),P("The first webcam was pointed at a coffee pot, so people could check if it was full before walking down the hall. Priorities.","DM Sans",50,0,30,{weight:400,width:780,lh:1.5,align:"left"})],C(W,"#F2B33D")),
+  D("qt3","Quotes & Notes","Note to Self",[L("note to self","Caveat",130,-150,-300,{rotate:-4,color:"accent"}),P("You don't have to have it all figured out.\nDrink some water.\nCall your mum.\nGo outside.","Caveat",72,0,40,{width:760,lh:1.25,align:"left",weight:700})],C(W,"#F28BA0")),
+  D("qt4","Quotes & Notes","The Story Behind",[L("THE STORY BEHIND","DM Sans",40,0,-250,{spacing:50,weight:700,color:"accent"}),L("this photo","Pinyon Script",130,0,-150,{rotate:-4}),P("Found this little corner on the last evening of our trip. No plans, no rush, just warm light and the sound of the sea. I want to remember exactly how this felt.","Playfair Display",44,0,90,{width:760,lh:1.6,align:"justify",weight:400})],C(W,"#E9B77C")),
+  D("qt5","Quotes & Notes","Manifesto",[P("MAKE THE COFFEE. OPEN THE WINDOW. SAY YES TO THE SMALL THINGS. KEEP GOING.","Anton",108,0,-20,{width:820,lh:1.02,align:"center",spacing:2}),L("— our sunday rules","Caveat",70,180,280,{rotate:-4,color:"accent"})],C(W,"#F26B50")),
+  D("qt6","Quotes & Notes","Recipe Card",[L("RECIPE","DM Sans",42,0,-300,{spacing:60,weight:700,color:"accent"}),L("Iced Oat Latte","Fraunces",110,0,-200,{weight:900,italic:true}),P("1 double shot of espresso\n200 ml oat milk\na handful of ice\n1 tsp maple syrup\n\nShake the espresso with the syrup, pour over ice, top with milk. Done.","DM Sans",42,0,150,{width:620,lh:1.5,align:"left",weight:400})],C(W,"#E9B77C")),
+  D("qt7","Quotes & Notes","Grateful For",[L("today I'm","Yellowtail",110,-120,-260,{rotate:-6,color:"accent"}),L("GRATEFUL FOR","Archivo Black",80,0,-160,{spacing:14}),P("1. slow mornings\n2. good coffee\n3. people who feel like home\n4. this view","Gloock",58,0,130,{width:640,lh:1.5,align:"left"})],C(W,"#E9C46A")),
+  D("qt8","Quotes & Notes","Postcard",[L("Greetings from","Mrs Saint Delafield",120,-60,-260,{rotate:-6,color:"accent"}),L("LISBON","Bodoni Moda",150,0,-130,{spacing:20}),P("Dear you, the trams are yellow, the custard tarts are warm and the light here is unreal. Wish you were here. x","Cormorant Garamond",56,0,80,{italic:true,weight:600,width:740,lh:1.4})],C(W,"#F2B33D")),
+  D("qt9","Quotes & Notes","Weekly Recap",[L("weekly","Shrikhand",120,-130,-320,{rotate:-6,color:"accent"}),L("RECAP","Bebas Neue",170,60,-190,{spacing:20}),P("Mon — new beginnings\nWed — finally sun\nFri — pizza night\nSun — doing absolutely nothing","DM Sans",48,0,110,{width:640,lh:1.6,align:"left",weight:700})],C(W,"#F26B50")),
+  D("qt10","Quotes & Notes","Big Words",[P("be the energy you want to attract","Fraunces",150,0,-20,{weight:900,italic:true,width:860,lh:1.0}),O("sparkle",80,370,-260,{color:"accent"})],{...C(W,"#E9C46A"),texture:10}),
+  D("qt11","Quotes & Notes","My Order",[L("MY USUAL","DM Sans",44,0,-250,{spacing:60,weight:700,color:"accent"}),P("one flat white, oat milk, extra hot, and a cinnamon bun if you're feeling generous","Gloock",72,0,10,{width:760,lh:1.25})],C(W,"#E9B77C")),
+  D("qt12","Quotes & Notes","Reminder",[L("gentle reminder","Satisfy",120,0,-220,{rotate:-4,color:"accent"}),P("rest is productive too","Bodoni Moda",100,0,40,{italic:true,width:700,lh:1.1})],C(W,"#F28BA0")),
 
   // ---------- Thanksgiving ----------
   D("tg1","Thanksgiving","Happy Thanksgiving",[O("leaf",110,330,-220,{color:"accent",rotate:20}),L("Happy","Pinyon Script",270,0,-90,{rotate:-6}),L("THANKSGIVING","Bodoni Moda",95,0,130,{spacing:18,color:"accent"})],C(W,"#E8913A")),
@@ -709,9 +727,9 @@ const SEEDS = [
   D("y6","2026","Class of 2026",T.classicClub("Class","of","2026","Bodoni Moda","Great Vibes"),C(W,W)),
 ];
 // per design: [scale, centreX, centreY], measured with the real fonts so every design is centred and fills the frame evenly
-const SEED_FIX={"cf1":[1.007,-1,10],"cf2":[1.135,0,6],"cf3":[1.2,1,-51],"cf4":[1.082,2,-44],"cf5":[1.16,-1,-41],"cf6":[1.141,2,-29],"cf7":[0.95,2,-34],"cf8":[1.2,18,4],"cf9":[1.12,-1,-75],"cf10":[1.2,-8,26],"bf1":[0.917,4,58],"bf2":[1.154,4,-92],"bf3":[0.977,-32,17],"bf4":[1.0,10,-35],"bf5":[0.754,1,6],"bf6":[1.151,-5,-32],"bf7":[1.091,29,-22],"wk1":[0.803,39,-43],"wk2":[1.132,5,27],"wk3":[0.952,-1,-49],"wk4":[1.053,49,9],"wk5":[0.961,-3,-14],"wk6":[1.01,10,-15],"wk7":[1.061,2,-78],"hd1":[1.05,24,-27],"hd2":[1.16,-8,-52],"hd3":[1.019,-2,-30],"hd4":[0.87,-1,-49],"hd5":[1.2,-2,-24],"hd6":[0.961,1,-12],"hd7":[1.193,-10,-33],"xm1":[0.907,-1,-53],"xm2":[1.01,0,-33],"xm3":[0.873,29,-8],"xm4":[1.007,-1,-45],"xm5":[1.183,-17,-25],"xm6":[0.903,1,-122],"xm7":[1.2,1,-83],"xm8":[1.027,-31,-2],"xm9":[0.832,3,-64],"xm10":[0.758,-2,-10],"xm11":[0.757,-1,-46],"xm12":[0.788,27,-40],"xm13":[1.2,9,-85],"xm14":[0.995,0,-6],"tg1":[0.87,-3,-60],"tg2":[0.944,1,-48],"tg3":[0.775,2,-33],"tg4":[0.759,-1,-24],"tg5":[0.828,1,-100],"tg6":[1.034,20,-32],"tg7":[1.148,-8,-31],"tg8":[0.835,1,-65],"tg9":[1.154,-6,-30],"tg10":[0.927,5,-20],"tg11":[1.014,0,-10],"tg12":[1.058,1,-60],"tg13":[1.2,55,-76],"tg14":[0.966,-59,24],"tv1":[0.948,27,-57],"tv2":[0.812,1,-41],"tv3":[1.017,11,-33],"tv4":[0.892,-1,-113],"tv5":[1.2,1,-53],"tv6":[1.066,-2,22],"tv7":[1.132,21,-8],"tv8":[1.061,96,23],"tv9":[0.897,0,-88],"tv10":[0.944,25,28],"tv11":[0.791,-3,-53],"tv12":[0.946,-2,-64],"tv13":[1.0,0,-72],"tv15":[1.144,19,-89],"tv16":[0.972,0,-16],"tv17":[0.72,-3,-42],"tv18":[1.117,0,-43],"tv19":[0.881,-9,-84],"tv14":[1.2,54,-51],"cs1":[1.2,16,-22],"cs2":[0.597,0,20],"cs3":[1.069,-5,12],"cs4":[1.2,11,-56],"cs5":[1.2,-24,-45],"cs6":[1.2,0,-14],"gl1":[1.2,-33,-61],"gl2":[1.1,-3,-69],"gl3":[1.197,3,-43],"gl4":[0.94,5,-39],"gl5":[1.094,-4,-10],"gl6":[1.2,1,8],"gl7":[1.129,2,-83],"mv1":[1.102,-27,-7],"mv2":[0.616,-2,20],"mv3":[1.2,32,-41],"mv4":[1.2,5,-22],"mv5":[0.838,1,-85],"mv6":[1.12,27,34],"mo1":[1.047,-5,-16],"mo2":[0.892,3,-25],"mo3":[1.151,31,-11],"mo4":[1.091,-1,-33],"mo5":[1.108,-7,-76],"mo6":[1.085,35,24],"mo7":[1.2,-7,38],"mo8":[0.966,-3,-6],"mo9":[0.795,0,-106],"mo10":[1.094,0,19],"mo11":[0.913,0,9],"mo12":[0.679,-1,22],"cm1":[1.2,-45,-86],"cm2":[1.2,2,-38],"cm3":[1.2,9,-21],"cm4":[1.047,35,39],"cm5":[0.852,-1,-22],"cm6":[1.082,20,-8],"tr1":[1.167,0,-33],"tr2":[1.045,6,-84],"tr3":[1.2,-49,-37],"tr4":[1.043,5,-52],"tr5":[0.873,-3,-56],"tr6":[0.87,-1,-132],"tr7":[1.012,19,23],"y1":[1.176,33,-52],"y2":[1.173,-2,-34],"y3":[0.817,34,15],"y4":[0.917,2,-57],"y5":[1.053,-1,-53],"y6":[1.141,-2,-42]};
-SEEDS.forEach(d=>{const f=SEED_FIX[d.id];if(!f)return;const [k,cx,cy]=f;d.layers.forEach(Ly=>{Ly.size=Math.round(Ly.size*k);Ly.x=Math.round((Ly.x-cx)*k);Ly.y=Math.round((Ly.y-cy)*k);if(Ly.cutout)Ly.cutout=Math.round(Ly.cutout*k*10)/10})});
-const NEW_CATS=["Thanksgiving","Holidays","Coffee","Breakfast","Weekend","Travel","Cosy","Girly","Movie Night","Monthly","Camera","Trending","2026"];
+const SEED_FIX={"cf1":[1.007,-1,10],"cf2":[1.135,0,6],"cf3":[1.2,1,-51],"cf4":[1.082,2,-44],"cf5":[1.16,-1,-41],"cf6":[1.141,2,-29],"cf7":[0.95,2,-34],"cf8":[1.2,18,4],"cf9":[1.12,-1,-75],"cf10":[1.2,-8,26],"bf1":[0.917,4,58],"bf2":[1.154,4,-92],"bf3":[0.977,-32,17],"bf4":[1.0,10,-35],"bf5":[0.754,1,6],"bf6":[1.151,-5,-32],"bf7":[1.091,29,-22],"wk1":[0.803,39,-43],"wk2":[1.132,5,27],"wk3":[0.952,-1,-49],"wk4":[1.053,49,9],"wk5":[0.961,-3,-14],"wk6":[1.01,10,-15],"wk7":[1.061,2,-78],"hd1":[1.05,24,-27],"hd2":[1.16,-8,-52],"hd3":[1.019,-2,-30],"hd4":[0.87,-1,-49],"hd5":[1.2,-2,-24],"hd6":[0.961,1,-12],"hd7":[1.193,-10,-33],"xm1":[0.907,-1,-53],"xm2":[1.01,0,-33],"xm3":[0.873,29,-8],"xm4":[1.007,-1,-45],"xm5":[1.183,-17,-25],"xm6":[0.903,1,-122],"xm7":[1.2,1,-83],"xm8":[1.027,-31,-2],"xm9":[0.832,3,-64],"xm10":[0.758,-2,-10],"xm11":[0.757,-1,-46],"xm12":[0.788,27,-40],"xm13":[1.2,9,-85],"xm14":[0.995,0,-6],"qt1":[1.015,1,-115],"qt2":[0.972,2,-65],"qt3":[1.111,-36,-66],"qt4":[1.102,-1,-15],"qt5":[1.053,5,-1],"qt6":[0.974,-2,31],"qt7":[1.042,-1,0],"qt8":[1.141,0,-72],"qt9":[0.994,-31,-58],"qt10":[1.066,12,-42],"qt11":[1.117,-4,-48],"qt12":[1.163,3,-84],"tg1":[0.87,-3,-60],"tg2":[0.944,1,-48],"tg3":[0.775,2,-33],"tg4":[0.759,-1,-24],"tg5":[0.828,1,-100],"tg6":[1.034,20,-32],"tg7":[1.148,-8,-31],"tg8":[0.835,1,-65],"tg9":[1.154,-6,-30],"tg10":[0.927,5,-20],"tg11":[1.014,0,-10],"tg12":[1.058,1,-60],"tg13":[1.2,55,-76],"tg14":[0.966,-59,24],"tv1":[0.948,27,-57],"tv2":[0.812,1,-41],"tv3":[1.017,11,-33],"tv4":[0.892,-1,-113],"tv5":[1.2,1,-53],"tv6":[1.066,-2,22],"tv7":[1.132,21,-8],"tv8":[1.061,96,23],"tv9":[0.897,0,-88],"tv10":[0.944,25,28],"tv11":[0.791,-3,-53],"tv12":[0.946,-2,-64],"tv13":[1.0,0,-72],"tv15":[1.144,19,-89],"tv16":[0.972,0,-16],"tv17":[0.72,-3,-42],"tv18":[1.117,0,-43],"tv19":[0.881,-9,-84],"tv14":[1.2,54,-51],"cs1":[1.2,16,-22],"cs2":[0.597,0,20],"cs3":[1.069,-5,12],"cs4":[1.2,11,-56],"cs5":[1.2,-24,-45],"cs6":[1.2,0,-14],"gl1":[1.2,-33,-61],"gl2":[1.1,-3,-69],"gl3":[1.197,3,-43],"gl4":[0.94,5,-39],"gl5":[1.094,-4,-10],"gl6":[1.2,1,8],"gl7":[1.129,2,-83],"mv1":[1.102,-27,-7],"mv2":[0.616,-2,20],"mv3":[1.2,32,-41],"mv4":[1.2,5,-22],"mv5":[0.838,1,-85],"mv6":[1.12,27,34],"mo1":[1.047,-5,-16],"mo2":[0.892,3,-25],"mo3":[1.151,31,-11],"mo4":[1.091,-1,-33],"mo5":[1.108,-7,-76],"mo6":[1.085,35,24],"mo7":[1.2,-7,38],"mo8":[0.966,-3,-6],"mo9":[0.795,0,-106],"mo10":[1.094,0,19],"mo11":[0.913,0,9],"mo12":[0.679,-1,22],"cm1":[1.2,-45,-86],"cm2":[1.2,2,-38],"cm3":[1.2,9,-21],"cm4":[1.047,35,39],"cm5":[0.852,-1,-22],"cm6":[1.082,20,-8],"tr1":[1.167,0,-33],"tr2":[1.045,6,-84],"tr3":[1.2,-49,-37],"tr4":[1.043,5,-52],"tr5":[0.873,-3,-56],"tr6":[0.87,-1,-132],"tr7":[1.012,19,23],"y1":[1.176,33,-52],"y2":[1.173,-2,-34],"y3":[0.817,34,15],"y4":[0.917,2,-57],"y5":[1.053,-1,-53],"y6":[1.141,-2,-42]};
+SEEDS.forEach(d=>{const f=SEED_FIX[d.id];if(!f)return;const [k,cx,cy]=f;d.layers.forEach(Ly=>{Ly.size=Math.round(Ly.size*k);Ly.x=Math.round((Ly.x-cx)*k);Ly.y=Math.round((Ly.y-cy)*k);if(Ly.cutout)Ly.cutout=Math.round(Ly.cutout*k*10)/10;if(Ly.width)Ly.width=Math.round(Ly.width*k)})});
+const NEW_CATS=["Thanksgiving","Holidays","Coffee","Breakfast","Weekend","Travel","Quotes & Notes","Cosy","Girly","Movie Night","Monthly","Camera","Trending","2026"];
 const SEED_CATS=[...new Set([...NEW_CATS,...SEEDS.map(d=>d.cat)])];
 
 
@@ -828,6 +846,20 @@ function drawLayers(ctx,d,s,Cx,Cy,opts={}){
     let l,r,t,b;
     if(isShape){
       shadowOn();drawShape(ctx,Ly.shape,px/2,Ly.style==="outline");l=r=t=b=px/2;
+    }else if(Ly.kind==="para"){
+      ctx.font=fontStr(Ly,px);ctx.textBaseline="alphabetic";ctx.textAlign="left";
+      const sp=(Ly.spacing||0)/100*px;try{ctx.letterSpacing=sp+"px"}catch(e){}
+      const W=(Ly.width||760)*s,lh=px*(Ly.lh||1.35),txt=Ly.upper?Ly.text.toUpperCase():Ly.text;
+      const lines=[];txt.split("\n").forEach(par=>{const words=par.split(/ +/).filter(Boolean);if(!words.length){lines.push({w:[],last:true});return}
+        let cur=[];words.forEach(w=>{const test=[...cur,w].join(" ");if(cur.length&&ctx.measureText(test).width>W){lines.push({w:cur,last:false});cur=[w]}else cur.push(w)});lines.push({w:cur,last:true})});
+      const asc=px*.72,H=(lines.length-1)*lh+px;let y=-H/2+asc;shadowOn();
+      const paint=(t2,x,yy)=>{if(Ly.style==="outline"){ctx.lineWidth=Math.max(1,px*.035);ctx.lineJoin="round";ctx.strokeText(t2,x,yy)}else ctx.fillText(t2,x,yy)};
+      lines.forEach(L2=>{const str=L2.w.join(" "),w=ctx.measureText(str).width;
+        if(Ly.align==="justify"&&!L2.last&&L2.w.length>1){const ws=L2.w.map(x=>ctx.measureText(x).width),gap=(W-ws.reduce((a,c)=>a+c,0))/(L2.w.length-1);let x=-W/2;L2.w.forEach((wd,k)=>{paint(wd,x,y);x+=ws[k]+gap})}
+        else{const x=Ly.align==="left"||Ly.align==="justify"?-W/2:Ly.align==="right"?W/2-w:-w/2;paint(str,x,y)}
+        y+=lh});
+      try{ctx.letterSpacing="0px"}catch(e){}
+      l=r=W/2;t=b=H/2;
     }else{
       ctx.font=fontStr(Ly,px);ctx.textBaseline="middle";ctx.textAlign="center";
       const txt=Ly.upper?Ly.text.toUpperCase():Ly.text;
@@ -1058,11 +1090,14 @@ function renderLayerChips(){
   const box=$("layerChips");box.innerHTML="";
   cur.layers.forEach((Ly,i)=>{const b=document.createElement("button");b.className="chip layerChip"+(i===sel?" on":"");
     if(Ly.kind==="shape"){b.textContent="✦ "+(ORNAMENTS[Ly.shape]||"Ornament");b.style.fontSize="15px"}
+    else if(Ly.kind==="para"){b.textContent="¶ "+(Ly.text.split(/\s+/).slice(0,3).join(" ")||"Paragraph");b.style.fontSize="15px"}
     else{b.style.fontFamily=`'${Ly.font}'`;b.style.fontWeight=Ly.weight;b.style.fontStyle=Ly.italic?"italic":"normal";
     b.textContent=(Ly.upper?Ly.text.toUpperCase():Ly.text)||"(empty)";}b.onclick=()=>{sel=i;renderLayerChips();renderTool();schedulePreview(true)};box.appendChild(b)});
+  const addP=document.createElement("button");addP.className="chip acc";addP.textContent="+ Paragraph";
+  addP.onclick=()=>{snap();cur.layers.push(P("Write your own text here. Tap to edit, then adjust width, line height and alignment.","DM Sans",52,0,200,{width:720,lh:1.45}));sel=cur.layers.length-1;renderLayerChips();renderTool();schedulePreview();$("sheetBody").scrollTop=0;setTimeout(()=>{const i=$("tText");if(i){i.focus();i.select()}},60)};
   const add=document.createElement("button");add.className="chip acc";add.textContent="+ Text";
   add.onclick=()=>{snap();const last=cur.layers[cur.layers.length-1];cur.layers.push(L("tekst","Caveat",140,0,last?Math.min(450,last.y+last.size*.9):0,{color:"accent"}));sel=cur.layers.length-1;tool="text";syncToolbar();renderLayerChips();renderTool();schedulePreview();setTimeout(()=>{const i=document.querySelector("#toolBody input.inp");if(i){i.focus();i.select()}},50)};
-  box.appendChild(add);
+  box.appendChild(add);box.appendChild(addP);
   const orn=document.createElement("button");orn.className="chip acc";orn.textContent="+ Ornament";
   orn.onclick=()=>{snap();cur.layers.push(O("sparkle",110,0,-280,{color:"accent"}));sel=cur.layers.length-1;renderLayerChips();renderTool();schedulePreview();$("sheetBody").scrollTop=0};
   box.appendChild(orn);
@@ -1078,6 +1113,8 @@ function bindRanges(root,target,after){
   });
 }
 const SWATCHES=["#FFFFFF","#F6E9D7","#E9B77C","#C98A4B","#F26B50","#D9473A","#7FC8E8","#A8B89A","#3B2416","#111111"];
+function alignSvg(a){const L={left:[[4,20],[4,16],[4,20],[4,13]],center:[[4,20],[6,18],[4,20],[8,16]],right:[[4,20],[8,20],[4,20],[11,20]],justify:[[4,20],[4,20],[4,20],[4,13]]}[a];
+  return `<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">${L.map((p,i)=>`<path d="M${p[0]} ${6+i*4}H${p[1]}"/>`).join("")}</svg>`}
 function sec(t){return `<div class="secH">${t}</div>`}
 function renderTool(light){
   const body=$("toolBody");const Ly=layer();
@@ -1098,11 +1135,13 @@ function renderTool(light){
     const groups=["All",...new Set(FONTS.map(x=>x.g))];
     const sample=((Ly.upper?Ly.text.toUpperCase():Ly.text)||"Aa").slice(0,14);
     const list=FONTS.filter(x=>fontGroup==="All"||x.g===fontGroup);
-    h+=sec("Text")+`<input class="inp" id="tText" value="${esc(Ly.text)}" autocomplete="off" autocorrect="off" spellcheck="false" enterkeyhint="done">`;
+    h+=sec(Ly.kind==="para"?"Paragraph":"Text")+(Ly.kind==="para"?`<textarea class="inp paraInp" id="tText" rows="6" autocomplete="off" spellcheck="true">${esc(Ly.text)}</textarea>`:`<input class="inp" id="tText" value="${esc(Ly.text)}" autocomplete="off" autocorrect="off" spellcheck="false" enterkeyhint="done">`);
     h+=sec("Font")+`<div class="chips">${groups.map(g=>`<button class="chip sm ${g===fontGroup?"on":""}" data-g="${g}">${g}</button>`).join("")}</div>
       <div class="fontRow" id="fontRow">${list.map(x=>`<button class="fontBtn ${x.n===Ly.font?"on":""}" data-f="${esc(x.n)}"><span class="s" style="font-family:'${x.n}';font-weight:${x.w[x.w.length-1]}">${esc(sample)}</span><span class="n">${x.n}</span></button>`).join("")}</div>`;
-    h+=sec("Size &amp; position")+rng("Size","size",20,480,Ly.size)+rng("Spacing","spacing",0,100,Ly.spacing||0)+rng("Rotate","rotate",-45,45,Ly.rotate||0)+rng("Arc","curve",-100,100,Ly.curve||0)+rng("Left/right","x",-700,700,Ly.x)+rng("Up/down","y",-900,900,Ly.y)
+    h+=sec("Size &amp; position")+rng("Size","size",20,480,Ly.size)+rng("Spacing","spacing",0,100,Ly.spacing||0)+rng("Rotate","rotate",-45,45,Ly.rotate||0)+(Ly.kind==="para"?"":rng("Arc","curve",-100,100,Ly.curve||0))+rng("Left/right","x",-700,700,Ly.x)+rng("Up/down","y",-900,900,Ly.y)
       +`<div class="hint" style="margin:2px 0 4px">Or: drag the text on the photo · pinch and twist with two fingers.</div>`;
+    if(Ly.kind==="para")h+=sec("Paragraph layout")+`<div class="chips wrap alignChips">${["left","center","right","justify"].map(a=>`<button class="chip ${Ly.align===a?"on":""}" data-al="${a}" aria-label="Align ${a}">${alignSvg(a)}</button>`).join("")}</div>`
+      +rng("Width","width",240,1000,Ly.width||760)+rng("Line height","lh",0.9,2.2,Ly.lh||1.35,0.05);
     h+=sec("Style")+`<div class="chips wrap">
       <button class="chip ${Ly.color==="main"?"on":""}" data-c="main"><span class="dot" style="background:${cur.colors.main}"></span>Main colour</button>
       <button class="chip ${Ly.color==="accent"?"on":""}" data-c="accent"><span class="dot" style="background:${cur.colors.accent}"></span>Accent</button>
@@ -1110,7 +1149,7 @@ function renderTool(light){
       ${f.it?`<button class="chip ${Ly.italic?"on":""}" data-t="italic">Italic</button>`:""}
       ${f.w.length>1?`<button class="chip ${Ly.weight===Math.max(...f.w)?"on":""}" data-t="bold">Bold</button>`:""}
       <button class="chip ${Ly.style==="outline"?"on":""}" data-t="outline">Outline</button></div>
-      ${isPro()?rng("Knock-out","cutout",0,40,Ly.cutout||0):proRow("Knock-out")}<div class="hint" style="margin:-4px 0 8px">Cuts a gap into the text underneath (like ‘More coffee please’). Make sure this text is in front.</div>
+      ${Ly.kind==="para"?"":(isPro()?rng("Knock-out","cutout",0,40,Ly.cutout||0):proRow("Knock-out"))}${Ly.kind==="para"?"":`<div class="hint" style="margin:-4px 0 8px">Cuts a gap into the text underneath (like ‘More coffee please’). Make sure this text is in front.</div>`}
       <div class="chips wrap"><button class="chip" data-a="center">Centre</button><button class="chip" data-a="straight">Straighten</button><button class="chip" data-a="up">Bring forward</button><button class="chip" data-a="down">Send back</button><button class="chip" data-a="dup">Duplicate</button><button class="chip" data-a="del" style="color:#ff9b87">Delete text</button></div>`;
   }else h+=`<div class="empty">No text. Tap “+ Text”.</div>`;
   h+=sec("Colours &amp; finish")+`<div class="lab" style="margin-top:0">Main colour</div><div class="sw" id="swMain"></div><div class="lab">Accent colour</div><div class="sw" id="swAccent"></div>`+rng("Shadow","shadow",0,80,cur.shadow||0,1,true)+(isPro()?rng("Texture","texture",0,100,cur.texture||0,1,true):proRow("Texture"))+`<div class="hint" style="margin-top:-4px">Texture gives a printed, worn retro look.</div>`;
@@ -1144,7 +1183,8 @@ function renderTool(light){
     const f=FONT_BY[Ly.font]||{w:[400]};
     const i=$("tText");i.addEventListener("focus",snap);
     i.addEventListener("input",()=>{Ly.text=i.value;schedulePreview();renderLayerChipsDebounced()});
-    i.addEventListener("keydown",e=>{if(e.key==="Enter")i.blur()});
+    if(Ly.kind!=="para")i.addEventListener("keydown",e=>{if(e.key==="Enter")i.blur()});
+    body.querySelectorAll("[data-al]").forEach(b=>b.onclick=()=>{snap();Ly.align=b.dataset.al;body.querySelectorAll("[data-al]").forEach(x=>x.classList.toggle("on",x===b));schedulePreview()});
     i.addEventListener("change",()=>{const t=((Ly.upper?Ly.text.toUpperCase():Ly.text)||"Aa").slice(0,14);body.querySelectorAll(".fontRow .s").forEach(x=>x.textContent=t)});
     body.querySelectorAll("[data-g]").forEach(b=>b.onclick=()=>{fontGroup=b.dataset.g;renderTool();$("fontRow").scrollLeft=0});
     body.querySelectorAll("[data-f]").forEach(b=>b.onclick=()=>{snap();const nf=FONT_BY[b.dataset.f];Ly.font=nf.n;if(!nf.w.includes(Ly.weight))Ly.weight=nf.w[nf.w.length-1];if(!nf.it)Ly.italic=false;
