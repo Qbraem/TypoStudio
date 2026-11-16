@@ -73,4 +73,8 @@ http.createServer((req, res) => {
     res.writeHead(200, { "Content-Type": TYPES[ext] || "application/octet-stream", "Cache-Control": cache });
     res.end(req.method === "HEAD" ? undefined : data);
   });
-}).listen(PORT, () => console.log("Studio Typo op poort " + PORT));
+}).listen(PORT, () => {
+  console.log("Studio Typo op poort " + PORT);
+  if (UP_URL) redis(["PING"]).then(r => console.log("Trending storage: Upstash OK (" + r + ")")).catch(e => console.error("Trending storage: Upstash FAILED – " + e.message));
+  else console.log("Trending storage: memory (no Upstash env vars)");
+});
