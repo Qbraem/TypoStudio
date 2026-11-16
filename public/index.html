@@ -238,6 +238,12 @@ input[type=range]::-moz-range-thumb{width:28px;height:28px;border-radius:50%;bac
 .uw-tiny .brand{display:none}
 /* iPhone Duo buitenscherm: statusbalk staat bovenaan aan de zijkant; daaronder mag de inhoud tot de rand */
 .side-status{--sarL:0px}
+/* staand: een rechter-inset is altijd de zijdelingse statusbalk (Duo buitenscherm) -> inhoud eronder mag tot de rand */
+@media (orientation: portrait){:root{--sarL:0px}}
+/* bovenbalk past zich aan de echte vrije breedte aan (zonder statusbalk), ook als iOS de insets pas later doorgeeft */
+.top{container-type:inline-size;container-name:topbar}
+@container topbar (max-width: 406px){#viewBtn{display:none}.brand{font-size:16px}.brand span{font-size:20px}#proBtnLabel{display:none}#proBtn{padding:0 9px}}
+@container topbar (max-width: 320px){.brand{display:none}}
 .side-status .tabs{padding-bottom:max(calc(var(--sab) - 14px), 6px)}
 #saProbe{position:fixed;left:0;top:0;width:0;height:0;visibility:hidden;pointer-events:none;padding:0 var(--sar) 0 var(--sal)}
 @media (min-aspect-ratio:1/1) and (max-width:1000px){.brand{display:none}#viewBtn{display:none}#proBtnLabel{display:none}#proBtn{padding:0 9px}}
@@ -948,6 +954,7 @@ function layer(){return cur.layers[sel]}
 function fitStage(){const st=$("stage");if(st)st.style.maxWidth=""}
 if(window.ResizeObserver)new ResizeObserver(()=>{fitStage();schedulePreview(true)}).observe(document.querySelector(".stageArea"));
 function applyUsable(){const p=document.getElementById("saProbe");if(!p)return;const cs=getComputedStyle(p),uw=innerWidth-parseFloat(cs.paddingLeft)-parseFloat(cs.paddingRight),h=document.documentElement;h.classList.toggle("uw-narrow",uw<=430);h.classList.toggle("uw-tiny",uw<=360);const sr=parseFloat(cs.paddingRight)||0,ar=innerWidth/innerHeight;h.classList.toggle("side-status",sr>20&&(ar<1||ar<1.7))}
+(function(){const p=document.getElementById("saProbe");if(p&&window.ResizeObserver)new ResizeObserver(()=>applyUsable()).observe(p);[300,1000,2500].forEach(t=>setTimeout(applyUsable,t));window.addEventListener("orientationchange",()=>setTimeout(applyUsable,300))})();
 function setAppH(){applyUsable();const h=window.visualViewport?visualViewport.height:innerHeight;document.documentElement.style.setProperty("--app-h",h+"px");if(typeof applySheetH==="function")applySheetH();requestAnimationFrame(()=>{fitStage();layoutSticker()})}
 if(window.visualViewport){visualViewport.addEventListener("resize",setAppH);visualViewport.addEventListener("scroll",()=>window.scrollTo(0,0))}
 window.addEventListener("resize",setAppH);
