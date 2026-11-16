@@ -1060,22 +1060,26 @@ function heartSvg(fill){return `<svg viewBox="0 0 24 24" fill="${fill?"currentCo
 function toggleFav(id){if(favs.has(id)){favs.delete(id);toast("Removed from favourites")}else{favs.add(id);toast("Added to favourites ♥")}try{localStorage.setItem("typoStudio.favs",JSON.stringify([...favs]))}catch(e){}}
 function updateFavChip(){const c=document.querySelector(".favChip");if(c)c.innerHTML=heartSvg(true)+(favs.size?`<span>${favs.size}</span>`:"")}
 let globalTop=[],localUse={};try{localUse=JSON.parse(localStorage.getItem("typoStudio.use")||"{}")}catch(e){}
-function loadTrending(){if(location.protocol.startsWith("http"))fetch("/api/trending").then(r=>r.json()).then(j=>{globalTop=(j.top||[]).filter(x=>x.n>=1).map(x=>x.id);if(activeCat==="Suggestions")renderLibrary()}).catch(()=>{})}
+function loadTrending(){if(location.protocol.startsWith("http"))fetch("/api/trending").then(r=>r.json()).then(j=>{globalTop=(j.top||[]);if(activeCat==="Suggestions")renderLibrary()}).catch(()=>{})}
 function markUsed(d){if(!d||!d.seed&&!SEEDS.some(x=>x.id===curSourceId))return;const id=SEEDS.some(x=>x.id===curSourceId)?curSourceId:null;if(!id)return;
   localUse[id]=(localUse[id]||0)+1;try{localStorage.setItem("typoStudio.use",JSON.stringify(localUse))}catch(e){}
   if(location.protocol.startsWith("http"))fetch("/api/used",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({id})}).catch(()=>{})}
+// Trending = seasonal picks for this moment + the most-saved templates (once enough people use the app) + a curated mix.
+const SEASON_PICKS={0:["y1","y2","y4","cs1","cs2","qt12"],1:["gl3","gl5","mo2","gl1","cs3","qt1"],2:["mo3","bf1","bf2","wk3","qt3"],3:["mo4","bf3","wk2","tv7","qt7"],
+  4:["mo5","tv1","bf6","wk4","cm2"],5:["mo6","tv7","tv14","tv3","cm2"],6:["mo7","tv6","tv7","tv9","cm1"],7:["mo8","tv14","tv15","tv18","cm6"],
+  8:["mo9","cs1","cf1","qt4","wk1"],9:["mo10","hd7","cs2","tg9","cf6"],10:null,11:["xm1","xm17","xm20","xm21","hd1","xm6"]};
 function suggestions(){
-  const m=new Date().getMonth(),by={};SEEDS.forEach(d=>(by[d.cat]=by[d.cat]||[]).push(d));
-  const now=new Date(),tgDay=(()=>{const f=new Date(now.getFullYear(),10,1);return 1+((11-f.getDay())%7)+21})();
-  const season=(m===10&&now.getDate()<=tgDay)?"Thanksgiving":[10,11].includes(m)?"Holidays":m===0?"2026":[5,6,7].includes(m)?"Travel":null;
-  const out=[];if(season&&by[season])out.push(...by[season].slice(0,4));if(season==="Thanksgiving"&&by.Holidays)out.push(...by.Holidays.slice(0,2));
-  const order=["Coffee","Weekend","Travel","Girly","Cosy","Breakfast","Viral","Movie Night","Camera","Monthly","2026","Holidays"].filter(c=>c!==season&&by[c]);
-  for(let r=0;r<2;r++)order.forEach(c=>{const d=by[c][r];if(d&&!out.includes(d))out.push(d)});
-  // most-used templates (all users, then this device) go first after the seasonal picks
-  const byId=Object.fromEntries(SEEDS.map(d=>[d.id,d]));const lead=out.splice(0,season?4:0);
-  const popular=[...globalTop,...Object.entries(localUse).sort((a,b)=>b[1]-a[1]).map(x=>x[0])].map(id=>byId[id]).filter(Boolean);
-  const merged=[...lead];[...popular,...out].forEach(d=>{if(!merged.includes(d))merged.push(d)});
-  return merged.slice(0,24);
+  const now=new Date(),m=now.getMonth(),byId=Object.fromEntries(SEEDS.map(d=>[d.id,d])),by={};SEEDS.forEach(d=>(by[d.cat]=by[d.cat]||[]).push(d));
+  const tgDay=(()=>{const f=new Date(now.getFullYear(),10,1);return 1+((11-f.getDay())%7)+21})();
+  let seasonal=SEASON_PICKS[m];
+  if(m===10)seasonal=now.getDate()<=tgDay?["tg1","tg16","tg19","tg3","tg18","xm1"]:["xm1","xm17","hd1","xm20","xm6","tg2"];
+  const lead=(seasonal||[]).map(id=>byId[id]).filter(Boolean);
+  // popular: only templates saved at least 3 times by everyone (or twice on this device), max 9
+  const popular=[...globalTop.filter(x=>x.n>=3).map(x=>x.id),...Object.entries(localUse).filter(x=>x[1]>=2).sort((a,b)=>b[1]-a[1]).map(x=>x[0])].map(id=>byId[id]).filter(Boolean).slice(0,9);
+  const order=["Coffee","Weekend","Travel","Girly","Quotes & Notes","Cosy","Breakfast","Viral","Movie Night","Camera"];
+  const mix=[];for(let r=0;r<2;r++)order.forEach(c=>{const d=by[c]&&by[c][r];if(d)mix.push(d)});
+  const out=[];[...lead,...popular,...mix].forEach(d=>{if(!out.includes(d))out.push(d)});
+  return out.slice(0,24);
 }
 const _ci={};function catIcon(sh){if(_ci[sh])return _ci[sh];const c=document.createElement("canvas");c.width=c.height=64;const x=c.getContext("2d");x.translate(32,32);x.fillStyle=x.strokeStyle="#fff";drawShape(x,sh,26,false);return _ci[sh]=c.toDataURL()}
 function renderLibrary(){
