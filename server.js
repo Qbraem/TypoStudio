@@ -1,4 +1,4 @@
-// Typo Studio – kleine Node-server (geen dependencies)
+// Studio Typo – kleine Node-server (geen dependencies)
 const http = require("http");
 const fs = require("fs");
 const path = require("path");
@@ -25,4 +25,4 @@ http.createServer((req, res) => {
     res.writeHead(200, { "Content-Type": TYPES[ext] || "application/octet-stream", "Cache-Control": cache });
     res.end(req.method === "HEAD" ? undefined : data);
   });
-}).listen(PORT, () => console.log("Typo Studio op poort " + PORT));
+}).listen(PORT, () => console.log("Studio Typo op poort " + PORT));

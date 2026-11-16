@@ -1,4 +1,4 @@
-# Typo Studio
+# Studio Typo
 
 Make transparent typography PNGs for Instagram stories and posts.
 
