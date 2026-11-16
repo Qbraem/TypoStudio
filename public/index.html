@@ -12,9 +12,7 @@
 <link rel="manifest" href="/manifest.webmanifest">
 <link rel="icon" href="/icons/icon-192.png?v=4">
 <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png?v=4">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&display=swap">
+<link rel="stylesheet" href="/fonts/fonts.css">
 <style>
 :root{
   --bg:#120d0a; --panel:#1f1712; --panel2:#2a2019; --line:#3a2c22; --text:#f6ece0; --muted:#b39d89;
@@ -412,7 +410,7 @@ input[type=range]::-moz-range-thumb{width:28px;height:28px;border-radius:50%;bac
   <div class="onbTrack" id="onbTrack">
     <section class="onbSlide">
       <div class="onbArt"><div class="onbStack" id="onbStack"></div></div>
-      <div class="onbText"><div class="htKicker">WELCOME</div><h2>Typography for<br>your <i>Stories</i></h2><p>Over 100 ready-made templates for every mood and moment: coffee, travel, holidays, weekends and more.</p></div>
+      <div class="onbText"><div class="htKicker">WELCOME</div><h2>Typography for<br>your <i>Stories</i></h2><p>Over 180 ready-made templates for every mood and moment: coffee, travel, holidays, weekends and more.</p></div>
     </section>
     <section class="onbSlide">
       <div class="onbArt"><div class="onbEdit"><div class="onbCanvas" id="onbCanvas"></div><div class="onbChips"><span class="on" data-i="0">Text</span><span data-i="1">Font</span><span data-i="2">Colour</span><span data-i="3">Ornament</span></div></div></div>
@@ -550,16 +548,8 @@ const FONTS = [
 ];
 const FONT_BY = Object.fromEntries(FONTS.map(f=>[f.n,f]));
 const FONT_CSS={}; // family -> promise that resolves when its stylesheet has loaded
-FONTS.forEach(f=>{
-  if(f.n==="DM Sans") return;
-  let spec = f.n.replace(/ /g,"+");
-  if(f.it) spec += ":ital,wght@" + [0,1].flatMap(i=>f.w.map(w=>i+","+w)).join(";");
-  else if(!(f.w.length===1 && f.w[0]===400)) spec += ":wght@" + f.w.join(";");
-  const l=document.createElement("link"); l.rel="stylesheet";
-  l.href="https://fonts.googleapis.com/css2?family="+spec+"&display=block";
-  FONT_CSS[f.n]=new Promise(res=>{l.onload=()=>{res();clearTimeout(window._fr);window._fr=setTimeout(()=>{fontCache.clear();schedulePreview();renderLibrary();if(typeof refreshOnb==="function")refreshOnb()},400)};l.onerror=()=>res();setTimeout(res,6000)});
-  document.head.appendChild(l);
-});
+// Fonts are self-hosted (public/fonts/fonts.css): they work offline and inside the iOS app.
+document.fonts&&document.fonts.ready.then(()=>{fontCache.clear();schedulePreview();renderLibrary()});
 
 /* ---------------- Seed designs ---------------- */
 const W="#FFFFFF", CORAL="#F26B50";

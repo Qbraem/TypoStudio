@@ -1,6 +1,6 @@
 // Typo Studio service worker: app werkt ook offline
-const VERSION = "typo-v41";
-const SHELL = ["/", "/manifest.webmanifest", "/icons/icon-192.png", "/icons/icon-512.png", "/icons/apple-touch-icon.png",
+const VERSION = "typo-v42";
+const SHELL = ["/", "/fonts/fonts.css", "/manifest.webmanifest", "/icons/icon-192.png", "/icons/icon-512.png", "/icons/apple-touch-icon.png",
   "/img/bg-sunset.jpg", "/img/bg-pier.jpg", "/img/th-sunset.jpg", "/img/th-pier.jpg", "/img/bg-xmas.jpg", "/img/th-xmas.jpg", "/img/bg-pool.jpg", "/img/th-pool.jpg", "/img/bg-golden.jpg", "/img/th-golden.jpg", "/img/bg-agave.jpg", "/img/th-agave.jpg"];
 
 self.addEventListener("install", e => {
@@ -26,5 +26,5 @@ self.addEventListener("fetch", e => {
     e.respondWith(fetch(e.request).then(res => { caches.open(VERSION).then(c => c.put("/", res.clone())); return res; }).catch(() => caches.match("/")));
     return;
   }
-  e.respondWith(caches.match(e.request).then(hit => hit || fetch(e.request)));
+  e.respondWith(caches.match(e.request).then(hit => hit || fetch(e.request).then(res => { if (res.ok && /^\/(fonts|img|icons)\//.test(url.pathname)) { const c = res.clone(); caches.open(VERSION).then(x => x.put(e.request, c)); } return res; })));
 });
