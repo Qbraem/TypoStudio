@@ -38,10 +38,17 @@ async function topUsed() {
   cache = { at: Date.now(), top }; return top;
 }
 const recent = new Map(); // simple abuse protection: max 60 hits per IP per hour
-function json(res, code, obj) { res.writeHead(code, { "Content-Type": "application/json", "Cache-Control": "no-store" }); res.end(JSON.stringify(obj)); }
+function json(res, code, obj) { res.writeHead(code, { "Content-Type": "application/json", "Cache-Control": "no-store", "Access-Control-Allow-Origin": "*" }); res.end(JSON.stringify(obj)); }
 
 http.createServer((req, res) => {
   const url = new URL(req.url, "http://x");
+  // the iOS app (capacitor://localhost) calls the Trending API cross-origin
+  if (url.pathname.startsWith("/api/")) {
+    res.setHeader("Access-Control-Allow-Origin", "*");
+    res.setHeader("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
+    res.setHeader("Access-Control-Allow-Headers", "Content-Type");
+    if (req.method === "OPTIONS") { res.writeHead(204); return res.end(); }
+  }
   if (url.pathname === "/api/trending" && req.method === "GET") {
     topUsed().then(top => json(res, 200, { top, store: UP_URL ? "upstash" : "memory" })).catch(() => json(res, 200, { top: [] }));
     return;

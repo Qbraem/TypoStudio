@@ -258,6 +258,7 @@ input[type=range]::-moz-range-thumb{width:28px;height:28px;border-radius:50%;bac
 .htLink{background:none;border:0;color:var(--accent2);font-weight:700;font-size:13px;padding:6px 0;text-decoration:underline}
 .paraInp{min-height:130px;line-height:1.45;font-size:16px}
 .alignChips .chip{min-width:52px;justify-content:center}
+.native .pwDemo{display:none!important}
 /* ---------- Pro ---------- */
 .proPill{display:inline-flex;align-items:center;gap:5px;height:34px;padding:0 12px;border:0;border-radius:17px;background:linear-gradient(135deg,#F6DE9C,#C9963A);color:#3a2408;font-weight:800;font-size:12px;letter-spacing:.8px;box-shadow:0 2px 10px rgba(201,150,58,.35)}
 .proPill svg{width:15px;height:15px}
@@ -1127,10 +1128,10 @@ function heartSvg(fill){return `<svg viewBox="0 0 24 24" fill="${fill?"currentCo
 function toggleFav(id){if(favs.has(id)){favs.delete(id);toast("Removed from favourites")}else{favs.add(id);toast("Added to favourites ♥")}try{localStorage.setItem("typoStudio.favs",JSON.stringify([...favs]))}catch(e){}}
 function updateFavChip(){const c=document.querySelector(".favChip");if(c)c.innerHTML=heartSvg(true)+(favs.size?`<span>${favs.size}</span>`:"")}
 let globalTop=[],localUse={};try{localUse=JSON.parse(localStorage.getItem("typoStudio.use")||"{}")}catch(e){}
-function loadTrending(){if(location.protocol.startsWith("http"))fetch("/api/trending").then(r=>r.json()).then(j=>{globalTop=(j.top||[]);if(activeCat==="Suggestions")renderLibrary()}).catch(()=>{})}
+function loadTrending(){if(NATIVE||location.protocol.startsWith("http"))fetch(API_BASE+"/api/trending").then(r=>r.json()).then(j=>{globalTop=(j.top||[]);if(activeCat==="Suggestions")renderLibrary()}).catch(()=>{})}
 function markUsed(d){if(!d||!d.seed&&!SEEDS.some(x=>x.id===curSourceId))return;const id=SEEDS.some(x=>x.id===curSourceId)?curSourceId:null;if(!id)return;
   localUse[id]=(localUse[id]||0)+1;try{localStorage.setItem("typoStudio.use",JSON.stringify(localUse))}catch(e){}
-  if(location.protocol.startsWith("http"))fetch("/api/used",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({id})}).catch(()=>{})}
+  if(NATIVE||location.protocol.startsWith("http"))fetch(API_BASE+"/api/used",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({id})}).catch(()=>{})}
 // Trending = seasonal picks for this moment + the most-saved templates (once enough people use the app) + a curated mix.
 const SEASON_PICKS={0:["y1","y2","y4","cs1","cs2","qt12"],1:["gl3","gl5","mo2","gl1","cs3","qt1"],2:["mo3","bf1","bf2","wk3","qt3"],3:["mo4","bf3","wk2","tv7","qt7"],
   4:["mo5","tv1","bf6","wk4","cm2"],5:["mo6","tv7","tv14","tv3","cm2"],6:["mo7","tv6","tv7","tv9","cm1"],7:["mo8","tv14","tv15","tv18","cm6"],
@@ -1348,6 +1349,7 @@ function pngFile(ex){return new File([ex.blob],fileName(),{type:"image/png"})}
 function canShare(ex){try{return !!(navigator.canShare&&navigator.canShare({files:[pngFile(ex)]}))}catch(e){return false}}
 async function shareOrDownload(ex){
   markUsed(cur);
+  if(NATIVE)return nativeSave(ex);
   setTimeout(()=>{let seen=true;try{seen=!!localStorage.getItem("typoStudio.howtoSaved")}catch(e){}if(!seen){try{localStorage.setItem("typoStudio.howtoSaved","1")}catch(e){}openHowto()}},900);
   if(canShare(ex)){try{await navigator.share({files:[pngFile(ex)]});return true}catch(e){if(e&&e.name==="AbortError")return true;return false}}
   const a=document.createElement("a");a.href=ex.url;a.download=fileName();document.body.appendChild(a);a.click();a.remove();toast("PNG downloaded ✓");return true;
@@ -1355,19 +1357,90 @@ async function shareOrDownload(ex){
 $("saveImgBtn").onclick=async()=>{
   if(!isPro()&&cur.pro){openPaywall("save");return}
   const key=JSON.stringify(cur);
+  if(NATIVE){const b=$("saveImgBtn");b.classList.add("busy");const ex=exportCache.key===key?exportCache:await buildExport();b.classList.remove("busy");if(ex)await shareOrDownload(ex);return}
   if(exportCache.key===key){if(!(await shareOrDownload(exportCache)))openModal(exportCache);return}
   const b=$("saveImgBtn");b.classList.add("busy");const ex=await buildExport();b.classList.remove("busy");
   if(ex)openModal(ex); // tweede tik nodig: iPhone staat delen alleen direct na een tik toe
 };
 $("viewBtn").onclick=async()=>{if(!isPro()&&cur.pro){openPaywall("save");return}const ex=await buildExport();if(ex)openModal(ex)};
-function openModal(ex){$("modalImg").src=ex.url;$("modalShare").classList.toggle("hidden",!canShare(ex));$("modal").classList.remove("hidden")}
-$("modalShare").onclick=()=>{if(exportCache.blob)navigator.share({files:[pngFile(exportCache)]}).catch(()=>{})};
+function openModal(ex){$("modalImg").src=ex.url;$("modalShare").classList.toggle("hidden",!NATIVE&&!canShare(ex));$("modalDl").classList.toggle("hidden",NATIVE);$("modal").classList.remove("hidden")}
+$("modalShare").onclick=()=>{if(NATIVE){if(exportCache.blob)nativeShare(exportCache).catch(()=>{});return}if(exportCache.blob)navigator.share({files:[pngFile(exportCache)]}).catch(()=>{})};
 $("modalDl").onclick=()=>{if(!exportCache.url)return;const a=document.createElement("a");a.href=exportCache.url;a.download=fileName();document.body.appendChild(a);a.click();a.remove()};
 $("modalClose").onclick=()=>$("modal").classList.add("hidden");
 $("modal").addEventListener("click",e=>{if(e.target.id==="modal")$("modal").classList.add("hidden")});
 
 /* ---------------- Webapp (offline) ---------------- */
 if("serviceWorker" in navigator&&location.protocol==="https:"){window.addEventListener("load",()=>navigator.serviceWorker.register("/sw.js").catch(()=>{}))}
+
+/* ---------------- iOS app (Capacitor) ----------------
+   In the web version none of this runs. Inside the iOS app it uses native plugins:
+   Filesystem + Media (save to Photos), Share (share sheet / Instagram), Haptics,
+   StatusBar, SplashScreen and RevenueCat (Purchases) for Studio Typo Pro. */
+const CAP=window.Capacitor;
+const NATIVE=!!(CAP&&CAP.isNativePlatform&&CAP.isNativePlatform());
+const NP=NATIVE?(CAP.Plugins||{}):{};
+const API_BASE=NATIVE?"https://studio-typo.onrender.com":"";
+const RC_API_KEY="appl_REPLACE_WITH_REVENUECAT_PUBLIC_KEY"; // RevenueCat → Project → API keys → Apple App Store (public key)
+const RC_ENTITLEMENT="pro";
+let nativePro=false;const rcPackages={};
+function hapt(style){try{NP.Haptics&&NP.Haptics.impact({style:style||"LIGHT"})}catch(e){}}
+function blobToBase64(blob){return new Promise((res,rej)=>{const f=new FileReader();f.onload=()=>res(String(f.result).split(",")[1]);f.onerror=rej;f.readAsDataURL(blob)})}
+async function nativeFile(ex){
+  const w=await NP.Filesystem.writeFile({path:fileName(),data:await blobToBase64(ex.blob),directory:"CACHE"});
+  return w.uri;
+}
+async function nativeShare(ex){const uri=await nativeFile(ex);await NP.Share.share({files:[uri]})}
+async function nativeSave(ex){
+  try{
+    const uri=await nativeFile(ex);
+    await NP.Media.savePhoto({path:uri});
+    hapt("MEDIUM");toast("Saved to Photos ✓");return true;
+  }catch(e){
+    // no permission for Photos (or plugin missing): fall back to the share sheet
+    try{await nativeShare(ex);return true}catch(e2){return /cancel/i.test(String(e2&&e2.message))}
+  }
+}
+function applyCustomer(ci){
+  const was=nativePro;
+  nativePro=!!(ci&&ci.entitlements&&ci.entitlements.active&&ci.entitlements.active[RC_ENTITLEMENT]);
+  if(was!==nativePro){updateProUI();renderLibrary();if(tab==="edit")renderTool()}
+}
+async function initPurchases(){
+  if(!NATIVE||!NP.Purchases)return;
+  try{
+    await NP.Purchases.configure({apiKey:RC_API_KEY});
+    const r=await NP.Purchases.getCustomerInfo();applyCustomer(r.customerInfo);
+    NP.Purchases.addCustomerInfoUpdateListener&&NP.Purchases.addCustomerInfoUpdateListener(ci=>applyCustomer(ci));
+    const off=await NP.Purchases.getOfferings();const cur=off&&off.current;
+    if(cur)for(const pk of cur.availablePackages||[]){
+      if(pk.packageType==="ANNUAL"){rcPackages.yearly=pk;PRO.yearly.price=pk.product.priceString;
+        if(pk.product.pricePerMonthString)PRO.yearly.perMonth=pk.product.pricePerMonthString;
+        const intro=pk.product.introPrice;if(intro&&intro.price===0&&intro.periodNumberOfUnits)PRO.yearly.trialDays=intro.periodUnit==="WEEK"?intro.periodNumberOfUnits*7:intro.periodNumberOfUnits}
+      if(pk.packageType==="LIFETIME"){rcPackages.lifetime=pk;PRO.lifetime.price=pk.product.priceString}
+    }
+    if(!$("paywall").classList.contains("hidden"))renderPlans();
+  }catch(e){console.warn("Purchases",e)}
+}
+async function buyPlan(plan){
+  const pk=rcPackages[plan];if(!pk){toast("Purchases are not available right now. Please try again later.");return}
+  const btn=$("pwCta");btn.disabled=true;
+  try{const r=await NP.Purchases.purchasePackage({aPackage:pk});applyCustomer(r.customerInfo);
+    if(nativePro){hapt("MEDIUM");closePaywall();toast("Welcome to Studio Typo Pro ✨")}}
+  catch(e){if(!(e&&(e.userCancelled||/cancel/i.test(e.message||""))))toast("The purchase didn't go through. Please try again.")}
+  finally{btn.disabled=false}
+}
+async function restorePurchases(){
+  try{const r=await NP.Purchases.restorePurchases();applyCustomer(r.customerInfo);toast(nativePro?"Purchases restored ✓":"No previous purchases found")}
+  catch(e){toast("Could not restore purchases")}
+}
+function initNative(){
+  if(!NATIVE)return;
+  document.documentElement.classList.add("native");
+  document.querySelectorAll('a[href^="/terms.html"],a[href^="/privacy.html"]').forEach(a=>a.href="https://studio-typo.onrender.com"+a.getAttribute("href"));
+  try{NP.StatusBar&&NP.StatusBar.setStyle({style:"DARK"})}catch(e){}
+  setTimeout(()=>{try{NP.SplashScreen&&NP.SplashScreen.hide({fadeOutDuration:250})}catch(e){}},300);
+  initPurchases();
+}
 
 /* ---------------- Studio Typo Pro ---------------- */
 // Prices are placeholders until they are set in App Store Connect.
@@ -1378,7 +1451,7 @@ SEEDS.forEach(d=>{d.pro=!FREE_IDS.has(d.id)});
 const PRO_ORN=new Set(["turkey","suitcase","plane","ticket","pin","globe","snowflake","tree","bauble","gift","holly","leaf","pumpkin","pie"]);
 // Web version: the owner's own tool, so Pro is unlocked. "Simulate free version" shows the app as a free user sees it.
 function simFree(){try{return localStorage.getItem("typoStudio.simFree")==="1"}catch(e){return false}}
-function isPro(){return !simFree()}
+function isPro(){return NATIVE?nativePro:!simFree()}
 function lockSvg(){return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="10" rx="2.5"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>'}
 function crownSvg(){return '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M3 8.5l4.5 3.5L12 5l4.5 7L21 8.5 19 18H5z"/><rect x="5" y="19.2" width="14" height="2" rx="1"/></svg>'}
 function proLabel(){return `<span class="proTag">${lockSvg()}PRO</span>`}
@@ -1416,8 +1489,8 @@ document.addEventListener("click",e=>{const b=e.target.closest("[data-pw]");if(b
 $("proBtn").onclick=()=>openPaywall();
 $("pwClose").onclick=closePaywall;
 document.querySelectorAll(".plan").forEach(p=>p.onclick=()=>{pwPlan=p.dataset.plan;renderPlans()});
-$("pwCta").onclick=()=>toast("Purchases will be available in the iOS app");
-$("pwRestore").onclick=()=>toast("Restore Purchases will be available in the iOS app");
+$("pwCta").onclick=()=>NATIVE?buyPlan(pwPlan):toast("Purchases will be available in the iOS app");
+$("pwRestore").onclick=()=>NATIVE?restorePurchases():toast("Restore Purchases will be available in the iOS app");
 $("pwSim").onchange=e=>{try{localStorage.setItem("typoStudio.simFree",e.target.checked?"1":"0")}catch(err){}
   updateProUI();renderLibrary();if(tab==="edit")renderTool();toast(e.target.checked?"Showing the free version":"Pro unlocked")};
 function updateProUI(){
@@ -1463,7 +1536,7 @@ function closeHowto(){$("howto").classList.add("hidden");try{localStorage.setIte
 $("helpBtn").onclick=openHowto;$("htClose").onclick=closeHowto;$("htDone").onclick=closeHowto;
 document.addEventListener("click",e=>{if(e.target.closest("[data-howto]")){$("modal").classList.add("hidden");openHowto()}});
 let firstSaveDone=false;try{firstSaveDone=!!localStorage.getItem("typoStudio.howto")}catch(e){}
-loadLocal();updateProUI();loadTrending();
+initNative();loadLocal();updateProUI();loadTrending();
 if(!onbSeen){openOnb();setTimeout(hideSplash,900)}else setTimeout(hideSplash,700);
 setDetent(0);setAppH();renderLibrary();
 document.fonts.ready.then(()=>{schedulePreview();renderLibrary()});
