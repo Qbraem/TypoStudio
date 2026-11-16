@@ -195,7 +195,7 @@ input[type=range]::-moz-range-thumb{width:28px;height:28px;border-radius:50%;bac
 .onbStack{position:relative;width:280px;height:230px}
 .onbStack .pwCard{top:10px}
 .onbEdit{display:flex;flex-direction:column;align-items:center;gap:12px}
-.onbCanvas{width:210px;height:210px;border-radius:20px;background:url('/img/th-golden.jpg') center/cover;display:flex;align-items:center;justify-content:center;box-shadow:0 14px 34px rgba(0,0,0,.5);overflow:hidden;position:relative}
+.onbCanvas{width:210px;height:210px;border-radius:20px;background:url('/img/th-golden.jpg?v=2') center/cover;display:flex;align-items:center;justify-content:center;box-shadow:0 14px 34px rgba(0,0,0,.5);overflow:hidden;position:relative}
 .onbCanvas::before{content:"";position:absolute;inset:0;background:rgba(0,0,0,.12)}
 .onbCanvas canvas{position:relative;max-width:86%;max-height:74%;transition:opacity .25s}
 .onbChips{display:flex;gap:6px}.onbChips span{padding:5px 11px;border-radius:14px;background:#2a2019;border:1px solid #3a2c22;font-size:12px;font-weight:700;color:var(--muted);transition:all .25s}
@@ -223,7 +223,7 @@ input[type=range]::-moz-range-thumb{width:28px;height:28px;border-radius:50%;bac
 .stk{display:inline-block;width:16px;height:16px;border:1.8px solid var(--text);border-radius:5px;border-bottom-right-radius:9px;vertical-align:-3px}
 .htArt{display:flex;justify-content:center}
 .mPhone{position:relative;width:62px;height:112px;border-radius:13px;border:2px solid #6a5444;background:#1f1712;overflow:hidden}
-.mPhone.photo{background:url('/img/th-golden.jpg') center/cover}
+.mPhone.photo{background:url('/img/th-golden.jpg?v=2') center/cover}
 .mGrid{display:grid;grid-template-columns:1fr 1fr;gap:4px;padding:10px 7px}
 .mGrid i{height:22px;border-radius:5px;background:#4a3528}.mGrid i.on{background:var(--accent);box-shadow:0 0 0 1.5px #fff}
 .mSheet{position:absolute;left:4px;right:4px;bottom:4px;border-radius:9px;background:#3a2c22;padding:4px;display:grid;gap:3px}
@@ -314,12 +314,12 @@ input[type=range]::-moz-range-thumb{width:28px;height:28px;border-radius:50%;bac
 
   <main class="stageArea">
     <div class="stage" id="stage">
-      <div class="bg" id="stageBg" style="background-image:url('/img/bg-golden.jpg')"></div>
+      <div class="bg" id="stageBg" style="background-image:url('/img/bg-golden.jpg?v=2')"></div>
       <canvas id="sticker"></canvas>
       <a class="credit" id="credit" href="https://www.instagram.com/myx100vi/" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="2.5" y="2.5" width="19" height="19" rx="5.5"/><circle cx="12" cy="12" r="4.3"/><circle cx="17.4" cy="6.6" r="1.1" fill="currentColor" stroke="none"/></svg><span id="creditName">© myx100vi</span></a>
       <div class="coach hidden" id="coach">Tap a text · drag to move · pinch to resize and rotate</div>
       <div class="bgRow" id="bgRow">
-        <button class="bgBtn on" data-photo="golden" aria-label="Golden hour"><img src="/img/th-golden.jpg" alt=""></button>
+        <button class="bgBtn on" data-photo="golden" aria-label="Golden hour"><img src="/img/th-golden.jpg?v=2" alt=""></button>
         <button class="bgBtn" data-photo="sunset" aria-label="Sunset"><img src="/img/th-sunset.jpg" alt=""></button>
         <button class="bgBtn" data-photo="pier" aria-label="Breakwater"><img src="/img/th-pier.jpg" alt=""></button>
         <button class="bgBtn" data-photo="xmas" aria-label="Christmas market"><img src="/img/th-xmas.jpg" alt=""></button>
@@ -919,7 +919,7 @@ $("bgRow").addEventListener("click",e=>{
   const b=e.target.closest("[data-bg],[data-photo]");if(!b)return;
   document.querySelectorAll("#bgRow .bgBtn").forEach(x=>x.classList.toggle("on",x===b));
   const bg=$("stageBg");setCredit(b.dataset.photo);
-  if(b.dataset.photo){bg.className="bg";bg.style.background="";bg.style.backgroundImage=`url('/img/bg-${b.dataset.photo}.jpg')`;bg.style.backgroundSize="cover";bg.style.backgroundPosition="center"}
+  if(b.dataset.photo){bg.className="bg";bg.style.background="";bg.style.backgroundImage=`url('/img/bg-${b.dataset.photo}.jpg?v=2')`;bg.style.backgroundSize="cover";bg.style.backgroundPosition="center"}
   else{bg.style.backgroundImage="";bg.className="bg bg-"+b.dataset.bg}
 });
 $("photoIn").addEventListener("change",e=>{
