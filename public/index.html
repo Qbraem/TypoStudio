@@ -133,11 +133,9 @@ input[type=range]::-moz-range-thumb{width:28px;height:28px;border-radius:50%;bac
 @media(min-width:600px){.grid{grid-template-columns:repeat(auto-fill,minmax(120px,1fr))}}
 .card{position:relative;border:1.5px solid #3d3733;background-clip:padding-box;border-radius:12px;overflow:hidden;background:#2a1d16 center/cover;aspect-ratio:1/1;padding:0;display:flex;align-items:center;justify-content:center}
 .card{background:radial-gradient(120% 90% at 20% 10%,#5a3d2b 0%,#2b1d15 55%,#1d140f 100%)}
-.card.light{background:radial-gradient(120% 90% at 20% 10%,#fbf3e6 0%,#efe2d0 60%,#e3d2bc 100%)}
-.card.xmasLight{background:radial-gradient(120% 90% at 20% 10%,#fff6ea 0%,#f3e3d3 60%,#e9d3bf 100%);border-color:#E9C46A88}
 .chip.xmas{background:linear-gradient(135deg,#C62E2E,#8E1B1B);border-color:#E9C46A;color:#fff;font-weight:700;box-shadow:0 0 0 1px rgba(233,196,106,.35),0 4px 14px rgba(198,46,46,.35)}
 .chip.xmas.on{background:linear-gradient(135deg,#E9C46A,#d9a93f);color:#7a1414;border-color:#fff}
-.card.xmas{background:radial-gradient(circle at 18% 22%,rgba(255,255,255,.75) 0 1.1px,transparent 1.8px) 0 0/30px 30px,radial-gradient(circle at 62% 70%,rgba(255,255,255,.55) 0 1px,transparent 1.6px) 0 0/23px 23px,radial-gradient(120% 90% at 20% 10%,#b3262b 0%,#6e1418 55%,#3f0b0e 100%)!important;border-color:#E9C46A66}
+.card.xmas{background:radial-gradient(circle at 30% 40%,rgba(255,255,255,.35) 0 .9px,transparent 1.4px) 0 0/58px 58px,radial-gradient(120% 90% at 20% 10%,#b3262b 0%,#6e1418 55%,#3f0b0e 100%)!important;border-color:#E9C46A55}
 .card.sel{border:2px solid #fff}
 .card canvas{max-width:86%;max-height:72%}
 .card .mine{position:absolute;top:4px;right:7px;font-size:11px;color:var(--accent2)}
@@ -479,7 +477,7 @@ const SEEDS = [
   // ---------- Holidays ----------
   D("hd1","Holidays","Merry & Bright",[O("snowflake",120,320,-200,{color:"accent"}),L("Merry","Sansita Swashed",250,0,-80,{rotate:-5}),L("& bright","Sansita Swashed",200,40,105,{rotate:-5,color:"accent"})],C(W,"#E9C46A")),
   D("hd2","Holidays","Let It Snow",[...T.arch("winter is here","Let it","snow"),O("snowflake",90,-330,120,{color:"accent"}),O("snowflake",60,330,40,{color:"accent"})],C(W,"#BFE3F2")),
-  D("hd3","Holidays","Happy Holidays",[L("Happy","Pinyon Script",260,0,-110,{rotate:-6}),L("HOLIDAYS","Bodoni Moda",110,0,150,{spacing:30})],C("#D7263D","#D7263D")),
+  D("hd3","Holidays","Happy Holidays",[L("Happy","Pinyon Script",260,0,-110,{rotate:-6}),L("HOLIDAYS","Bodoni Moda",110,0,150,{spacing:30,color:"accent"})],C(W,"#E9C46A")),
   D("hd4","Travel","Hello Summer",[O("burst",140,280,-210,{color:"accent"}),L("hello","Pacifico",200,-60,-90,{rotate:-6}),L("SUMMER","Bagel Fat One",230,0,95,{color:"accent"})],C(W,"#F6C445")),
   D("hd5","Travel","Bon Voyage",T.serifClean("Bon","voyage","DM Serif Display")),
   D("hd6","Travel","Holiday Mode",[L("HOLIDAY","Titan One",200,0,-100),L("MODE","Titan One",200,-60,80),L("on","Caveat",190,310,90,{rotate:-10,color:"accent"})],C(W,"#7FC8E8")),
@@ -490,7 +488,7 @@ const SEEDS = [
   D("xm2","Holidays","Ho Ho Ho!",T.bubble("Ho ho","ho!"),{...C("#F6ECD2","#D7263D"),texture:20}),
   D("xm3","Holidays","Cosy Christmas",[O("tree",150,-330,-60,{color:"accent"}),L("cosy","Satisfy",230,60,-80,{rotate:-6}),L("CHRISTMAS","Archivo Black",120,30,110,{spacing:18,color:"accent"})],C(W,"#7FBF8F")),
   D("xm4","Holidays","Jingle All the Way",[O("bauble",120,330,-230,{color:"accent",rotate:10}),L("jingle","Shrikhand",250,-20,-90,{rotate:-6}),L("all the way","Yellowtail",190,60,105,{rotate:-6,color:"accent"})],{...C(W,"#E9C46A"),texture:12}),
-  D("xm5","Holidays","Deck the Halls",[L("DECK","Gloock",220,0,-190),L("the","Mrs Saint Delafield",210,40,-15,{rotate:-8,color:"accent"}),L("HALLS","Gloock",220,0,170),O("holly",100,-330,-10,{color:"accent"})],C("#D7263D","#2E7D4F")),
+  D("xm5","Holidays","Deck the Halls",[L("DECK","Gloock",220,0,-190),L("the","Mrs Saint Delafield",210,40,-15,{rotate:-8,color:"accent"}),L("HALLS","Gloock",220,0,170),O("holly",100,-330,-10,{color:"accent"})],C(W,"#E9C46A")),
   D("xm6","Holidays","Hot Cocoa Season",[O("steam",120,0,-300,{color:"accent"}),L("hot cocoa","Cherry Bomb One",210,0,-120,{rotate:-4}),L("SEASON","Bebas Neue",180,0,70,{spacing:40,color:"accent"})],{...C("#F7EFE2","#C98A4B"),texture:20}),
   D("xm7","Holidays","Silent Night",[O("star",90,0,-250,{color:"accent"}),L("silent","Cormorant Garamond",230,0,-60,{italic:true}),L("NIGHT","DM Sans",90,0,105,{spacing:60,weight:700,upper:true})],C(W,"#E9C46A")),
   D("xm8","Holidays","Naughty or Nice?",[L("naughty","Bagel Fat One",220,-30,-140,{rotate:-5}),L("or","Caveat",150,-260,10,{rotate:-8,color:"accent"}),L("nice?","Bagel Fat One",240,60,120,{rotate:-5,color:"accent"})],C(W,"#D7263D")),
@@ -882,8 +880,7 @@ function renderLibrary(){
   const cards=list.map(d=>{
     const b=document.createElement("button");const light=lum(d.colors.main)<.45;
     b.className="card"+(d.id===curSourceId?" sel":"");b.setAttribute("aria-label",d.name);
-    if(d.cat==="Holidays")b.classList.add(light?"xmasLight":"xmas");
-    else if(light)b.classList.add("light");
+    if(d.cat==="Holidays")b.classList.add("xmas");
     if(!d.seed)b.innerHTML='<span class="mine">★</span>';
     else if(d.pro&&!isPro())b.innerHTML=proLabel();
     b.onclick=()=>{
