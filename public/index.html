@@ -39,13 +39,14 @@ button{cursor:pointer;touch-action:manipulation;-webkit-user-select:none;user-se
 .iconbtn:disabled{opacity:.35}
 .iconbtn.busy{opacity:.7}
 
-.stageArea{grid-area:stage;min-height:0;display:flex;align-items:center;justify-content:center;padding:4px calc(12px + var(--sar)) 8px calc(12px + var(--sal))}
-.stage{position:relative;width:100%;height:100%;margin:0 auto;border-radius:18px;overflow:hidden;background:#2a1b12;touch-action:none;box-shadow:0 8px 30px rgba(0,0,0,.5)}
+/* foto altijd volledige breedte: van rand tot rand, loopt door onder de afgeronde hoeken van het paneel */
+.stageArea{grid-area:stage;min-height:0;display:flex;padding:0;margin-bottom:-20px;position:relative;z-index:0;--under:20px}
+.stage{position:relative;width:100%;height:100%;margin:0;border-radius:0;overflow:hidden;background:#2a1b12;touch-action:none}
 .stage .bg{position:absolute;inset:0;background-size:cover;background-position:center}
 .bg-dark{background:#141414}.bg-light{background:#efe7dc}
 .bg-check{background:repeating-conic-gradient(#3a3a3a 0 25%,#2a2a2a 0 50%) 0 0/22px 22px}
 #sticker{position:absolute;left:0;top:0;width:100%;height:100%;pointer-events:none}
-.bgRow{position:absolute;left:8px;right:8px;bottom:8px;display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;padding:4px;border-radius:24px;background:rgba(20,14,10,.45);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px)}
+.bgRow{position:absolute;left:calc(8px + var(--sal));right:calc(8px + var(--sar));bottom:calc(8px + var(--under,0px));display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;padding:4px;border-radius:24px;background:rgba(20,14,10,.45);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px)}
 .bgRow::-webkit-scrollbar{display:none}
 .bgBtn{flex:none;width:36px;height:36px;border-radius:50%;border:2px solid rgba(255,255,255,.25);padding:0;overflow:hidden;background:#333;position:relative}
 .bgBtn img{width:100%;height:100%;object-fit:cover;display:block}
@@ -64,10 +65,10 @@ button{cursor:pointer;touch-action:manipulation;-webkit-user-select:none;user-se
 .igHead b{font-weight:600}.igTime{opacity:.7}.igFlex{flex:1}
 .igHead svg{width:18px;height:18px;margin-left:6px}
 .igAv{width:26px;height:26px;border-radius:13px;background:linear-gradient(135deg,#e9b77c,#7a4a2c);border:1.5px solid #fff;flex:none}
-.igBottom{position:absolute;left:0;right:0;bottom:0;padding:24px 12px 12px;display:flex;align-items:center;gap:12px;background:linear-gradient(transparent,rgba(0,0,0,.35))}
+.igBottom{position:absolute;left:0;right:0;bottom:var(--under,0px);padding:24px calc(12px + var(--sar)) 12px calc(12px + var(--sal));display:flex;align-items:center;gap:12px;background:linear-gradient(transparent,rgba(0,0,0,.35))}
 .igMsg{flex:1;height:36px;border:1.3px solid rgba(255,255,255,.75);border-radius:18px;display:flex;align-items:center;padding:0 14px;font-size:13px;opacity:.95}
 .igBottom svg{width:24px;height:24px;flex:none}
-.stage.ig .bgRow{bottom:62px}
+.stage.ig .bgRow{bottom:calc(62px + var(--under,0px))}
 .stage.ig .credit{top:58px}
 .stage.ig .coach{top:84px}
 .igToggle{display:flex;align-items:center;justify-content:center;background:rgba(255,255,255,.14)!important;color:#fff}
@@ -75,7 +76,7 @@ button{cursor:pointer;touch-action:manipulation;-webkit-user-select:none;user-se
 .coach{position:absolute;left:10px;right:10px;top:40px;padding:8px 12px;border-radius:12px;background:rgba(20,14,10,.6);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);font-size:13px;text-align:center;transition:opacity .4s;pointer-events:none}
 
 /* sheet */
-.sheet{grid-area:sheet;height:var(--sheet-h,42%);background:var(--panel);border-radius:18px 18px 0 0;display:flex;flex-direction:column;min-height:0;box-shadow:0 -6px 24px rgba(0,0,0,.35);transition:height .25s ease}
+.sheet{grid-area:sheet;position:relative;z-index:2;height:var(--sheet-h,42%);background:var(--panel);border-radius:18px 18px 0 0;display:flex;flex-direction:column;min-height:0;box-shadow:0 -6px 24px rgba(0,0,0,.35);transition:height .25s ease}
 .sheet.dragging{transition:none}
 .grab{flex:none;height:22px;display:flex;align-items:center;justify-content:center;touch-action:none;cursor:grab}
 .grab i{width:38px;height:5px;border-radius:3px;background:#5a4636}
@@ -85,13 +86,40 @@ button{cursor:pointer;touch-action:manipulation;-webkit-user-select:none;user-se
 .tabs button{flex:1;border:0;background:none;color:var(--muted);display:flex;flex-direction:column;align-items:center;gap:2px;padding:7px 0 6px;font-size:11px;font-weight:700;min-height:50px}
 .tabs svg{width:24px;height:24px}
 .tabs button.on{color:var(--accent)}
+#toolNav{display:none;flex:1;min-width:0}
+/* staand bewerken: paneel zo hoog als de inhoud, foto krijgt de rest */
+.shell.editBar .sheet{height:auto!important;max-height:calc(var(--app-h,100vh) * .5);min-height:150px;transition:none}
+.shell.editBar .grab{display:none}
+.shell.editBar .sheetBody{padding-top:12px}
+.tabs.editBar>button{display:none}
+.tabs.editBar #toolNav{display:flex}
+#toolNav button{min-width:0;font-size:10.5px;letter-spacing:.1px}
+#toolNav button svg{width:23px;height:23px}
+#toolNav .back{flex:0 0 58px;border-right:1px solid var(--line);margin:8px 0;padding:0;min-height:34px}
+/* groepen: staand = één groep tegelijk (gekozen via toolbar), breed = inklapbaar */
+.grpH{display:none}
+.grp:not(.act){display:none}
+.grp>.grpC>.secH:first-child{margin-top:6px}
 
 /* breed scherm: iPhone Duo ingeklapt (liggend), uitgeklapt liggend, iPad, computer
    -> foto links over de volle hoogte, paneel rechts */
 @media (min-aspect-ratio: 1/1), (min-width: 900px){
   .shell{grid-template-columns:minmax(0,1fr) clamp(300px,44vw,440px);grid-template-rows:auto minmax(0,1fr) auto;grid-template-areas:"stage top" "stage sheet" "stage tabs"}
   .top{padding:calc(var(--sat) + 4px) calc(10px + var(--sar)) 4px 12px;min-height:48px;border-left:1px solid var(--line);background:var(--panel)}
-  .stageArea{padding:calc(var(--sat) + 8px) 8px calc(var(--sab) + 8px) calc(8px + var(--sal))}
+  .stageArea{padding:0;margin:0;--under:0px}
+  .stage .credit{top:calc(var(--sat) + 10px)}
+  .stage .igTop{padding-top:calc(var(--sat) + 8px);padding-left:calc(10px + var(--sal))}
+  .stage.ig .credit{top:calc(var(--sat) + 58px)}
+  .stage .bgRow{bottom:calc(8px + var(--sab))}.stage.ig .bgRow{bottom:calc(62px + var(--sab))}
+  .stage .igBottom{padding-bottom:calc(12px + var(--sab))}
+  .grp,.grp:not(.act){display:block}
+  .grpH{display:flex;align-items:center;gap:10px;width:100%;border:0;background:none;padding:15px 2px 11px;color:var(--text);font-weight:700;font-size:15px;border-top:1px solid var(--line);text-align:left}
+  .grp:first-child .grpH{border-top:0}
+  .grpH>svg:first-child{width:21px;height:21px;color:var(--accent2);flex:none}
+  .grpH .chev{width:18px;height:18px;margin-left:auto;color:var(--muted);transition:transform .2s}
+  .grp.closed .grpC{display:none}.grp.closed .chev{transform:rotate(-90deg)}
+  .grp>.grpC>.secH:first-child{display:none}
+  .grpC{padding-bottom:10px}
   .sheet{height:auto!important;border-radius:0;box-shadow:none;border-left:1px solid var(--line)}
   .grab{display:none}
   .tabs{border-top:1px solid var(--line);border-left:1px solid var(--line);padding:0 var(--sar) var(--sab) 0}
@@ -100,6 +128,10 @@ button{cursor:pointer;touch-action:manipulation;-webkit-user-select:none;user-se
   .sheetBody{padding:10px calc(14px + var(--sar)) 14px 14px}
   .chips,.toolbar{margin-left:-14px;margin-right:calc(-14px - var(--sar))}
   .chips{padding-left:14px}
+}
+/* iPhone Duo open (liggend, ~4:3): foto links en paneel rechts van de vouw, precies 50/50 */
+@media (min-aspect-ratio: 6/5) and (max-aspect-ratio: 3/2) and (max-width: 1000px) and (min-height: 561px){
+  .shell{grid-template-columns:50% 50%}
 }
 /* laag scherm (bv. iPhone Duo ingeklapt): alles compacter */
 @media (max-height: 560px){
@@ -113,7 +145,6 @@ button{cursor:pointer;touch-action:manipulation;-webkit-user-select:none;user-se
 @media (max-height: 560px) and (max-aspect-ratio: 1/1){ .brand{display:none} }
 /* groot scherm: 9:16-kader zoals een Instagram-story */
 @media (min-width: 1100px) and (min-height: 700px){
-  .stage{width:auto;max-width:100%;aspect-ratio:9/16}
   .shell{grid-template-columns:minmax(0,1fr) 440px}
 }
 
@@ -403,6 +434,7 @@ input[type=range]::-moz-range-thumb{width:28px;height:28px;border-radius:50%;bac
   <nav class="tabs" id="tabs">
     <button data-tab="lib" class="on"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><rect x="3" y="3" width="7.5" height="7.5" rx="2"/><rect x="13.5" y="3" width="7.5" height="7.5" rx="2"/><rect x="3" y="13.5" width="7.5" height="7.5" rx="2"/><rect x="13.5" y="13.5" width="7.5" height="7.5" rx="2"/></svg>Library</button>
     <button data-tab="edit"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 7h10M18 7h2M4 17h4M12 17h8"/><circle cx="16" cy="7" r="2.2"/><circle cx="10" cy="17" r="2.2"/></svg>Edit</button>
+    <div id="toolNav"></div>
   </nav>
 </div>
 
@@ -829,7 +861,7 @@ function isCustomCat(c){return !SEED_CATS.includes(c)}
 function layer(){return cur.layers[sel]}
 
 /* ---------------- iPhone: hoogte & toetsenbord ---------------- */
-function fitStage(){const a=document.querySelector(".stageArea"),st=$("stage");if(!a||!st)return;const cs=getComputedStyle(a),h=a.clientHeight-parseFloat(cs.paddingTop)-parseFloat(cs.paddingBottom);if(h>50)st.style.maxWidth=Math.round(h)+"px"}
+function fitStage(){const st=$("stage");if(st)st.style.maxWidth=""}
 if(window.ResizeObserver)new ResizeObserver(()=>{fitStage();schedulePreview(true)}).observe(document.querySelector(".stageArea"));
 function setAppH(){const h=window.visualViewport?visualViewport.height:innerHeight;document.documentElement.style.setProperty("--app-h",h+"px");if(typeof applySheetH==="function")applySheetH();requestAnimationFrame(()=>{fitStage();layoutSticker()})}
 if(window.visualViewport){visualViewport.addEventListener("resize",setAppH);visualViewport.addEventListener("scroll",()=>window.scrollTo(0,0))}
@@ -1012,7 +1044,7 @@ function trim(c){
 function lum(hex){const m=/^#?([0-9a-f]{6})$/i.exec(hex||"");if(!m)return 1;const n=parseInt(m[1],16);return(.299*(n>>16)+.587*((n>>8)&255)+.114*(n&255))/255}
 
 /* ---------------- Voorbeeld op de foto ---------------- */
-var previewQueued=false,lastBoxes=[],guideX=false;
+const STAGE_K=.82;var previewQueued=false,lastBoxes=[],guideX=false;
 const VIEW0={x:50,y:46,scale:.85};let view={...VIEW0};
 function layoutSticker(){schedulePreview(true)}
 function schedulePreview(noExport){
@@ -1024,13 +1056,13 @@ function schedulePreview(noExport){
     const dpr=Math.min(3,window.devicePixelRatio||1,1800/Math.max(W,H));
     const pw=Math.round(W*dpr),ph=Math.round(H*dpr);if(cv.width!==pw||cv.height!==ph){cv.width=pw;cv.height=ph}
     const ctx=cv.getContext("2d");ctx.clearRect(0,0,pw,ph);
-    lastBoxes=drawLayers(ctx,cur,Math.min(pw,ph*1.12)*view.scale/FRAME,pw*view.x/100,ph*view.y/100,{sel:tab==="edit"?sel:-1,dpr,guideX});
+    lastBoxes=drawLayers(ctx,cur,Math.min(pw,ph*STAGE_K)*view.scale/FRAME,pw*view.x/100,ph*view.y/100,{sel:tab==="edit"?sel:-1,dpr,guideX});
   });
 }
 // tik / sleep / knijp
 (function gestures(){
   const st=$("stage"),pts=new Map();let g=null;
-  const toUnits=(cx,cy)=>{const r=st.getBoundingClientRect(),k=FRAME/(Math.min(r.width,r.height*1.12)*view.scale);return{x:(cx-r.left-r.width*view.x/100)*k,y:(cy-r.top-r.height*view.y/100)*k,k}};
+  const toUnits=(cx,cy)=>{const r=st.getBoundingClientRect(),k=FRAME/(Math.min(r.width,r.height*STAGE_K)*view.scale);return{x:(cx-r.left-r.width*view.x/100)*k,y:(cy-r.top-r.height*view.y/100)*k,k}};
   function hit(u){
     let best=-1,bd=1e9;
     cur.layers.forEach((Ly,i)=>{const b=lastBoxes[i];if(!b)return;
@@ -1113,11 +1145,11 @@ function showTab(t){
   tab=t;document.querySelectorAll("#tabs button").forEach(b=>b.classList.toggle("on",b.dataset.tab===t));
   ["lib","edit"].forEach(x=>$("tab-"+x).classList.toggle("hidden",x!==t));
   $("undoBtn").classList.toggle("hidden",t!=="edit");
-  $("sheetBody").scrollTop=0;
+  $("sheetBody").scrollTop=0;syncNav();
   if(t==="edit"){if(!layer())sel=0;view={...VIEW0};layoutSticker();renderLayerChips();renderTool();showCoach()}
   schedulePreview(true);
 }
-$("tabs").addEventListener("click",e=>{const b=e.target.closest("button");if(b)showTab(b.dataset.tab)});
+$("tabs").addEventListener("click",e=>{const b=e.target.closest("button");if(!b)return;if(b.dataset.gk){setToolGrp(b.dataset.gk);return}if(b.dataset.tab)showTab(b.dataset.tab)});
 
 /* ---------------- Bibliotheek ---------------- */
 let thumbJob=0;
@@ -1230,17 +1262,45 @@ function bindRanges(root,target,after){
 const SWATCHES=["#FFFFFF","#F6E9D7","#E9B77C","#C98A4B","#F26B50","#D9473A","#7FC8E8","#A8B89A","#3B2416","#111111"];
 function alignSvg(a){const L={left:[[4,20],[4,16],[4,20],[4,13]],center:[[4,20],[6,18],[4,20],[8,16]],right:[[4,20],[8,20],[4,20],[11,20]],justify:[[4,20],[4,20],[4,20],[4,13]]}[a];
   return `<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">${L.map((p,i)=>`<path d="M${p[0]} ${6+i*4}H${p[1]}"/>`).join("")}</svg>`}
-function sec(t){return `<div class="secH">${t}</div>`}
+function sec(t,k){return k?`<!--G:${k}:${t}-->`:`<div class="secH">${t}</div>`}
+/* gereedschap-groepen: onderaan als toolbar (staand) of inklapbaar rechts (breed) */
+const WIDE=matchMedia("(min-aspect-ratio: 1/1), (min-width: 900px)");
+let toolGrp="text";const openGrps=new Set(["text","font"]);
+const GRP_IC={text:'<path d="M4 6.5h12M10 6.5V19M18.5 9.5V19"/>',font:'<path d="M3.5 18L8.5 5h1L14.5 18M5.5 13.5h7"/><path d="M20.5 18v-5.2a2.8 2.8 0 0 0-5.3-1.2M20.5 15.2c-3-.6-5.5 0-5.5 1.6 0 2 4 1.9 5.5-.3"/>',
+  orn:'<path d="M12 3.5l2 5.5 5.5 2-5.5 2-2 5.5-2-5.5-5.5-2 5.5-2z"/>',size:'<path d="M12 3v18M3 12h18M9 6l3-3 3 3M9 18l3 3 3-3M6 9l-3 3 3 3M18 9l3 3-3 3"/>',
+  style:'<path d="M5 19L15.5 8.5M14 5l1-2 1 2 2 1-2 1-1 2-1-2-2-1zM19 12l.7-1.3L21 10l-1.3-.7L19 8l-.7 1.3L17 10l1.3.7z"/>',
+  colour:'<path d="M12 3a9 9 0 1 0 0 18c1.2 0 1.8-.8 1.8-1.7 0-1.2-1-1.4-1-2.5 0-.9.7-1.6 1.7-1.6H17a4 4 0 0 0 4-4C21 6.6 17 3 12 3z"/><circle cx="7.5" cy="11" r="1.2"/><circle cx="10.5" cy="7.3" r="1.2"/><circle cx="15" cy="7.5" r="1.2"/>',
+  save:'<path d="M6.5 3.5h11v17l-5.5-3.8-5.5 3.8z"/>'};
+const GRP_NAME={text:"Text",font:"Font",size:"Size",style:"Style",colour:"Colour",save:"Keep"};
+const icon=(k)=>`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">${GRP_IC[k]}</svg>`;
+function buildGroups(h,isShape){
+  const parts=h.split(/<!--G:(\w+):(.*?)-->/),groups=[];
+  for(let i=1;i<parts.length;i+=3){const k=parts[i],t=parts[i+1],c=parts[i+2],g=groups.find(x=>x.k===k);
+    if(g)g.c+=`<div class="secH">${t}</div>`+c;else groups.push({k,t,c})}
+  if(!groups.some(g=>g.k===toolGrp))toolGrp=groups.length?groups[0].k:"text";
+  const wide=WIDE.matches;
+  const out=parts[0]+groups.map(g=>{const ic=g.k==="text"&&isShape?"orn":g.k;
+    const cls=wide?(openGrps.has(g.k)?"":" closed"):(g.k===toolGrp?" act":"");
+    return `<section class="grp${cls}" data-grp="${g.k}"><button class="grpH" data-gh="${g.k}">${icon(ic)}<span>${g.t}</span><svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></button><div class="grpC">${g.c}</div></section>`}).join("");
+  $("toolNav").innerHTML=`<button class="back" data-tab="lib" aria-label="Library"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><rect x="3" y="3" width="7.5" height="7.5" rx="2"/><rect x="13.5" y="3" width="7.5" height="7.5" rx="2"/><rect x="3" y="13.5" width="7.5" height="7.5" rx="2"/><rect x="13.5" y="13.5" width="7.5" height="7.5" rx="2"/></svg>Library</button>`
+    +groups.map(g=>`<button data-gk="${g.k}" class="${g.k===toolGrp?"on":""}">${icon(g.k==="text"&&isShape?"orn":g.k)}${g.k==="text"&&isShape?"Ornament":GRP_NAME[g.k]}</button>`).join("");
+  return out;
+}
+function setToolGrp(k){toolGrp=k;document.querySelectorAll("#toolBody .grp").forEach(g=>g.classList.toggle("act",g.dataset.grp===k));
+  document.querySelectorAll("#toolNav [data-gk]").forEach(b=>b.classList.toggle("on",b.dataset.gk===k));$("sheetBody").scrollTop=0;
+  if(k==="font"){const f=document.querySelector(".fontBtn.on"),r=$("fontRow");if(f&&r)r.scrollLeft=f.offsetLeft-r.offsetLeft-(r.clientWidth-f.clientWidth)/2}}
+function syncNav(){const on=tab==="edit"&&!WIDE.matches;$("tabs").classList.toggle("editBar",on);document.querySelector(".shell").classList.toggle("editBar",on);requestAnimationFrame(()=>{fitStage();layoutSticker()})}
+WIDE.addEventListener("change",()=>{syncNav();if(tab==="edit")renderTool()});
 function renderTool(light){
   const body=$("toolBody");const Ly=layer();
   if(light){ // tijdens slepen/knijpen: enkel de schuifjes bijwerken
     body.querySelectorAll("input[type=range][data-k]").forEach(i=>{const src=i.dataset.d?cur:Ly;if(!src)return;i.value=src[i.dataset.k]||0;i.parentElement.querySelector("output").textContent=i.value});return}
   let h="";
   if(Ly&&Ly.kind==="shape"){
-    h+=sec("Ornament")+`<div class="ornGrid">${Object.entries(ORNAMENTS).map(([k,n])=>(PRO_ORN.has(k)&&!isPro()?`<button class="ornBtn" data-pw="orn" data-icon="${k}"><canvas width="96" height="96"></canvas><span>${n}</span>${proLabel()}</button>`:`<button class="ornBtn ${k===Ly.shape?"on":""}" data-o="${k}"><canvas width="96" height="96"></canvas><span>${n}</span></button>`)).join("")}</div>`;
-    h+=sec("Size &amp; position")+rng("Size","size",20,480,Ly.size)+rng("Rotate","rotate",-180,180,Ly.rotate||0)+rng("Left/right","x",-700,700,Ly.x)+rng("Up/down","y",-900,900,Ly.y)
+    h+=sec("Ornament","text")+`<div class="ornGrid">${Object.entries(ORNAMENTS).map(([k,n])=>(PRO_ORN.has(k)&&!isPro()?`<button class="ornBtn" data-pw="orn" data-icon="${k}"><canvas width="96" height="96"></canvas><span>${n}</span>${proLabel()}</button>`:`<button class="ornBtn ${k===Ly.shape?"on":""}" data-o="${k}"><canvas width="96" height="96"></canvas><span>${n}</span></button>`)).join("")}</div>`;
+    h+=sec("Size &amp; position","size")+rng("Size","size",20,480,Ly.size)+rng("Rotate","rotate",-180,180,Ly.rotate||0)+rng("Left/right","x",-700,700,Ly.x)+rng("Up/down","y",-900,900,Ly.y)
       +`<div class="hint" style="margin:2px 0 4px">Or: drag the ornament on the photo · pinch and twist with two fingers.</div>`;
-    h+=sec("Style")+`<div class="chips wrap">
+    h+=sec("Style","style")+`<div class="chips wrap">
       <button class="chip ${Ly.color==="main"?"on":""}" data-c="main"><span class="dot" style="background:${cur.colors.main}"></span>Main colour</button>
       <button class="chip ${Ly.color==="accent"?"on":""}" data-c="accent"><span class="dot" style="background:${cur.colors.accent}"></span>Accent</button>
       ${STROKE_SHAPES.has(Ly.shape)?"":`<button class="chip ${Ly.style==="outline"?"on":""}" data-t="outline">Outline</button>`}</div>
@@ -1250,14 +1310,14 @@ function renderTool(light){
     const groups=["All",...new Set(FONTS.map(x=>x.g))];
     const sample=((Ly.upper?Ly.text.toUpperCase():Ly.text)||"Aa").slice(0,14);
     const list=FONTS.filter(x=>fontGroup==="All"||x.g===fontGroup);
-    h+=sec(Ly.kind==="para"?"Paragraph":"Text")+(Ly.kind==="para"?`<textarea class="inp paraInp" id="tText" rows="6" autocomplete="off" spellcheck="true">${esc(Ly.text)}</textarea>`:`<input class="inp" id="tText" value="${esc(Ly.text)}" autocomplete="off" autocorrect="off" spellcheck="false" enterkeyhint="done">`);
-    h+=sec("Font")+`<div class="chips">${groups.map(g=>`<button class="chip sm ${g===fontGroup?"on":""}" data-g="${g}">${g}</button>`).join("")}</div>
+    h+=sec(Ly.kind==="para"?"Paragraph":"Text","text")+(Ly.kind==="para"?`<textarea class="inp paraInp" id="tText" rows="6" autocomplete="off" spellcheck="true">${esc(Ly.text)}</textarea>`:`<input class="inp" id="tText" value="${esc(Ly.text)}" autocomplete="off" autocorrect="off" spellcheck="false" enterkeyhint="done">`);
+    h+=sec("Font","font")+`<div class="chips">${groups.map(g=>`<button class="chip sm ${g===fontGroup?"on":""}" data-g="${g}">${g}</button>`).join("")}</div>
       <div class="fontRow" id="fontRow">${list.map(x=>`<button class="fontBtn ${x.n===Ly.font?"on":""}" data-f="${esc(x.n)}"><span class="s" style="font-family:'${x.n}';font-weight:${x.w[x.w.length-1]}">${esc(sample)}</span><span class="n">${x.n}</span></button>`).join("")}</div>`;
-    h+=sec("Size &amp; position")+rng("Size","size",20,480,Ly.size)+rng("Spacing","spacing",0,100,Ly.spacing||0)+rng("Rotate","rotate",-45,45,Ly.rotate||0)+(Ly.kind==="para"?"":rng("Arc","curve",-100,100,Ly.curve||0))+rng("Left/right","x",-700,700,Ly.x)+rng("Up/down","y",-900,900,Ly.y)
+    h+=sec("Size &amp; position","size")+rng("Size","size",20,480,Ly.size)+rng("Spacing","spacing",0,100,Ly.spacing||0)+rng("Rotate","rotate",-45,45,Ly.rotate||0)+(Ly.kind==="para"?"":rng("Arc","curve",-100,100,Ly.curve||0))+rng("Left/right","x",-700,700,Ly.x)+rng("Up/down","y",-900,900,Ly.y)
       +`<div class="hint" style="margin:2px 0 4px">Or: drag the text on the photo · pinch and twist with two fingers.</div>`;
-    if(Ly.kind==="para")h+=sec("Paragraph layout")+`<div class="chips wrap alignChips">${["left","center","right","justify"].map(a=>`<button class="chip ${Ly.align===a?"on":""}" data-al="${a}" aria-label="Align ${a}">${alignSvg(a)}</button>`).join("")}</div>`
+    if(Ly.kind==="para")h+=sec("Paragraph layout","size")+`<div class="chips wrap alignChips">${["left","center","right","justify"].map(a=>`<button class="chip ${Ly.align===a?"on":""}" data-al="${a}" aria-label="Align ${a}">${alignSvg(a)}</button>`).join("")}</div>`
       +rng("Width","width",240,1000,Ly.width||760)+rng("Line height","lh",0.9,2.2,Ly.lh||1.35,0.05);
-    h+=sec("Style")+`<div class="chips wrap">
+    h+=sec("Style","style")+`<div class="chips wrap">
       <button class="chip ${Ly.color==="main"?"on":""}" data-c="main"><span class="dot" style="background:${cur.colors.main}"></span>Main colour</button>
       <button class="chip ${Ly.color==="accent"?"on":""}" data-c="accent"><span class="dot" style="background:${cur.colors.accent}"></span>Accent</button>
       <button class="chip ${Ly.upper?"on":""}" data-t="upper">CAPS</button>
@@ -1268,15 +1328,16 @@ function renderTool(light){
       ${Ly.kind==="para"?"":(isPro()?rng("Knock-out","cutout",0,40,Ly.cutout||0):proRow("Knock-out"))}${Ly.kind==="para"?"":`<div class="hint" style="margin:-4px 0 8px">Cuts a gap into the text underneath (like ‘More coffee please’). Make sure this text is in front.</div>`}
       <div class="chips wrap"><button class="chip" data-a="center">Centre</button><button class="chip" data-a="straight">Straighten</button><button class="chip" data-a="up">Bring forward</button><button class="chip" data-a="down">Send back</button><button class="chip" data-a="dup">Duplicate</button><button class="chip" data-a="del" style="color:#ff9b87">Delete text</button></div>`;
   }else h+=`<div class="empty">No text. Tap “+ Text”.</div>`;
-  h+=sec("Colours &amp; finish")+`<div class="lab" style="margin-top:0">Main colour</div><div class="sw" id="swMain"></div><div class="lab">Accent colour</div><div class="sw" id="swAccent"></div>`+rng("Shadow","shadow",0,80,cur.shadow||0,1,true)+(isPro()?rng("Texture","texture",0,100,cur.texture||0,1,true):proRow("Texture"))+`<div class="hint" style="margin-top:-4px">Texture gives a printed, worn retro look.</div>`;
+  h+=sec("Colours &amp; finish","colour")+`<div class="lab" style="margin-top:0">Main colour</div><div class="sw" id="swMain"></div><div class="lab">Accent colour</div><div class="sw" id="swAccent"></div>`+rng("Shadow","shadow",0,80,cur.shadow||0,1,true)+(isPro()?rng("Texture","texture",0,100,cur.texture||0,1,true):proRow("Texture"))+`<div class="hint" style="margin-top:-4px">Texture gives a printed, worn retro look.</div>`;
   const isMine=custom.some(d=>d.id===curSourceId);
-  h+=sec("Save")+`<input class="inp" id="sName" value="${esc(cur.name)}" placeholder="Name">
+  h+=sec("Save as template","save")+`<input class="inp" id="sName" value="${esc(cur.name)}" placeholder="Name">
     <select class="inp" id="sCat" style="margin-top:8px">${allCats().map(c=>`<option ${c===cur.cat?"selected":""}>${esc(c)}</option>`).join("")}<option value="__new">+ New category…</option></select>
     <input class="inp hidden" id="sCatNew" placeholder="New category name" style="margin-top:8px">
     <div class="row" style="margin-top:10px"><button class="btn pri" id="sSave">${isMine?"Save":"Save to my designs"}</button>${isMine?`<button class="btn" id="sCopy">Save as copy</button><button class="btn warn" id="sDel">Delete</button>`:""}</div>
     <div class="hint" style="margin-top:8px">Your designs are stored on this device.</div>`;
   const keep=$("sheetBody").scrollTop,fr=$("fontRow")?$("fontRow").scrollLeft:0;
-  body.innerHTML=h;$("sheetBody").scrollTop=keep;if($("fontRow"))$("fontRow").scrollLeft=fr;
+  body.innerHTML=buildGroups(h,!!(Ly&&Ly.kind==="shape"));
+  body.querySelectorAll("[data-gh]").forEach(b=>b.onclick=()=>{const k=b.dataset.gh,g=b.parentElement;g.classList.toggle("closed");if(g.classList.contains("closed"))openGrps.delete(k);else openGrps.add(k)});$("sheetBody").scrollTop=keep;if($("fontRow"))$("fontRow").scrollLeft=fr;
 
   if(Ly&&Ly.kind==="shape"){
     body.querySelectorAll(".ornBtn[data-pw]").forEach(b=>{const x=b.querySelector("canvas").getContext("2d");x.translate(48,48);x.fillStyle=x.strokeStyle="#8f7a68";drawShape(x,b.dataset.icon,30,false)});
