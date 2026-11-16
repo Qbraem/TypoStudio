@@ -216,6 +216,8 @@ input[type=range]::-moz-range-thumb{width:28px;height:28px;border-radius:50%;bac
 .plan .pp{font-size:14px}.plan .pp b{font-size:22px}
 .plan .ps{font-size:12px;color:var(--muted);line-height:1.3}
 .plan .ribbon{position:absolute;top:-10px;left:12px;height:20px;padding:0 8px;border-radius:10px;background:var(--accent);color:#fff;font-size:10px;font-weight:800;letter-spacing:.6px;display:flex;align-items:center}
+.plan .ribbon.deal{left:auto;right:10px;background:linear-gradient(135deg,#F6DE9C,#C9963A);color:#3a2408}
+.plan .pp s{font-size:13px;color:#8f7a68;margin-left:4px}
 .plan .radio{position:absolute;top:14px;right:12px;width:20px;height:20px;border-radius:10px;border:2px solid #6a5444}
 .plan.on .radio{border-color:#E9C46A;background:radial-gradient(circle,#E9C46A 0 5px,transparent 5.5px)}
 .pwCta{width:100%;height:56px;border:0;border-radius:28px;background:linear-gradient(135deg,#F6DE9C,#C9963A);color:#3a2408;font-size:17px;font-weight:800;box-shadow:0 8px 24px rgba(201,150,58,.35)}
@@ -333,8 +335,8 @@ input[type=range]::-moz-range-thumb{width:28px;height:28px;border-radius:50%;bac
         <li><span class="ck"></span><div><b>New designs every month</b><small>Fresh trends and seasonal drops, included</small></div></li>
       </ul>
       <div class="plans">
-        <button class="plan on" data-plan="yearly"><span class="ribbon">BEST VALUE</span><span class="pl">Yearly</span><span class="pp"><b id="pwYearly">€9.99</b> / year</span><span class="ps">7 days free · just <span id="pwPerMonth">€0.83</span> a month</span><span class="radio"></span></button>
-        <button class="plan" data-plan="lifetime"><span class="pl">Lifetime</span><span class="pp"><b id="pwLifetime">€24.99</b> once</span><span class="ps">Pay once, keep Pro forever</span><span class="radio"></span></button>
+        <button class="plan on" data-plan="yearly"><span class="ribbon">BEST VALUE</span><span class="pl">Yearly</span><span class="pp"><b id="pwYearly">€12.99</b> / year</span><span class="ps">7 days free · just <span id="pwPerMonth">€1.08</span> a month</span><span class="radio"></span></button>
+        <button class="plan" data-plan="lifetime"><span class="ribbon deal">LAUNCH DEAL −<span id="pwOff">40%</span></span><span class="pl">Lifetime</span><span class="pp"><b id="pwLifetime">€24.99</b> <s id="pwRegular">€41.99</s></span><span class="ps">Pay once, keep Pro forever</span><span class="radio"></span></button>
       </div>
       <button class="pwCta" id="pwCta">Start 7-day free trial</button>
       <p class="pwFine" id="pwFine"></p>
@@ -1200,7 +1202,7 @@ if("serviceWorker" in navigator&&location.protocol==="https:"){window.addEventLi
 
 /* ---------------- Studio Typo Pro ---------------- */
 // Prices are placeholders until they are set in App Store Connect.
-const PRO={yearly:{price:"€9.99",perMonth:"€0.83",trialDays:7},lifetime:{price:"€24.99"}};
+const PRO={yearly:{price:"€12.99",perMonth:"€1.08",trialDays:7},lifetime:{price:"€24.99",regular:"€41.99",off:"40%"}};
 const FREE_PER_CAT=3;
 const FREE_IDS=new Set(NEW_CATS.flatMap(c=>SEEDS.filter(d=>d.cat===c).slice(0,FREE_PER_CAT).map(d=>d.id)));
 SEEDS.forEach(d=>{d.pro=!FREE_IDS.has(d.id)});
@@ -1226,11 +1228,11 @@ function openPaywall(reason){
 function closePaywall(){$("paywall").classList.add("hidden")}
 function renderPlans(){
   document.querySelectorAll(".plan").forEach(p=>p.classList.toggle("on",p.dataset.plan===pwPlan));
-  const y=PRO.yearly;$("pwYearly").textContent=y.price;$("pwPerMonth").textContent=y.perMonth;$("pwLifetime").textContent=PRO.lifetime.price;
-  $("pwCta").textContent=pwPlan==="yearly"?`Start ${y.trialDays}-day free trial`:`Unlock forever – ${PRO.lifetime.price}`;
+  const y=PRO.yearly;$("pwYearly").textContent=y.price;$("pwPerMonth").textContent=y.perMonth;$("pwLifetime").textContent=PRO.lifetime.price;$("pwRegular").textContent=PRO.lifetime.regular;$("pwOff").textContent=PRO.lifetime.off;
+  $("pwCta").textContent=pwPlan==="yearly"?`Start ${y.trialDays}-day free trial`:`Get lifetime – ${PRO.lifetime.price}`;
   $("pwFine").innerHTML=pwPlan==="yearly"
     ?`${y.trialDays} days free, then ${y.price} per year. The subscription renews automatically unless it is cancelled at least 24 hours before the end of the current period. Payment is charged to your Apple ID account. Manage or cancel any time in Settings › Apple ID › Subscriptions.`
-    :`One-time purchase of ${PRO.lifetime.price}. No subscription, unlocks Pro forever on all devices with your Apple ID.`;
+    :`Launch deal: one-time purchase of ${PRO.lifetime.price} instead of ${PRO.lifetime.regular}. No subscription – unlocks Pro forever on all devices with your Apple ID.`;
 }
 let pwHeroDone=false;
 async function renderPwHero(){
