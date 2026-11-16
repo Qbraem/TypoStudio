@@ -10,8 +10,8 @@
 <meta name="apple-mobile-web-app-title" content="Typo Studio">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <link rel="manifest" href="/manifest.webmanifest">
-<link rel="icon" href="/icons/icon-192.png?v=2">
-<link rel="apple-touch-icon" href="/icons/apple-touch-icon.png?v=2">
+<link rel="icon" href="/icons/icon-192.png?v=3">
+<link rel="apple-touch-icon" href="/icons/apple-touch-icon.png?v=3">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&display=swap">
@@ -56,7 +56,8 @@ button{cursor:pointer;touch-action:manipulation;-webkit-user-select:none;user-se
 .bgBtn.bg-warm{background:linear-gradient(135deg,#e9a35a,#5a3420)}.bgBtn.bg-dark{background:#141414}.bgBtn.bg-light{background:#efe7dc}
 .bgBtn.bg-check{background:repeating-conic-gradient(#666 0 25%,#333 0 50%) 0 0/12px 12px}
 .bgBtn .lab{font-size:15px;line-height:32px}
-.coach{position:absolute;left:10px;right:10px;top:10px;padding:8px 12px;border-radius:12px;background:rgba(20,14,10,.6);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);font-size:13px;text-align:center;transition:opacity .4s;pointer-events:none}
+.credit{position:absolute;top:10px;right:12px;z-index:3;color:rgba(255,255,255,.85);font-size:11px;letter-spacing:.2px;text-decoration:none;text-shadow:0 1px 3px rgba(0,0,0,.5)}
+.coach{position:absolute;left:10px;right:10px;top:32px;padding:8px 12px;border-radius:12px;background:rgba(20,14,10,.6);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);font-size:13px;text-align:center;transition:opacity .4s;pointer-events:none}
 
 /* sheet */
 .sheet{grid-area:sheet;height:var(--sheet-h,42%);background:var(--panel);border-radius:18px 18px 0 0;display:flex;flex-direction:column;min-height:0;box-shadow:0 -6px 24px rgba(0,0,0,.35);transition:height .25s ease}
@@ -130,9 +131,9 @@ input[type=range]::-moz-range-thumb{width:28px;height:28px;border-radius:50%;bac
 /* library */
 .grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
 @media(min-width:600px){.grid{grid-template-columns:repeat(auto-fill,minmax(120px,1fr))}}
-.card{position:relative;border:2px solid transparent;border-radius:12px;overflow:hidden;background:#2a1d16 center/cover;aspect-ratio:1/1;padding:0;display:flex;align-items:center;justify-content:center}
+.card{position:relative;border:1.5px solid #3d3733;background-clip:padding-box;border-radius:12px;overflow:hidden;background:#2a1d16 center/cover;aspect-ratio:1/1;padding:0;display:flex;align-items:center;justify-content:center}
 .card.light{background:#efe7dc}
-.card.sel{border-color:var(--accent)}
+.card.sel{border:2px solid #fff}
 .card canvas{max-width:86%;max-height:72%}
 .card .mine{position:absolute;top:4px;right:7px;font-size:11px;color:var(--accent2)}
 .empty{color:var(--muted);font-size:14px;padding:18px 4px;text-align:center;grid-column:1/-1}
@@ -143,6 +144,14 @@ input[type=range]::-moz-range-thumb{width:28px;height:28px;border-radius:50%;bac
 .toolbar::-webkit-scrollbar{display:none}
 .toolbar button{flex:none;border:0;background:none;min-height:44px;padding:0 10px;font-size:14px;font-weight:700;color:var(--muted);border-bottom:2px solid transparent}
 .toolbar button.on{color:var(--text);border-bottom-color:var(--accent)}
+.secH{font-size:12px;letter-spacing:1.1px;text-transform:uppercase;color:var(--muted);font-weight:700;margin:18px 0 8px}
+#toolBody>.secH:first-child{margin-top:4px}
+.chips.wrap{flex-wrap:wrap;overflow:visible;margin:0;padding:0 0 8px}
+.chip.sm{min-height:34px;font-size:13px;padding:0 12px}
+.chip .dot{width:14px;height:14px;border-radius:50%;border:1px solid #777;display:inline-block}
+.fontRow{display:flex;gap:8px;overflow-x:auto;scrollbar-width:none;padding-bottom:4px;margin:0 calc(-14px - var(--sar)) 0 calc(-14px - var(--sal));padding-left:calc(14px + var(--sal));padding-right:14px}
+.fontRow::-webkit-scrollbar{display:none}
+.fontRow .fontBtn{flex:none;width:132px}
 .fontGrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
 @media(min-width:600px){.fontGrid{grid-template-columns:repeat(3,minmax(0,1fr))}}
 .fontBtn{min-height:64px;border-radius:12px;border:1px solid var(--line);background:var(--panel2);padding:6px 8px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;overflow:hidden}
@@ -177,6 +186,7 @@ input[type=range]::-moz-range-thumb{width:28px;height:28px;border-radius:50%;bac
     <div class="stage" id="stage">
       <div class="bg" id="stageBg" style="background-image:url('/img/bg-beans.jpg')"></div>
       <canvas id="sticker"></canvas>
+      <a class="credit hidden" id="credit" href="https://www.instagram.com/max.on.the.moveee/" target="_blank" rel="noopener">© max.on.the.moveee</a>
       <div class="coach hidden" id="coach">Tik op een tekst · sleep om te verplaatsen · knijp om te schalen en draaien</div>
       <div class="bgRow" id="bgRow">
         <button class="bgBtn on" data-photo="beans" aria-label="Koffiebonen"><img src="/img/th-beans.jpg" alt=""></button>
@@ -207,15 +217,7 @@ input[type=range]::-moz-range-thumb{width:28px;height:28px;border-radius:50%;bac
       <div id="tab-edit" class="hidden">
         <div class="stickyTop">
           <div class="chips" id="layerChips"></div>
-          <div class="toolbar" id="toolbar">
-            <button data-tool="text" class="on">Tekst</button>
-            <button data-tool="font">Lettertype</button>
-            <button data-tool="size">Grootte</button>
-            <button data-tool="pos">Positie</button>
-            <button data-tool="style">Stijl</button>
-            <button data-tool="colors">Kleuren</button>
-            <button data-tool="save">Opslaan</button>
-          </div>
+
         </div>
         <div id="toolBody"></div>
       </div>
@@ -463,7 +465,7 @@ function schedulePreview(noExport){
     return best;
   }
   st.addEventListener("pointerdown",e=>{
-    if(e.target.closest(".bgRow"))return;
+    if(e.target.closest(".bgRow")||e.target.closest(".credit"))return;
     st.setPointerCapture(e.pointerId);pts.set(e.pointerId,{x:e.clientX,y:e.clientY});
     if(tab==="edit"){
       if(pts.size===1){const u=toUnits(e.clientX,e.clientY);const h=hit(u);
@@ -500,14 +502,14 @@ function schedulePreview(noExport){
 $("bgRow").addEventListener("click",e=>{
   const b=e.target.closest("[data-bg],[data-photo]");if(!b)return;
   document.querySelectorAll("#bgRow .bgBtn").forEach(x=>x.classList.toggle("on",x===b));
-  const bg=$("stageBg");
+  const bg=$("stageBg");$("credit").classList.toggle("hidden",b.dataset.photo!=="pier");
   if(b.dataset.photo){bg.className="bg";bg.style.background="";bg.style.backgroundImage=`url('/img/bg-${b.dataset.photo}.jpg')`;bg.style.backgroundSize="cover";bg.style.backgroundPosition="center"}
   else{bg.style.backgroundImage="";bg.className="bg bg-"+b.dataset.bg}
 });
 $("photoIn").addEventListener("change",e=>{
   const f=e.target.files[0];if(!f)return;const url=URL.createObjectURL(f),bg=$("stageBg");
   bg.className="bg";bg.style.background="";bg.style.backgroundImage=`url("${url}")`;bg.style.backgroundSize="cover";bg.style.backgroundPosition="center";
-  document.querySelectorAll("#bgRow .bgBtn").forEach(x=>x.classList.remove("on"));e.target.closest(".bgBtn").classList.add("on");
+  document.querySelectorAll("#bgRow .bgBtn").forEach(x=>x.classList.remove("on"));e.target.closest(".bgBtn").classList.add("on");$("credit").classList.add("hidden");
 });
 function showCoach(){try{if(localStorage.getItem("typoStudio.coach"))return}catch(e){}$("coach").classList.remove("hidden");$("coach").style.opacity=1;clearTimeout(showCoach._t);showCoach._t=setTimeout(hideCoach,6000)}
 function hideCoach(){const c=$("coach");if(c.classList.contains("hidden"))return;c.style.opacity=0;setTimeout(()=>c.classList.add("hidden"),400);try{localStorage.setItem("typoStudio.coach","1")}catch(e){}}
@@ -590,91 +592,82 @@ function renderLayerChips(){
   box.appendChild(add);
   const on=box.querySelector(".chip.on");if(on)on.scrollIntoView({inline:"nearest",block:"nearest"});
 }
-function syncToolbar(){document.querySelectorAll("#toolbar button").forEach(b=>b.classList.toggle("on",b.dataset.tool===tool))}
-$("toolbar").addEventListener("click",e=>{const b=e.target.closest("[data-tool]");if(!b)return;tool=b.dataset.tool;syncToolbar();renderTool()});
-function rng(label,k,min,max,v,step=1){return `<div class="ctl"><span>${label}</span><input type="range" data-k="${k}" min="${min}" max="${max}" step="${step}" value="${v}"><output>${v}</output></div>`}
+function syncToolbar(){}
+
+function rng(label,k,min,max,v,step=1,design=false){return `<div class="ctl"><span>${label}</span><input type="range" data-k="${k}" ${design?'data-d="1"':""} min="${min}" max="${max}" step="${step}" value="${v}"><output>${v}</output></div>`}
 function bindRanges(root,target,after){
   root.querySelectorAll("input[type=range][data-k]").forEach(inp=>{
     inp.addEventListener("pointerdown",snap);inp.addEventListener("keydown",snap);
-    inp.addEventListener("input",()=>{target()[inp.dataset.k]=+inp.value;inp.parentElement.querySelector("output").textContent=inp.value;schedulePreview();if(after)after(inp.dataset.k)});
+    inp.addEventListener("input",()=>{const t=inp.dataset.d?cur:target();if(!t)return;t[inp.dataset.k]=+inp.value;inp.parentElement.querySelector("output").textContent=inp.value;schedulePreview();if(after)after(inp.dataset.k)});
   });
 }
 const SWATCHES=["#FFFFFF","#F6E9D7","#E9B77C","#C98A4B","#F26B50","#D9473A","#7FC8E8","#A8B89A","#3B2416","#111111"];
+function sec(t){return `<div class="secH">${t}</div>`}
 function renderTool(light){
   const body=$("toolBody");const Ly=layer();
-  if(light&&tool!=="pos"&&tool!=="size"){return}
-  if(!Ly&&tool!=="colors"&&tool!=="save"){body.innerHTML=`<div class="empty">Geen tekst. Tik op “+ Tekst”.</div>`;return}
-  const f=Ly?FONT_BY[Ly.font]||{w:[400]}:null;
-  if(tool==="text"){
-    body.innerHTML=`<input class="inp" id="tText" value="${esc(Ly.text)}" autocomplete="off" autocorrect="off" spellcheck="false" enterkeyhint="done">
-      <div class="chips" style="margin-top:10px"><button class="chip ${Ly.upper?"on":""}" id="tUpper">HOOFDLETTERS</button><button class="chip" id="tDup">Dupliceer</button><button class="chip" id="tDel" style="color:#ff9b87">Verwijder</button></div>`;
-    const i=$("tText");i.addEventListener("focus",snap);
-    i.addEventListener("input",()=>{Ly.text=i.value;schedulePreview();renderLayerChipsDebounced()});
-    i.addEventListener("keydown",e=>{if(e.key==="Enter")i.blur()});
-    $("tUpper").onclick=()=>{snap();change(()=>Ly.upper=!Ly.upper,{chips:true,tool:true})};
-    $("tDup").onclick=()=>{snap();cur.layers.splice(sel+1,0,Object.assign(clone(Ly),{y:Math.min(450,Ly.y+Ly.size*.9)}));sel++;change(()=>{},{chips:true,tool:true})};
-    $("tDel").onclick=()=>{snap();cur.layers.splice(sel,1);sel=Math.max(0,sel-1);change(()=>{},{chips:true,tool:true});toast("Laag verwijderd · ↶ om terug te zetten")};
-  }
-  if(tool==="font"){
+  if(light){ // tijdens slepen/knijpen: enkel de schuifjes bijwerken
+    body.querySelectorAll("input[type=range][data-k]").forEach(i=>{const src=i.dataset.d?cur:Ly;if(!src)return;i.value=src[i.dataset.k]||0;i.parentElement.querySelector("output").textContent=i.value});return}
+  let h="";
+  if(Ly){
+    const f=FONT_BY[Ly.font]||{w:[400]};
     const groups=["Alle",...new Set(FONTS.map(x=>x.g))];
     const sample=((Ly.upper?Ly.text.toUpperCase():Ly.text)||"Aa").slice(0,14);
     const list=FONTS.filter(x=>fontGroup==="Alle"||x.g===fontGroup);
-    body.innerHTML=`<div class="chips">${groups.map(g=>`<button class="chip ${g===fontGroup?"on":""}" data-g="${g}">${g}</button>`).join("")}</div>
-      <div class="fontGrid">${list.map(x=>`<button class="fontBtn ${x.n===Ly.font?"on":""}" data-f="${esc(x.n)}"><span class="s" style="font-family:'${x.n}';font-weight:${x.w[x.w.length-1]}">${esc(sample)}</span><span class="n">${x.n}</span></button>`).join("")}</div>`;
-    body.querySelectorAll("[data-g]").forEach(b=>b.onclick=()=>{fontGroup=b.dataset.g;renderTool()});
+    h+=sec("Tekst")+`<input class="inp" id="tText" value="${esc(Ly.text)}" autocomplete="off" autocorrect="off" spellcheck="false" enterkeyhint="done">`;
+    h+=sec("Lettertype")+`<div class="chips">${groups.map(g=>`<button class="chip sm ${g===fontGroup?"on":""}" data-g="${g}">${g}</button>`).join("")}</div>
+      <div class="fontRow" id="fontRow">${list.map(x=>`<button class="fontBtn ${x.n===Ly.font?"on":""}" data-f="${esc(x.n)}"><span class="s" style="font-family:'${x.n}';font-weight:${x.w[x.w.length-1]}">${esc(sample)}</span><span class="n">${x.n}</span></button>`).join("")}</div>`;
+    h+=sec("Grootte &amp; positie")+rng("Grootte","size",20,480,Ly.size)+rng("Spatiëring","spacing",0,100,Ly.spacing||0)+rng("Draaien","rotate",-45,45,Ly.rotate||0)+rng("Boog","curve",-100,100,Ly.curve||0)+rng("Links/rechts","x",-700,700,Ly.x)+rng("Hoogte","y",-900,900,Ly.y)
+      +`<div class="hint" style="margin:2px 0 4px">Of: sleep de tekst op de foto · knijp en draai met twee vingers.</div>`;
+    h+=sec("Stijl")+`<div class="chips wrap">
+      <button class="chip ${Ly.color==="main"?"on":""}" data-c="main"><span class="dot" style="background:${cur.colors.main}"></span>Hoofdkleur</button>
+      <button class="chip ${Ly.color==="accent"?"on":""}" data-c="accent"><span class="dot" style="background:${cur.colors.accent}"></span>Accent</button>
+      <button class="chip ${Ly.upper?"on":""}" data-t="upper">HOOFDLETTERS</button>
+      ${f.it?`<button class="chip ${Ly.italic?"on":""}" data-t="italic">Cursief</button>`:""}
+      ${f.w.length>1?`<button class="chip ${Ly.weight===Math.max(...f.w)?"on":""}" data-t="bold">Vet</button>`:""}
+      <button class="chip ${Ly.style==="outline"?"on":""}" data-t="outline">Contour</button></div>
+      <div class="chips wrap"><button class="chip" data-a="center">Centreer</button><button class="chip" data-a="straight">Recht</button><button class="chip" data-a="up">Naar voren</button><button class="chip" data-a="down">Naar achter</button><button class="chip" data-a="dup">Dupliceer</button><button class="chip" data-a="del" style="color:#ff9b87">Verwijder tekst</button></div>`;
+  }else h+=`<div class="empty">Geen tekst. Tik op “+ Tekst”.</div>`;
+  h+=sec("Kleuren van het ontwerp")+`<div class="lab" style="margin-top:0">Hoofdkleur</div><div class="sw" id="swMain"></div><div class="lab">Accentkleur</div><div class="sw" id="swAccent"></div>`+rng("Schaduw","shadow",0,80,cur.shadow||0,1,true);
+  const isMine=custom.some(d=>d.id===curSourceId);
+  h+=sec("Opslaan")+`<input class="inp" id="sName" value="${esc(cur.name)}" placeholder="Naam">
+    <select class="inp" id="sCat" style="margin-top:8px">${allCats().map(c=>`<option ${c===cur.cat?"selected":""}>${esc(c)}</option>`).join("")}<option value="__new">+ Nieuwe categorie…</option></select>
+    <input class="inp hidden" id="sCatNew" placeholder="Naam nieuwe categorie" style="margin-top:8px">
+    <div class="row" style="margin-top:10px"><button class="btn pri" id="sSave">${isMine?"Opslaan":"Opslaan bij mijn ontwerpen"}</button>${isMine?`<button class="btn" id="sCopy">Als kopie</button><button class="btn warn" id="sDel">Verwijder</button>`:""}</div>
+    <div class="hint" style="margin-top:8px">Je ontwerpen worden bewaard op dit toestel.</div>`;
+  const keep=$("sheetBody").scrollTop,fr=$("fontRow")?$("fontRow").scrollLeft:0;
+  body.innerHTML=h;$("sheetBody").scrollTop=keep;if($("fontRow"))$("fontRow").scrollLeft=fr;
+
+  if(Ly){
+    const f=FONT_BY[Ly.font]||{w:[400]};
+    const i=$("tText");i.addEventListener("focus",snap);
+    i.addEventListener("input",()=>{Ly.text=i.value;schedulePreview();renderLayerChipsDebounced()});
+    i.addEventListener("keydown",e=>{if(e.key==="Enter")i.blur()});
+    i.addEventListener("change",()=>{const t=((Ly.upper?Ly.text.toUpperCase():Ly.text)||"Aa").slice(0,14);body.querySelectorAll(".fontRow .s").forEach(x=>x.textContent=t)});
+    body.querySelectorAll("[data-g]").forEach(b=>b.onclick=()=>{fontGroup=b.dataset.g;renderTool();$("fontRow").scrollLeft=0});
     body.querySelectorAll("[data-f]").forEach(b=>b.onclick=()=>{snap();const nf=FONT_BY[b.dataset.f];Ly.font=nf.n;if(!nf.w.includes(Ly.weight))Ly.weight=nf.w[nf.w.length-1];if(!nf.it)Ly.italic=false;
       body.querySelectorAll(".fontBtn").forEach(x=>x.classList.toggle("on",x===b));schedulePreview();renderLayerChips()});
-  }
-  if(tool==="size"){
-    body.innerHTML=rng("Grootte","size",20,480,Ly.size)+rng("Spatiëring","spacing",0,100,Ly.spacing||0)+
-      (f.w.length>1?`<div class="chips" style="margin-top:6px"><button class="chip ${Ly.weight===Math.max(...f.w)?"on":""}" id="tBold">Vet</button></div>`:"")+
-      `<div class="hint" style="margin-top:6px">Tip: knijp met twee vingers op de foto om te schalen.</div>`;
-    bindRanges(body,layer);
-    if($("tBold"))$("tBold").onclick=()=>{snap();change(()=>Ly.weight=Ly.weight===Math.max(...f.w)?Math.min(...f.w):Math.max(...f.w),{chips:true,tool:true})};
-  }
-  if(tool==="pos"){
-    body.innerHTML=`<div class="hint" style="margin-bottom:4px">Sleep de tekst op de foto · knijp en draai met twee vingers.</div>`+
-      rng("Draaien","rotate",-45,45,Ly.rotate||0)+rng("Boog","curve",-100,100,Ly.curve||0)+rng("Links/rechts","x",-700,700,Ly.x)+rng("Hoogte","y",-900,900,Ly.y)+
-      `<div class="chips" style="margin-top:6px"><button class="chip" id="pCenter">Centreer</button><button class="chip" id="pStraight">Recht</button><button class="chip" id="pUp">Naar voren</button><button class="chip" id="pDown">Naar achter</button></div>`;
-    bindRanges(body,layer);
-    $("pCenter").onclick=()=>{snap();change(()=>Ly.x=0,{tool:true})};
-    $("pStraight").onclick=()=>{snap();change(()=>{Ly.rotate=0;Ly.curve=0},{tool:true})};
-    $("pUp").onclick=()=>{if(sel>=cur.layers.length-1)return;snap();const a=cur.layers;[a[sel],a[sel+1]]=[a[sel+1],a[sel]];sel++;change(()=>{},{chips:true})};
-    $("pDown").onclick=()=>{if(sel<=0)return;snap();const a=cur.layers;[a[sel],a[sel-1]]=[a[sel-1],a[sel]];sel--;change(()=>{},{chips:true})};
-  }
-  if(tool==="style"){
-    body.innerHTML=`<div class="lab" style="margin-top:2px">Kleur van deze tekst</div>
-      <div class="chips"><button class="chip ${Ly.color==="main"?"on":""}" data-c="main"><span style="width:14px;height:14px;border-radius:50%;background:${cur.colors.main};border:1px solid #777;display:inline-block"></span>Hoofdkleur</button>
-      <button class="chip ${Ly.color==="accent"?"on":""}" data-c="accent"><span style="width:14px;height:14px;border-radius:50%;background:${cur.colors.accent};display:inline-block"></span>Accent</button></div>
-      <div class="lab">Stijl</div><div class="chips">
-      ${f.it?`<button class="chip ${Ly.italic?"on":""}" id="sItalic">Cursief</button>`:""}
-      <button class="chip ${Ly.style==="outline"?"on":""}" id="sOutline">Contour</button>
-      <button class="chip ${Ly.upper?"on":""}" id="sUpper">HOOFDLETTERS</button></div>`;
     body.querySelectorAll("[data-c]").forEach(b=>b.onclick=()=>{snap();change(()=>Ly.color=b.dataset.c,{tool:true})});
-    if($("sItalic"))$("sItalic").onclick=()=>{snap();change(()=>Ly.italic=!Ly.italic,{chips:true,tool:true})};
-    $("sOutline").onclick=()=>{snap();change(()=>Ly.style=Ly.style==="outline"?"fill":"outline",{tool:true})};
-    $("sUpper").onclick=()=>{snap();change(()=>Ly.upper=!Ly.upper,{chips:true,tool:true})};
+    body.querySelectorAll("[data-t]").forEach(b=>b.onclick=()=>{snap();const t=b.dataset.t;change(()=>{
+      if(t==="upper")Ly.upper=!Ly.upper;if(t==="italic")Ly.italic=!Ly.italic;if(t==="outline")Ly.style=Ly.style==="outline"?"fill":"outline";
+      if(t==="bold")Ly.weight=Ly.weight===Math.max(...f.w)?Math.min(...f.w):Math.max(...f.w)},{chips:true,tool:true})});
+    body.querySelectorAll("[data-a]").forEach(b=>b.onclick=()=>{const a=b.dataset.a,arr=cur.layers;snap();
+      if(a==="center")Ly.x=0;if(a==="straight"){Ly.rotate=0;Ly.curve=0}
+      if(a==="up"&&sel<arr.length-1){[arr[sel],arr[sel+1]]=[arr[sel+1],arr[sel]];sel++}
+      if(a==="down"&&sel>0){[arr[sel],arr[sel-1]]=[arr[sel-1],arr[sel]];sel--}
+      if(a==="dup"){arr.splice(sel+1,0,Object.assign(clone(Ly),{y:Math.min(450,Ly.y+Ly.size*.9)}));sel++}
+      if(a==="del"){arr.splice(sel,1);sel=Math.max(0,sel-1);toast("Tekst verwijderd · ↶ om terug te zetten")}
+      change(()=>{},{chips:true,tool:true})});
   }
-  if(tool==="colors"){
-    body.innerHTML=`<div class="lab" style="margin-top:2px">Hoofdkleur</div><div class="sw" id="swMain"></div><div class="lab">Accentkleur</div><div class="sw" id="swAccent"></div>`+rng("Schaduw","shadow",0,80,cur.shadow||0);
-    const sw=(el,key)=>{el.innerHTML="";SWATCHES.forEach(c=>{const b=document.createElement("button");b.style.background=c;b.setAttribute("aria-label",c);if(cur.colors[key].toUpperCase()===c)b.classList.add("on");
-        b.onclick=()=>{snap();cur.colors[key]=c;sw(el,key);schedulePreview()};el.appendChild(b)});
-      const i=document.createElement("input");i.type="color";i.value=cur.colors[key];i.addEventListener("focus",snap);i.oninput=()=>{cur.colors[key]=i.value.toUpperCase();schedulePreview()};i.onchange=()=>sw(el,key);el.appendChild(i)};
-    sw($("swMain"),"main");sw($("swAccent"),"accent");bindRanges(body,()=>cur);
-  }
-  if(tool==="save"){
-    const isMine=custom.some(d=>d.id===curSourceId);
-    body.innerHTML=`<label class="lab" style="margin-top:2px" for="sName">Naam</label><input class="inp" id="sName" value="${esc(cur.name)}">
-      <label class="lab" for="sCat">Categorie</label><select class="inp" id="sCat">${allCats().map(c=>`<option ${c===cur.cat?"selected":""}>${esc(c)}</option>`).join("")}<option value="__new">+ Nieuwe categorie…</option></select>
-      <input class="inp hidden" id="sCatNew" placeholder="Naam nieuwe categorie" style="margin-top:8px">
-      <div class="row" style="margin-top:14px"><button class="btn pri" id="sSave">${isMine?"Opslaan":"Opslaan bij mijn ontwerpen"}</button>${isMine?`<button class="btn" id="sCopy">Als kopie</button><button class="btn warn" id="sDel">Verwijder</button>`:""}</div>
-      <div class="hint" style="margin-top:8px">Je ontwerpen worden bewaard op dit toestel.</div>`;
-    $("sName").oninput=e=>cur.name=e.target.value;
-    $("sCat").onchange=()=>$("sCatNew").classList.toggle("hidden",$("sCat").value!=="__new");
-    $("sSave").onclick=()=>doSave(false);if($("sCopy"))$("sCopy").onclick=()=>doSave(true);
-    if($("sDel"))$("sDel").onclick=()=>{const b=$("sDel");if(!b.dataset.armed){b.dataset.armed="1";b.textContent="Zeker?";return}
-      custom=custom.filter(d=>d.id!==curSourceId);saveLocal();loadDesign(custom[0]||SEEDS[0]);renderLibrary();renderLayerChips();renderTool();toast("Verwijderd")};
-  }
+  bindRanges(body,()=>layer());
+  const sw=(el,key)=>{el.innerHTML="";SWATCHES.forEach(c=>{const b=document.createElement("button");b.style.background=c;b.setAttribute("aria-label",c);if(cur.colors[key].toUpperCase()===c)b.classList.add("on");
+      b.onclick=()=>{snap();cur.colors[key]=c;sw(el,key);schedulePreview();body.querySelectorAll(`[data-c=${key}] .dot`).forEach(d=>d.style.background=c)};el.appendChild(b)});
+    const i=document.createElement("input");i.type="color";i.value=cur.colors[key];i.addEventListener("focus",snap);i.oninput=()=>{cur.colors[key]=i.value.toUpperCase();schedulePreview()};i.onchange=()=>sw(el,key);el.appendChild(i)};
+  sw($("swMain"),"main");sw($("swAccent"),"accent");
+  $("sName").oninput=e=>cur.name=e.target.value;
+  $("sCat").onchange=()=>$("sCatNew").classList.toggle("hidden",$("sCat").value!=="__new");
+  $("sSave").onclick=()=>doSave(false);if($("sCopy"))$("sCopy").onclick=()=>doSave(true);
+  if($("sDel"))$("sDel").onclick=()=>{const b=$("sDel");if(!b.dataset.armed){b.dataset.armed="1";b.textContent="Zeker?";return}
+    custom=custom.filter(d=>d.id!==curSourceId);saveLocal();loadDesign(custom[0]||SEEDS[0]);renderLibrary();renderLayerChips();renderTool();toast("Verwijderd")};
 }
 let _lcd;function renderLayerChipsDebounced(){clearTimeout(_lcd);_lcd=setTimeout(renderLayerChips,250)}
 function doSave(asCopy){
