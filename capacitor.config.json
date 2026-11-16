@@ -1,0 +1,21 @@
+{
+  "appId": "be.qbraem.studiotypo",
+  "appName": "Studio Typo",
+  "webDir": "public",
+  "ios": {
+    "contentInset": "never",
+    "backgroundColor": "#120d0a",
+    "limitsNavigationsToAppBoundDomains": false
+  },
+  "plugins": {
+    "SplashScreen": {
+      "launchAutoHide": false,
+      "backgroundColor": "#120d0a",
+      "showSpinner": false
+    },
+    "StatusBar": {
+      "style": "DARK",
+      "overlaysWebView": true
+    }
+  }
+}

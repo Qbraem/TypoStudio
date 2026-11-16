@@ -1,9 +1,28 @@
 {
-  "name": "typo-studio",
+  "name": "studio-typo",
   "version": "1.0.0",
   "private": true,
-  "description": "Typo Studio – transparante typo-PNG's voor Instagram",
+  "description": "Studio Typo – transparent typography PNGs for Instagram Stories (web + iOS app)",
   "main": "server.js",
-  "scripts": { "start": "node server.js" },
-  "engines": { "node": ">=18" }
+  "scripts": {
+    "start": "node server.js",
+    "ios:setup": "bash scripts/ios-setup.sh",
+    "ios:sync": "npx cap sync ios",
+    "ios:open": "npx cap open ios"
+  },
+  "engines": { "node": ">=18" },
+  "dependencies": {
+    "@capacitor/core": "latest",
+    "@capacitor/ios": "latest",
+    "@capacitor/filesystem": "latest",
+    "@capacitor/share": "latest",
+    "@capacitor/haptics": "latest",
+    "@capacitor/status-bar": "latest",
+    "@capacitor/splash-screen": "latest",
+    "@capacitor-community/media": "latest",
+    "@revenuecat/purchases-capacitor": "latest"
+  },
+  "devDependencies": {
+    "@capacitor/cli": "latest"
+  }
 }
