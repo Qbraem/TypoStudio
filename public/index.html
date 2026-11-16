@@ -132,10 +132,12 @@ input[type=range]::-moz-range-thumb{width:28px;height:28px;border-radius:50%;bac
 .grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
 @media(min-width:600px){.grid{grid-template-columns:repeat(auto-fill,minmax(120px,1fr))}}
 .card{position:relative;border:1.5px solid #3d3733;background-clip:padding-box;border-radius:12px;overflow:hidden;background:#2a1d16 center/cover;aspect-ratio:1/1;padding:0;display:flex;align-items:center;justify-content:center}
-.card.light{background:#efe7dc}
+.card{background:radial-gradient(120% 90% at 20% 10%,#5a3d2b 0%,#2b1d15 55%,#1d140f 100%)}
+.card.light{background:radial-gradient(120% 90% at 20% 10%,#fbf3e6 0%,#efe2d0 60%,#e3d2bc 100%)}
+.card.xmasLight{background:radial-gradient(120% 90% at 20% 10%,#fff6ea 0%,#f3e3d3 60%,#e9d3bf 100%);border-color:#E9C46A88}
 .chip.xmas{background:linear-gradient(135deg,#C62E2E,#8E1B1B);border-color:#E9C46A;color:#fff;font-weight:700;box-shadow:0 0 0 1px rgba(233,196,106,.35),0 4px 14px rgba(198,46,46,.35)}
 .chip.xmas.on{background:linear-gradient(135deg,#E9C46A,#d9a93f);color:#7a1414;border-color:#fff}
-.card.xmas{background:radial-gradient(circle at 18% 22%,rgba(255,255,255,.9) 0 1.2px,transparent 2px) 0 0/34px 34px,radial-gradient(circle at 62% 70%,rgba(255,255,255,.7) 0 1px,transparent 1.8px) 0 0/27px 27px,radial-gradient(circle at 40% 30%,#2f6b4f,#123726 75%)!important;border-color:#E9C46A55}
+.card.xmas{background:radial-gradient(circle at 18% 22%,rgba(255,255,255,.75) 0 1.1px,transparent 1.8px) 0 0/30px 30px,radial-gradient(circle at 62% 70%,rgba(255,255,255,.55) 0 1px,transparent 1.6px) 0 0/23px 23px,radial-gradient(120% 90% at 20% 10%,#b3262b 0%,#6e1418 55%,#3f0b0e 100%)!important;border-color:#E9C46A66}
 .card.sel{border:2px solid #fff}
 .card canvas{max-width:86%;max-height:72%}
 .card .mine{position:absolute;top:4px;right:7px;font-size:11px;color:var(--accent2)}
@@ -252,17 +254,16 @@ input[type=range]::-moz-range-thumb{width:28px;height:28px;border-radius:50%;bac
 
   <main class="stageArea">
     <div class="stage" id="stage">
-      <div class="bg" id="stageBg" style="background-image:url('/img/bg-beans.jpg')"></div>
+      <div class="bg" id="stageBg" style="background-image:url('/img/bg-golden.jpg')"></div>
       <canvas id="sticker"></canvas>
       <a class="credit" id="credit" href="https://www.instagram.com/myx100vi/" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="2.5" y="2.5" width="19" height="19" rx="5.5"/><circle cx="12" cy="12" r="4.3"/><circle cx="17.4" cy="6.6" r="1.1" fill="currentColor" stroke="none"/></svg><span id="creditName">© myx100vi</span></a>
       <div class="coach hidden" id="coach">Tap a text · drag to move · pinch to resize and rotate</div>
       <div class="bgRow" id="bgRow">
-        <button class="bgBtn on" data-photo="beans" aria-label="Coffee beans"><img src="/img/th-beans.jpg" alt=""></button>
+        <button class="bgBtn on" data-photo="golden" aria-label="Golden hour"><img src="/img/th-golden.jpg" alt=""></button>
         <button class="bgBtn" data-photo="sunset" aria-label="Sunset"><img src="/img/th-sunset.jpg" alt=""></button>
         <button class="bgBtn" data-photo="pier" aria-label="Breakwater"><img src="/img/th-pier.jpg" alt=""></button>
         <button class="bgBtn" data-photo="xmas" aria-label="Christmas market"><img src="/img/th-xmas.jpg" alt=""></button>
         <button class="bgBtn" data-photo="pool" aria-label="Pool"><img src="/img/th-pool.jpg" alt=""></button>
-        <button class="bgBtn" data-photo="golden" aria-label="Golden hour"><img src="/img/th-golden.jpg" alt=""></button>
         <button class="bgBtn" data-photo="agave" aria-label="Agave"><img src="/img/th-agave.jpg" alt=""></button>
         <button class="bgBtn bg-dark" data-bg="dark" aria-label="Dark"></button>
         <button class="bgBtn bg-light" data-bg="light" aria-label="Light"></button>
@@ -833,7 +834,7 @@ $("photoIn").addEventListener("change",e=>{
 function showCoach(){try{if(localStorage.getItem("typoStudio.coach"))return}catch(e){}$("coach").classList.remove("hidden");$("coach").style.opacity=1;clearTimeout(showCoach._t);showCoach._t=setTimeout(hideCoach,6000)}
 function hideCoach(){const c=$("coach");if(c.classList.contains("hidden"))return;c.style.opacity=0;setTimeout(()=>c.classList.add("hidden"),400);try{localStorage.setItem("typoStudio.coach","1")}catch(e){}}
 
-const PHOTO_CREDIT={beans:"myx100vi",sunset:"myx100vi",xmas:"myx100vi",pool:"myx100vi",golden:"myx100vi",agave:"myx100vi",pier:"max.on.the.moveee"};
+const PHOTO_CREDIT={sunset:"myx100vi",xmas:"myx100vi",pool:"myx100vi",golden:"myx100vi",agave:"myx100vi",pier:"max.on.the.moveee"};
 function setCredit(photo){const h=PHOTO_CREDIT[photo];$("credit").classList.toggle("hidden",!h);if(h){$("credit").href=`https://www.instagram.com/${h}/`;$("creditName").textContent="© "+h}}
 function setPhoto(photo){const b=document.querySelector(`#bgRow [data-photo="${photo}"]`);if(b)b.click()}
 /* ---------------- Sheet (bottom sheet met grijper) ---------------- */
@@ -863,7 +864,7 @@ $("tabs").addEventListener("click",e=>{const b=e.target.closest("button");if(b)s
 
 /* ---------------- Bibliotheek ---------------- */
 let thumbJob=0;
-function loadDesign(d){const onPhoto=document.querySelector("#bgRow .bgBtn.on[data-photo]");if(onPhoto){if(d.cat==="Holidays"&&onPhoto.dataset.photo!=="xmas")setPhoto("xmas");else if(d.cat!=="Holidays"&&onPhoto.dataset.photo==="xmas")setPhoto("beans")}cur=clone(d);curSourceId=d.id;sel=0;hist=[];updUndo();schedulePreview()}
+function loadDesign(d){const onPhoto=document.querySelector("#bgRow .bgBtn.on[data-photo]");if(onPhoto){if(d.cat==="Holidays"&&onPhoto.dataset.photo!=="xmas")setPhoto("xmas");else if(d.cat!=="Holidays"&&onPhoto.dataset.photo==="xmas")setPhoto("golden")}cur=clone(d);curSourceId=d.id;sel=0;hist=[];updUndo();schedulePreview()}
 function renderLibrary(){
   if(!$("cats"))return;
   const cats=$("cats");cats.innerHTML="";
@@ -880,10 +881,9 @@ function renderLibrary(){
   const job=++thumbJob;let n=0;
   const cards=list.map(d=>{
     const b=document.createElement("button");const light=lum(d.colors.main)<.45;
-    b.className="card"+(d.id===curSourceId?" sel":"")+(light?" light":"");b.setAttribute("aria-label",d.name);
-    const photo=d.cat==="Holidays"?`url('/img/sq-xmas.jpg')`:`url('/img/sq-${["beans","golden","pool","sunset","agave","pier"][n++%6]}.jpg')`;
-    if(light)b.style.backgroundImage=`linear-gradient(rgba(250,244,234,.5),rgba(250,244,234,.58)),${photo}`; // donkere tekst: foto met lichte waas
-    else b.style.backgroundImage=`linear-gradient(rgba(0,0,0,.22),rgba(0,0,0,.35)),${photo}`;
+    b.className="card"+(d.id===curSourceId?" sel":"");b.setAttribute("aria-label",d.name);
+    if(d.cat==="Holidays")b.classList.add(light?"xmasLight":"xmas");
+    else if(light)b.classList.add("light");
     if(!d.seed)b.innerHTML='<span class="mine">★</span>';
     else if(d.pro&&!isPro())b.innerHTML=proLabel();
     b.onclick=()=>{
@@ -1238,9 +1238,9 @@ let pwHeroDone=false;
 async function renderPwHero(){
   if(pwHeroDone)return;pwHeroDone=true;
   const pick=["xm1","cf4","tv1"].map(id=>SEEDS.find(d=>d.id===id)).filter(Boolean);
-  const bgs=["xmas","beans","sunset"];const box=$("pwHero");box.innerHTML="";
+  const box=$("pwHero");box.innerHTML="";
   for(let i=0;i<pick.length;i++){const d=pick[i];await ensureFonts(d);
-    const c=document.createElement("div");c.className="pwCard c"+i;c.style.backgroundImage=`linear-gradient(rgba(0,0,0,.15),rgba(0,0,0,.3)),url('/img/sq-${bgs[i]}.jpg')`;
+    const c=document.createElement("div");c.className="pwCard c"+i;c.classList.add("card",d.cat==="Holidays"?"xmas":"_");
     c.appendChild(drawExport(d,.2));box.appendChild(c)}
 }
 document.addEventListener("click",e=>{const b=e.target.closest("[data-pw]");if(b){e.preventDefault();openPaywall(b.dataset.pw)}});
