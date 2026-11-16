@@ -46,7 +46,7 @@ button{cursor:pointer;touch-action:manipulation;-webkit-user-select:none;user-se
 .bg-dark{background:#141414}.bg-light{background:#efe7dc}
 .bg-check{background:repeating-conic-gradient(#3a3a3a 0 25%,#2a2a2a 0 50%) 0 0/22px 22px}
 #sticker{position:absolute;left:0;top:0;width:100%;height:100%;pointer-events:none}
-.bgRow{position:absolute;left:calc(8px + var(--sal));right:calc(8px + var(--sar));bottom:calc(8px + var(--under,0px));display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;padding:4px;border-radius:24px;background:rgba(20,14,10,.45);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px)}
+.bgRow{position:absolute;left:calc(8px + var(--sal));right:8px;bottom:calc(8px + var(--under,0px));display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;padding:4px calc(4px + var(--sar)) 4px 4px;border-radius:24px;background:rgba(20,14,10,.45);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px)}
 .bgRow::-webkit-scrollbar{display:none}
 .bgBtn{flex:none;width:36px;height:36px;border-radius:50%;border:2px solid rgba(255,255,255,.25);padding:0;overflow:hidden;background:#333;position:relative}
 .bgBtn img{width:100%;height:100%;object-fit:cover;display:block}
@@ -80,7 +80,7 @@ button{cursor:pointer;touch-action:manipulation;-webkit-user-select:none;user-se
 .sheet.dragging{transition:none}
 .grab{flex:none;height:22px;display:flex;align-items:center;justify-content:center;touch-action:none;cursor:grab}
 .grab i{width:38px;height:5px;border-radius:3px;background:#5a4636}
-.sheetBody{flex:1;min-height:0;overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;padding:0 calc(14px + var(--sar)) 14px calc(14px + var(--sal))}
+.sheetBody{flex:1;min-height:0;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;padding:0 calc(14px + var(--sar)) 14px calc(14px + var(--sal))}
 
 .tabs{grid-area:tabs;display:flex;background:var(--panel);border-top:1px solid var(--line);padding:0 var(--sar) var(--sab) var(--sal)}
 .tabs button{flex:1;border:0;background:none;color:var(--muted);display:flex;flex-direction:column;align-items:center;gap:2px;padding:7px 0 6px;font-size:11px;font-weight:700;min-height:50px}
@@ -90,6 +90,14 @@ button{cursor:pointer;touch-action:manipulation;-webkit-user-select:none;user-se
 /* staand bewerken: paneel zo hoog als de inhoud, foto krijgt de rest */
 .shell.editBar .sheet{height:auto!important;max-height:calc(var(--app-h,100vh) * .5);min-height:150px;transition:none}
 .shell.editBar .grab{display:none}
+/* lage schermen (iPhone Duo buitenscherm, kleine iPhones): tijdens bewerken telt elke pixel foto */
+@media (max-height: 760px){
+  .shell.editBar .sheet{max-height:calc(var(--app-h,100vh) * .42)}
+  .shell.editBar .stage .igOv{display:none}
+  .shell.editBar .stage.ig .bgRow{bottom:calc(8px + var(--under,0px))}
+  .shell.editBar .stage.ig .credit{top:10px}
+  .shell.editBar .ctl{min-height:38px}
+}
 .shell.editBar .sheetBody{padding-top:12px}
 .tabs.editBar>button{display:none}
 .tabs.editBar #toolNav{display:flex}
@@ -127,7 +135,7 @@ button{cursor:pointer;touch-action:manipulation;-webkit-user-select:none;user-se
   .tabs svg{width:20px;height:20px}
   .sheetBody{padding:10px calc(14px + var(--sar)) 14px 14px}
   .chips,.toolbar{margin-left:-14px;margin-right:calc(-14px - var(--sar))}
-  .chips{padding-left:14px}
+  .chips{padding-left:14px;padding-right:calc(14px + var(--sar))}
 }
 /* iPhone Duo open (liggend, ~4:3): foto links en paneel rechts van de vouw, precies 50/50 */
 @media (min-aspect-ratio: 6/5) and (max-aspect-ratio: 3/2) and (max-width: 1000px) and (min-height: 561px){
@@ -150,7 +158,7 @@ button{cursor:pointer;touch-action:manipulation;-webkit-user-select:none;user-se
 }
 
 /* ---------- Gedeelde controls ---------- */
-.chips{display:flex;gap:8px;overflow-x:auto;scrollbar-width:none;padding:2px 0 10px;margin:0 calc(-14px - var(--sal)) 0 calc(-14px - var(--sar));padding-left:calc(14px + var(--sal));padding-right:14px}
+.chips{display:flex;gap:8px;overflow-x:auto;scrollbar-width:none;padding:2px 0 10px;margin:0 calc(-14px - var(--sar)) 0 calc(-14px - var(--sal));padding-left:calc(14px + var(--sal));padding-right:calc(14px + var(--sar))}
 .chips::-webkit-scrollbar{display:none}
 .chip{flex:none;min-height:40px;border:1px solid var(--line);background:var(--panel2);border-radius:20px;padding:0 14px;font-size:14px;font-weight:500;white-space:nowrap;display:inline-flex;align-items:center;gap:6px}
 .chip.on{background:var(--text);color:#1b130e;border-color:var(--text)}
@@ -194,7 +202,7 @@ input[type=range]::-moz-range-thumb{width:28px;height:28px;border-radius:50%;bac
 
 /* editor */
 .layerChip{max-width:150px;overflow:hidden;text-overflow:ellipsis;font-size:17px}
-.toolbar{display:flex;gap:4px;overflow-x:auto;scrollbar-width:none;border-bottom:1px solid var(--line);margin:0 calc(-14px - var(--sar)) 10px calc(-14px - var(--sal));padding:0 14px}
+.toolbar{display:flex;gap:4px;overflow-x:auto;scrollbar-width:none;border-bottom:1px solid var(--line);margin:0 calc(-14px - var(--sar)) 10px calc(-14px - var(--sal));padding:0 calc(14px + var(--sar)) 0 calc(14px + var(--sal))}
 .toolbar::-webkit-scrollbar{display:none}
 .toolbar button{flex:none;border:0;background:none;min-height:44px;padding:0 10px;font-size:14px;font-weight:700;color:var(--muted);border-bottom:2px solid transparent}
 .toolbar button.on{color:var(--text);border-bottom-color:var(--accent)}
@@ -207,7 +215,7 @@ input[type=range]::-moz-range-thumb{width:28px;height:28px;border-radius:50%;bac
 .chips.wrap{flex-wrap:wrap;overflow:visible;margin:0;padding:0 0 8px}
 .chip.sm{min-height:34px;font-size:13px;padding:0 12px}
 .chip .dot{width:14px;height:14px;border-radius:50%;border:1px solid #777;display:inline-block}
-.fontRow{display:flex;gap:8px;overflow-x:auto;scrollbar-width:none;padding-bottom:4px;margin:0 calc(-14px - var(--sar)) 0 calc(-14px - var(--sal));padding-left:calc(14px + var(--sal));padding-right:14px}
+.fontRow{display:flex;gap:8px;overflow-x:auto;scrollbar-width:none;padding-bottom:4px;margin:0 calc(-14px - var(--sar)) 0 calc(-14px - var(--sal));padding-left:calc(14px + var(--sal));padding-right:calc(14px + var(--sar))}
 .fontRow::-webkit-scrollbar{display:none}
 .fontRow .fontBtn{flex:none;width:132px}
 .fontGrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
@@ -224,6 +232,9 @@ input[type=range]::-moz-range-thumb{width:28px;height:28px;border-radius:50%;bac
 /* compact header on narrow screens */
 .top{justify-content:flex-end}
 @media (max-width:430px){#viewBtn{display:none}.brand{font-size:16px}.brand span{font-size:20px}#proBtnLabel{display:none}#proBtn{padding:0 9px}}
+.uw-narrow #viewBtn{display:none}.uw-narrow .brand{font-size:16px}.uw-narrow .brand span{font-size:20px}.uw-narrow #proBtnLabel{display:none}.uw-narrow #proBtn{padding:0 9px}
+.uw-tiny .brand{display:none}
+#saProbe{position:fixed;left:0;top:0;width:0;height:0;visibility:hidden;pointer-events:none;padding:0 var(--sar) 0 var(--sal)}
 @media (min-aspect-ratio:1/1) and (max-width:1000px){.brand{display:none}#viewBtn{display:none}#proBtnLabel{display:none}#proBtn{padding:0 9px}}
 /* ---------- Splash & onboarding ---------- */
 .splash{position:fixed;inset:0;z-index:80;background:radial-gradient(90% 60% at 50% 40%,#3a2614 0%,#120d0a 70%);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;transition:opacity .45s ease}
@@ -583,6 +594,7 @@ input[type=range]::-moz-range-thumb{width:28px;height:28px;border-radius:50%;bac
   </div>
 </div>
 <div class="toast" id="toast"></div>
+<div id="saProbe"></div>
 
 <script>
 /* ---------------- Fonts ---------------- */
@@ -920,7 +932,8 @@ function layer(){return cur.layers[sel]}
 /* ---------------- iPhone: hoogte & toetsenbord ---------------- */
 function fitStage(){const st=$("stage");if(st)st.style.maxWidth=""}
 if(window.ResizeObserver)new ResizeObserver(()=>{fitStage();schedulePreview(true)}).observe(document.querySelector(".stageArea"));
-function setAppH(){const h=window.visualViewport?visualViewport.height:innerHeight;document.documentElement.style.setProperty("--app-h",h+"px");if(typeof applySheetH==="function")applySheetH();requestAnimationFrame(()=>{fitStage();layoutSticker()})}
+function applyUsable(){const p=document.getElementById("saProbe");if(!p)return;const cs=getComputedStyle(p),uw=innerWidth-parseFloat(cs.paddingLeft)-parseFloat(cs.paddingRight),h=document.documentElement;h.classList.toggle("uw-narrow",uw<=430);h.classList.toggle("uw-tiny",uw<=360)}
+function setAppH(){applyUsable();const h=window.visualViewport?visualViewport.height:innerHeight;document.documentElement.style.setProperty("--app-h",h+"px");if(typeof applySheetH==="function")applySheetH();requestAnimationFrame(()=>{fitStage();layoutSticker()})}
 if(window.visualViewport){visualViewport.addEventListener("resize",setAppH);visualViewport.addEventListener("scroll",()=>window.scrollTo(0,0))}
 window.addEventListener("resize",setAppH);
 
@@ -1101,7 +1114,12 @@ function trim(c){
 function lum(hex){const m=/^#?([0-9a-f]{6})$/i.exec(hex||"");if(!m)return 1;const n=parseInt(m[1],16);return(.299*(n>>16)+.587*((n>>8)&255)+.114*(n&255))/255}
 
 /* ---------------- Voorbeeld op de foto ---------------- */
-const STAGE_K=.82;var previewQueued=false,lastBoxes=[],guideX=false;
+const STAGE_K=1.05;
+/* vrije ruimte op de foto: zonder de Story-balken en de fotorij, zodat de typo nooit onder de knoppen valt */
+function stageGeom(W,H){const st=$("stage"),ov=st.querySelector(".igOv"),ig=st.classList.contains("ig")&&!!ov&&getComputedStyle(ov).display!=="none",sa=document.querySelector(".stageArea");
+  const u=parseFloat(getComputedStyle(sa).getPropertyValue("--under"))||0,row=$("bgRow")?$("bgRow").offsetHeight:44;
+  const top=ig?58:10,bot=u+row+(ig?66:16),h=Math.max(H*.5,H-top-bot);
+  return{size:Math.min(W*.96,h*STAGE_K),cx:W*view.x/100,cy:top+h*view.y/100}}var previewQueued=false,lastBoxes=[],guideX=false;
 const VIEW0={x:50,y:46,scale:.85};let view={...VIEW0};
 function layoutSticker(){schedulePreview(true)}
 function schedulePreview(noExport){
@@ -1113,13 +1131,13 @@ function schedulePreview(noExport){
     const dpr=Math.min(3,window.devicePixelRatio||1,1800/Math.max(W,H));
     const pw=Math.round(W*dpr),ph=Math.round(H*dpr);if(cv.width!==pw||cv.height!==ph){cv.width=pw;cv.height=ph}
     const ctx=cv.getContext("2d");ctx.clearRect(0,0,pw,ph);
-    lastBoxes=drawLayers(ctx,cur,Math.min(pw,ph*STAGE_K)*view.scale/FRAME,pw*view.x/100,ph*view.y/100,{sel:tab==="edit"?sel:-1,dpr,guideX});
+    const G=stageGeom(W,H);lastBoxes=drawLayers(ctx,cur,G.size*dpr*view.scale/FRAME,G.cx*dpr,G.cy*dpr,{sel:tab==="edit"?sel:-1,dpr,guideX});
   });
 }
 // tik / sleep / knijp
 (function gestures(){
   const st=$("stage"),pts=new Map();let g=null;
-  const toUnits=(cx,cy)=>{const r=st.getBoundingClientRect(),k=FRAME/(Math.min(r.width,r.height*STAGE_K)*view.scale);return{x:(cx-r.left-r.width*view.x/100)*k,y:(cy-r.top-r.height*view.y/100)*k,k}};
+  const toUnits=(cx,cy)=>{const r=st.getBoundingClientRect(),G=stageGeom(r.width,r.height),k=FRAME/(G.size*view.scale);return{x:(cx-r.left-G.cx)*k,y:(cy-r.top-G.cy)*k,k}};
   function hit(u){
     let best=-1,bd=1e9;
     cur.layers.forEach((Ly,i)=>{const b=lastBoxes[i];if(!b)return;
@@ -1181,7 +1199,7 @@ const PHOTO_CREDIT={sunset:"myx100vi",xmas:"myx100vi",pool:"myx100vi",golden:"my
 function setCredit(photo){const h=PHOTO_CREDIT[photo];$("credit").classList.toggle("hidden",!h);if(h){$("credit").href=`https://www.instagram.com/${h}/`;$("creditName").textContent="© "+h}}
 function setPhoto(photo){const b=document.querySelector(`#bgRow [data-photo="${photo}"]`);if(b)b.click()}
 let igOn=true;try{igOn=localStorage.getItem("typoStudio.ig")!=="0"}catch(e){}
-function applyIg(){$("stage").classList.toggle("ig",igOn);$("igToggle").classList.toggle("on",igOn);$("igToggle").setAttribute("aria-pressed",igOn)}
+function applyIg(){$("stage").classList.toggle("ig",igOn);if(typeof schedulePreview==="function")requestAnimationFrame(()=>schedulePreview(true));$("igToggle").classList.toggle("on",igOn);$("igToggle").setAttribute("aria-pressed",igOn)}
 $("igToggle").addEventListener("click",e=>{e.stopPropagation();igOn=!igOn;try{localStorage.setItem("typoStudio.ig",igOn?"1":"0")}catch(err){}applyIg();toast(igOn?"Story layout on":"Story layout off")});
 applyIg();
 /* ---------------- Sheet (bottom sheet met grijper) ---------------- */
@@ -1305,7 +1323,7 @@ function renderLayerChips(){
   const orn=document.createElement("button");orn.className="chip acc";orn.textContent="+ Ornament";
   orn.onclick=()=>{snap();cur.layers.push(O("sparkle",110,0,-280,{color:"accent"}));sel=cur.layers.length-1;renderLayerChips();renderTool();schedulePreview();$("sheetBody").scrollTop=0};
   box.appendChild(orn);
-  const on=box.querySelector(".chip.on");if(on)on.scrollIntoView({inline:"nearest",block:"nearest"});
+  const on=box.querySelector(".chip.on");if(on){const l=on.offsetLeft-box.offsetLeft,r=l+on.offsetWidth;if(l<box.scrollLeft+14)box.scrollLeft=l-14;else if(r>box.scrollLeft+box.clientWidth-14)box.scrollLeft=r-box.clientWidth+14}
 }
 function syncToolbar(){}
 
