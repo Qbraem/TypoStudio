@@ -172,8 +172,38 @@ input[type=range]::-moz-range-thumb{width:28px;height:28px;border-radius:50%;bac
 
 /* compact header on narrow screens */
 .top{justify-content:flex-end}
-@media (max-width:430px){#viewBtn{display:none}#proBtnLabel{display:none}#proBtn{padding:0 9px}}
+@media (max-width:430px){#viewBtn{display:none}.brand{font-size:16px}.brand span{font-size:20px}#proBtnLabel{display:none}#proBtn{padding:0 9px}}
 @media (min-aspect-ratio:1/1) and (max-width:1000px){.brand{display:none}#viewBtn{display:none}#proBtnLabel{display:none}#proBtn{padding:0 9px}}
+/* ---------- How to ---------- */
+.htBox{background:radial-gradient(120% 50% at 50% 0%,#3a2614 0%,#160f0b 60%)}
+.htHead{padding:calc(var(--sat) + 56px) calc(24px + var(--sar)) 6px calc(24px + var(--sal));text-align:center}
+.htKicker{display:inline-block;padding:5px 12px;border-radius:12px;background:rgba(243,213,138,.14);color:#F3D58A;font-size:11px;font-weight:800;letter-spacing:1.6px}
+.htHead h2{margin:12px 0 8px;font-size:30px;line-height:1.15}
+.htHead h2 i{font-family:"Yellowtail",cursive;font-style:normal;font-weight:400;color:var(--accent2);font-size:36px}
+.htHead p{margin:0;color:var(--muted);font-size:15px}
+.htSteps{list-style:none;margin:0;padding:22px calc(18px + var(--sar)) 0 calc(18px + var(--sal));display:grid;gap:14px}
+.htSteps li{display:grid;grid-template-columns:34px 1fr 92px;gap:12px;align-items:center;padding:14px;border-radius:20px;background:rgba(255,255,255,.035);border:1px solid #3a2c22}
+.htNum{width:34px;height:34px;border-radius:17px;background:linear-gradient(135deg,#F6DE9C,#C9963A);color:#3a2408;font-weight:800;display:flex;align-items:center;justify-content:center;align-self:start}
+.htText b{display:block;font-size:16px;margin-bottom:3px}.htText span{font-size:13.5px;line-height:1.45;color:var(--muted)}
+.htText em{font-style:normal;color:var(--text);font-weight:600}
+.kbd{display:inline-block;padding:0 7px;border-radius:7px;background:var(--accent);color:#fff!important;font-size:12px;line-height:20px}
+.stk{display:inline-block;width:16px;height:16px;border:1.8px solid var(--text);border-radius:5px;border-bottom-right-radius:9px;vertical-align:-3px}
+.htArt{display:flex;justify-content:center}
+.mPhone{position:relative;width:62px;height:112px;border-radius:13px;border:2px solid #6a5444;background:#1f1712;overflow:hidden}
+.mPhone.photo{background:url('/img/th-golden.jpg') center/cover}
+.mGrid{display:grid;grid-template-columns:1fr 1fr;gap:4px;padding:10px 7px}
+.mGrid i{height:22px;border-radius:5px;background:#4a3528}.mGrid i.on{background:var(--accent);box-shadow:0 0 0 1.5px #fff}
+.mSheet{position:absolute;left:4px;right:4px;bottom:4px;border-radius:9px;background:#3a2c22;padding:4px;display:grid;gap:3px}
+.mRow{display:flex;align-items:center;gap:4px;font-size:7.5px;font-weight:700;padding:4px;border-radius:6px;background:#4a3a2e}
+.mRow.dim{opacity:.55}.mIco{width:9px;height:9px;border-radius:3px;background:#8f7a68}.mIco.dl{background:var(--accent)}
+.mIgTop{position:absolute;top:5px;left:5px;right:5px;display:flex;gap:2px}.mIgTop span{flex:1;height:2px;border-radius:1px;background:rgba(255,255,255,.8)}
+.mType{position:absolute;left:0;right:0;top:34px;text-align:center;font-family:"Yellowtail",cursive;color:#fff;font-size:15px;line-height:.95;transform:rotate(-6deg);text-shadow:0 1px 4px rgba(0,0,0,.4)}
+.mType::after{content:"";position:absolute;inset:-5px 4px;border:1.2px dashed rgba(255,255,255,.9);border-radius:4px}
+.mStick{position:absolute;top:7px;right:6px;width:13px;height:13px;border:1.6px solid #fff;border-radius:4px;border-bottom-right-radius:7px}
+.htTip{margin:14px calc(18px + var(--sar)) 0 calc(18px + var(--sal));padding:14px 16px;border-radius:16px;border:1px dashed #5a4636;font-size:13.5px;line-height:1.45;color:var(--muted)}
+.htTip b{display:block;color:#F3D58A;font-size:12px;letter-spacing:1px;text-transform:uppercase;margin-bottom:3px}.htTip em{font-style:normal;color:var(--text);font-weight:600}
+.htFoot{padding:18px calc(22px + var(--sar)) calc(24px + var(--sab)) calc(22px + var(--sal))}
+.htLink{background:none;border:0;color:var(--accent2);font-weight:700;font-size:13px;padding:6px 0;text-decoration:underline}
 /* ---------- Pro ---------- */
 .proPill{display:inline-flex;align-items:center;gap:5px;height:34px;padding:0 12px;border:0;border-radius:17px;background:linear-gradient(135deg,#F6DE9C,#C9963A);color:#3a2408;font-weight:800;font-size:12px;letter-spacing:.8px;box-shadow:0 2px 10px rgba(201,150,58,.35)}
 .proPill svg{width:15px;height:15px}
@@ -245,6 +275,7 @@ input[type=range]::-moz-range-thumb{width:28px;height:28px;border-radius:50%;bac
   <header class="top">
     <div class="brand">Studio <span>Typo</span></div>
     <button class="iconbtn hidden" id="undoBtn" aria-label="Undo" disabled><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 14 4 9l5-5"/><path d="M4 9h10.5a5.5 5.5 0 0 1 0 11H11"/></svg></button>
+    <button class="iconbtn helpBtn" id="helpBtn" aria-label="How to use"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9.5"/><path d="M9.3 9.2a2.8 2.8 0 0 1 5.4 1c0 1.9-2.7 2.4-2.7 4"/><circle cx="12" cy="17.4" r=".6" fill="currentColor"/></svg></button>
     <button class="proPill" id="proBtn" aria-label="Studio Typo Pro"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M3 8.5l4.5 3.5L12 5l4.5 7L21 8.5 19 18H5z"/><rect x="5" y="19.2" width="14" height="2" rx="1"/></svg><span id="proBtnLabel">PRO</span></button>
     <button class="iconbtn" id="viewBtn" aria-label="Preview PNG"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg></button>
     <button class="iconbtn pri" id="saveImgBtn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12"/><path d="m7 10 5 5 5-5"/><path d="M5 21h14"/></svg>Save</button>
@@ -319,6 +350,40 @@ input[type=range]::-moz-range-thumb{width:28px;height:28px;border-radius:50%;bac
   </nav>
 </div>
 
+<div class="paywall hidden" id="howto" role="dialog" aria-modal="true" aria-labelledby="htTitle">
+  <div class="pwBox htBox">
+    <button class="pwClose" id="htClose" aria-label="Close"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+    <div class="htHead">
+      <div class="htKicker">HOW TO</div>
+      <h2 id="htTitle">From Studio <i>Typo</i><br>to your Story</h2>
+      <p>Four quick steps to put your typography on top of any Instagram Story.</p>
+    </div>
+    <ol class="htSteps">
+      <li>
+        <div class="htNum">1</div>
+        <div class="htText"><b>Pick &amp; style your design</b><span>Choose a design in the Library and make it yours in Edit: text, font, colours.</span></div>
+        <div class="htArt"><div class="mPhone"><div class="mGrid"><i></i><i class="on"></i><i></i><i></i><i></i><i></i></div></div></div>
+      </li>
+      <li>
+        <div class="htNum">2</div>
+        <div class="htText"><b>Save it to your Camera Roll</b><span>Tap <em class="kbd">Save</em>, then choose <em>Save Image</em>. The PNG is transparent: only the letters, no background.</span></div>
+        <div class="htArt"><div class="mPhone"><div class="mSheet"><div class="mRow"><span class="mIco dl"></span>Save Image</div><div class="mRow dim"><span class="mIco"></span>Copy</div></div></div></div>
+      </li>
+      <li>
+        <div class="htNum">3</div>
+        <div class="htText"><b>Open your photo in Stories</b><span>In Instagram, swipe right or tap <em class="kbd">+</em> → <em>Story</em> and pick the photo you want to post.</span></div>
+        <div class="htArt"><div class="mPhone photo"><div class="mIgTop"><span></span><span></span><span></span></div></div></div>
+      </li>
+      <li>
+        <div class="htNum">4</div>
+        <div class="htText"><b>Add the PNG as a photo sticker</b><span>Tap the <em>sticker</em> icon <span class="stk"></span>, choose <em>Photo</em> and select your PNG. Pinch to resize, drag to place, and share!</span></div>
+        <div class="htArt"><div class="mPhone photo"><div class="mType">Slow<br>Mornings</div><div class="mStick"></div></div></div>
+      </li>
+    </ol>
+    <div class="htTip"><b>Quick tip</b><span>You can also tap <em>Copy</em> in step 2, then open your Story and tap <em>Add sticker</em> when Instagram offers to paste it.</span></div>
+    <div class="htFoot"><button class="pwCta" id="htDone">Got it, let's create</button></div>
+  </div>
+</div>
 <div class="paywall hidden" id="paywall" role="dialog" aria-modal="true" aria-labelledby="pwTitle">
   <div class="pwBox">
     <button class="pwClose" id="pwClose" aria-label="Close"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
@@ -349,7 +414,7 @@ input[type=range]::-moz-range-thumb{width:28px;height:28px;border-radius:50%;bac
   <div class="box">
     <div class="row" style="justify-content:space-between"><b>Your PNG</b><button class="btn" id="modalClose" style="min-height:36px">Close</button></div>
     <img id="modalImg" alt="PNG preview">
-    <div class="hint">Tip: press and hold the image → ‘Save to Photos’. Or use the buttons.</div>
+    <div class="hint">Tip: press and hold the image → ‘Save to Photos’. Or use the buttons. <button class="htLink" data-howto>How to add it to your Story</button></div>
     <div class="row"><button class="btn pri hidden" id="modalShare">Save to Photos</button><button class="btn" id="modalDl">Download</button></div>
   </div>
 </div>
@@ -1042,6 +1107,7 @@ function fileName(){return (cur.name||"typo").toLowerCase().normalize("NFD").rep
 function pngFile(ex){return new File([ex.blob],fileName(),{type:"image/png"})}
 function canShare(ex){try{return !!(navigator.canShare&&navigator.canShare({files:[pngFile(ex)]}))}catch(e){return false}}
 async function shareOrDownload(ex){
+  setTimeout(()=>{let seen=true;try{seen=!!localStorage.getItem("typoStudio.howtoSaved")}catch(e){}if(!seen){try{localStorage.setItem("typoStudio.howtoSaved","1")}catch(e){}openHowto()}},900);
   if(canShare(ex)){try{await navigator.share({files:[pngFile(ex)]});return true}catch(e){if(e&&e.name==="AbortError")return true;return false}}
   const a=document.createElement("a");a.href=ex.url;a.download=fileName();document.body.appendChild(a);a.click();a.remove();toast("PNG downloaded ✓");return true;
 }
@@ -1254,7 +1320,14 @@ function updateProUI(){
 }
 
 /* ---------------- Start ---------------- */
+/* ---------------- How to ---------------- */
+function openHowto(){$("howto").classList.remove("hidden");$("howto").querySelector(".pwBox").scrollTop=0}
+function closeHowto(){$("howto").classList.add("hidden");try{localStorage.setItem("typoStudio.howto","1")}catch(e){}}
+$("helpBtn").onclick=openHowto;$("htClose").onclick=closeHowto;$("htDone").onclick=closeHowto;
+document.addEventListener("click",e=>{if(e.target.closest("[data-howto]")){$("modal").classList.add("hidden");openHowto()}});
+let firstSaveDone=false;try{firstSaveDone=!!localStorage.getItem("typoStudio.howto")}catch(e){}
 loadLocal();updateProUI();
+if(!firstSaveDone)setTimeout(openHowto,700);
 setDetent(0);setAppH();renderLibrary();
 document.fonts.ready.then(()=>{schedulePreview();renderLibrary()});
 </script>
