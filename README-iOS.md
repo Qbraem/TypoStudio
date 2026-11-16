@@ -53,7 +53,7 @@ en in Xcode opnieuw op ▶︎.
 ### 5. Account en aankopen (eenmalig)
 1. **Apple Developer Program** (€99/jaar): developer.apple.com/programs
 2. **App Store Connect** → *Agreements, Tax, and Banking*: overeenkomst voor betaalde apps tekenen, bank- en belastinggegevens invullen. Vraag ook het **Small Business Program** aan (15% commissie i.p.v. 30%).
-3. **App Store Connect → Apps → +**: nieuwe app, bundle-ID `be.qbraem.studiotypo`, naam *Studio Typo*.
+3. **App Store Connect → Apps → +**: nieuwe app, bundle-ID `be.qbraem.studiotypo.app`, naam *Studio Typo*.
 4. **In-app aankopen** aanmaken:
    | Type | Product-ID | Prijs |
    |---|---|---|
