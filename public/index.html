@@ -338,22 +338,22 @@ const T={
   scriptCaps:(a,b,sf="Great Vibes",cf="Montserrat",o={})=>[L(a,sf,250,0,-60,o),L(b,cf,105,0,115,{spacing:45,upper:true})],
   handTop:(a,b,hf="Caveat",bf="Bebas Neue")=>[L(a,hf,130,-120,-150,{rotate:-8,color:"accent"}),L(b,bf,320,0,40,{upper:true})],
   boldHand:(a,b,c,bf="Luckiest Guy",hf="Homemade Apple")=>[L(a,bf,215,0,-140,{upper:true,spacing:3}),L(b,bf,215,0,65,{upper:true,spacing:3}),L(c,hf,105,40,225,{rotate:-12,color:"accent"})],
-  statementCut:(a,mid,b,cf="Anton",sf="Great Vibes")=>[L(a,cf,330,0,-140,{upper:true}),L(b,cf,330,0,170,{upper:true}),L(mid,sf,240,0,25,{rotate:-4,cutout:16})],
-  classicClub:(a,mid,b,cf="Bodoni Moda",sf="Pinyon Script")=>[L(a,cf,230,0,-215,{upper:true}),L(b,cf,230,0,195,{upper:true}),L(mid,sf,300,10,-5,{rotate:-8,cutout:10})],
-  retro:(a,b,c)=>[L(a,"Fraunces",300,0,-95,{weight:900}),L(b,"Fraunces",300,-175,150,{weight:900}),...(c?[L(c,"Fraunces",112,250,140,{weight:900,italic:true,color:"accent"})]:[])],
+  statementCut:(a,mid,b,cf="Anton",sf="Great Vibes")=>[L(a,cf,300,0,-165,{upper:true}),L(b,cf,300,0,165,{upper:true}),L(mid,sf,250,0,10,{rotate:-4,cutout:16})],
+  classicClub:(a,mid,b,cf="Bodoni Moda",sf="Pinyon Script")=>[L(a,cf,230,0,-215,{upper:true}),L(b,cf,230,0,195,{upper:true}),L(mid,sf,250,10,-5,{rotate:-8,cutout:10})],
+  retro:(a,b,c)=>[L(a,"Fraunces",280,0,-110,{weight:900}),L(b,"Fraunces",280,-60,130,{weight:900}),...(c?[L(c,"Fraunces",105,90,290,{weight:900,italic:true,color:"accent",rotate:-3})]:[])],
   italicStack:(a,b,c)=>[L(a,"Fraunces",270,-150,-95,{weight:900,italic:true,rotate:-4}),L(b,"Fraunces",130,175,-70,{weight:900,italic:true,rotate:-4}),L(c,"Fraunces",255,0,115,{weight:900,italic:true,rotate:-4})],
   bubble:(a,b,f="Modak")=>[L(a,f,300,0,-105,{upper:true}),L(b,f,300,0,135,{upper:true})],
   groovy:(a,b,c,f="Shrikhand")=>[O("drops",120,-215,-330,{rotate:-12}),L(a,f,230,-60,-185,{rotate:-6}),L(b,f,190,30,-15,{rotate:-6}),L(c,f,230,0,165,{rotate:-6})],
   bouncy:(a,b,f="Cherry Bomb One")=>[L(a,f,230,-60,-85,{rotate:-6}),L(b,f,230,50,95,{rotate:-6})],
   serifClean:(a,b,f="Playfair Display")=>[L(a,f,210,0,-70,{italic:true,weight:400}),L(b,"DM Sans",90,0,85,{spacing:55,weight:700,upper:true})],
-  arch:(small,a,b,bf="DM Serif Display",sf="Yellowtail")=>[L(small,"DM Sans",58,0,-215,{spacing:40,curve:35,weight:700,upper:true,color:"accent"}),L(a,bf,230,0,-55,{upper:true}),L(b,sf,230,40,115,{rotate:-6,color:"accent"})],
+  arch:(small,a,b,bf="DM Serif Display",sf="Yellowtail")=>[L(small,"DM Sans",54,0,-290,{spacing:36,curve:28,weight:700,upper:true,color:"accent"}),L(a,bf,220,0,-70,{upper:true}),L(b,sf,230,40,120,{rotate:-6,color:"accent"})],
   signature:(the,a,b,f="Gloock")=>[L(the,"Mrs Saint Delafield",230,-215,-175,{rotate:-8}),L(a,f,210,10,-20),L(b,f,210,60,150)],
   bigScriptBold:(a,b,sf="Pacifico",bf="Titan One")=>[L(a,sf,230,0,-75,{rotate:-6}),L(b,bf,185,0,125,{spacing:14,upper:true,color:"accent"})],
   dailyGrind:(the,a,b)=>[L(the,"Yellowtail",210,-30,-195,{rotate:-6}),L(a,"Fredoka",300,0,-15,{upper:true}),L(b,"Yellowtail",240,30,165,{rotate:-6,cutout:12})],
 };
 const SEEDS = [
   // ---------- Coffee ----------
-  D("cf1","Coffee","Slow Mornings",T.theScript("Slow","Mornings")),
+  D("cf1","Coffee","Slow Mornings",[L("the","DM Serif Display",95,-300,-105),L("Slow","Yellowtail",250,60,-115,{rotate:-6}),L("Mornings","Yellowtail",250,0,105,{rotate:-6})]),
   D("cf2","Coffee","Coffee Lovers Club",T.boldHand("Coffee","Lovers","club")),
   D("cf3","Coffee","But first, coffee",T.handTop("but first,","coffee")),
   D("cf4","Coffee","More Coffee Please",T.statementCut("More","coffee","Please"),C("#FFFBD6","#FFFBD6")),
@@ -361,7 +361,7 @@ const SEEDS = [
   D("cf6","Coffee","Coffee Break",T.bigScriptBold("Coffee","Break")),
   D("cf7","Coffee","Holy Brew!",T.bubble("Holy","Brew!"),{...C("#F6ECD2",CORAL),texture:25}),
   D("cf8","Coffee","Home Barista",[L("HOME","Archivo Black",115,0,-120,{spacing:60}),L("barista","Yellowtail",280,0,55,{rotate:-6})]),
-  D("cf9","Coffee","But First Espresso",[L("BUT FIRST","Anton",160,0,-175,{spacing:6}),L("ESPRESSO","Anton",230,0,5),O("steam",130,0,-330,{color:"accent"}),L("always","Caveat",150,170,165,{rotate:-8,color:"accent"})],C(W,"#F2B33D")),
+  D("cf9","Coffee","But First Espresso",[O("steam",120,0,-300,{color:"accent"}),L("BUT FIRST","Anton",130,0,-165,{spacing:8}),L("ESPRESSO","Anton",210,0,0),L("always","Caveat",150,190,150,{rotate:-8,color:"accent"})],C(W,"#F2B33D")),
   D("cf10","Coffee","Bean Happy",[O("sparkles",130,-300,-150,{color:"accent"}),L("bean","Bagel Fat One",240,0,-85),L("happy","Bagel Fat One",240,0,120,{color:"accent"}),O("bean",110,310,-130,{rotate:20})],C(W,"#F2B33D")),
 
   // ---------- Breakfast ----------
@@ -369,33 +369,49 @@ const SEEDS = [
   D("bf2","Breakfast","Rise & Shine",[O("burst",150,0,-300,{color:"accent"}),L("RISE","Shrikhand",210,0,-120),L("&","Yellowtail",170,0,20,{color:"accent"}),L("SHINE","Shrikhand",210,0,150)],C(W,"#F6C445")),
   D("bf3","Breakfast","Pancake Sunday",T.bouncy("pancake","sunday"),{...C("#F7EFE2",CORAL),texture:25}),
   D("bf4","Breakfast","Breakfast in Bed",T.scriptCaps("Breakfast","in bed","Great Vibes","Montserrat")),
-  D("bf5","Breakfast","Good Eggs Only",[L("GOOD EGGS","Bowlby One",190,0,-60),L("only","Caveat",150,150,95,{rotate:-8,color:"accent"}),O("sparkle",70,-330,-170,{color:"accent"})],C(W,"#F6C445")),
+  D("bf5","Breakfast","Good Eggs Only",[O("sparkle",80,-400,-150,{color:"accent"}),L("GOOD EGGS","Bowlby One",170,0,-40),L("only","Caveat",200,250,115,{rotate:-8,color:"accent"})],C(W,"#F6C445")),
   D("bf6","Breakfast","Avocado Toast",T.serifClean("avocado","toast"),C(W,"#A8C686")),
-  D("bf7","Breakfast","The Breakfast Club",T.classicClub("The","Breakfast","Club","Gloock","Pinyon Script"),C("#E0332A","#E0332A")),
+  D("bf7","Breakfast","The Breakfast Club",[L("THE","Gloock",210,0,-210),L("CLUB","Gloock",210,0,190),L("Breakfast","Pinyon Script",210,10,-5,{rotate:-8,cutout:10})],C("#E0332A","#E0332A")),
 
   // ---------- Weekend ----------
-  D("wk1","Weekend","Sunday Club",[L("THE WEEKEND EDIT","Young Serif",44,-215,-262,{spacing:22}),L("Est. 2026","Young Serif",62,300,-262),...T.retro("Sunday","Club"),L("Brunch &","Fraunces",112,250,105,{weight:900,italic:true,color:"accent"}),L("Bubbles","Fraunces",112,250,200,{weight:900,italic:true,color:"accent"})],C("#FBF3E2","#E2CF9C")),
+  D("wk1","Weekend","Sunday Club",[L("THE WEEKEND EDIT","Young Serif",42,-170,-270,{spacing:22}),L("Est. 2026","Young Serif",58,330,-270),L("Sunday","Fraunces",280,0,-105,{weight:900}),L("Club","Fraunces",280,-190,130,{weight:900}),L("Brunch &","Fraunces",88,350,100,{weight:900,italic:true,color:"accent"}),L("Bubbles","Fraunces",88,350,182,{weight:900,italic:true,color:"accent"})],C("#FBF3E2","#E2CF9C")),
   D("wk2","Weekend","Out of Office!",T.italicStack("Out","of","Office!"),{...C("#2F6FE0","#2F6FE0"),texture:40}),
   D("wk3","Weekend","Hello Weekend",[L("hello","Caveat",150,-170,-115,{rotate:-10,color:"accent"}),L("WEEKEND","Luckiest Guy",200,0,40,{spacing:3})]),
   D("wk4","Weekend","Lazy Sunday",T.bouncy("lazy","sunday","Grandstander"),C(W,CORAL)),
-  D("wk5","Weekend","Weekend Mode",T.statementCut("Weekend","mode","On","Anton","Yellowtail"),C(W,W)),
+  D("wk5","Weekend","Weekend Mode",[L("WEEKEND","Anton",260,0,-70),L("mode","Yellowtail",250,150,95,{rotate:-6,cutout:14,color:"accent"})],C(W,"#7FC8E8")),
   D("wk6","Weekend","Saturday Mood",T.scriptCaps("Saturday","mood","Allura","Montserrat")),
   D("wk7","Weekend","Do Not Disturb",[L("do not","Homemade Apple",110,-150,-150,{rotate:-10,color:"accent"}),L("DISTURB","Bebas Neue",320,0,40)],C(W,"#7FC8E8")),
 
   // ---------- Holidays ----------
   D("hd1","Holidays","Merry & Bright",[O("sparkles",120,300,-200,{color:"accent"}),L("Merry","Sansita Swashed",250,0,-80,{rotate:-5}),L("& bright","Sansita Swashed",200,40,105,{rotate:-5,color:"accent"})],C(W,"#E9C46A")),
   D("hd2","Holidays","Let It Snow",T.arch("winter is here","Let it","snow"),C(W,"#BFE3F2")),
-  D("hd3","Holidays","Happy Holidays",T.scriptCaps("Happy","holidays","Pinyon Script","Bodoni Moda"),C("#D7263D","#D7263D")),
+  D("hd3","Holidays","Happy Holidays",[L("Happy","Pinyon Script",260,0,-110,{rotate:-6}),L("HOLIDAYS","Bodoni Moda",110,0,150,{spacing:30})],C("#D7263D","#D7263D")),
   D("hd4","Holidays","Hello Summer",[O("burst",140,280,-210,{color:"accent"}),L("hello","Pacifico",200,-60,-90,{rotate:-6}),L("SUMMER","Bagel Fat One",230,0,95,{color:"accent"})],C(W,"#F6C445")),
   D("hd5","Holidays","Bon Voyage",T.serifClean("Bon","voyage","DM Serif Display")),
-  D("hd6","Holidays","Holiday Mode",T.boldHand("Holiday","Mode","on","Titan One","Caveat"),C(W,"#7FC8E8")),
-  D("hd7","Holidays","Trick or Treat",[L("trick","Shrikhand",210,-60,-100,{rotate:-6}),L("or","Yellowtail",140,140,-10,{rotate:-6,color:"accent"}),L("treat","Shrikhand",210,30,110,{rotate:-6})],{...C("#F0923A",W),texture:20}),
+  D("hd6","Holidays","Holiday Mode",[L("HOLIDAY","Titan One",200,0,-100),L("MODE","Titan One",200,-60,80),L("on","Caveat",190,310,90,{rotate:-10,color:"accent"})],C(W,"#7FC8E8")),
+  D("hd7","Holidays","Trick or Treat",[L("trick","Shrikhand",210,-90,-110,{rotate:-6}),L("or","Yellowtail",130,-260,60,{rotate:-6,color:"accent"}),L("treat","Shrikhand",210,60,110,{rotate:-6})],{...C("#F0923A",W),texture:20}),
+
+  // ---------- Travel ----------
+  D("tv1","Travel","Wanderlust",[L("wanderlust","Yellowtail",230,0,-40,{rotate:-6}),L("EXPLORE MORE","DM Sans",58,-90,120,{spacing:36,weight:700,color:"accent"}),O("arrow",120,390,105,{rotate:8,color:"accent"})],C(W,"#F2B33D")),
+  D("tv2","Travel","Passport Ready",[L("PASSPORT","Titan One",190,0,-110),L("READY","Titan One",190,-80,70),L("let's go","Caveat",150,340,165,{rotate:-10,color:"accent"})],C(W,"#7FC8E8")),
+  D("tv3","Travel","Take Me Somewhere Warm",[L("TAKE ME","Anton",220,0,-170,{spacing:4}),L("WARM","Anton",260,0,160,{spacing:6}),L("somewhere","Yellowtail",230,0,-5,{rotate:-5,cutout:14,color:"accent"})],C(W,"#F6C445")),
+  D("tv4","Travel","Travel Diaries",[L("TRAVEL","Bodoni Moda",210,0,-150,{spacing:6}),L("diaries","Pinyon Script",260,20,20,{rotate:-8,cutout:10}),L("VOL. 01","Young Serif",54,0,190,{spacing:30,color:"accent"})],C(W,"#E9B77C")),
+  D("tv5","Travel","Greetings from Paris",T.arch("greetings from","Hello","Paris"),C(W,"#F28BA0")),
+  D("tv6","Travel","Road Trip",T.bubble("Road","Trip!","Bagel Fat One"),{...C("#F6ECD2",CORAL),texture:22}),
+  D("tv7","Travel","Beach Please",[O("burst",130,330,-200,{color:"accent"}),L("beach","Cherry Bomb One",230,-60,-80,{rotate:-6}),L("please","Cherry Bomb One",230,50,100,{rotate:-6})],{...C(W,"#F6C445"),texture:15}),
+  D("tv8","Travel","Jet Lag Is Real",[L("Jet","Fraunces",280,-120,-110,{weight:900}),L("Lag","Fraunces",280,40,120,{weight:900}),L("is real","Fraunces",100,330,-60,{weight:900,italic:true,color:"accent",rotate:-4})],C("#FBF3E2","#E2CF9C")),
+  D("tv9","Travel","Catch Flights Not Feelings",[L("catch flights","Yellowtail",190,0,-120,{rotate:-6}),L("NOT FEELINGS","Anton",170,0,70,{spacing:6,color:"accent"})],C(W,"#7FC8E8")),
+  D("tv10","Travel","Weekend Getaway",[L("Weekend","Fraunces",220,0,-90,{weight:900,italic:true}),L("getaway","Mrs Saint Delafield",230,60,90,{rotate:-8,color:"accent"})],C(W,"#F2B33D")),
+  D("tv11","Travel","Adventure Awaits",[O("star",70,-420,-210,{color:"accent"}),L("ADVENTURE","Archivo Black",130,0,-80,{spacing:16}),L("awaits","Satisfy",240,40,80,{rotate:-6,color:"accent"})],C(W,"#F2B33D")),
+  D("tv12","Travel","Ciao Italia",T.arch("wish you were here","Ciao","Italia","Gloock","Pinyon Script"),C(W,"#E0332A")),
+  D("tv13","Travel","Out of Office",[O("sparkle",80,380,-200,{color:"accent"}),L("out of","Caveat",150,-170,-140,{rotate:-8,color:"accent"}),L("OFFICE","Bowlby One",220,0,40)],C(W,"#7FC8E8")),
+  D("tv14","Travel","Island Time",[L("island","Pacifico",230,0,-70,{rotate:-6}),L("TIME","Bebas Neue",200,0,110,{spacing:25,color:"accent"}),O("sparkles",120,320,-160,{color:"accent"})],C(W,"#5FD3C6")),
 
   // ---------- Cosy ----------
-  D("cs1","Cosy","Cosy Season",[L("COSY","Archivo Black",150,0,-110,{spacing:40}),L("season","Satisfy",250,0,55,{rotate:-6,color:"accent"})],C("#F6E9D7","#E9B77C")),
+  D("cs1","Cosy","Cosy Season",[L("COSY","Archivo Black",140,0,-120,{spacing:40}),L("season","Satisfy",250,20,70,{rotate:-6,color:"accent"})],C("#F6E9D7","#E9B77C")),
   D("cs2","Cosy","Sweater Weather",T.bubble("Sweater","Weather","Bagel Fat One"),{...C("#F6E9D7",CORAL),texture:20}),
-  D("cs3","Cosy","Hygge",[L("hygge","Gloock",300,0,-30),L("the art of slowing down","Caveat",95,0,130,{color:"accent"})],C("#F6E9D7","#E9B77C")),
-  D("cs4","Cosy","Books & Blankets",T.scriptCaps("Books","& blankets","Sacramento","DM Sans")),
+  D("cs3","Cosy","Hygge",[L("hygge","Gloock",300,0,-50),L("the art of slowing down","Caveat",95,0,175,{color:"accent"})],C("#F6E9D7","#E9B77C")),
+  D("cs4","Cosy","Books & Blankets",[L("Books","Sacramento",280,0,-70),L("& BLANKETS","DM Sans",72,0,110,{spacing:28,weight:700})]),
   D("cs5","Cosy","Candle Season",[O("sparkle",80,-300,-160,{color:"accent"}),...T.serifClean("candle","season","Cormorant Garamond")],C("#F6E9D7","#E9B77C")),
   D("cs6","Cosy","Stay Home",T.dailyGrind("let's","stay","home"),C("#FFF4E8","#FFF4E8")),
 
@@ -404,16 +420,16 @@ const SEEDS = [
   D("gl2","Girly","I'm the Boss",T.groovy("I'm","the","boss"),{...C("#F2392B","#F2392B"),texture:22}),
   D("gl3","Girly","Pretty in Pink",[O("heart",90,300,-170,{color:"accent"}),L("Pretty","Great Vibes",270,0,-60,{rotate:-4}),L("IN PINK","Montserrat",100,0,115,{spacing:50,weight:800,color:"accent"})],C(W,"#F28BA0")),
   D("gl4","Girly","Self Care Sunday",[L("self care","Mrs Saint Delafield",220,-40,-110,{rotate:-8,color:"accent"}),L("SUNDAY","Gloock",230,0,60,{upper:true})],C(W,"#F28BA0")),
-  D("gl5","Girly","XOXO",[L("XOXO","Bowlby One",260,0,-20,{spacing:6}),O("heart",80,330,-150,{color:"accent",rotate:12}),O("heart",55,-330,130,{color:"accent",rotate:-12})],C(W,"#F28BA0")),
+  D("gl5","Girly","XOXO",[O("heart",90,330,-190,{color:"accent",rotate:12}),L("XOXO","Bowlby One",230,0,0,{spacing:6}),O("heart",64,-330,170,{color:"accent",rotate:-12})],C(W,"#F28BA0")),
   D("gl6","Girly","Girls Night",T.bigScriptBold("girls","night","Lobster","Bagel Fat One"),C(W,"#F28BA0")),
-  D("gl7","Girly","That Girl",[L("that","Mrs Saint Delafield",210,-170,-110,{rotate:-10,color:"accent"}),L("GIRL","Bodoni Moda",300,0,40,{italic:true})],C(W,"#F28BA0")),
+  D("gl7","Girly","That Girl",[L("that","Mrs Saint Delafield",210,-200,-170,{rotate:-10,color:"accent"}),L("GIRL","Bodoni Moda",300,0,40,{italic:true})],C(W,"#F28BA0")),
 
   // ---------- Movie Night ----------
-  D("mv1","Movie Night","Movie Night",[O("star",70,-330,-170,{color:"accent"}),L("MOVIE","Bebas Neue",330,0,-80,{spacing:8}),L("night","Yellowtail",240,30,110,{rotate:-6,color:"accent",cutout:12})],C(W,"#F2C94C")),
+  D("mv1","Movie Night","Movie Night",[O("star",80,-370,-240,{color:"accent"}),L("MOVIE","Bebas Neue",330,0,-80,{spacing:8}),L("night","Yellowtail",240,60,120,{rotate:-6,color:"accent",cutout:12})],C(W,"#F2C94C")),
   D("mv2","Movie Night","Popcorn & Chill",T.bubble("Popcorn","& chill","Bagel Fat One"),C(W,"#F2C94C")),
   D("mv3","Movie Night","Now Showing",T.arch("tonight only","Now","showing","Bodoni Moda","Yellowtail"),C(W,"#F2C94C")),
-  D("mv4","Movie Night","Lights Camera Action",[L("LIGHTS","Anton",200,0,-170,{spacing:10}),L("CAMERA","Anton",200,0,10,{spacing:10}),L("action!","Yellowtail",200,40,175,{rotate:-6,color:"accent"})],C(W,"#F2C94C")),
-  D("mv5","Movie Night","Binge Mode",T.handTop("currently in","binge mode","Caveat","Bebas Neue"),C(W,"#F2C94C")),
+  D("mv4","Movie Night","Lights Camera Action",[L("LIGHTS","Anton",190,0,-190,{spacing:10}),L("CAMERA","Anton",190,0,-10,{spacing:10}),L("action!","Yellowtail",210,60,170,{rotate:-6,color:"accent"})],C(W,"#F2C94C")),
+  D("mv5","Movie Night","Binge Mode",[L("currently in","Caveat",140,-120,-190,{rotate:-8,color:"accent"}),L("BINGE MODE","Bebas Neue",280,0,20)],C(W,"#F2C94C")),
   D("mv6","Movie Night","Couch Potato",T.bouncy("couch","potato","Cherry Bomb One"),{...C("#F7EFE2","#F2C94C"),texture:25}),
 
   // ---------- Monthly ----------
@@ -424,44 +440,41 @@ const SEEDS = [
   D("mo5","Monthly","May",[L("may","Shrikhand",330,0,-30,{rotate:-6}),O("sparkles",130,260,-170,{color:"accent"})],{...C("#F28BA0","#F6C445"),texture:15}),
   D("mo6","Monthly","June",[L("JUNE","Rubik Mono One",210,0,-40),L("summer starts","Yellowtail",150,60,100,{rotate:-6,color:"accent"})],C(W,"#F6C445")),
   D("mo7","Monthly","Late July",T.bouncy("late","july","Cherry Bomb One"),{...C("#F7EFE2",CORAL),texture:30}),
-  D("mo8","Monthly","August",T.retro("Hello","August"),C("#FBF3E2","#F6C445")),
-  D("mo9","Monthly","Hello September",T.handTop("hello","September","Caveat","Anton"),C(W,"#E9B77C")),
+  D("mo8","Monthly","August",[L("hello","Fraunces",150,-120,-130,{weight:900,italic:true,color:"accent",rotate:-4}),L("August","Fraunces",280,0,40,{weight:900})],C("#FBF3E2","#F6C445")),
+  D("mo9","Monthly","Hello September",[L("hello","Caveat",200,-230,-215,{rotate:-8,color:"accent"}),L("SEPTEMBER","Anton",250,0,20)],C(W,"#E9B77C")),
   D("mo10","Monthly","October",[L("October","Lobster",260,0,-40,{rotate:-4}),L("pumpkin season","Caveat",110,60,110,{rotate:-6,color:"accent"})],C(W,"#F0923A")),
-  D("mo11","Monthly","November",T.serifClean("November","cosy days ahead","Cormorant Garamond"),C("#F6E9D7","#E9B77C")),
-  D("mo12","Monthly","December",[O("sparkles",120,330,-180,{color:"accent"}),L("DECEMBER","Bodoni Moda",200,0,-30,{spacing:8}),L("magic","Pinyon Script",210,40,110,{rotate:-6,color:"accent"})],C(W,"#E9C46A")),
+  D("mo11","Monthly","November",[L("November","Cormorant Garamond",250,0,-50,{italic:true}),L("cosy days ahead","Caveat",120,60,110,{rotate:-5,color:"accent"})],C("#F6E9D7","#E9B77C")),
+  D("mo12","Monthly","December",[O("sparkles",120,330,-180,{color:"accent"}),L("DECEMBER","Bodoni Moda",200,0,-30,{spacing:8}),L("magic","Pinyon Script",270,60,120,{rotate:-6,color:"accent"})],C(W,"#E9C46A")),
 
   // ---------- Camera ----------
-  D("cm1","Camera","Shot on Film",[L("shot on","Homemade Apple",110,-160,-140,{rotate:-10,color:"accent"}),L("FILM","Bebas Neue",360,0,30,{spacing:10})],{...C(W,"#F2B33D"),texture:30}),
+  D("cm1","Camera","Shot on Film",[L("shot on","Homemade Apple",105,-180,-190,{rotate:-10,color:"accent"}),L("FILM","Bebas Neue",360,0,30,{spacing:10})],{...C(W,"#F2B33D"),texture:30}),
   D("cm2","Camera","Golden Hour",T.scriptCaps("Golden","hour","Great Vibes","Montserrat"),C(W,"#F2B33D")),
-  D("cm3","Camera","Film Is Not Dead",T.italicStack("Film","is not","Dead"),{...C(W,W),texture:35}),
-  D("cm4","Camera","Say Cheese",T.bouncy("say","cheese!","Bagel Fat One"),C(W,"#F2B33D")),
+  D("cm3","Camera","Film Is Not Dead",[L("Film","Fraunces",250,-60,-150,{weight:900,italic:true,rotate:-4}),L("is not","Fraunces",110,170,-5,{weight:900,italic:true,rotate:-4,color:"accent"}),L("Dead","Fraunces",250,20,130,{weight:900,italic:true,rotate:-4})],{...C(W,"#F2B33D"),texture:35}),
+  D("cm4","Camera","Say Cheese",[L("say","Bagel Fat One",210,-170,-90,{rotate:-6}),L("cheese!","Bagel Fat One",230,40,90,{rotate:-6,color:"accent"})],C(W,"#F2B33D")),
   D("cm5","Camera","Through My Lens",T.arch("35mm diaries","Through","my lens"),C(W,"#F2B33D")),
-  D("cm6","Camera","Photo Dump",[L("PHOTO","Archivo Black",170,0,-100,{spacing:20}),L("dump","Shrikhand",250,30,70,{rotate:-6,color:"accent"}),O("sparkle",70,-330,90,{color:"accent"})],C(W,"#F2B33D")),
+  D("cm6","Camera","Photo Dump",[L("PHOTO","Archivo Black",160,0,-130,{spacing:20}),L("dump","Shrikhand",250,30,90,{rotate:-6,color:"accent"}),O("sparkle",80,-330,110,{color:"accent"})],C(W,"#F2B33D")),
 
   // ---------- Trending ----------
   D("tr1","Trending","Holy Cow!",T.bubble("Holy","Cow!"),{...C("#F6ECD2",CORAL),texture:25}),
-  D("tr2","Trending","Main Character Energy",[L("main character","Yellowtail",180,0,-110,{rotate:-6,color:"accent"}),L("ENERGY","Anton",280,0,60)]),
+  D("tr2","Trending","Main Character Energy",[L("main character","Yellowtail",160,0,-210,{rotate:-6,color:"accent"}),L("ENERGY","Anton",280,0,50)]),
   D("tr3","Trending","Soft Life",T.signature("the","soft","life","Gloock"),C(W,"#F28BA0")),
   D("tr4","Trending","It's Giving",T.groovy("it's","giving","vibes","Bagel Fat One"),{...C(W,W),texture:15}),
-  D("tr5","Trending","Romanticize Your Life",[L("romanticize","Yellowtail",230,0,-85,{rotate:-6,color:"accent"}),L("YOUR LIFE","Anton",250,0,95,{spacing:4})],C(W,"#F28BA0")),
+  D("tr5","Trending","Romanticize Your Life",[L("romanticize","Yellowtail",200,0,-180,{rotate:-6,color:"accent"}),L("YOUR LIFE","Anton",250,0,80,{spacing:4})],C(W,"#F28BA0")),
   D("tr6","Trending","Mood",[L("mood","Modak",380,0,-20),O("drops",120,-230,-260,{rotate:-15})],{...C("#2F6FE0","#2F6FE0"),texture:20}),
-  D("tr7","Trending","Not Today",T.boldHand("Not","Today","thanks","Bowlby One","Caveat"),C(W,CORAL)),
+  D("tr7","Trending","Not Today",[L("NOT","Bowlby One",215,0,-140),L("TODAY","Bowlby One",215,0,65),L("thanks","Caveat",170,220,230,{rotate:-10,color:"accent"})],C(W,CORAL)),
 
   // ---------- 2026 ----------
-  D("y1","2026","Hello 2026",[O("sparkles",130,300,-200,{color:"accent"}),L("hello","Yellowtail",220,-80,-100,{rotate:-6}),L("2026","Fraunces",280,20,100,{weight:900,color:"accent"})],C(W,"#E9C46A")),
+  D("y1","2026","Hello 2026",[O("sparkles",130,330,-200,{color:"accent"}),L("hello","Yellowtail",200,-90,-150,{rotate:-6}),L("2026","Fraunces",280,20,70,{weight:900,color:"accent"})],C(W,"#E9C46A")),
   D("y2","2026","Cheers to 2026",T.scriptCaps("Cheers","to 2026","Pinyon Script","Bodoni Moda"),C(W,"#E9C46A")),
-  D("y3","2026","2026 Dump",[L("2026","Rubik Mono One",230,0,-80),L("photo dump","Shrikhand",170,40,90,{rotate:-6,color:"accent"})],C(W,"#E9C46A")),
-  D("y4","2026","New Year New Me",T.statementCut("New year","new","Me","Anton","Yellowtail"),C(W,W)),
+  D("y3","2026","2026 Dump",[L("2026","Rubik Mono One",210,0,-100),L("photo dump","Shrikhand",160,40,110,{rotate:-6,color:"accent"})],C(W,"#E9C46A")),
+  D("y4","2026","New Year New Me",[L("new year","Yellowtail",210,0,-200,{rotate:-6,color:"accent"}),L("NEW ME","Anton",290,0,60,{spacing:4})],C(W,"#E9C46A")),
   D("y5","2026","Best of 2026",T.arch("a year in review","Best of","2026"),C(W,"#E9C46A")),
   D("y6","2026","Class of 2026",T.classicClub("Class","of","2026","Bodoni Moda","Great Vibes"),C(W,W)),
 ];
-// keep every line within the frame width (rough letter widths per font, in em)
-const SEED_EM={"Anton":.46,"Bebas Neue":.40,"Modak":.62,"Bagel Fat One":.64,"Cherry Bomb One":.6,"Grandstander":.58,"Shrikhand":.64,"Luckiest Guy":.62,"Titan One":.64,"Bowlby One":.72,"Fredoka":.6,"Fraunces":.6,"Bodoni Moda":.62,"Gloock":.56,"Young Serif":.62,"Archivo Black":.72,"DM Serif Display":.52,"Playfair Display":.5,"Cormorant Garamond":.42,"Montserrat":.66,"DM Sans":.6,"Rubik Mono One":.95,"Bungee":.78,"Lilita One":.52,"Chewy":.5,"Lobster":.45,"Pacifico":.55,"Sansita Swashed":.52,"Righteous":.6,"Abril Fatface":.55};
-SEEDS.forEach(d=>d.layers.forEach(Ly=>{if(Ly.kind==="shape"||!Ly.text)return;
-  const em=SEED_EM[Ly.font]||.4,n=[...Ly.text].length,caps=Ly.upper||Ly.text===Ly.text.toUpperCase()?1.12:1;
-  const w=Ly.size*(n*em*caps+(n-1)*(Ly.spacing||0)/100);const max=Ly.curve?900:880;
-  if(w>max)Ly.size=Math.round(Ly.size*max/w);}));
-const NEW_CATS=["Coffee","Breakfast","Weekend","Holidays","Cosy","Girly","Movie Night","Monthly","Camera","Trending","2026"];
+// per design: [scale, centreX, centreY], measured with the real fonts so every design is centred and fills the frame evenly
+const SEED_FIX={"cf1":[1.007,-1,10],"cf2":[1.135,0,6],"cf3":[1.2,1,-51],"cf4":[1.082,2,-44],"cf5":[1.16,-1,-41],"cf6":[1.141,2,-29],"cf7":[0.95,2,-34],"cf8":[1.2,18,4],"cf9":[1.12,-1,-75],"cf10":[1.2,-8,26],"bf1":[0.917,4,58],"bf2":[1.154,4,-92],"bf3":[0.977,-32,17],"bf4":[1.0,10,-35],"bf5":[0.754,1,6],"bf6":[1.151,-5,-32],"bf7":[1.091,29,-22],"wk1":[0.803,39,-43],"wk2":[1.132,5,27],"wk3":[0.952,-1,-49],"wk4":[1.053,49,9],"wk5":[0.961,-3,-14],"wk6":[1.01,10,-15],"wk7":[1.061,2,-78],"hd1":[1.05,24,-24],"hd2":[1.2,-1,-52],"hd3":[1.019,-2,-30],"hd4":[0.87,-1,-49],"hd5":[1.2,-2,-24],"hd6":[0.961,1,-12],"hd7":[1.193,-10,-33],"tv1":[0.948,27,-14],"tv2":[0.812,1,24],"tv3":[1.017,11,-33],"tv4":[0.892,-1,-29],"tv5":[1.2,1,-53],"tv6":[1.066,-2,22],"tv7":[1.132,21,-8],"tv8":[1.061,96,23],"tv9":[0.897,0,-58],"tv10":[0.944,25,28],"tv11":[0.791,-3,-53],"tv12":[0.946,-2,-64],"tv13":[1.0,0,-73],"tv14":[1.2,54,-51],"cs1":[1.2,16,-22],"cs2":[0.597,0,20],"cs3":[1.069,-5,12],"cs4":[1.2,11,-56],"cs5":[1.2,-24,-45],"cs6":[1.2,0,-14],"gl1":[1.2,-33,-61],"gl2":[1.1,-3,-69],"gl3":[1.197,3,-43],"gl4":[0.94,5,-39],"gl5":[1.094,-4,-10],"gl6":[1.2,1,8],"gl7":[1.129,2,-83],"mv1":[1.102,-27,-7],"mv2":[0.616,-2,20],"mv3":[1.2,32,-41],"mv4":[1.2,5,-22],"mv5":[0.838,1,-85],"mv6":[1.12,27,34],"mo1":[1.047,-5,-16],"mo2":[0.892,3,-25],"mo3":[1.151,31,-11],"mo4":[1.091,-1,-33],"mo5":[1.108,-7,-76],"mo6":[1.085,35,24],"mo7":[1.2,-7,38],"mo8":[0.966,-3,-6],"mo9":[0.795,0,-106],"mo10":[1.094,0,19],"mo11":[0.913,0,9],"mo12":[0.679,-1,22],"cm1":[1.2,-45,-86],"cm2":[1.2,2,-38],"cm3":[1.2,9,-21],"cm4":[1.047,35,39],"cm5":[0.852,-1,-22],"cm6":[1.082,20,-8],"tr1":[1.167,0,-33],"tr2":[1.045,6,-84],"tr3":[1.2,-49,-37],"tr4":[1.043,5,-52],"tr5":[0.873,-3,-56],"tr6":[0.87,-1,-132],"tr7":[1.012,19,23],"y1":[1.176,33,-52],"y2":[1.173,-2,-34],"y3":[0.817,34,15],"y4":[0.917,2,-57],"y5":[1.053,-1,-53],"y6":[1.141,-2,-42]};
+SEEDS.forEach(d=>{const f=SEED_FIX[d.id];if(!f)return;const [k,cx,cy]=f;d.layers.forEach(Ly=>{Ly.size=Math.round(Ly.size*k);Ly.x=Math.round((Ly.x-cx)*k);Ly.y=Math.round((Ly.y-cy)*k);if(Ly.cutout)Ly.cutout=Math.round(Ly.cutout*k*10)/10})});
+const NEW_CATS=["Coffee","Breakfast","Weekend","Holidays","Travel","Cosy","Girly","Movie Night","Monthly","Camera","Trending","2026"];
 const SEED_CATS=[...new Set([...NEW_CATS,...SEEDS.map(d=>d.cat)])];
 
 
@@ -904,6 +917,7 @@ const PHRASES={
   "Breakfast":["Brunch Club","Rise & Shine","Pancake Party","Breakfast in Bed","Croissant Club","Eggs Benedict","Sunny Side Up","Toast & Jam","Morning Glory","Bagels & Bliss"],
   "Weekend":["Hello Weekend","Sunday Club","Saturday Mood","Lazy Sunday","Weekend Mode","Out of Office","Do Not Disturb","Sunday Funday","Friday Feeling","Weekend Getaway"],
   "Holidays":["Merry & Bright","Let It Snow","Happy Holidays","Hello Summer","Bon Voyage","Beach Please","Holiday Mode","Trick or Treat","Jingle All the Way","Passport Ready"],
+  "Travel":["Wanderlust","Passport Ready","Take Me Somewhere Warm","Travel Diaries","Greetings from Paris","Road Trip","Beach Please","Jet Lag Is Real","Catch Flights Not Feelings","Weekend Getaway","Adventure Awaits","Ciao Italia","Island Time","Out of Office","Bon Voyage","Window Seat","Lost in Lisbon","Summer in the City","Home Is Elsewhere","Next Stop: Anywhere"],
   "Cosy":["Cosy Season","Sweater Weather","Hygge Days","Books & Blankets","Candle Season","Stay Home","Rainy Days","Soup Season","Slow Living","Warm & Fuzzy"],
   "Girly":["The Girls Club","Pretty in Pink","Self Care Sunday","Girls Night","That Girl","XOXO","Hot Girl Walk","Babe","Glow Up","Pink Era"],
   "Movie Night":["Movie Night","Popcorn & Chill","Now Showing","Lights Camera Action","Binge Mode","Couch Potato","Double Feature","Rom-Com Night","Snack Attack","The End"],
