@@ -788,8 +788,10 @@ function renderLibrary(){
   const cards=list.map(d=>{
     const b=document.createElement("button");const light=lum(d.colors.main)<.45;
     b.className="card"+(d.id===curSourceId?" sel":"")+(light?" light":"");b.setAttribute("aria-label",d.name);
+    const photo=`url('/img/sq-${["beans","sunset","pier"][n++%3]}.jpg')`;
     if(d.cat==="Holidays"&&!light)b.classList.add("xmas");
-    else if(!light)b.style.backgroundImage=`linear-gradient(rgba(0,0,0,.22),rgba(0,0,0,.35)),url('/img/sq-${["beans","sunset","pier"][n++%3]}.jpg')`;
+    else if(light)b.style.backgroundImage=`linear-gradient(rgba(250,244,234,.5),rgba(250,244,234,.58)),${photo}`; // donkere tekst: foto met lichte waas
+    else b.style.backgroundImage=`linear-gradient(rgba(0,0,0,.22),rgba(0,0,0,.35)),${photo}`;
     if(!d.seed)b.innerHTML='<span class="mine">★</span>';
     b.onclick=()=>{
       if(d.id===curSourceId){showTab("edit");return}
