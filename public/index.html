@@ -1208,16 +1208,17 @@ function applyIg(){$("stage").classList.toggle("ig",igOn);if(typeof schedulePrev
 $("igToggle").addEventListener("click",e=>{e.stopPropagation();igOn=!igOn;try{localStorage.setItem("typoStudio.ig",igOn?"1":"0")}catch(err){}applyIg();toast(igOn?"Story layout on":"Story layout off")});
 applyIg();
 /* ---------------- Sheet (bottom sheet met grijper) ---------------- */
-const DETENTS=[.40,.70];let detent=0;
+/* paneelstanden: ingeklapt (enkel categorieën), normaal, groot */
+const DETENTS=[.17,.40,.70];let detent=1;
 function setDetent(i){detent=i;applySheetH();$("sheet").style.height="";setTimeout(()=>{fitStage();layoutSticker()},280)}
 function applySheetH(){const H=window.visualViewport?visualViewport.height:innerHeight;document.documentElement.style.setProperty("--sheet-h",Math.round(DETENTS[detent]*H)+"px")}
 (function sheetDrag(){
   const gb=$("grab"),sh=$("sheet");let sy=0,h0=0,moved=false;
   gb.addEventListener("pointerdown",e=>{gb.setPointerCapture(e.pointerId);sy=e.clientY;h0=sh.getBoundingClientRect().height;moved=false;sh.classList.add("dragging")});
   gb.addEventListener("pointermove",e=>{if(!sh.classList.contains("dragging"))return;const dy=e.clientY-sy;if(Math.abs(dy)>4)moved=true;
-    const H=$("sheet").parentElement.clientHeight;sh.style.height=Math.max(H*.25,Math.min(H*.85,h0-dy))+"px"});
-  gb.addEventListener("pointerup",()=>{sh.classList.remove("dragging");if(!moved){setDetent(detent?0:1);return}
-    const H=sh.parentElement.clientHeight,f=sh.getBoundingClientRect().height/H;setDetent(Math.abs(f-DETENTS[0])<Math.abs(f-DETENTS[1])?0:1)});
+    const H=$("sheet").parentElement.clientHeight;sh.style.height=Math.max(H*.12,Math.min(H*.85,h0-dy))+"px"});
+  gb.addEventListener("pointerup",()=>{sh.classList.remove("dragging");if(!moved){setDetent(detent===1?2:1);return}
+    const H=sh.parentElement.clientHeight,f=sh.getBoundingClientRect().height/H;let bi=0;DETENTS.forEach((d,i)=>{if(Math.abs(f-d)<Math.abs(f-DETENTS[bi]))bi=i});setDetent(bi)});
 })();
 
 /* ---------------- Tabs ---------------- */
@@ -1680,7 +1681,7 @@ document.addEventListener("click",e=>{if(e.target.closest("[data-howto]")){$("mo
 let firstSaveDone=false;try{firstSaveDone=!!localStorage.getItem("typoStudio.howto")}catch(e){}
 initNative();loadLocal();updateProUI();loadTrending();
 if(!onbSeen){openOnb();setTimeout(hideSplash,900)}else setTimeout(hideSplash,700);
-setDetent(0);setAppH();renderLibrary();
+setDetent(1);setAppH();renderLibrary();
 document.fonts.ready.then(()=>{schedulePreview();renderLibrary()});
 </script>
 </body>
