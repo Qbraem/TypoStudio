@@ -243,6 +243,11 @@ input[type=range]::-moz-range-thumb{width:28px;height:28px;border-radius:50%;bac
 .proPill.static{height:26px;padding:0 10px;font-size:11px;vertical-align:middle;box-shadow:none}
 .proTag{display:inline-flex;align-items:center;gap:3px;height:20px;padding:0 7px;border-radius:10px;background:rgba(20,14,10,.62);color:#F3D58A;font-size:10px;font-weight:800;letter-spacing:.6px;backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);border:1px solid rgba(243,213,138,.35)}
 .proTag svg{width:10px;height:10px}
+.favBtn{position:absolute;bottom:5px;right:5px;width:30px;height:30px;border-radius:15px;display:flex;align-items:center;justify-content:center;color:rgba(255,255,255,.85);background:rgba(20,14,10,.35);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px)}
+.favBtn svg{width:16px;height:16px}.favBtn.on{color:#FF6B7F}
+.favChip{color:#FF6B7F;gap:5px;padding:0 13px}.favChip svg{width:17px;height:17px}.favChip span{font-size:13px;color:var(--text)}
+.favChip.on{background:#FF6B7F;border-color:#FF6B7F;color:#fff}.favChip.on span{color:#fff}
+.favEmpty{display:flex;flex-direction:column;align-items:center;gap:6px;padding:26px 10px}.favEmpty svg{width:30px;height:30px;color:#FF6B7F}.favEmpty b{color:var(--text);font-size:16px}
 .card .proTag{position:absolute;top:6px;left:6px}
 .ornBtn{position:relative}.ornBtn .proTag{position:absolute;top:3px;right:3px;height:16px;padding:0 5px;font-size:8px}
 .lockRow{width:100%;display:flex;justify-content:space-between;align-items:center;min-height:44px;background:none;border:0;border-bottom:1px dashed var(--line);color:var(--muted);font-size:14px;padding:0}
@@ -694,7 +699,7 @@ const SEED_CATS=[...new Set([...NEW_CATS,...SEEDS.map(d=>d.cat)])];
 /* ---------------- State ---------------- */
 let custom=[], customCats=[];
 let cur=clone(SEEDS[0]), curSourceId=SEEDS[0].id;
-let activeCat=([10,11].includes(new Date().getMonth())?"Holidays":"All"), tab="lib", tool="text", sel=0, fontGroup="All";
+let activeCat="Suggestions", tab="lib", tool="text", sel=0, fontGroup="All";
 let hist=[];
 const $=id=>document.getElementById(id);
 function clone(o){return JSON.parse(JSON.stringify(o))}
@@ -960,19 +965,34 @@ $("tabs").addEventListener("click",e=>{const b=e.target.closest("button");if(b)s
 /* ---------------- Bibliotheek ---------------- */
 let thumbJob=0;
 function loadDesign(d){const onPhoto=document.querySelector("#bgRow .bgBtn.on[data-photo]");if(onPhoto){if(d.cat==="Holidays"&&onPhoto.dataset.photo!=="xmas")setPhoto("xmas");else if(d.cat!=="Holidays"&&onPhoto.dataset.photo==="xmas")setPhoto("golden")}cur=clone(d);curSourceId=d.id;sel=0;hist=[];updUndo();schedulePreview()}
+/* ---------------- Favourites & suggestions ---------------- */
+let favs=new Set();try{favs=new Set(JSON.parse(localStorage.getItem("typoStudio.favs")||"[]"))}catch(e){}
+function heartSvg(fill){return `<svg viewBox="0 0 24 24" fill="${fill?"currentColor":"none"}" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M12 20.5s-7.5-4.6-9.2-9.4C1.6 7.6 3.9 4.5 7.2 4.5c2 0 3.6 1.1 4.8 2.8 1.2-1.7 2.8-2.8 4.8-2.8 3.3 0 5.6 3.1 4.4 6.6-1.7 4.8-9.2 9.4-9.2 9.4z"/></svg>`}
+function toggleFav(id){if(favs.has(id)){favs.delete(id);toast("Removed from favourites")}else{favs.add(id);toast("Added to favourites ♥")}try{localStorage.setItem("typoStudio.favs",JSON.stringify([...favs]))}catch(e){}}
+function updateFavChip(){const c=document.querySelector(".favChip");if(c)c.innerHTML=heartSvg(true)+(favs.size?`<span>${favs.size}</span>`:"")}
+function suggestions(){
+  const m=new Date().getMonth(),by={};SEEDS.forEach(d=>(by[d.cat]=by[d.cat]||[]).push(d));
+  const season=[10,11].includes(m)?"Holidays":m===0?"2026":[5,6,7].includes(m)?"Travel":null;
+  const out=[];if(season&&by[season])out.push(...by[season].slice(0,4));
+  const order=["Coffee","Weekend","Travel","Girly","Cosy","Breakfast","Trending","Movie Night","Camera","Monthly","2026","Holidays"].filter(c=>c!==season&&by[c]);
+  for(let r=0;r<2;r++)order.forEach(c=>{const d=by[c][r];if(d&&!out.includes(d))out.push(d)});
+  return out.slice(0,21);
+}
 function renderLibrary(){
   if(!$("cats"))return;
   const cats=$("cats");cats.innerHTML="";
   const mk=(label,val)=>{const b=document.createElement("button");b.className="chip"+(activeCat===val?" on":"")+(val==="Holidays"?" xmas":"");if(val==="Holidays")label="❄ Holidays";b.textContent=label;b.onclick=()=>{activeCat=val;renderLibrary()};cats.appendChild(b)};
+  mk("Suggestions","Suggestions");
+  const fv=document.createElement("button");fv.className="chip favChip"+(activeCat==="♥"?" on":"");fv.setAttribute("aria-label","Favourites");fv.innerHTML=heartSvg(true)+(favs.size?`<span>${favs.size}</span>`:"");fv.onclick=()=>{activeCat="♥";renderLibrary()};cats.appendChild(fv);
   mk("All","All");if(custom.length)mk("★ My designs","★");
   allCats().forEach(c=>mk(c+(isCustomCat(c)?" ★":""),c));
   const plus=document.createElement("button");plus.className="chip";plus.textContent="+ Category";
   plus.onclick=()=>{$("newCatRow").classList.toggle("hidden");$("newCatName").focus()};cats.appendChild(plus);
-  let list=allDesigns();if(activeCat==="★")list=custom;else if(activeCat!=="All")list=list.filter(d=>d.cat===activeCat);
+  let list=allDesigns();if(activeCat==="★")list=custom;else if(activeCat==="Suggestions")list=suggestions();else if(activeCat==="♥")list=list.filter(d=>favs.has(d.id));else if(activeCat!=="All")list=list.filter(d=>d.cat===activeCat);
   const grid=$("grid");grid.innerHTML="";
-  $("catActions").classList.toggle("hidden",!(activeCat!=="All"&&activeCat!=="★"&&isCustomCat(activeCat)));
+  $("catActions").classList.toggle("hidden",!(!["All","★","Suggestions","♥"].includes(activeCat)&&isCustomCat(activeCat)));
   $("catDel").textContent="Delete category";$("catDel").dataset.armed="";
-  if(!list.length){grid.innerHTML=`<div class="empty">Nothing here yet. Edit a design and save it to this category.</div>`;return}
+  if(!list.length){grid.innerHTML=activeCat==="♥"?`<div class="empty favEmpty">${heartSvg(false)}<b>No favourites yet</b>Tap the heart on any design to save it here.</div>`:`<div class="empty">Nothing here yet. Edit a design and save it to this category.</div>`;return}
   const job=++thumbJob;let n=0;
   const cards=list.map(d=>{
     const b=document.createElement("button");const light=lum(d.colors.main)<.45;
@@ -980,6 +1000,8 @@ function renderLibrary(){
     if(d.cat==="Holidays")b.classList.add("xmas");
     if(!d.seed)b.innerHTML='<span class="mine">★</span>';
     else if(d.pro&&!isPro())b.innerHTML=proLabel();
+    const h=document.createElement("span");h.className="favBtn"+(favs.has(d.id)?" on":"");h.setAttribute("role","button");h.setAttribute("aria-label","Favourite");h.innerHTML=heartSvg(favs.has(d.id));
+    h.onclick=e=>{e.stopPropagation();toggleFav(d.id);h.classList.toggle("on",favs.has(d.id));h.innerHTML=heartSvg(favs.has(d.id));if(activeCat==="♥")renderLibrary();else updateFavChip()};b.appendChild(h);
     b.onclick=()=>{
       if(d.id===curSourceId){showTab("edit");return}
       loadDesign(d);document.querySelectorAll(".card").forEach(x=>x.classList.remove("sel"));b.classList.add("sel");toast("Tap again to edit");
