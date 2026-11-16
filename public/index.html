@@ -929,7 +929,9 @@ const SEED_CATS=[...new Set([...NEW_CATS,...SEEDS.map(d=>d.cat)])];
 
 /* ---------------- State ---------------- */
 let custom=[], customCats=[];
-let cur=clone(SEEDS[0]), curSourceId=SEEDS[0].id;
+/* startontwerp bij het openen van de app */
+const START_DESIGN=SEEDS.find(d=>d.id==="wk1")||SEEDS[0];
+let cur=clone(START_DESIGN), curSourceId=START_DESIGN.id;
 let activeCat="Suggestions", tab="lib", tool="text", sel=0, fontGroup="All";
 let hist=[];
 const $=id=>document.getElementById(id);
@@ -1506,14 +1508,14 @@ async function shareOrDownload(ex){
   const a=document.createElement("a");a.href=ex.url;a.download=fileName();document.body.appendChild(a);a.click();a.remove();toast("PNG downloaded ✓");return true;
 }
 $("saveImgBtn").onclick=async()=>{
-  if(!isPro()&&cur.pro){openPaywall("save");return}
+  if(!BETA_FREE_DOWNLOADS&&!isPro()&&cur.pro){openPaywall("save");return}
   const key=JSON.stringify(cur);
   if(NATIVE){const b=$("saveImgBtn");b.classList.add("busy");const ex=exportCache.key===key?exportCache:await buildExport();b.classList.remove("busy");if(ex)await shareOrDownload(ex);return}
   if(exportCache.key===key){if(!(await shareOrDownload(exportCache)))openModal(exportCache);return}
   const b=$("saveImgBtn");b.classList.add("busy");const ex=await buildExport();b.classList.remove("busy");
   if(ex)openModal(ex); // tweede tik nodig: iPhone staat delen alleen direct na een tik toe
 };
-$("viewBtn").onclick=async()=>{if(!isPro()&&cur.pro){openPaywall("save");return}const ex=await buildExport();if(ex)openModal(ex)};
+$("viewBtn").onclick=async()=>{if(!BETA_FREE_DOWNLOADS&&!isPro()&&cur.pro){openPaywall("save");return}const ex=await buildExport();if(ex)openModal(ex)};
 function openModal(ex){$("modalImg").src=ex.url;$("modalShare").classList.toggle("hidden",!NATIVE&&!canShare(ex));$("modalDl").classList.toggle("hidden",NATIVE);$("modal").classList.remove("hidden")}
 $("modalShare").onclick=()=>{if(NATIVE){if(exportCache.blob)nativeShare(exportCache).catch(()=>{});return}if(exportCache.blob)navigator.share({files:[pngFile(exportCache)]}).catch(()=>{})};
 $("modalDl").onclick=()=>{if(!exportCache.url)return;const a=document.createElement("a");a.href=exportCache.url;a.download=fileName();document.body.appendChild(a);a.click();a.remove()};
@@ -1595,6 +1597,9 @@ function initNative(){
 
 /* ---------------- Studio Typo Pro ---------------- */
 // Prices are placeholders until they are set in App Store Connect.
+/* BETA (TestFlight): alle ontwerpen mogen bewaard worden, ook PRO. Paywall en PRO-labels blijven zichtbaar.
+   Zet op false voor de App Store-release. */
+const BETA_FREE_DOWNLOADS=true;
 const PRO={yearly:{price:"€12.99",perMonth:"€1.08",trialDays:7},lifetime:{price:"€24.99",regular:"€41.99"}};
 const FREE_PER_CAT=3;
 const FREE_IDS=new Set(NEW_CATS.flatMap(c=>SEEDS.filter(d=>d.cat===c).slice(0,FREE_PER_CAT).map(d=>d.id)));
