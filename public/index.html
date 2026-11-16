@@ -145,6 +145,10 @@ input[type=range]::-moz-range-thumb{width:28px;height:28px;border-radius:50%;bac
 .toolbar::-webkit-scrollbar{display:none}
 .toolbar button{flex:none;border:0;background:none;min-height:44px;padding:0 10px;font-size:14px;font-weight:700;color:var(--muted);border-bottom:2px solid transparent}
 .toolbar button.on{color:var(--text);border-bottom-color:var(--accent)}
+.ornGrid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
+.ornBtn{border:1px solid var(--line);background:var(--panel2);border-radius:12px;padding:6px 2px;display:flex;flex-direction:column;align-items:center;gap:2px;font-size:11px;color:var(--muted)}
+.ornBtn canvas{width:40px;height:40px}
+.ornBtn.on{border-color:var(--accent);background:#3a2419;color:var(--text)}
 .secH{font-size:12px;letter-spacing:1.1px;text-transform:uppercase;color:var(--muted);font-weight:700;margin:18px 0 8px}
 #toolBody>.secH:first-child{margin-top:4px}
 .chips.wrap{flex-wrap:wrap;overflow:visible;margin:0;padding:0 0 8px}
@@ -229,7 +233,7 @@ input[type=range]::-moz-range-thumb{width:28px;height:28px;border-radius:50%;bac
         <textarea class="inp" id="genText" placeholder="Cozy Christmas&#10;Hot Cocoa Season"></textarea>
         <div class="chips" style="margin-top:8px"><button class="chip" id="genInspire">💡 Inspiratie</button><button class="chip" id="genInspireNL">💡 Nederlands</button></div>
         <label class="lab">Stijl</label>
-        <div class="chips" id="genStyle"><button class="chip on" data-s="mix">Mix</button><button class="chip" data-s="script">Sierlijk</button><button class="chip" data-s="bold">Speels & bold</button><button class="chip" data-s="clean">Strak</button></div>
+        <div class="chips" id="genStyle"><button class="chip on" data-s="mix">Mix</button><button class="chip" data-s="script">Sierlijk</button><button class="chip" data-s="bold">Speels & bold</button><button class="chip" data-s="clean">Strak</button><button class="chip" data-s="retro">Retro</button></div>
         <label class="lab">Kleuren</label>
         <div class="chips" id="genColors"></div>
         <label class="lab" for="genCat">In categorie</label>
@@ -293,12 +297,21 @@ const FONTS = [
   {n:"DM Serif Display",g:"Serif",w:[400],it:true},
   {n:"Abril Fatface",g:"Serif",w:[400]},
   {n:"Cormorant Garamond",g:"Serif",w:[600],it:true},
-  {n:"Fraunces",g:"Serif",w:[800],it:true},
+  {n:"Fraunces",g:"Serif",w:[800,900],it:true},
+  {n:"Gloock",g:"Serif",w:[400]},
+  {n:"Young Serif",g:"Serif",w:[400]},
+  {n:"Bodoni Moda",g:"Serif",w:[700],it:true},
   {n:"Montserrat",g:"Sans",w:[400,800]},
   {n:"DM Sans",g:"Sans",w:[400,700]},
   {n:"Bebas Neue",g:"Sans",w:[400]},
   {n:"Anton",g:"Sans",w:[400]},
   {n:"Archivo Black",g:"Sans",w:[400]},
+  {n:"Modak",g:"Bubbel & groovy",w:[400]},
+  {n:"Bagel Fat One",g:"Bubbel & groovy",w:[400]},
+  {n:"Cherry Bomb One",g:"Bubbel & groovy",w:[400]},
+  {n:"Grandstander",g:"Bubbel & groovy",w:[800]},
+  {n:"Sansita Swashed",g:"Script",w:[800]},
+  {n:"Mrs Saint Delafield",g:"Script",w:[400]},
 ];
 const FONT_BY = Object.fromEntries(FONTS.map(f=>[f.n,f]));
 FONTS.forEach(f=>{
@@ -315,6 +328,7 @@ FONTS.forEach(f=>{
 /* ---------------- Seed designs ---------------- */
 const W="#FFFFFF", CORAL="#F26B50";
 function L(text,font,size,x,y,o={}){return Object.assign({text,font,weight:FONT_BY[font]?FONT_BY[font].w[FONT_BY[font].w.length-1]:400,italic:false,size,x,y,rotate:0,spacing:0,curve:0,upper:false,color:"main",style:"fill"},o)}
+function O(shape,size,x,y,o={}){return Object.assign({kind:"shape",shape,text:"",size,x,y,rotate:0,color:"main",style:"fill"},o)}
 function D(id,cat,name,layers,o={}){return Object.assign({id,cat,name,layers,colors:{main:W,accent:CORAL},shadow:0,seed:true},o)}
 const SEEDS = [
   // Ochtend
@@ -348,12 +362,105 @@ const SEEDS = [
   D("s24","Weekdagen","Sunday Brew",[L("Sunday","Allura",270,0,-55),L("BREW","Montserrat",100,0,115,{spacing:55,weight:800})]),
   D("s25","Weekdagen","Friday Fika",[L("FRIDAY","Bowlby One",170,0,-60),L("fika","Pacifico",200,40,95,{rotate:-6,color:"accent"})]),
   // Seizoenen
-  D("s26","Seizoenen","Autumn Brew",[L("autumn","Satisfy",240,0,-60),L("BREW","Fraunces",160,0,105,{spacing:12})],{colors:{main:"#F6E9D7",accent:"#C98A4B"}}),
+  D("s26","Seizoenen","Autumn Brew",[L("autumn","Satisfy",240,0,-60),L("BREW","Fraunces",160,0,105,{spacing:12,weight:800})],{colors:{main:"#F6E9D7",accent:"#C98A4B"}}),
   D("s27","Seizoenen","Iced Coffee Weather",[L("ICED COFFEE","Titan One",140,0,-65),L("weather","Yellowtail",210,30,90,{rotate:-6,color:"accent"})],{colors:{main:W,accent:"#7FC8E8"}}),
   D("s28","Seizoenen","Winter Warmer",[L("Winter","DM Serif Display",220,0,-55,{italic:true}),L("WARMER","DM Sans",88,0,100,{spacing:60,weight:700,color:"accent"})]),
   D("s29","Seizoenen","Pumpkin Spice",[L("pumpkin","Lobster",220,0,-60,{rotate:-4}),L("SPICE","Bungee",150,0,100,{spacing:8,color:"accent"})],{colors:{main:W,accent:"#F0923A"}}),
+  // ---- Retro serif ----
+  D("r1","Retro serif","Sunday Coffee Club",[
+    L("THE NEIGHBOURHOOD","Young Serif",44,-205,-262,{spacing:22}),
+    L("Est. 2026","Young Serif",62,300,-262),
+    L("Sunday","Fraunces",300,0,-95,{weight:900}),
+    L("Club","Fraunces",300,-175,150,{weight:900}),
+    L("Coffee &","Fraunces",112,250,105,{weight:900,italic:true,color:"accent"}),
+    L("Slow Living","Fraunces",112,250,200,{weight:900,italic:true,color:"accent"}),
+  ],{colors:{main:"#FBF3E2",accent:"#E2CF9C"}}),
+  D("r2","Retro serif","Out of Coffee!",[
+    L("Out","Fraunces",270,-150,-95,{weight:900,italic:true,rotate:-4}),
+    L("of","Fraunces",130,175,-70,{weight:900,italic:true,rotate:-4}),
+    L("Coffee!","Fraunces",255,0,115,{weight:900,italic:true,rotate:-4}),
+  ],{colors:{main:"#2F6FE0",accent:"#2F6FE0"},texture:40}),
+  D("r3","Retro serif","Good Things Brewing",[
+    L("GOOD THINGS","Young Serif",70,0,-175,{spacing:30,color:"accent"}),
+    L("Brewing","Fraunces",270,0,-10,{weight:900,italic:true}),
+    O("swash",420,40,140,{rotate:-4,color:"accent"}),
+  ],{colors:{main:"#FBF3E2",accent:"#F26B50"}}),
+
+  // ---- Bubbel & groovy ----
+  D("g1","Bubbel & groovy","Holy Brew!",[
+    L("HOLY","Modak",300,0,-105),
+    L("BREW!","Modak",300,0,135),
+  ],{colors:{main:"#F6ECD2",accent:"#F26B50"},texture:25}),
+  D("g2","Bubbel & groovy","I'm the barista",[
+    O("drops",120,-215,-330,{rotate:-12}),
+    L("I'm","Shrikhand",230,-60,-185,{rotate:-6}),
+    L("the","Shrikhand",190,30,-15,{rotate:-6}),
+    L("barista","Shrikhand",230,0,165,{rotate:-6}),
+  ],{colors:{main:"#F2392B",accent:"#F2392B"},texture:22}),
+  D("g3","Bubbel & groovy","Lazy Latte",[
+    L("lazy","Cherry Bomb One",230,-60,-85,{rotate:-6}),
+    L("latte","Cherry Bomb One",230,50,95,{rotate:-6}),
+  ],{colors:{main:"#F7EFE2",accent:"#F26B50"},texture:30}),
+  D("g4","Bubbel & groovy","Bean Happy",[
+    O("sparkles",130,-300,-150,{color:"accent"}),
+    L("bean","Bagel Fat One",240,0,-85),
+    L("happy","Bagel Fat One",240,0,120,{color:"accent"}),
+    O("bean",110,310,-130,{rotate:20}),
+  ],{colors:{main:"#FFFFFF",accent:"#F2B33D"}}),
+  D("g5","Bubbel & groovy","Coffee Time!",[
+    O("drops",110,0,-300),
+    L("coffee","Grandstander",210,0,-110,{rotate:-5}),
+    L("TIME!","Bagel Fat One",230,10,85,{rotate:-5,color:"accent"}),
+  ],{colors:{main:"#FFFFFF",accent:"#F26B50"},texture:15}),
+
+  // ---- Klassiek & script ----
+  D("k1","Klassiek & script","The Coffee Club",[
+    L("THE","Bodoni Moda",230,0,-215),
+    L("CLUB","Bodoni Moda",230,0,195),
+    L("Coffee","Pinyon Script",300,10,-5,{rotate:-8,cutout:10}),
+  ],{colors:{main:"#B3261E",accent:"#B3261E"}}),
+  D("k2","Klassiek & script","The Morning Club",[
+    L("The","Mrs Saint Delafield",230,-215,-175,{rotate:-8}),
+    L("Morning","Gloock",210,10,-20),
+    L("Club","Gloock",210,60,150),
+  ],{colors:{main:"#D7263D",accent:"#D7263D"}}),
+  D("k3","Klassiek & script","Vintage Brews",[
+    L("SLOW ROASTED · SINCE 2026","Young Serif",46,0,-275,{spacing:28,curve:28,color:"accent"}),
+    L("Vintage","Sansita Swashed",250,0,-80,{rotate:-5}),
+    L("Brews","Sansita Swashed",260,20,115,{rotate:-5}),
+  ],{colors:{main:"#E0332A",accent:"#3B2416"},texture:30}),
+  D("k4","Klassiek & script","Coffee & Kisses",[
+    L("Coffee","Gloock",230,0,-90),
+    O("heart",90,0,40,{color:"accent"}),
+    L("& Kisses","Mrs Saint Delafield",220,30,130,{rotate:-6,color:"accent"}),
+  ],{colors:{main:"#FFFFFF",accent:"#F28BA0"}}),
+
+  // ---- Statement ----
+  D("t1","Statement","More Coffee Please",[
+    L("MORE","Anton",330,0,-140),
+    L("PLEASE","Anton",330,0,170),
+    L("coffee","Great Vibes",240,0,25,{rotate:-4,cutout:16}),
+  ],{colors:{main:"#FFFBD6",accent:"#FFFBD6"}}),
+  D("t2","Statement","The Daily Grind",[
+    L("The","Yellowtail",210,-30,-195,{rotate:-6}),
+    L("DAILY","Fredoka",300,0,-15),
+    L("Grind","Yellowtail",240,30,165,{rotate:-6,cutout:12}),
+  ],{colors:{main:"#FFF4E8",accent:"#FFF4E8"}}),
+  D("t3","Statement","But First Espresso",[
+    L("BUT FIRST","Anton",160,0,-175,{spacing:6}),
+    L("ESPRESSO","Anton",230,0,5),
+    O("steam",130,0,-330,{color:"accent"}),
+    L("always","Caveat",150,170,165,{rotate:-8,color:"accent"}),
+  ],{colors:{main:"#FFFFFF",accent:"#F2B33D"}}),
+  D("t4","Statement","Stay Grounded",[
+    O("sparkle",80,-330,-170,{color:"accent"}),
+    L("STAY","Archivo Black",210,0,-90,{spacing:10}),
+    L("grounded","Great Vibes",230,0,70,{rotate:-6,cutout:12,color:"accent"}),
+    O("sparkle",55,330,160,{color:"accent"}),
+  ],{colors:{main:"#FFFFFF",accent:"#E9B77C"}}),
 ];
-const SEED_CATS=[...new Set(SEEDS.map(d=>d.cat))];
+const NEW_CATS=["Retro serif","Bubbel & groovy","Klassiek & script","Statement"];
+const SEED_CATS=[...new Set([...NEW_CATS,...SEEDS.map(d=>d.cat)])];
 
 
 
@@ -386,38 +493,91 @@ async function ensureFonts(d){
     return document.fonts.load(k,Ly.text||"a").then(r=>{if(r&&r.length)fontCache.add(k)}).catch(()=>{})}));
 }
 function colorOf(d,c){return c==="main"?d.colors.main:c==="accent"?d.colors.accent:(c||d.colors.main)}
+/* ---------- Ornamenten ---------- */
+const ORNAMENTS={drops:"Druppels",sparkle:"Glinster",sparkles:"Glinsters",star:"Ster",heart:"Hartje",bean:"Koffieboon",steam:"Stoom",dot:"Bolletje",burst:"Zonnetje",swash:"Krul",line:"Lijn",arrow:"Pijl"};
+const STROKE_SHAPES=new Set(["steam","swash","line","arrow"]);
+function teardrop(ctx,r,h){ // ronde kant boven, punt naar onder (naar het midden)
+  const cy=-h/2+r;ctx.moveTo(0,h/2);ctx.quadraticCurveTo(r*1.25,cy+r*1.3,r,cy);ctx.arc(0,cy,r,0,Math.PI,true);ctx.quadraticCurveTo(-r*1.25,cy+r*1.3,0,h/2);ctx.closePath();
+}
+function sparklePath(ctx,cx,cy,u){ctx.moveTo(cx,cy-u);ctx.quadraticCurveTo(cx,cy,cx+u,cy);ctx.quadraticCurveTo(cx,cy,cx,cy+u);ctx.quadraticCurveTo(cx,cy,cx-u,cy);ctx.quadraticCurveTo(cx,cy,cx,cy-u);ctx.closePath()}
+function starPath(ctx,u,n,inner){for(let i=0;i<n*2;i++){const a=-Math.PI/2+i*Math.PI/n,r=i%2?u*inner:u;i?ctx.lineTo(r*Math.cos(a),r*Math.sin(a)):ctx.moveTo(r*Math.cos(a),r*Math.sin(a))}ctx.closePath()}
+function drawShape(ctx,shape,u,outline){
+  ctx.beginPath();ctx.lineCap="round";ctx.lineJoin="round";
+  const lw=Math.max(1,u*.1);
+  switch(shape){
+    case "drops":[-42,0,42].forEach(a=>{ctx.save();ctx.translate(0,u*.45);ctx.rotate(a*Math.PI/180);ctx.translate(0,-u*.95);teardrop(ctx,a?u*.16:u*.19,a?u*.5:u*.6);ctx.restore()});break;
+    case "sparkle":sparklePath(ctx,0,0,u);break;
+    case "sparkles":sparklePath(ctx,-u*.2,u*.12,u*.72);sparklePath(ctx,u*.62,-u*.55,u*.36);sparklePath(ctx,u*.6,u*.62,u*.24);break;
+    case "star":starPath(ctx,u,5,.45);break;
+    case "burst":starPath(ctx,u,14,.8);break;
+    case "heart":ctx.moveTo(0,u*.85);ctx.bezierCurveTo(-u*1.05,u*.1,-u*.95,-u*.85,0,-u*.35);ctx.bezierCurveTo(u*.95,-u*.85,u*1.05,u*.1,0,u*.85);ctx.closePath();break;
+    case "dot":ctx.arc(0,0,u*.5,0,Math.PI*2);break;
+    case "bean":ctx.save();ctx.rotate(-.5);ctx.ellipse(0,0,u*.6,u*.88,0,0,Math.PI*2);ctx.restore();break;
+    case "steam":[-.42,0,.42].forEach((dx,i)=>{const x=dx*u,h=i===1?u:u*.8;ctx.moveTo(x,h*.8);ctx.bezierCurveTo(x-u*.28,h*.35,x+u*.28,-h*.1,x,-h*.5);ctx.bezierCurveTo(x-u*.16,-h*.7,x,-h*.85,x,-h*.95)});break;
+    case "swash":ctx.moveTo(-u,u*.15);ctx.bezierCurveTo(-u*.35,-u*.4,u*.25,u*.5,u,-u*.18);break;
+    case "line":ctx.moveTo(-u,0);ctx.lineTo(u,0);break;
+    case "arrow":ctx.moveTo(-u,u*.45);ctx.quadraticCurveTo(-u*.1,-u*.65,u*.82,-u*.12);ctx.moveTo(u*.82,-u*.12);ctx.lineTo(u*.46,-u*.38);ctx.moveTo(u*.82,-u*.12);ctx.lineTo(u*.5,u*.2);break;
+  }
+  if(STROKE_SHAPES.has(shape)){ctx.lineWidth=shape==="line"?u*.09:lw*1.05;ctx.stroke()}
+  else if(outline){ctx.lineWidth=lw*.8;ctx.stroke()}
+  else ctx.fill();
+  if(shape==="bean"&&!outline){ // groef in de boon
+    ctx.save();ctx.shadowColor="transparent";ctx.globalCompositeOperation="destination-out";ctx.rotate(-.5);ctx.beginPath();
+    ctx.moveTo(0,-u*.78);ctx.bezierCurveTo(u*.32,-u*.3,-u*.32,u*.3,0,u*.78);ctx.lineWidth=u*.12;ctx.stroke();ctx.restore();
+  }
+}
+function hashStr(s){let h=2166136261;for(const c of String(s)){h^=c.charCodeAt(0);h=Math.imul(h,16777619)}return h>>>0}
+function rng32(seed){return()=>{seed|=0;seed=seed+0x6D2B79F5|0;let t=Math.imul(seed^seed>>>15,1|seed);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}}
+
 function drawLayers(ctx,d,s,Cx,Cy,opts={}){
-  const boxes=[];
+  const boxes=[];let selBox=null;
   d.layers.forEach((Ly,i)=>{
-    if(!Ly.text){boxes.push(null);return}
-    const px=Ly.size*s; ctx.save();
-    ctx.translate(Cx+Ly.x*s,Cy+Ly.y*s); ctx.rotate((Ly.rotate||0)*Math.PI/180);
-    ctx.font=fontStr(Ly,px); const col=colorOf(d,Ly.color); ctx.fillStyle=col; ctx.strokeStyle=col;
-    ctx.textBaseline="middle"; ctx.textAlign="center";
-    if(d.shadow){ctx.shadowColor=`rgba(0,0,0,${(d.shadow/100)*.75})`;ctx.shadowBlur=px*.14;ctx.shadowOffsetY=px*.035}
-    const txt=Ly.upper?Ly.text.toUpperCase():Ly.text;
-    const paint=(t,x,y)=>{if(Ly.style==="outline"){ctx.lineWidth=Math.max(1,px*.035);ctx.lineJoin="round";ctx.strokeText(t,x,y)}else ctx.fillText(t,x,y)};
-    const sp=(Ly.spacing||0)/100*px, curve=Ly.curve||0; let l,r,t,b;
-    if(!sp&&!curve){paint(txt,0,0);const m=ctx.measureText(txt);
-      l=m.actualBoundingBoxLeft;r=m.actualBoundingBoxRight;t=m.actualBoundingBoxAscent;b=m.actualBoundingBoxDescent;
-      if(!isFinite(l)||!isFinite(t)){l=r=m.width/2;t=b=px*.5}}
-    else{
-      const ch=[...txt],ws=ch.map(x=>ctx.measureText(x).width),total=ws.reduce((a,c)=>a+c,0)+sp*(ch.length-1);
-      l=r=total/2;t=b=px*.55;
-      if(!curve){let x=-total/2;ch.forEach((c,k)=>{paint(c,x+ws[k]/2,0);x+=ws[k]+sp})}
-      else{const span=Math.abs(curve)/100*Math.PI,R=total/span,dir=curve>0?1:-1;let a=-span/2;
-        ch.forEach((c,k)=>{const mid=a+(ws[k]/2)/R;ctx.save();ctx.translate(R*Math.sin(mid),dir*R*(1-Math.cos(mid)));ctx.rotate(dir*mid);paint(c,0,0);ctx.restore();a+=(ws[k]+sp)/R});
-        const drop=R*(1-Math.cos(span/2));if(dir>0)b+=drop;else t+=drop;l=r=Math.min(total/2,R*Math.sin(Math.min(span/2,Math.PI/2)))+px*.3}
+    const isShape=Ly.kind==="shape";
+    if(!isShape&&!Ly.text){boxes.push(null);return}
+    ctx.save();ctx.translate(Cx+Ly.x*s,Cy+Ly.y*s);const rot=(Ly.rotate||0)*Math.PI/180;ctx.rotate(rot);
+    const col=colorOf(d,Ly.color);ctx.fillStyle=col;ctx.strokeStyle=col;
+    const px=Ly.size*s;
+    const shadowOn=()=>{if(d.shadow){ctx.shadowColor=`rgba(0,0,0,${(d.shadow/100)*.75})`;ctx.shadowBlur=px*.14;ctx.shadowOffsetY=px*.035}};
+    let l,r,t,b;
+    if(isShape){
+      shadowOn();drawShape(ctx,Ly.shape,px/2,Ly.style==="outline");l=r=t=b=px/2;
+    }else{
+      ctx.font=fontStr(Ly,px);ctx.textBaseline="middle";ctx.textAlign="center";
+      const txt=Ly.upper?Ly.text.toUpperCase():Ly.text;
+      const sp=(Ly.spacing||0)/100*px,curve=Ly.curve||0;const glyphs=[];
+      if(!sp&&!curve){glyphs.push({t:txt,x:0,y:0,rot:0});const m=ctx.measureText(txt);
+        l=m.actualBoundingBoxLeft;r=m.actualBoundingBoxRight;t=m.actualBoundingBoxAscent;b=m.actualBoundingBoxDescent;
+        if(!isFinite(l)||!isFinite(t)){l=r=m.width/2;t=b=px*.5}}
+      else{
+        const ch=[...txt],ws=ch.map(x=>ctx.measureText(x).width),total=ws.reduce((a,c)=>a+c,0)+sp*(ch.length-1);
+        l=r=total/2;t=b=px*.55;
+        if(!curve){let x=-total/2;ch.forEach((c,k)=>{glyphs.push({t:c,x:x+ws[k]/2,y:0,rot:0});x+=ws[k]+sp})}
+        else{const span=Math.abs(curve)/100*Math.PI,R=total/span,dir=curve>0?1:-1;let a=-span/2;
+          ch.forEach((c,k)=>{const mid=a+(ws[k]/2)/R;glyphs.push({t:c,x:R*Math.sin(mid),y:dir*R*(1-Math.cos(mid)),rot:dir*mid});a+=(ws[k]+sp)/R});
+          const drop=R*(1-Math.cos(span/2));if(dir>0)b+=drop;else t+=drop;l=r=Math.min(total/2,R*Math.sin(Math.min(span/2,Math.PI/2)))+px*.3}
+      }
+      const each=fn=>glyphs.forEach(g=>{if(g.rot){ctx.save();ctx.translate(g.x,g.y);ctx.rotate(g.rot);fn(g.t,0,0);ctx.restore()}else fn(g.t,g.x,g.y)});
+      if(Ly.cutout){ // uitsparing: snij een rand uit in wat eronder ligt
+        ctx.save();ctx.globalCompositeOperation="destination-out";ctx.lineWidth=Ly.cutout*s*2;ctx.lineJoin="round";
+        each((g,x,y)=>{ctx.strokeText(g,x,y);ctx.fillText(g,x,y)});ctx.restore();
+      }
+      shadowOn();
+      each((g,x,y)=>{if(Ly.style==="outline"){ctx.lineWidth=Math.max(1,px*.035);ctx.lineJoin="round";ctx.strokeText(g,x,y)}else ctx.fillText(g,x,y)});
     }
     boxes.push({l:l/s,r:r/s,t:t/s,b:b/s});
-    if(opts.sel===i){
-      ctx.shadowColor="transparent";const p=8*(opts.dpr||1);
-      ctx.lineWidth=1.5*(opts.dpr||1);ctx.setLineDash([6*(opts.dpr||1),5*(opts.dpr||1)]);
-      ctx.strokeStyle="rgba(0,0,0,.55)";ctx.strokeRect(-l-p+1,-t-p+1,l+r+2*p,t+b+2*p);
-      ctx.strokeStyle="rgba(255,255,255,.95)";ctx.strokeRect(-l-p,-t-p,l+r+2*p,t+b+2*p);
-    }
+    if(opts.sel===i)selBox={x:Cx+Ly.x*s,y:Cy+Ly.y*s,rot,l,r,t,b};
     ctx.restore();
   });
+  if(d.texture){ // gedrukte / verweerde textuur
+    const rnd=rng32(hashStr(d.id||d.name)),n=Math.round(d.texture*90);
+    ctx.save();ctx.globalCompositeOperation="destination-out";ctx.fillStyle="#000";
+    for(let k=0;k<n;k++){const x=Cx+(rnd()*1500-750)*s,y=Cy+(rnd()*1300-650)*s,big=rnd()<.06,rr=(big?2.5+rnd()*4:.5+rnd()*rnd()*2.6)*s;
+      ctx.globalAlpha=.45+rnd()*.55;ctx.beginPath();ctx.arc(x,y,Math.max(rr,.35),0,Math.PI*2);ctx.fill()}
+    ctx.restore();
+  }
+  if(selBox){const B=selBox,dp=opts.dpr||1,p=8*dp;ctx.save();ctx.translate(B.x,B.y);ctx.rotate(B.rot);ctx.lineWidth=1.5*dp;ctx.setLineDash([6*dp,5*dp]);
+    ctx.strokeStyle="rgba(0,0,0,.55)";ctx.strokeRect(-B.l-p+1,-B.t-p+1,B.l+B.r+2*p,B.t+B.b+2*p);
+    ctx.strokeStyle="rgba(255,255,255,.95)";ctx.strokeRect(-B.l-p,-B.t-p,B.l+B.r+2*p,B.t+B.b+2*p);ctx.restore()}
   if(opts.guideX){ctx.save();ctx.strokeStyle="rgba(242,107,80,.95)";ctx.lineWidth=1.5*(opts.dpr||1);ctx.beginPath();ctx.moveTo(Cx,0);ctx.lineTo(Cx,ctx.canvas.height);ctx.stroke();ctx.restore()}
   return boxes;
 }
@@ -488,7 +648,7 @@ function schedulePreview(noExport){
     }else if(g.mode==="pinch"&&pts.size===2){
       const [a,b]=[...pts.values()],d=Math.hypot(a.x-b.x,a.y-b.y),an=Math.atan2(b.y-a.y,b.x-a.x);
       layer().size=Math.round(Math.max(20,Math.min(480,g.s0*d/g.d0)));
-      let rot=g.r0+(an-g.a0)*180/Math.PI;if(Math.abs(rot)<2.5)rot=0;layer().rotate=Math.round(Math.max(-45,Math.min(45,rot)));schedulePreview(true);
+      let rot=g.r0+(an-g.a0)*180/Math.PI;if(Math.abs(rot)<2.5)rot=0;const lim=layer().kind==="shape"?180:45;layer().rotate=Math.round(Math.max(-lim,Math.min(lim,rot)));schedulePreview(true);
     }else if(g.mode==="view"){
       view.x=Math.max(10,Math.min(90,g.x0+(e.clientX-g.sx)/r.width*100));view.y=Math.max(10,Math.min(90,g.y0+(e.clientY-g.sy)/r.height*100));layoutSticker();
     }else if(g.mode==="vpinch"&&pts.size===2){
@@ -586,11 +746,15 @@ function change(fn,{chips=false,tool=false}={}){fn();schedulePreview();if(chips)
 function renderLayerChips(){
   const box=$("layerChips");box.innerHTML="";
   cur.layers.forEach((Ly,i)=>{const b=document.createElement("button");b.className="chip layerChip"+(i===sel?" on":"");
-    b.style.fontFamily=`'${Ly.font}'`;b.style.fontWeight=Ly.weight;b.style.fontStyle=Ly.italic?"italic":"normal";
-    b.textContent=(Ly.upper?Ly.text.toUpperCase():Ly.text)||"(leeg)";b.onclick=()=>{sel=i;renderLayerChips();renderTool();schedulePreview(true)};box.appendChild(b)});
+    if(Ly.kind==="shape"){b.textContent="✦ "+(ORNAMENTS[Ly.shape]||"Ornament");b.style.fontSize="15px"}
+    else{b.style.fontFamily=`'${Ly.font}'`;b.style.fontWeight=Ly.weight;b.style.fontStyle=Ly.italic?"italic":"normal";
+    b.textContent=(Ly.upper?Ly.text.toUpperCase():Ly.text)||"(leeg)";}b.onclick=()=>{sel=i;renderLayerChips();renderTool();schedulePreview(true)};box.appendChild(b)});
   const add=document.createElement("button");add.className="chip acc";add.textContent="+ Tekst";
   add.onclick=()=>{snap();const last=cur.layers[cur.layers.length-1];cur.layers.push(L("tekst","Caveat",140,0,last?Math.min(450,last.y+last.size*.9):0,{color:"accent"}));sel=cur.layers.length-1;tool="text";syncToolbar();renderLayerChips();renderTool();schedulePreview();setTimeout(()=>{const i=document.querySelector("#toolBody input.inp");if(i){i.focus();i.select()}},50)};
   box.appendChild(add);
+  const orn=document.createElement("button");orn.className="chip acc";orn.textContent="+ Ornament";
+  orn.onclick=()=>{snap();cur.layers.push(O("sparkle",110,0,-280,{color:"accent"}));sel=cur.layers.length-1;renderLayerChips();renderTool();schedulePreview();$("sheetBody").scrollTop=0};
+  box.appendChild(orn);
   const on=box.querySelector(".chip.on");if(on)on.scrollIntoView({inline:"nearest",block:"nearest"});
 }
 function syncToolbar(){}
@@ -609,7 +773,16 @@ function renderTool(light){
   if(light){ // tijdens slepen/knijpen: enkel de schuifjes bijwerken
     body.querySelectorAll("input[type=range][data-k]").forEach(i=>{const src=i.dataset.d?cur:Ly;if(!src)return;i.value=src[i.dataset.k]||0;i.parentElement.querySelector("output").textContent=i.value});return}
   let h="";
-  if(Ly){
+  if(Ly&&Ly.kind==="shape"){
+    h+=sec("Ornament")+`<div class="ornGrid">${Object.entries(ORNAMENTS).map(([k,n])=>`<button class="ornBtn ${k===Ly.shape?"on":""}" data-o="${k}"><canvas width="96" height="96"></canvas><span>${n}</span></button>`).join("")}</div>`;
+    h+=sec("Grootte &amp; positie")+rng("Grootte","size",20,480,Ly.size)+rng("Draaien","rotate",-180,180,Ly.rotate||0)+rng("Links/rechts","x",-700,700,Ly.x)+rng("Hoogte","y",-900,900,Ly.y)
+      +`<div class="hint" style="margin:2px 0 4px">Of: sleep het ornament op de foto · knijp en draai met twee vingers.</div>`;
+    h+=sec("Stijl")+`<div class="chips wrap">
+      <button class="chip ${Ly.color==="main"?"on":""}" data-c="main"><span class="dot" style="background:${cur.colors.main}"></span>Hoofdkleur</button>
+      <button class="chip ${Ly.color==="accent"?"on":""}" data-c="accent"><span class="dot" style="background:${cur.colors.accent}"></span>Accent</button>
+      ${STROKE_SHAPES.has(Ly.shape)?"":`<button class="chip ${Ly.style==="outline"?"on":""}" data-t="outline">Contour</button>`}</div>
+      <div class="chips wrap"><button class="chip" data-a="center">Centreer</button><button class="chip" data-a="straight">Recht</button><button class="chip" data-a="up">Naar voren</button><button class="chip" data-a="down">Naar achter</button><button class="chip" data-a="dup">Dupliceer</button><button class="chip" data-a="del" style="color:#ff9b87">Verwijder</button></div>`;
+  }else if(Ly){
     const f=FONT_BY[Ly.font]||{w:[400]};
     const groups=["Alle",...new Set(FONTS.map(x=>x.g))];
     const sample=((Ly.upper?Ly.text.toUpperCase():Ly.text)||"Aa").slice(0,14);
@@ -626,9 +799,10 @@ function renderTool(light){
       ${f.it?`<button class="chip ${Ly.italic?"on":""}" data-t="italic">Cursief</button>`:""}
       ${f.w.length>1?`<button class="chip ${Ly.weight===Math.max(...f.w)?"on":""}" data-t="bold">Vet</button>`:""}
       <button class="chip ${Ly.style==="outline"?"on":""}" data-t="outline">Contour</button></div>
+      ${rng("Uitsparing","cutout",0,40,Ly.cutout||0)}<div class="hint" style="margin:-4px 0 8px">Snijdt een rand uit in de tekst eronder (zoals ‘More coffee please’). Zet deze tekst dan ‘Naar voren’.</div>
       <div class="chips wrap"><button class="chip" data-a="center">Centreer</button><button class="chip" data-a="straight">Recht</button><button class="chip" data-a="up">Naar voren</button><button class="chip" data-a="down">Naar achter</button><button class="chip" data-a="dup">Dupliceer</button><button class="chip" data-a="del" style="color:#ff9b87">Verwijder tekst</button></div>`;
   }else h+=`<div class="empty">Geen tekst. Tik op “+ Tekst”.</div>`;
-  h+=sec("Kleuren van het ontwerp")+`<div class="lab" style="margin-top:0">Hoofdkleur</div><div class="sw" id="swMain"></div><div class="lab">Accentkleur</div><div class="sw" id="swAccent"></div>`+rng("Schaduw","shadow",0,80,cur.shadow||0,1,true);
+  h+=sec("Kleuren &amp; afwerking")+`<div class="lab" style="margin-top:0">Hoofdkleur</div><div class="sw" id="swMain"></div><div class="lab">Accentkleur</div><div class="sw" id="swAccent"></div>`+rng("Schaduw","shadow",0,80,cur.shadow||0,1,true)+rng("Textuur","texture",0,100,cur.texture||0,1,true)+`<div class="hint" style="margin-top:-4px">Textuur geeft een gedrukte, verweerde retro-look.</div>`;
   const isMine=custom.some(d=>d.id===curSourceId);
   h+=sec("Opslaan")+`<input class="inp" id="sName" value="${esc(cur.name)}" placeholder="Naam">
     <select class="inp" id="sCat" style="margin-top:8px">${allCats().map(c=>`<option ${c===cur.cat?"selected":""}>${esc(c)}</option>`).join("")}<option value="__new">+ Nieuwe categorie…</option></select>
@@ -638,7 +812,23 @@ function renderTool(light){
   const keep=$("sheetBody").scrollTop,fr=$("fontRow")?$("fontRow").scrollLeft:0;
   body.innerHTML=h;$("sheetBody").scrollTop=keep;if($("fontRow"))$("fontRow").scrollLeft=fr;
 
+  if(Ly&&Ly.kind==="shape"){
+    body.querySelectorAll(".ornBtn").forEach(b=>{const c=b.querySelector("canvas"),x=c.getContext("2d");x.translate(48,48);x.fillStyle=x.strokeStyle="#f6ece0";drawShape(x,b.dataset.o,30,false);
+      b.onclick=()=>{snap();Ly.shape=b.dataset.o;if(STROKE_SHAPES.has(Ly.shape))Ly.style="fill";body.querySelectorAll(".ornBtn").forEach(z=>z.classList.toggle("on",z===b));schedulePreview();renderLayerChips()}});
+  }
   if(Ly){
+    body.querySelectorAll("[data-c]").forEach(b=>b.onclick=()=>{snap();change(()=>Ly.color=b.dataset.c,{tool:true})});
+    body.querySelectorAll("[data-a]").forEach(b=>b.onclick=()=>{const a=b.dataset.a,arr=cur.layers;snap();
+      if(a==="center")Ly.x=0;if(a==="straight"){Ly.rotate=0;Ly.curve=0}
+      if(a==="up"&&sel<arr.length-1){[arr[sel],arr[sel+1]]=[arr[sel+1],arr[sel]];sel++}
+      if(a==="down"&&sel>0){[arr[sel],arr[sel-1]]=[arr[sel-1],arr[sel]];sel--}
+      if(a==="dup"){arr.splice(sel+1,0,Object.assign(clone(Ly),{x:Ly.kind==="shape"?Math.min(650,Ly.x+Ly.size*.8):Ly.x,y:Ly.kind==="shape"?Ly.y:Math.min(450,Ly.y+Ly.size*.9)}));sel++}
+      if(a==="del"){arr.splice(sel,1);sel=Math.max(0,sel-1);toast("Verwijderd · ↶ om terug te zetten")}
+      change(()=>{},{chips:true,tool:true})});
+  }
+  if(Ly&&Ly.kind==="shape"){
+    body.querySelectorAll("[data-t]").forEach(b=>b.onclick=()=>{snap();change(()=>Ly.style=Ly.style==="outline"?"fill":"outline",{tool:true})});
+  }else if(Ly){
     const f=FONT_BY[Ly.font]||{w:[400]};
     const i=$("tText");i.addEventListener("focus",snap);
     i.addEventListener("input",()=>{Ly.text=i.value;schedulePreview();renderLayerChipsDebounced()});
@@ -647,17 +837,10 @@ function renderTool(light){
     body.querySelectorAll("[data-g]").forEach(b=>b.onclick=()=>{fontGroup=b.dataset.g;renderTool();$("fontRow").scrollLeft=0});
     body.querySelectorAll("[data-f]").forEach(b=>b.onclick=()=>{snap();const nf=FONT_BY[b.dataset.f];Ly.font=nf.n;if(!nf.w.includes(Ly.weight))Ly.weight=nf.w[nf.w.length-1];if(!nf.it)Ly.italic=false;
       body.querySelectorAll(".fontBtn").forEach(x=>x.classList.toggle("on",x===b));schedulePreview();renderLayerChips()});
-    body.querySelectorAll("[data-c]").forEach(b=>b.onclick=()=>{snap();change(()=>Ly.color=b.dataset.c,{tool:true})});
     body.querySelectorAll("[data-t]").forEach(b=>b.onclick=()=>{snap();const t=b.dataset.t;change(()=>{
       if(t==="upper")Ly.upper=!Ly.upper;if(t==="italic")Ly.italic=!Ly.italic;if(t==="outline")Ly.style=Ly.style==="outline"?"fill":"outline";
       if(t==="bold")Ly.weight=Ly.weight===Math.max(...f.w)?Math.min(...f.w):Math.max(...f.w)},{chips:true,tool:true})});
-    body.querySelectorAll("[data-a]").forEach(b=>b.onclick=()=>{const a=b.dataset.a,arr=cur.layers;snap();
-      if(a==="center")Ly.x=0;if(a==="straight"){Ly.rotate=0;Ly.curve=0}
-      if(a==="up"&&sel<arr.length-1){[arr[sel],arr[sel+1]]=[arr[sel+1],arr[sel]];sel++}
-      if(a==="down"&&sel>0){[arr[sel],arr[sel-1]]=[arr[sel-1],arr[sel]];sel--}
-      if(a==="dup"){arr.splice(sel+1,0,Object.assign(clone(Ly),{y:Math.min(450,Ly.y+Ly.size*.9)}));sel++}
-      if(a==="del"){arr.splice(sel,1);sel=Math.max(0,sel-1);toast("Tekst verwijderd · ↶ om terug te zetten")}
-      change(()=>{},{chips:true,tool:true})});
+
   }
   bindRanges(body,()=>layer());
   const sw=(el,key)=>{el.innerHTML="";SWATCHES.forEach(c=>{const b=document.createElement("button");b.style.background=c;b.setAttribute("aria-label",c);if(cur.colors[key].toUpperCase()===c)b.classList.add("on");
@@ -720,11 +903,13 @@ const POOLS={
   script:["Yellowtail","Great Vibes","Pinyon Script","Allura","Sacramento","Satisfy","Playball","Pacifico","Kaushan Script","Lobster","Dancing Script"],
   hand:["Homemade Apple","Caveat","Nanum Pen Script","Reenie Beanie","Gochi Hand","Shadows Into Light"],
   bold:["Luckiest Guy","Titan One","Bowlby One","Lilita One","Chewy","Fredoka","Shrikhand","Bungee","Rubik Mono One"],
-  serif:["Playfair Display","DM Serif Display","Abril Fatface","Cormorant Garamond","Fraunces"],
+  serif:["Playfair Display","DM Serif Display","Abril Fatface","Cormorant Garamond","Fraunces","Gloock","Young Serif","Bodoni Moda"],
+  groovy:["Shrikhand","Bagel Fat One","Cherry Bomb One","Modak","Grandstander"],
+  signature:["Mrs Saint Delafield","Pinyon Script","Great Vibes","Allura"],
   sans:["Montserrat","DM Sans","Bebas Neue","Anton","Archivo Black"]
 };
 // gemiddelde letterbreedte (in em) per lettertype, voor de automatische grootte
-const EMW={script:.40,hand:.40,bold:.66,serif:.52,sans:.60,"Bebas Neue":.40,"Anton":.46,"Rubik Mono One":.95,"Bungee":.78,"Sacramento":.32,"Allura":.34,"Pinyon Script":.42,"Great Vibes":.36,"Reenie Beanie":.30,"Nanum Pen Script":.30,"Homemade Apple":.55};
+const EMW={script:.40,hand:.40,bold:.66,serif:.52,sans:.60,"Bebas Neue":.40,"Anton":.46,"Rubik Mono One":.95,"Bungee":.78,"Sacramento":.32,"Allura":.34,"Pinyon Script":.42,"Great Vibes":.36,"Reenie Beanie":.30,"Nanum Pen Script":.30,"Homemade Apple":.55,groovy:.62,signature:.36,"Modak":.62,"Bagel Fat One":.64,"Cherry Bomb One":.6,"Grandstander":.58,"Bodoni Moda":.6,"Gloock":.55,"Young Serif":.6,"Mrs Saint Delafield":.32,"Sansita Swashed":.52,"Fraunces":.58};
 const GEN_COLORS=[{n:"Wit + koraal",main:"#FFFFFF",accent:"#F26B50"},{n:"Crème + karamel",main:"#F6E9D7",accent:"#C98A4B"},{n:"Wit + ijsblauw",main:"#FFFFFF",accent:"#7FC8E8"},{n:"Wit + salie",main:"#FFFFFF",accent:"#A8B89A"},{n:"Volledig wit",main:"#FFFFFF",accent:"#FFFFFF"},{n:"Espresso + koraal",main:"#3B2416",accent:"#F26B50"}];
 let genStyle="mix", genColor=0;
 const pick=a=>a[Math.floor(Math.random()*a.length)];
@@ -752,6 +937,28 @@ function splitWords(p){
   return [w.slice(0,best).join(" "),w.slice(best).join(" ")];
 }
 const TEMPLATES={
+  // dikke kapitalen boven en onder, script met uitsparing in het midden (zoals 'More coffee please')
+  statementCut(p){const w=p.trim().split(/\s+/);if(w.length<3)return null;
+    const top=w[0],mid=w.slice(1,-1).join(" "),bot=w[w.length-1];const cf=pick(["Anton","Bebas Neue","Archivo Black"]);
+    const T=mkLayer(top,cf,{upper:true,max:340}),B=mkLayer(bot,cf,{upper:true,max:340});
+    const sz=Math.min(T.size,B.size);T.size=B.size=sz;T.y=-Math.round(sz*.48);B.y=Math.round(sz*.48);
+    const M=mkLayer(mid,pick(POOLS.signature.concat(["Yellowtail"])),{max:260,target:700,rotate:-4,cutout:14,y:0});return [T,B,M];},
+  // groovy 70s, gestapeld en schuin, met druppeltjes
+  groovy(p){const f=pick(POOLS.groovy);const parts=p.trim().split(/\s+/).length>=3?p.trim().split(/\s+/).slice(0,3):splitWords(p);
+    const ls=stack(parts.map((t,i)=>mkLayer(t,f,{max:240,rotate:-6,x:i%2?30:-30})));
+    if(Math.random()<.7){const a=ls[0];ls.unshift(O(pick(["drops","sparkles","sparkle"]),Math.round(a.size*.5),-Math.round(fitW(a)/2)+20,a.y-Math.round(a.size*.85),{rotate:-12}))}
+    return ls;},
+  // klassiek: THE + script + KAPITALEN
+  classicClub(p){let w=p.trim().split(/\s+/);let the=false;if(/^the$/i.test(w[0])&&w.length>=3){the=true;w=w.slice(1)}if(w.length<2)return null;
+    const cf=pick(["Bodoni Moda","Gloock","Playfair Display"]);const last=w.pop(),mid=w.join(" ");
+    const out=[];if(the)out.push(mkLayer("The",pick(POOLS.signature),{size:150,rotate:-8,x:-200}));
+    const M=mkLayer(mid,pick(POOLS.signature),{max:280,rotate:-8}),B=mkLayer(last,cf,{upper:true,max:230});
+    const ls=stack(the?[out[0],M,B]:[M,B]);return ls;},
+  // retro serif: groot zacht serif + italic accent rechts
+  retroSerif(p){const [a,b]=splitWords(p);const big=mkLayer(a,"Fraunces",{max:300,weight:900});if(!b)return [big];
+    const sm=mkLayer(b,"Fraunces",{max:Math.round(big.size*.5),target:420,weight:900,italic:true,color:"accent"});
+    stack([big,sm]);sm.x=Math.round(Math.min(200,fitW(big)/2-fitW(sm)/2));sm.y-=Math.round(sm.size*.15);
+    const out=[big,sm];if(Math.random()<.5)out.push(Object.assign(mkLayer("EST. 2026","Young Serif",{size:50,spacing:24}),{y:big.y-Math.round(big.size*.75)}));return out;},
   // groot schrijfletter, gestapeld (zoals The Slow Mornings)
   scriptStack(p){const sf=pick(POOLS.script);let parts=splitWords(p);let pre=null;
     if(/^the\s/i.test(p)&&parts.length>1){pre="the";parts=splitWords(p.replace(/^the\s+/i,""));}
@@ -786,11 +993,11 @@ const TEMPLATES={
     return stack([mkLayer(a,f,{upper:true,max:220}),mkLayer(b,f,{upper:true,max:220,style:"outline"})]);},
 };
 function fitW(l){const em=EMW[l.font]||EMW[poolOf(l.font)]||.5;return [...(l.upper?l.text.toUpperCase():l.text)].length*em*l.size}
-const STYLE_TPL={mix:Object.keys(TEMPLATES),script:["scriptStack","scriptCaps","serifClean","arch"],bold:["boldHand","handTop","boldStack","outline","arch"],clean:["scriptCaps","serifClean","handTop","arch"]};
+const STYLE_TPL={mix:Object.keys(TEMPLATES),script:["scriptStack","scriptCaps","serifClean","arch","classicClub"],bold:["boldHand","handTop","boldStack","outline","arch","groovy","statementCut"],clean:["scriptCaps","serifClean","handTop","arch","statementCut"],retro:["retroSerif","groovy","classicClub","statementCut"]};
 function generateFor(p,n,cat){
   const names=[...STYLE_TPL[genStyle]].sort(()=>Math.random()-.5);const out=[];let i=0,guard=0;
   while(out.length<n&&guard++<40){const fn=TEMPLATES[names[i++%names.length]];const layers=fn(p);if(!layers||!layers.length)continue;
-    const c=GEN_COLORS[genColor];out.push({id:uid(),cat,name:p,colors:{main:c.main,accent:c.accent},shadow:0,layers,seed:false,t:Date.now()+out.length});}
+    const c=GEN_COLORS[genColor];out.push({id:uid(),cat,name:p,colors:{main:c.main,accent:c.accent},shadow:0,texture:genStyle==="retro"?pick([0,20,30]):0,layers,seed:false,t:Date.now()+out.length});}
   return out;
 }
 
