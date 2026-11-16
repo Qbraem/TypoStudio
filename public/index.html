@@ -208,7 +208,8 @@ input[type=range]::-moz-range-thumb{width:28px;height:28px;border-radius:50%;bac
 .onbSlide{flex:none;width:100%;scroll-snap-align:center;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:22px;padding:calc(var(--sat) + 50px) calc(26px + var(--sar)) 10px calc(26px + var(--sal));text-align:center}
 @media (min-aspect-ratio:1/1){.onbSlide{flex-direction:row;text-align:left;gap:40px;padding-top:calc(var(--sat) + 30px)}.onbText{max-width:340px}}
 .onbArt{height:min(38vh,290px);display:flex;align-items:center;justify-content:center}
-@media (min-aspect-ratio:1/1){.onbArt{height:min(62vh,300px)}}
+@media (min-aspect-ratio:1/1){.onbArt{height:min(62vh,300px);min-width:440px;flex:none}}
+@media (min-aspect-ratio:1/1) and (max-width:900px){.onbArt{min-width:320px}.onbStack{transform:scale(.72)}.onbSlide{gap:20px}}
 .onbText h2{margin:12px 0 10px;font-size:30px;line-height:1.15}.onbText h2 i{font-family:"Yellowtail",cursive;font-style:normal;font-weight:400;color:var(--accent2);font-size:38px}
 .onbText p{margin:0 auto;color:var(--muted);font-size:15.5px;line-height:1.5;max-width:330px}
 .onbStack{position:relative;width:280px;height:230px}
