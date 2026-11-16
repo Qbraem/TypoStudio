@@ -1388,7 +1388,7 @@ function renderTool(light){
     body.querySelectorAll("input[type=range][data-k]").forEach(i=>{const src=i.dataset.d?cur:Ly;if(!src)return;i.value=src[i.dataset.k]||0;i.parentElement.querySelector("output").textContent=i.value});return}
   let h="";
   if(Ly&&Ly.kind==="shape"){
-    h+=sec("Ornament","text")+`<div class="ornGrid">${Object.entries(ORNAMENTS).map(([k,n])=>(PRO_ORN.has(k)&&!isPro()?`<button class="ornBtn" data-pw="orn" data-icon="${k}"><canvas width="96" height="96"></canvas><span>${n}</span>${proLabel()}</button>`:`<button class="ornBtn ${k===Ly.shape?"on":""}" data-o="${k}"><canvas width="96" height="96"></canvas><span>${n}</span></button>`)).join("")}</div>`;
+    h+=sec("Ornament","text")+`<div class="ornGrid">${Object.entries(ORNAMENTS).map(([k,n])=>(PRO_ORN.has(k)&&!canUse()?`<button class="ornBtn" data-pw="orn" data-icon="${k}"><canvas width="96" height="96"></canvas><span>${n}</span>${proLabel()}</button>`:`<button class="ornBtn ${k===Ly.shape?"on":""}" data-o="${k}"><canvas width="96" height="96"></canvas><span>${n}</span></button>`)).join("")}</div>`;
     h+=sec("Size &amp; position","size")+rng("Size","size",20,480,Ly.size)+rng("Rotate","rotate",-180,180,Ly.rotate||0)+rng("Left/right","x",-700,700,Ly.x)+rng("Up/down","y",-900,900,Ly.y)
       +`<div class="hint" style="margin:2px 0 4px">Or: drag the ornament on the photo · pinch and twist with two fingers.</div>`;
     h+=sec("Style","style")+`<div class="chips wrap">
@@ -1416,10 +1416,10 @@ function renderTool(light){
       ${f.w.length>1?`<button class="chip ${Ly.weight===Math.max(...f.w)?"on":""}" data-t="bold">Bold</button>`:""}
       <button class="chip ${Ly.style==="outline"?"on":""}" data-t="outline">Outline</button>
       <button class="chip ${Ly.multi?"on":""}" data-t="multi"><span class="dot" style="background:conic-gradient(#B8746E,#E8913A,#C9552B,#D98F6A,#B8746E)"></span>Multicolour</button></div>
-      ${Ly.kind==="para"?"":(isPro()?rng("Knock-out","cutout",0,40,Ly.cutout||0):proRow("Knock-out"))}${Ly.kind==="para"?"":`<div class="hint" style="margin:-4px 0 8px">Cuts a gap into the text underneath (like ‘More coffee please’). Make sure this text is in front.</div>`}
+      ${Ly.kind==="para"?"":(canUse()?rng("Knock-out","cutout",0,40,Ly.cutout||0):proRow("Knock-out"))}${Ly.kind==="para"?"":`<div class="hint" style="margin:-4px 0 8px">Cuts a gap into the text underneath (like ‘More coffee please’). Make sure this text is in front.</div>`}
       <div class="chips wrap"><button class="chip" data-a="center">Centre</button><button class="chip" data-a="straight">Straighten</button><button class="chip" data-a="up">Bring forward</button><button class="chip" data-a="down">Send back</button><button class="chip" data-a="dup">Duplicate</button><button class="chip" data-a="del" style="color:#ff9b87">Delete text</button></div>`;
   }else h+=`<div class="empty">No text. Tap “+ Text”.</div>`;
-  h+=sec("Colours &amp; finish","colour")+`<div class="lab" style="margin-top:0">Main colour</div><div class="sw" id="swMain"></div><div class="lab">Accent colour</div><div class="sw" id="swAccent"></div>`+rng("Shadow","shadow",0,80,cur.shadow||0,1,true)+(isPro()?rng("Texture","texture",0,100,cur.texture||0,1,true):proRow("Texture"))+`<div class="hint" style="margin-top:-4px">Texture gives a printed, worn retro look.</div>`;
+  h+=sec("Colours &amp; finish","colour")+`<div class="lab" style="margin-top:0">Main colour</div><div class="sw" id="swMain"></div><div class="lab">Accent colour</div><div class="sw" id="swAccent"></div>`+rng("Shadow","shadow",0,80,cur.shadow||0,1,true)+(canUse()?rng("Texture","texture",0,100,cur.texture||0,1,true):proRow("Texture"))+`<div class="hint" style="margin-top:-4px">Texture gives a printed, worn retro look.</div>`;
   const isMine=custom.some(d=>d.id===curSourceId);
   h+=sec("Save as template","save")+`<input class="inp" id="sName" value="${esc(cur.name)}" placeholder="Name">
     <select class="inp" id="sCat" style="margin-top:8px">${allCats().map(c=>`<option ${c===cur.cat?"selected":""}>${esc(c)}</option>`).join("")}<option value="__new">+ New category…</option></select>
@@ -1508,14 +1508,14 @@ async function shareOrDownload(ex){
   const a=document.createElement("a");a.href=ex.url;a.download=fileName();document.body.appendChild(a);a.click();a.remove();toast("PNG downloaded ✓");return true;
 }
 $("saveImgBtn").onclick=async()=>{
-  if(!BETA_FREE_DOWNLOADS&&!isPro()&&cur.pro){openPaywall("save");return}
+  if(!canUse()&&cur.pro){openPaywall("save");return}
   const key=JSON.stringify(cur);
   if(NATIVE){const b=$("saveImgBtn");b.classList.add("busy");const ex=exportCache.key===key?exportCache:await buildExport();b.classList.remove("busy");if(ex)await shareOrDownload(ex);return}
   if(exportCache.key===key){if(!(await shareOrDownload(exportCache)))openModal(exportCache);return}
   const b=$("saveImgBtn");b.classList.add("busy");const ex=await buildExport();b.classList.remove("busy");
   if(ex)openModal(ex); // tweede tik nodig: iPhone staat delen alleen direct na een tik toe
 };
-$("viewBtn").onclick=async()=>{if(!BETA_FREE_DOWNLOADS&&!isPro()&&cur.pro){openPaywall("save");return}const ex=await buildExport();if(ex)openModal(ex)};
+$("viewBtn").onclick=async()=>{if(!canUse()&&cur.pro){openPaywall("save");return}const ex=await buildExport();if(ex)openModal(ex)};
 function openModal(ex){$("modalImg").src=ex.url;$("modalShare").classList.toggle("hidden",!NATIVE&&!canShare(ex));$("modalDl").classList.toggle("hidden",NATIVE);$("modal").classList.remove("hidden")}
 $("modalShare").onclick=()=>{if(NATIVE){if(exportCache.blob)nativeShare(exportCache).catch(()=>{});return}if(exportCache.blob)navigator.share({files:[pngFile(exportCache)]}).catch(()=>{})};
 $("modalDl").onclick=()=>{if(!exportCache.url)return;const a=document.createElement("a");a.href=exportCache.url;a.download=fileName();document.body.appendChild(a);a.click();a.remove()};
@@ -1597,9 +1597,10 @@ function initNative(){
 
 /* ---------------- Studio Typo Pro ---------------- */
 // Prices are placeholders until they are set in App Store Connect.
-/* BETA (TestFlight): alle ontwerpen mogen bewaard worden, ook PRO. Paywall en PRO-labels blijven zichtbaar.
-   Zet op false voor de App Store-release. */
-const BETA_FREE_DOWNLOADS=true;
+/* BETA (TestFlight): alles is vrij te gebruiken (opslaan, PRO-ornamenten, knock-out, textuur).
+   Paywall en PRO-labels blijven zichtbaar. Zet op false voor de App Store-release. */
+const BETA_UNLOCK_ALL=true;
+function canUse(){return BETA_UNLOCK_ALL||isPro()}
 const PRO={yearly:{price:"€12.99",perMonth:"€1.08",trialDays:7},lifetime:{price:"€24.99",regular:"€41.99"}};
 const FREE_PER_CAT=3;
 const FREE_IDS=new Set(NEW_CATS.flatMap(c=>SEEDS.filter(d=>d.cat===c).slice(0,FREE_PER_CAT).map(d=>d.id)));
