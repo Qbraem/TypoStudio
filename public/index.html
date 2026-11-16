@@ -474,11 +474,11 @@ input[type=range]::-moz-range-thumb{width:28px;height:28px;border-radius:50%;bac
       <div class="bgRow" id="bgRow">
         <button class="bgBtn igToggle" id="igToggle" aria-label="Show Story layout" aria-pressed="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"><rect x="6" y="2.5" width="12" height="19" rx="3"/><path d="M8.5 5.5h7M8.5 18.5h4.5"/><circle cx="15.5" cy="18.5" r=".6" fill="currentColor"/></svg></button>
         <button class="bgBtn on" data-photo="golden" aria-label="Golden hour"><img src="/img/th-golden.jpg?v=2" alt=""></button>
-        <button class="bgBtn" data-photo="sunset" aria-label="Sunset"><img src="/img/th-sunset.jpg" alt=""></button>
-        <button class="bgBtn" data-photo="pier" aria-label="Breakwater"><img src="/img/th-pier.jpg" alt=""></button>
-        <button class="bgBtn" data-photo="xmas" aria-label="Christmas market"><img src="/img/th-xmas.jpg?v=2" alt=""></button>
-        <button class="bgBtn" data-photo="pool" aria-label="Pool"><img src="/img/th-pool.jpg" alt=""></button>
-        <button class="bgBtn" data-photo="agave" aria-label="Agave"><img src="/img/th-agave.jpg" alt=""></button>
+        <button class="bgBtn" data-photo="sunset" aria-label="Sunset"><img src="/img/th-sunset.jpg?v=3" alt=""></button>
+        <button class="bgBtn" data-photo="pier" aria-label="Breakwater"><img src="/img/th-pier.jpg?v=3" alt=""></button>
+        <button class="bgBtn" data-photo="xmas" aria-label="Christmas market"><img src="/img/th-xmas.jpg?v=3" alt=""></button>
+        <button class="bgBtn" data-photo="pool" aria-label="Pool"><img src="/img/th-pool.jpg?v=3" alt=""></button>
+        <button class="bgBtn" data-photo="agave" aria-label="Agave"><img src="/img/th-agave.jpg?v=3" alt=""></button>
         <button class="bgBtn bg-dark" data-bg="dark" aria-label="Dark"></button>
         <button class="bgBtn bg-light" data-bg="light" aria-label="Light"></button>
         <button class="bgBtn bg-check" data-bg="check" aria-label="Transparent"></button>
@@ -1199,7 +1199,7 @@ $("bgRow").addEventListener("click",e=>{
   const b=e.target.closest("[data-bg],[data-photo]");if(!b)return;
   document.querySelectorAll("#bgRow .bgBtn").forEach(x=>x.classList.toggle("on",x===b));
   const bg=$("stageBg");setCredit(b.dataset.photo);
-  if(b.dataset.photo){bg.className="bg";bg.style.background="";bg.style.backgroundImage=`url('/img/bg-${b.dataset.photo}.jpg?v=2')`;bg.style.backgroundSize="cover";bg.style.backgroundPosition="center"}
+  if(b.dataset.photo){bg.className="bg";bg.style.background="";bg.style.backgroundImage=`url('/img/bg-${b.dataset.photo}.jpg?v=3')`;bg.style.backgroundSize="cover";bg.style.backgroundPosition="center"}
   else{bg.style.backgroundImage="";bg.className="bg bg-"+b.dataset.bg}
 });
 $("photoIn").addEventListener("change",e=>{
