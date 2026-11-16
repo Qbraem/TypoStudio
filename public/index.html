@@ -171,6 +171,64 @@ input[type=range]::-moz-range-thumb{width:28px;height:28px;border-radius:50%;bac
 .sw button.on{outline:2px solid var(--text);outline-offset:2px}
 .sw input[type=color]{width:40px;height:40px;border:0;background:none;padding:0}
 
+/* compact header on narrow screens */
+.top{justify-content:flex-end}
+@media (max-width:430px){#viewBtn{display:none}#proBtnLabel{display:none}#proBtn{padding:0 9px}}
+@media (min-aspect-ratio:1/1) and (max-width:1000px){.brand{display:none}#viewBtn{display:none}#proBtnLabel{display:none}#proBtn{padding:0 9px}}
+/* ---------- Pro ---------- */
+.proPill{display:inline-flex;align-items:center;gap:5px;height:34px;padding:0 12px;border:0;border-radius:17px;background:linear-gradient(135deg,#F6DE9C,#C9963A);color:#3a2408;font-weight:800;font-size:12px;letter-spacing:.8px;box-shadow:0 2px 10px rgba(201,150,58,.35)}
+.proPill svg{width:15px;height:15px}
+.proPill.static{height:26px;padding:0 10px;font-size:11px;vertical-align:middle;box-shadow:none}
+.proTag{display:inline-flex;align-items:center;gap:3px;height:20px;padding:0 7px;border-radius:10px;background:rgba(20,14,10,.62);color:#F3D58A;font-size:10px;font-weight:800;letter-spacing:.6px;backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);border:1px solid rgba(243,213,138,.35)}
+.proTag svg{width:10px;height:10px}
+.card .proTag{position:absolute;top:6px;left:6px}
+.ornBtn{position:relative}.ornBtn .proTag{position:absolute;top:3px;right:3px;height:16px;padding:0 5px;font-size:8px}
+.lockRow{width:100%;display:flex;justify-content:space-between;align-items:center;min-height:44px;background:none;border:0;border-bottom:1px dashed var(--line);color:var(--muted);font-size:14px;padding:0}
+.genLock{display:flex;flex-direction:column;align-items:center;text-align:center;gap:8px;padding:22px 16px;margin:4px 0 14px;border-radius:18px;background:linear-gradient(160deg,#3a2614,#1f1510);border:1px solid rgba(243,213,138,.3)}
+.genLock b{font-size:18px}.genLock span{font-size:14px;color:var(--muted);max-width:300px}
+.glIcon{width:44px;height:44px;border-radius:22px;background:linear-gradient(135deg,#F6DE9C,#C9963A)}
+.pwBtn{margin-top:4px;height:44px;padding:0 22px;border:0;border-radius:22px;background:linear-gradient(135deg,#F6DE9C,#C9963A);color:#3a2408;font-weight:800;font-size:15px}
+.paywall{position:fixed;inset:0;z-index:50;background:rgba(0,0,0,.6);display:flex;justify-content:center;align-items:stretch}
+.pwBox{position:relative;width:100%;max-width:480px;height:100%;overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;background:radial-gradient(120% 60% at 50% 0%,#3a2614 0%,#160f0b 60%);box-shadow:0 0 60px rgba(0,0,0,.6)}
+@media(min-width:700px) and (min-height:760px){.paywall{align-items:center}.pwBox{height:auto;max-height:92vh;border-radius:26px}}
+.pwClose{position:absolute;top:calc(var(--sat) + 10px);right:calc(12px + var(--sar));z-index:3;width:40px;height:40px;border-radius:20px;border:0;background:rgba(0,0,0,.4);color:#fff;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px)}
+.pwClose svg{width:18px;height:18px}
+.pwHero{position:relative;height:250px;margin-top:var(--sat);overflow:hidden}
+.pwHero::after{content:"";position:absolute;left:0;right:0;bottom:0;height:70px;background:linear-gradient(transparent,#1d140e)}
+.pwCard{position:absolute;top:34px;width:150px;height:190px;border-radius:16px;background-size:cover;background-position:center;display:flex;align-items:center;justify-content:center;box-shadow:0 14px 34px rgba(0,0,0,.55);border:1.5px solid rgba(255,255,255,.18)}
+.pwCard canvas{max-width:84%;max-height:70%}
+.pwCard.c0{left:50%;margin-left:-75px;z-index:2;transform:translateY(-6px)}
+.pwCard.c1{left:50%;margin-left:-205px;transform:rotate(-9deg) translateY(18px);opacity:.92}
+.pwCard.c2{left:50%;margin-left:55px;transform:rotate(9deg) translateY(18px);opacity:.92}
+.pwBody{padding:0 calc(22px + var(--sar)) calc(24px + var(--sab)) calc(22px + var(--sal));text-align:center}
+.pwReason{display:inline-block;margin:0 0 10px;padding:6px 12px;border-radius:14px;background:rgba(243,213,138,.12);color:#F3D58A;font-size:13px;font-weight:600}
+.pwBody h2{margin:0;font-size:30px;font-weight:700;display:flex;align-items:center;justify-content:center;gap:10px;flex-wrap:wrap}
+.pwBrand i{font-family:"Yellowtail",cursive;font-style:normal;font-weight:400;color:var(--accent2);font-size:36px}
+.pwSub{margin:6px 0 18px;color:var(--muted);font-size:15px}
+.pwFeat{list-style:none;padding:0;margin:0 0 20px;display:grid;gap:12px;text-align:left}
+.pwFeat li{display:flex;gap:12px;align-items:flex-start}
+.pwFeat b{display:block;font-size:15px}.pwFeat small{display:block;color:var(--muted);font-size:13px;margin-top:2px;line-height:1.35}
+.ck{flex:none;width:24px;height:24px;border-radius:12px;background:linear-gradient(135deg,#F6DE9C,#C9963A);position:relative;margin-top:1px}
+.ck::after{content:"";position:absolute;left:8px;top:5px;width:6px;height:11px;border:solid #3a2408;border-width:0 2.5px 2.5px 0;transform:rotate(45deg)}
+.plans{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px}
+.plan{position:relative;text-align:left;padding:18px 14px 14px;border-radius:18px;border:1.5px solid var(--line);background:rgba(255,255,255,.03);display:flex;flex-direction:column;gap:4px;min-height:118px}
+.plan.on{border-color:#E9C46A;background:rgba(233,196,106,.09);box-shadow:0 0 0 1px #E9C46A inset}
+.plan .pl{font-size:13px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.8px}
+.plan .pp{font-size:14px}.plan .pp b{font-size:22px}
+.plan .ps{font-size:12px;color:var(--muted);line-height:1.3}
+.plan .ribbon{position:absolute;top:-10px;left:12px;height:20px;padding:0 8px;border-radius:10px;background:var(--accent);color:#fff;font-size:10px;font-weight:800;letter-spacing:.6px;display:flex;align-items:center}
+.plan .radio{position:absolute;top:14px;right:12px;width:20px;height:20px;border-radius:10px;border:2px solid #6a5444}
+.plan.on .radio{border-color:#E9C46A;background:radial-gradient(circle,#E9C46A 0 5px,transparent 5.5px)}
+.pwCta{width:100%;height:56px;border:0;border-radius:28px;background:linear-gradient(135deg,#F6DE9C,#C9963A);color:#3a2408;font-size:17px;font-weight:800;box-shadow:0 8px 24px rgba(201,150,58,.35)}
+.pwFine{font-size:11.5px;line-height:1.45;color:#9c8877;margin:12px 0 8px}
+.pwLinks{display:flex;justify-content:center;gap:8px;font-size:13px;color:#9c8877;flex-wrap:wrap}
+.pwLinks a,.pwLinks button{color:var(--text);background:none;border:0;padding:6px 0;text-decoration:none;font-size:13px;font-weight:600}
+.pwFreeInfo{font-size:12px;color:#9c8877;margin:10px 0 0}
+.pwDemo{display:flex;align-items:center;justify-content:space-between;gap:12px;text-align:left;margin-top:18px;padding:12px 14px;border-radius:14px;border:1px dashed #5a4636;font-size:12px;color:var(--muted);cursor:pointer}
+.pwDemo input{position:absolute;opacity:0;pointer-events:none}
+.pwDemo i{flex:none;width:46px;height:28px;border-radius:14px;background:#4a3a2e;position:relative;transition:background .2s}
+.pwDemo i::after{content:"";position:absolute;top:3px;left:3px;width:22px;height:22px;border-radius:11px;background:#fff;transition:left .2s}
+.pwDemo input:checked+i{background:var(--accent)}.pwDemo input:checked+i::after{left:21px}
 /* modal & toast */
 .modal{position:fixed;inset:0;background:rgba(0,0,0,.75);display:flex;align-items:flex-end;justify-content:center;z-index:20}
 .modal .box{background:var(--panel);border-radius:20px 20px 0 0;padding:16px calc(16px + var(--sar)) calc(16px + var(--sab)) calc(16px + var(--sal));width:100%;max-width:560px;display:grid;gap:12px}
@@ -186,6 +244,7 @@ input[type=range]::-moz-range-thumb{width:28px;height:28px;border-radius:50%;bac
   <header class="top">
     <div class="brand">Studio <span>Typo</span></div>
     <button class="iconbtn hidden" id="undoBtn" aria-label="Undo" disabled><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 14 4 9l5-5"/><path d="M4 9h10.5a5.5 5.5 0 0 1 0 11H11"/></svg></button>
+    <button class="proPill" id="proBtn" aria-label="Studio Typo Pro"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M3 8.5l4.5 3.5L12 5l4.5 7L21 8.5 19 18H5z"/><rect x="5" y="19.2" width="14" height="2" rx="1"/></svg><span id="proBtnLabel">PRO</span></button>
     <button class="iconbtn" id="viewBtn" aria-label="Preview PNG"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg></button>
     <button class="iconbtn pri" id="saveImgBtn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12"/><path d="m7 10 5 5 5-5"/><path d="M5 21h14"/></svg>Save</button>
   </header>
@@ -233,6 +292,7 @@ input[type=range]::-moz-range-thumb{width:28px;height:28px;border-radius:50%;bac
 
       <!-- Nieuw -->
       <div id="tab-gen" class="hidden">
+        <div class="genLock hidden" id="genLock"><div class="glIcon"></div><b>Create with Pro</b><span>Type any phrase and get beautiful designs in seconds. Unlimited with Studio Typo Pro.</span><button class="pwBtn" data-pw="gen">Unlock Pro</button></div>
         <label class="lab" for="genText" style="margin-top:4px">Your text <span style="opacity:.7">(one phrase per line)</span></label>
         <textarea class="inp" id="genText" placeholder="Cosy Christmas&#10;Hot Cocoa Season"></textarea>
         <div class="chips" style="margin-top:8px"><button class="chip" id="genInspire">💡 Inspiration</button></div>
@@ -257,6 +317,32 @@ input[type=range]::-moz-range-thumb{width:28px;height:28px;border-radius:50%;bac
   </nav>
 </div>
 
+<div class="paywall hidden" id="paywall" role="dialog" aria-modal="true" aria-labelledby="pwTitle">
+  <div class="pwBox">
+    <button class="pwClose" id="pwClose" aria-label="Close"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+    <div class="pwHero" id="pwHero"></div>
+    <div class="pwBody">
+      <div class="pwReason hidden" id="pwReason"></div>
+      <h2 id="pwTitle"><span class="pwBrand">Studio <i>Typo</i></span> <span class="proPill static"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M3 8.5l4.5 3.5L12 5l4.5 7L21 8.5 19 18H5z"/><rect x="5" y="19.2" width="14" height="2" rx="1"/></svg>PRO</span></h2>
+      <p class="pwSub">Typography that makes your stories stand out.</p>
+      <ul class="pwFeat">
+        <li><span class="ck"></span><div><b><span id="pwCount">100+</span> designs</b><small>Every category, including Holidays and every new seasonal collection</small></div></li>
+        <li><span class="ck"></span><div><b>Unlimited generator</b><small>Turn any phrase into ready-made designs</small></div></li>
+        <li><span class="ck"></span><div><b>Premium details</b><small>Travel &amp; holiday icons, print texture and knock-out effects</small></div></li>
+        <li><span class="ck"></span><div><b>New designs every month</b><small>Fresh trends and seasonal drops, included</small></div></li>
+      </ul>
+      <div class="plans">
+        <button class="plan on" data-plan="yearly"><span class="ribbon">BEST VALUE</span><span class="pl">Yearly</span><span class="pp"><b id="pwYearly">€12.99</b> / year</span><span class="ps">7 days free · just <span id="pwPerMonth">€1.08</span> a month</span><span class="radio"></span></button>
+        <button class="plan" data-plan="lifetime"><span class="pl">Lifetime</span><span class="pp"><b id="pwLifetime">€24.99</b> once</span><span class="ps">Pay once, keep Pro forever</span><span class="radio"></span></button>
+      </div>
+      <button class="pwCta" id="pwCta">Start 7-day free trial</button>
+      <p class="pwFine" id="pwFine"></p>
+      <div class="pwLinks"><button id="pwRestore">Restore Purchases</button><span>·</span><a href="/terms.html" target="_blank" rel="noopener">Terms of Use</a><span>·</span><a href="/privacy.html" target="_blank" rel="noopener">Privacy Policy</a></div>
+      <p class="pwFreeInfo" id="pwFreeInfo"></p>
+      <label class="pwDemo"><span><b>Web preview.</b> Purchases will be available in the iOS app.<br>Simulate the free version</span><input type="checkbox" id="pwSim"><i></i></label>
+    </div>
+  </div>
+</div>
 <div class="modal hidden" id="modal">
   <div class="box">
     <div class="row" style="justify-content:space-between"><b>Your PNG</b><button class="btn" id="modalClose" style="min-height:36px">Close</button></div>
@@ -796,6 +882,7 @@ function renderLibrary(){
     if(light)b.style.backgroundImage=`linear-gradient(rgba(250,244,234,.5),rgba(250,244,234,.58)),${photo}`; // donkere tekst: foto met lichte waas
     else b.style.backgroundImage=`linear-gradient(rgba(0,0,0,.22),rgba(0,0,0,.35)),${photo}`;
     if(!d.seed)b.innerHTML='<span class="mine">★</span>';
+    else if(d.pro&&!isPro())b.innerHTML=proLabel();
     b.onclick=()=>{
       if(d.id===curSourceId){showTab("edit");return}
       loadDesign(d);document.querySelectorAll(".card").forEach(x=>x.classList.remove("sel"));b.classList.add("sel");toast("Tap again to edit");
@@ -848,7 +935,7 @@ function renderTool(light){
     body.querySelectorAll("input[type=range][data-k]").forEach(i=>{const src=i.dataset.d?cur:Ly;if(!src)return;i.value=src[i.dataset.k]||0;i.parentElement.querySelector("output").textContent=i.value});return}
   let h="";
   if(Ly&&Ly.kind==="shape"){
-    h+=sec("Ornament")+`<div class="ornGrid">${Object.entries(ORNAMENTS).map(([k,n])=>`<button class="ornBtn ${k===Ly.shape?"on":""}" data-o="${k}"><canvas width="96" height="96"></canvas><span>${n}</span></button>`).join("")}</div>`;
+    h+=sec("Ornament")+`<div class="ornGrid">${Object.entries(ORNAMENTS).map(([k,n])=>(PRO_ORN.has(k)&&!isPro()?`<button class="ornBtn" data-pw="orn" data-icon="${k}"><canvas width="96" height="96"></canvas><span>${n}</span>${proLabel()}</button>`:`<button class="ornBtn ${k===Ly.shape?"on":""}" data-o="${k}"><canvas width="96" height="96"></canvas><span>${n}</span></button>`)).join("")}</div>`;
     h+=sec("Size &amp; position")+rng("Size","size",20,480,Ly.size)+rng("Rotate","rotate",-180,180,Ly.rotate||0)+rng("Left/right","x",-700,700,Ly.x)+rng("Up/down","y",-900,900,Ly.y)
       +`<div class="hint" style="margin:2px 0 4px">Or: drag the ornament on the photo · pinch and twist with two fingers.</div>`;
     h+=sec("Style")+`<div class="chips wrap">
@@ -873,10 +960,10 @@ function renderTool(light){
       ${f.it?`<button class="chip ${Ly.italic?"on":""}" data-t="italic">Italic</button>`:""}
       ${f.w.length>1?`<button class="chip ${Ly.weight===Math.max(...f.w)?"on":""}" data-t="bold">Bold</button>`:""}
       <button class="chip ${Ly.style==="outline"?"on":""}" data-t="outline">Outline</button></div>
-      ${rng("Knock-out","cutout",0,40,Ly.cutout||0)}<div class="hint" style="margin:-4px 0 8px">Cuts a gap into the text underneath (like ‘More coffee please’). Make sure this text is in front.</div>
+      ${isPro()?rng("Knock-out","cutout",0,40,Ly.cutout||0):proRow("Knock-out")}<div class="hint" style="margin:-4px 0 8px">Cuts a gap into the text underneath (like ‘More coffee please’). Make sure this text is in front.</div>
       <div class="chips wrap"><button class="chip" data-a="center">Centre</button><button class="chip" data-a="straight">Straighten</button><button class="chip" data-a="up">Bring forward</button><button class="chip" data-a="down">Send back</button><button class="chip" data-a="dup">Duplicate</button><button class="chip" data-a="del" style="color:#ff9b87">Delete text</button></div>`;
   }else h+=`<div class="empty">No text. Tap “+ Text”.</div>`;
-  h+=sec("Colours &amp; finish")+`<div class="lab" style="margin-top:0">Main colour</div><div class="sw" id="swMain"></div><div class="lab">Accent colour</div><div class="sw" id="swAccent"></div>`+rng("Shadow","shadow",0,80,cur.shadow||0,1,true)+rng("Texture","texture",0,100,cur.texture||0,1,true)+`<div class="hint" style="margin-top:-4px">Texture gives a printed, worn retro look.</div>`;
+  h+=sec("Colours &amp; finish")+`<div class="lab" style="margin-top:0">Main colour</div><div class="sw" id="swMain"></div><div class="lab">Accent colour</div><div class="sw" id="swAccent"></div>`+rng("Shadow","shadow",0,80,cur.shadow||0,1,true)+(isPro()?rng("Texture","texture",0,100,cur.texture||0,1,true):proRow("Texture"))+`<div class="hint" style="margin-top:-4px">Texture gives a printed, worn retro look.</div>`;
   const isMine=custom.some(d=>d.id===curSourceId);
   h+=sec("Save")+`<input class="inp" id="sName" value="${esc(cur.name)}" placeholder="Name">
     <select class="inp" id="sCat" style="margin-top:8px">${allCats().map(c=>`<option ${c===cur.cat?"selected":""}>${esc(c)}</option>`).join("")}<option value="__new">+ New category…</option></select>
@@ -887,7 +974,8 @@ function renderTool(light){
   body.innerHTML=h;$("sheetBody").scrollTop=keep;if($("fontRow"))$("fontRow").scrollLeft=fr;
 
   if(Ly&&Ly.kind==="shape"){
-    body.querySelectorAll(".ornBtn").forEach(b=>{const c=b.querySelector("canvas"),x=c.getContext("2d");x.translate(48,48);x.fillStyle=x.strokeStyle="#f6ece0";drawShape(x,b.dataset.o,30,false);
+    body.querySelectorAll(".ornBtn[data-pw]").forEach(b=>{const x=b.querySelector("canvas").getContext("2d");x.translate(48,48);x.fillStyle=x.strokeStyle="#8f7a68";drawShape(x,b.dataset.icon,30,false)});
+    body.querySelectorAll(".ornBtn[data-o]").forEach(b=>{const c=b.querySelector("canvas"),x=c.getContext("2d");x.translate(48,48);x.fillStyle=x.strokeStyle="#f6ece0";drawShape(x,b.dataset.o,30,false);
       b.onclick=()=>{snap();Ly.shape=b.dataset.o;if(STROKE_SHAPES.has(Ly.shape))Ly.style="fill";body.querySelectorAll(".ornBtn").forEach(z=>z.classList.toggle("on",z===b));schedulePreview();renderLayerChips()}});
   }
   if(Ly){
@@ -958,12 +1046,13 @@ async function shareOrDownload(ex){
   const a=document.createElement("a");a.href=ex.url;a.download=fileName();document.body.appendChild(a);a.click();a.remove();toast("PNG downloaded ✓");return true;
 }
 $("saveImgBtn").onclick=async()=>{
+  if(!isPro()&&cur.pro){openPaywall("save");return}
   const key=JSON.stringify(cur);
   if(exportCache.key===key){if(!(await shareOrDownload(exportCache)))openModal(exportCache);return}
   const b=$("saveImgBtn");b.classList.add("busy");const ex=await buildExport();b.classList.remove("busy");
   if(ex)openModal(ex); // tweede tik nodig: iPhone staat delen alleen direct na een tik toe
 };
-$("viewBtn").onclick=async()=>{const ex=await buildExport();if(ex)openModal(ex)};
+$("viewBtn").onclick=async()=>{if(!isPro()&&cur.pro){openPaywall("save");return}const ex=await buildExport();if(ex)openModal(ex)};
 function openModal(ex){$("modalImg").src=ex.url;$("modalShare").classList.toggle("hidden",!canShare(ex));$("modal").classList.remove("hidden")}
 $("modalShare").onclick=()=>{if(exportCache.blob)navigator.share({files:[pngFile(exportCache)]}).catch(()=>{})};
 $("modalDl").onclick=()=>{if(!exportCache.url)return;const a=document.createElement("a");a.href=exportCache.url;a.download=fileName();document.body.appendChild(a);a.click();a.remove()};
@@ -1084,7 +1173,7 @@ const STYLE_TPL={mix:Object.keys(TEMPLATES),script:["scriptStack","scriptCaps","
 function generateFor(p,n,cat){
   const names=[...STYLE_TPL[genStyle]].sort(()=>Math.random()-.5);const out=[];let i=0,guard=0;
   while(out.length<n&&guard++<40){const fn=TEMPLATES[names[i++%names.length]];const layers=fn(p);if(!layers||!layers.length)continue;
-    const c=GEN_COLORS[genColor];out.push({id:uid(),cat,name:p,colors:{main:c.main,accent:c.accent},shadow:0,texture:genStyle==="retro"?pick([0,20,30]):0,layers,seed:false,t:Date.now()+out.length});}
+    const c=GEN_COLORS[genColor];out.push({id:uid(),pro:true,cat,name:p,colors:{main:c.main,accent:c.accent},shadow:0,texture:genStyle==="retro"?pick([0,20,30]):0,layers,seed:false,t:Date.now()+out.length});}
   return out;
 }
 
@@ -1095,7 +1184,7 @@ let aiN=4;
   pickOne("genColors","data-c",v=>genColor=+v);pickOne("genStyle","data-s",v=>genStyle=v);pickOne("genCount","data-n",v=>aiN=+v);
   const inspire=list=>{$("genText").value=[...list].sort(()=>Math.random()-.5).slice(0,3).join("\n")};
   $("genInspire").onclick=()=>{const c=$("genCat").value.trim();inspire(PHRASES[c]||PHRASES_EN)};
-  $("genGo").onclick=()=>{
+  $("genGo").onclick=()=>{if(!isPro()){openPaywall("gen");return}
     const lines=$("genText").value.split("\n").map(x=>x.trim()).filter(Boolean).slice(0,8),err=$("genErr");err.textContent="";
     if(!lines.length){err.textContent="Type some text first, or tap 💡 Inspiration.";return}
     $("genText").blur();
@@ -1108,8 +1197,64 @@ let aiN=4;
 /* ---------------- Webapp (offline) ---------------- */
 if("serviceWorker" in navigator&&location.protocol==="https:"){window.addEventListener("load",()=>navigator.serviceWorker.register("/sw.js").catch(()=>{}))}
 
+/* ---------------- Studio Typo Pro ---------------- */
+// Prices are placeholders until they are set in App Store Connect.
+const PRO={yearly:{price:"€12.99",perMonth:"€1.08",trialDays:7},lifetime:{price:"€24.99"}};
+const FREE_PER_CAT=3;
+const FREE_IDS=new Set(NEW_CATS.flatMap(c=>SEEDS.filter(d=>d.cat===c).slice(0,FREE_PER_CAT).map(d=>d.id)));
+SEEDS.forEach(d=>{d.pro=!FREE_IDS.has(d.id)});
+const PRO_ORN=new Set(["suitcase","plane","ticket","pin","globe","snowflake","tree","bauble","gift","holly"]);
+// Web version: the owner's own tool, so Pro is unlocked. "Simulate free version" shows the app as a free user sees it.
+function simFree(){try{return localStorage.getItem("typoStudio.simFree")==="1"}catch(e){return false}}
+function isPro(){return !simFree()}
+function lockSvg(){return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="10" rx="2.5"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>'}
+function crownSvg(){return '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M3 8.5l4.5 3.5L12 5l4.5 7L21 8.5 19 18H5z"/><rect x="5" y="19.2" width="14" height="2" rx="1"/></svg>'}
+function proLabel(){return `<span class="proTag">${lockSvg()}PRO</span>`}
+function proRow(label){return `<button class="lockRow" data-pw="feature"><span>${label}</span>${proLabel()}</button>`}
+
+let pwPlan="yearly";
+const PW_REASON={save:"This design is part of Studio Typo Pro",gen:"The generator is part of Studio Typo Pro",feature:"This feature is part of Studio Typo Pro",orn:"This ornament is part of Studio Typo Pro"};
+function openPaywall(reason){
+  const total=SEEDS.length,freeN=FREE_IDS.size;
+  $("pwReason").textContent=PW_REASON[reason]||"";$("pwReason").classList.toggle("hidden",!PW_REASON[reason]);
+  $("pwCount").textContent=`${Math.floor(total/10)*10}+`;
+  $("pwFreeInfo").textContent=`Free: ${freeN} designs and the full editor. Pro: everything.`;
+  $("pwSim").checked=simFree();
+  renderPlans();$("paywall").classList.remove("hidden");$("paywall").scrollTop=0;renderPwHero();
+}
+function closePaywall(){$("paywall").classList.add("hidden")}
+function renderPlans(){
+  document.querySelectorAll(".plan").forEach(p=>p.classList.toggle("on",p.dataset.plan===pwPlan));
+  const y=PRO.yearly;
+  $("pwCta").textContent=pwPlan==="yearly"?`Start ${y.trialDays}-day free trial`:`Unlock forever – ${PRO.lifetime.price}`;
+  $("pwFine").innerHTML=pwPlan==="yearly"
+    ?`${y.trialDays} days free, then ${y.price} per year. The subscription renews automatically unless it is cancelled at least 24 hours before the end of the current period. Payment is charged to your Apple ID account. Manage or cancel any time in Settings › Apple ID › Subscriptions.`
+    :`One-time purchase of ${PRO.lifetime.price}. No subscription, unlocks Pro forever on all devices with your Apple ID.`;
+}
+let pwHeroDone=false;
+async function renderPwHero(){
+  if(pwHeroDone)return;pwHeroDone=true;
+  const pick=["xm1","cf4","tv1"].map(id=>SEEDS.find(d=>d.id===id)).filter(Boolean);
+  const bgs=["xmas","beans","sunset"];const box=$("pwHero");box.innerHTML="";
+  for(let i=0;i<pick.length;i++){const d=pick[i];await ensureFonts(d);
+    const c=document.createElement("div");c.className="pwCard c"+i;c.style.backgroundImage=`linear-gradient(rgba(0,0,0,.15),rgba(0,0,0,.3)),url('/img/sq-${bgs[i]}.jpg')`;
+    c.appendChild(drawExport(d,.2));box.appendChild(c)}
+}
+document.addEventListener("click",e=>{const b=e.target.closest("[data-pw]");if(b){e.preventDefault();openPaywall(b.dataset.pw)}});
+$("proBtn").onclick=()=>openPaywall();
+$("pwClose").onclick=closePaywall;
+document.querySelectorAll(".plan").forEach(p=>p.onclick=()=>{pwPlan=p.dataset.plan;renderPlans()});
+$("pwCta").onclick=()=>toast("Purchases will be available in the iOS app");
+$("pwRestore").onclick=()=>toast("Restore Purchases will be available in the iOS app");
+$("pwSim").onchange=e=>{try{localStorage.setItem("typoStudio.simFree",e.target.checked?"1":"0")}catch(err){}
+  updateProUI();renderLibrary();if(tab==="edit")renderTool();toast(e.target.checked?"Showing the free version":"Pro unlocked")};
+function updateProUI(){
+  const pro=isPro();$("proBtn").classList.toggle("isPro",pro);$("proBtnLabel").textContent=pro?"PRO":"GET PRO";
+  $("genLock").classList.toggle("hidden",pro);
+}
+
 /* ---------------- Start ---------------- */
-loadLocal();
+loadLocal();updateProUI();
 setDetent(0);setAppH();renderLibrary();
 document.fonts.ready.then(()=>{schedulePreview();renderLibrary()});
 </script>
