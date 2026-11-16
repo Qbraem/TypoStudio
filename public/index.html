@@ -174,6 +174,39 @@ input[type=range]::-moz-range-thumb{width:28px;height:28px;border-radius:50%;bac
 .top{justify-content:flex-end}
 @media (max-width:430px){#viewBtn{display:none}.brand{font-size:16px}.brand span{font-size:20px}#proBtnLabel{display:none}#proBtn{padding:0 9px}}
 @media (min-aspect-ratio:1/1) and (max-width:1000px){.brand{display:none}#viewBtn{display:none}#proBtnLabel{display:none}#proBtn{padding:0 9px}}
+/* ---------- Splash & onboarding ---------- */
+.splash{position:fixed;inset:0;z-index:80;background:radial-gradient(90% 60% at 50% 40%,#3a2614 0%,#120d0a 70%);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;transition:opacity .45s ease}
+.splash.out{opacity:0;pointer-events:none}
+.spLogo{width:108px;height:108px;border-radius:26px;overflow:hidden;box-shadow:0 18px 50px rgba(0,0,0,.55);animation:spIn .7s cubic-bezier(.2,.9,.3,1.2) both}
+.spLogo img{width:100%;height:100%;display:block}
+.spName{font-size:24px;font-weight:700;animation:spFade .6s .25s both}.spName i{font-family:"Yellowtail",cursive;font-style:normal;font-weight:400;color:var(--accent2);font-size:30px;margin-left:4px}
+@keyframes spIn{from{transform:scale(.6);opacity:0}to{transform:none;opacity:1}}
+@keyframes spFade{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.onb{position:fixed;inset:0;z-index:70;background:radial-gradient(120% 55% at 50% 0%,#3a2614 0%,#120d0a 65%);display:flex;flex-direction:column;overflow:hidden}
+.onbSkip{position:absolute;top:calc(var(--sat) + 10px);right:calc(14px + var(--sar));z-index:2;height:36px;padding:0 14px;border:0;border-radius:18px;background:rgba(255,255,255,.08);color:var(--muted);font-weight:700;font-size:14px}
+.onbTrack{flex:1;display:flex;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+.onbTrack::-webkit-scrollbar{display:none}
+.onbSlide{flex:none;width:100%;scroll-snap-align:center;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:22px;padding:calc(var(--sat) + 50px) calc(26px + var(--sar)) 10px calc(26px + var(--sal));text-align:center}
+@media (min-aspect-ratio:1/1){.onbSlide{flex-direction:row;text-align:left;gap:40px;padding-top:calc(var(--sat) + 30px)}.onbText{max-width:340px}}
+.onbArt{height:min(38vh,290px);display:flex;align-items:center;justify-content:center}
+@media (min-aspect-ratio:1/1){.onbArt{height:min(62vh,300px)}}
+.onbText h2{margin:12px 0 10px;font-size:30px;line-height:1.15}.onbText h2 i{font-family:"Yellowtail",cursive;font-style:normal;font-weight:400;color:var(--accent2);font-size:38px}
+.onbText p{margin:0 auto;color:var(--muted);font-size:15.5px;line-height:1.5;max-width:330px}
+.onbStack{position:relative;width:280px;height:230px}
+.onbStack .pwCard{top:10px}
+.onbEdit{display:flex;flex-direction:column;align-items:center;gap:12px}
+.onbCanvas{width:210px;height:210px;border-radius:20px;background:url('/img/th-golden.jpg') center/cover;display:flex;align-items:center;justify-content:center;box-shadow:0 14px 34px rgba(0,0,0,.5);overflow:hidden;position:relative}
+.onbCanvas::before{content:"";position:absolute;inset:0;background:rgba(0,0,0,.12)}
+.onbCanvas canvas{position:relative;max-width:86%;max-height:74%;transition:opacity .25s}
+.onbChips{display:flex;gap:6px}.onbChips span{padding:5px 11px;border-radius:14px;background:#2a2019;border:1px solid #3a2c22;font-size:12px;font-weight:700;color:var(--muted);transition:all .25s}
+.onbChips span.on{background:var(--text);color:#1b130e;border-color:var(--text)}
+.onbShare{position:relative;display:flex;align-items:center;margin-right:56px}
+.mPhone.big{width:128px;height:230px;border-radius:24px;border-width:3px}
+.mPhone.big .mType{top:78px;font-size:30px}
+.mPhone.big .mIgTop{top:10px;left:10px;right:10px}.mPhone.big .mIgTop span{height:3px}
+.onbPng{position:absolute;right:-56px;top:20px;width:64px;height:76px;border-radius:10px;background:repeating-conic-gradient(#5a4a3e 0 25%,#3a2c22 0 50%) 0 0/12px 12px;border:2px solid #E9C46A;display:flex;align-items:flex-end;justify-content:center;padding-bottom:6px;font-size:11px;font-weight:800;color:#F3D58A;transform:rotate(8deg);box-shadow:0 10px 24px rgba(0,0,0,.4)}
+.onbFoot{padding:10px calc(24px + var(--sar)) calc(18px + var(--sab)) calc(24px + var(--sal));display:flex;flex-direction:column;align-items:center;gap:12px;max-width:480px;width:100%;margin:0 auto}
+.onbDots{display:flex;gap:7px}.onbDots i{width:7px;height:7px;border-radius:4px;background:#5a4636;transition:all .25s}.onbDots i.on{width:22px;background:#E9C46A}
 /* ---------- How to ---------- */
 .htBox{background:radial-gradient(120% 50% at 50% 0%,#3a2614 0%,#160f0b 60%)}
 .htHead{padding:calc(var(--sat) + 56px) calc(24px + var(--sar)) 6px calc(24px + var(--sal));text-align:center}
@@ -213,8 +246,6 @@ input[type=range]::-moz-range-thumb{width:28px;height:28px;border-radius:50%;bac
 .card .proTag{position:absolute;top:6px;left:6px}
 .ornBtn{position:relative}.ornBtn .proTag{position:absolute;top:3px;right:3px;height:16px;padding:0 5px;font-size:8px}
 .lockRow{width:100%;display:flex;justify-content:space-between;align-items:center;min-height:44px;background:none;border:0;border-bottom:1px dashed var(--line);color:var(--muted);font-size:14px;padding:0}
-.genLock{display:flex;flex-direction:column;align-items:center;text-align:center;gap:8px;padding:22px 16px;margin:4px 0 14px;border-radius:18px;background:linear-gradient(160deg,#3a2614,#1f1510);border:1px solid rgba(243,213,138,.3)}
-.genLock b{font-size:18px}.genLock span{font-size:14px;color:var(--muted);max-width:300px}
 .glIcon{width:44px;height:44px;border-radius:22px;background:linear-gradient(135deg,#F6DE9C,#C9963A)}
 .pwBtn{margin-top:4px;height:44px;padding:0 22px;border:0;border-radius:22px;background:linear-gradient(135deg,#F6DE9C,#C9963A);color:#3a2408;font-weight:800;font-size:15px}
 .paywall{position:fixed;inset:0;z-index:50;background:rgba(0,0,0,.6);display:flex;justify-content:center;align-items:stretch}
@@ -311,7 +342,7 @@ input[type=range]::-moz-range-thumb{width:28px;height:28px;border-radius:50%;bac
           <div class="row hidden" id="newCatRow" style="margin-bottom:10px;flex-wrap:nowrap"><input class="inp" id="newCatName" placeholder="New category name" maxlength="40"><button class="btn pri" id="newCatOk">Create</button></div>
         </div>
         <div class="grid" id="grid"></div>
-        <div class="row hidden" id="catActions" style="margin-top:14px"><button class="btn" id="catGen">✨ Create more designs</button><button class="btn warn" id="catDel">Delete category</button></div>
+        <div class="row hidden" id="catActions" style="margin-top:14px"><button class="btn warn" id="catDel">Delete category</button></div>
       </div>
 
       <!-- Bewerken -->
@@ -324,32 +355,34 @@ input[type=range]::-moz-range-thumb{width:28px;height:28px;border-radius:50%;bac
       </div>
 
       <!-- Nieuw -->
-      <div id="tab-gen" class="hidden">
-        <div class="genLock hidden" id="genLock"><div class="glIcon"></div><b>Create with Pro</b><span>Type any phrase and get beautiful designs in seconds. Unlimited with Studio Typo Pro.</span><button class="pwBtn" data-pw="gen">Unlock Pro</button></div>
-        <label class="lab" for="genText" style="margin-top:4px">Your text <span style="opacity:.7">(one phrase per line)</span></label>
-        <textarea class="inp" id="genText" placeholder="Cosy Christmas&#10;Hot Cocoa Season"></textarea>
-        <div class="chips" style="margin-top:8px"><button class="chip" id="genInspire">💡 Inspiration</button></div>
-        <label class="lab">Style</label>
-        <div class="chips" id="genStyle"><button class="chip on" data-s="mix">Mix</button><button class="chip" data-s="script">Elegant</button><button class="chip" data-s="bold">Playful & bold</button><button class="chip" data-s="clean">Clean</button><button class="chip" data-s="retro">Retro</button></div>
-        <label class="lab">Colours</label>
-        <div class="chips" id="genColors"></div>
-        <label class="lab" for="genCat">Category</label>
-        <input class="inp" id="genCat" list="catList" placeholder="e.g. Christmas"><datalist id="catList"></datalist>
-        <label class="lab">Variations per phrase</label>
-        <div class="chips" id="genCount"><button class="chip" data-n="2">2</button><button class="chip on" data-n="4">4</button><button class="chip" data-n="6">6</button></div>
-        <button class="btn pri" id="genGo" style="width:100%;margin-top:8px">✨ Create designs</button>
-        <div class="err" id="genErr"></div>
-      </div>
     </div>
   </section>
 
   <nav class="tabs" id="tabs">
     <button data-tab="lib" class="on"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><rect x="3" y="3" width="7.5" height="7.5" rx="2"/><rect x="13.5" y="3" width="7.5" height="7.5" rx="2"/><rect x="3" y="13.5" width="7.5" height="7.5" rx="2"/><rect x="13.5" y="13.5" width="7.5" height="7.5" rx="2"/></svg>Library</button>
     <button data-tab="edit"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 7h10M18 7h2M4 17h4M12 17h8"/><circle cx="16" cy="7" r="2.2"/><circle cx="10" cy="17" r="2.2"/></svg>Edit</button>
-    <button data-tab="gen"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8z"/><path d="M19 15l.8 2.2L22 18l-2.2.8L19 21l-.8-2.2L16 18l2.2-.8z"/></svg>Create</button>
   </nav>
 </div>
 
+<div class="splash" id="splash"><div class="spLogo"><img src="/icons/icon-512.png?v=4" alt=""></div><div class="spName">Studio <i>Typo</i></div></div>
+<div class="onb hidden" id="onb" role="dialog" aria-modal="true" aria-label="Welcome">
+  <button class="onbSkip" id="onbSkip">Skip</button>
+  <div class="onbTrack" id="onbTrack">
+    <section class="onbSlide">
+      <div class="onbArt"><div class="onbStack" id="onbStack"></div></div>
+      <div class="onbText"><div class="htKicker">WELCOME</div><h2>Typography for<br>your <i>Stories</i></h2><p>Over 100 ready-made templates for every mood and moment: coffee, travel, holidays, weekends and more.</p></div>
+    </section>
+    <section class="onbSlide">
+      <div class="onbArt"><div class="onbEdit"><div class="onbCanvas" id="onbCanvas"></div><div class="onbChips"><span class="on" data-i="0">Text</span><span data-i="1">Font</span><span data-i="2">Colour</span><span data-i="3">Ornament</span></div></div></div>
+      <div class="onbText"><div class="htKicker">MAKE IT YOURS</div><h2>Every template<br>is <i>editable</i></h2><p>Tap any text to write your own words. Change fonts, colours, size and position, and add little ornaments. Everything can be personalised.</p></div>
+    </section>
+    <section class="onbSlide">
+      <div class="onbArt"><div class="onbShare"><div class="mPhone photo big"><div class="mIgTop"><span></span><span></span><span></span></div><div class="mType">Slow<br>Mornings</div></div><div class="onbPng">PNG</div></div></div>
+      <div class="onbText"><div class="htKicker">SAVE &amp; SHARE</div><h2>Ready for<br>your <i>Story</i></h2><p>Save a transparent PNG to your Camera Roll and place it on top of any photo in Instagram Stories.</p></div>
+    </section>
+  </div>
+  <div class="onbFoot"><div class="onbDots" id="onbDots"><i class="on"></i><i></i><i></i></div><button class="pwCta" id="onbNext">Continue</button><button class="htLink" id="onbHow">How does it work?</button></div>
+</div>
 <div class="paywall hidden" id="howto" role="dialog" aria-modal="true" aria-labelledby="htTitle">
   <div class="pwBox htBox">
     <button class="pwClose" id="htClose" aria-label="Close"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
@@ -394,7 +427,7 @@ input[type=range]::-moz-range-thumb{width:28px;height:28px;border-radius:50%;bac
       <p class="pwSub">Typography that makes your stories stand out.</p>
       <ul class="pwFeat">
         <li><span class="ck"></span><div><b><span id="pwCount">100+</span> designs</b><small>Every category, including Holidays and every new seasonal collection</small></div></li>
-        <li><span class="ck"></span><div><b>Unlimited generator</b><small>Turn any phrase into ready-made designs</small></div></li>
+        <li><span class="ck"></span><div><b>Make every design yours</b><small>Change any text, font and colour – save your own versions</small></div></li>
         <li><span class="ck"></span><div><b>Premium details</b><small>Travel &amp; holiday icons, print texture and knock-out effects</small></div></li>
         <li><span class="ck"></span><div><b>New designs every month</b><small>Fresh trends and seasonal drops, included</small></div></li>
       </ul>
@@ -916,11 +949,10 @@ function applySheetH(){const H=window.visualViewport?visualViewport.height:inner
 /* ---------------- Tabs ---------------- */
 function showTab(t){
   tab=t;document.querySelectorAll("#tabs button").forEach(b=>b.classList.toggle("on",b.dataset.tab===t));
-  ["lib","edit","gen"].forEach(x=>$("tab-"+x).classList.toggle("hidden",x!==t));
+  ["lib","edit"].forEach(x=>$("tab-"+x).classList.toggle("hidden",x!==t));
   $("undoBtn").classList.toggle("hidden",t!=="edit");
   $("sheetBody").scrollTop=0;
   if(t==="edit"){if(!layer())sel=0;view={...VIEW0};layoutSticker();renderLayerChips();renderTool();showCoach()}
-  if(t==="gen")$("catList").innerHTML=allCats().map(c=>`<option value="${esc(c)}">`).join("");
   schedulePreview(true);
 }
 $("tabs").addEventListener("click",e=>{const b=e.target.closest("button");if(b)showTab(b.dataset.tab)});
@@ -940,7 +972,7 @@ function renderLibrary(){
   const grid=$("grid");grid.innerHTML="";
   $("catActions").classList.toggle("hidden",!(activeCat!=="All"&&activeCat!=="★"&&isCustomCat(activeCat)));
   $("catDel").textContent="Delete category";$("catDel").dataset.armed="";
-  if(!list.length){grid.innerHTML=`<div class="empty">Nothing here yet. Create designs in ✨ Create, or save one to this category.</div>`;return}
+  if(!list.length){grid.innerHTML=`<div class="empty">Nothing here yet. Edit a design and save it to this category.</div>`;return}
   const job=++thumbJob;let n=0;
   const cards=list.map(d=>{
     const b=document.createElement("button");const light=lum(d.colors.main)<.45;
@@ -959,7 +991,7 @@ function renderLibrary(){
 $("newCatOk").onclick=()=>{const n=$("newCatName").value.trim();if(!n)return;if(!allCats().includes(n)){customCats.unshift(n);saveLocal()}
   $("newCatName").value="";$("newCatRow").classList.add("hidden");activeCat=n;renderLibrary()};
 $("newCatName").addEventListener("keydown",e=>{if(e.key==="Enter")$("newCatOk").click()});
-$("catGen").onclick=()=>{$("genCat").value=activeCat;showTab("gen")};
+
 $("catDel").onclick=()=>{const b=$("catDel");if(!b.dataset.armed){b.dataset.armed="1";b.textContent="Sure? Tap again";return}
   const c=activeCat;custom=custom.filter(d=>d.cat!==c);customCats=customCats.filter(x=>x!==c);saveLocal();activeCat="All";renderLibrary();toast("Category deleted")};
 
@@ -1125,141 +1157,6 @@ $("modalDl").onclick=()=>{if(!exportCache.url)return;const a=document.createElem
 $("modalClose").onclick=()=>$("modal").classList.add("hidden");
 $("modal").addEventListener("click",e=>{if(e.target.id==="modal")$("modal").classList.add("hidden")});
 
-/* ---------------- Gratis generator (zonder AI) ---------------- */
-const PHRASES={
-  "Coffee":["Coffee First","But first, coffee","Espresso Yourself","Coffee Date","Stay Grounded","Daily Grind","Extra Shot","Oat Latte","Coffee O'Clock","Mug Life","Bean There","Sip Happens"],
-  "Breakfast":["Brunch Club","Rise & Shine","Pancake Party","Breakfast in Bed","Croissant Club","Eggs Benedict","Sunny Side Up","Toast & Jam","Morning Glory","Bagels & Bliss"],
-  "Weekend":["Hello Weekend","Sunday Club","Saturday Mood","Lazy Sunday","Weekend Mode","Out of Office","Do Not Disturb","Sunday Funday","Friday Feeling","Weekend Getaway"],
-  "Holidays":["Merry & Bright","Let It Snow","Happy Holidays","Merry Christmas","Ho Ho Ho!","Cosy Christmas","Jingle All the Way","Deck the Halls","Hot Cocoa Season","Silent Night","Naughty or Nice?","Under the Mistletoe","Season's Greetings","Christmas Eve","Wrapping Season","Merry Everything","Snow Day","Baby It's Cold Outside","Joy to the World","Home for the Holidays"],
-  "Travel":["Wanderlust","Passport Ready","Take Me Somewhere Warm","Travel Diaries","Greetings from Paris","Road Trip","Beach Please","Jet Lag Is Real","Catch Flights Not Feelings","Weekend Getaway","Adventure Awaits","Ciao Italia","Island Time","Out of Office","Bon Voyage","Window Seat","Lost in Lisbon","Summer in the City","Home Is Elsewhere","Next Stop: Anywhere"],
-  "Cosy":["Cosy Season","Sweater Weather","Hygge Days","Books & Blankets","Candle Season","Stay Home","Rainy Days","Soup Season","Slow Living","Warm & Fuzzy"],
-  "Girly":["The Girls Club","Pretty in Pink","Self Care Sunday","Girls Night","That Girl","XOXO","Hot Girl Walk","Babe","Glow Up","Pink Era"],
-  "Movie Night":["Movie Night","Popcorn & Chill","Now Showing","Lights Camera Action","Binge Mode","Couch Potato","Double Feature","Rom-Com Night","Snack Attack","The End"],
-  "Monthly":["Hello January","February","Hello March","April Showers","May Days","June","Late July","Hello August","September","October","November","December"],
-  "Camera":["Shot on Film","Golden Hour","Film Is Not Dead","Say Cheese","Through My Lens","Photo Dump","Point & Shoot","35mm","Snapshots","Behind the Scenes"],
-  "Trending":["Holy Cow!","Main Character Energy","Soft Life","It's Giving","Romanticize Your Life","Mood","Not Today","Core Memory","Plot Twist","Delulu Is the Solulu"],
-  "2026":["Hello 2026","Cheers to 2026","2026 Dump","New Year New Me","Best of 2026","Class of 2026","2026 Era","Goals 2026","Year in Review","Made in 2026"]
-};
-const PHRASES_EN=Object.values(PHRASES).flat();
-const POOLS={
-  script:["Yellowtail","Great Vibes","Pinyon Script","Allura","Sacramento","Satisfy","Playball","Pacifico","Kaushan Script","Lobster","Dancing Script"],
-  hand:["Homemade Apple","Caveat","Nanum Pen Script","Reenie Beanie","Gochi Hand","Shadows Into Light"],
-  bold:["Luckiest Guy","Titan One","Bowlby One","Lilita One","Chewy","Fredoka","Shrikhand","Bungee","Rubik Mono One"],
-  serif:["Playfair Display","DM Serif Display","Abril Fatface","Cormorant Garamond","Fraunces","Gloock","Young Serif","Bodoni Moda"],
-  groovy:["Shrikhand","Bagel Fat One","Cherry Bomb One","Modak","Grandstander"],
-  signature:["Mrs Saint Delafield","Pinyon Script","Great Vibes","Allura"],
-  sans:["Montserrat","DM Sans","Bebas Neue","Anton","Archivo Black"]
-};
-// gemiddelde letterbreedte (in em) per lettertype, voor de automatische grootte
-const EMW={script:.40,hand:.40,bold:.66,serif:.52,sans:.60,"Bebas Neue":.40,"Anton":.46,"Rubik Mono One":.95,"Bungee":.78,"Sacramento":.32,"Allura":.34,"Pinyon Script":.42,"Great Vibes":.36,"Reenie Beanie":.30,"Nanum Pen Script":.30,"Homemade Apple":.55,groovy:.62,signature:.36,"Modak":.62,"Bagel Fat One":.64,"Cherry Bomb One":.6,"Grandstander":.58,"Bodoni Moda":.6,"Gloock":.55,"Young Serif":.6,"Mrs Saint Delafield":.32,"Sansita Swashed":.52,"Fraunces":.58};
-const GEN_COLORS=[{n:"White + coral",main:"#FFFFFF",accent:"#F26B50"},{n:"Cream + caramel",main:"#F6E9D7",accent:"#C98A4B"},{n:"White + ice blue",main:"#FFFFFF",accent:"#7FC8E8"},{n:"White + sage",main:"#FFFFFF",accent:"#A8B89A"},{n:"All white",main:"#FFFFFF",accent:"#FFFFFF"},{n:"Espresso + coral",main:"#3B2416",accent:"#F26B50"}];
-let genStyle="mix", genColor=0;
-const pick=a=>a[Math.floor(Math.random()*a.length)];
-function poolOf(font){for(const k in POOLS)if(POOLS[k].includes(font))return k;return "sans"}
-function fitSize(text,font,{target=820,max=280,min=50,spacing=0}={}){
-  const em=EMW[font]||EMW[poolOf(font)]||.5; const n=[...text].length||1;
-  const w=n*em+(n-1)*spacing/100; return Math.round(Math.max(min,Math.min(max,target/w)));
-}
-function mkLayer(text,font,o={}){
-  const f=FONT_BY[font]; const upper=!!o.upper; const t=upper?text.toUpperCase():text;
-  const size=o.size||fitSize(t,font,{target:o.target||820,max:o.max||280,min:o.min||50,spacing:o.spacing||0});
-  return Object.assign(L(text,font,size,0,0,{weight:f.w[f.w.length-1]}),o,{size});
-}
-function stack(layers,gap=.12){ // zet lagen onder elkaar, gecentreerd
-  const hs=layers.map(l=>l.size*(poolOf(l.font)==="script"?.8:poolOf(l.font)==="hand"?.85:.98));
-  const total=hs.reduce((a,b)=>a+b,0)-hs.length*0+gap*0; let y=-total/2;
-  layers.forEach((l,i)=>{l.y=Math.round(y+hs[i]/2+(l.dy||0)); y+=hs[i]; delete l.dy}); return layers;
-}
-function splitWords(p){
-  const w=p.trim().split(/\s+/);
-  if(w.length===1) return [w[0]];
-  if(w.length===2) return w;
-  // splits ongeveer in het midden, maar houd kleine woorden (&, of, the) bij het volgende woord
-  let best=1,bd=1e9; for(let i=1;i<w.length;i++){const a=w.slice(0,i).join(" ").length,b=w.slice(i).join(" ").length;const d=Math.abs(a-b)+(/^(&|and|en|of|the|de|het|een|is|my|a)$/i.test(w[i-1])?6:0);if(d<bd){bd=d;best=i}}
-  return [w.slice(0,best).join(" "),w.slice(best).join(" ")];
-}
-const TEMPLATES={
-  // dikke kapitalen boven en onder, script met uitsparing in het midden (zoals 'More coffee please')
-  statementCut(p){const w=p.trim().split(/\s+/);if(w.length<3)return null;
-    const top=w[0],mid=w.slice(1,-1).join(" "),bot=w[w.length-1];const cf=pick(["Anton","Bebas Neue","Archivo Black"]);
-    const T=mkLayer(top,cf,{upper:true,max:340}),B=mkLayer(bot,cf,{upper:true,max:340});
-    const sz=Math.min(T.size,B.size);T.size=B.size=sz;T.y=-Math.round(sz*.48);B.y=Math.round(sz*.48);
-    const M=mkLayer(mid,pick(POOLS.signature.concat(["Yellowtail"])),{max:260,target:700,rotate:-4,cutout:14,y:0});return [T,B,M];},
-  // groovy 70s, gestapeld en schuin, met druppeltjes
-  groovy(p){const f=pick(POOLS.groovy);const parts=p.trim().split(/\s+/).length>=3?p.trim().split(/\s+/).slice(0,3):splitWords(p);
-    const ls=stack(parts.map((t,i)=>mkLayer(t,f,{max:240,rotate:-6,x:i%2?30:-30})));
-    if(Math.random()<.7){const a=ls[0];ls.unshift(O(pick(["drops","sparkles","sparkle"]),Math.round(a.size*.5),-Math.round(fitW(a)/2)+20,a.y-Math.round(a.size*.85),{rotate:-12}))}
-    return ls;},
-  // klassiek: THE + script + KAPITALEN
-  classicClub(p){let w=p.trim().split(/\s+/);let the=false;if(/^the$/i.test(w[0])&&w.length>=3){the=true;w=w.slice(1)}if(w.length<2)return null;
-    const cf=pick(["Bodoni Moda","Gloock","Playfair Display"]);const last=w.pop(),mid=w.join(" ");
-    const out=[];if(the)out.push(mkLayer("The",pick(POOLS.signature),{size:150,rotate:-8,x:-200}));
-    const M=mkLayer(mid,pick(POOLS.signature),{max:280,rotate:-8}),B=mkLayer(last,cf,{upper:true,max:230});
-    const ls=stack(the?[out[0],M,B]:[M,B]);return ls;},
-  // retro serif: groot zacht serif + italic accent rechts
-  retroSerif(p){const [a,b]=splitWords(p);const big=mkLayer(a,"Fraunces",{max:300,weight:900});if(!b)return [big];
-    const sm=mkLayer(b,"Fraunces",{max:Math.round(big.size*.5),target:420,weight:900,italic:true,color:"accent"});
-    stack([big,sm]);sm.x=Math.round(Math.min(200,fitW(big)/2-fitW(sm)/2));sm.y-=Math.round(sm.size*.15);
-    const out=[big,sm];if(Math.random()<.5)out.push(Object.assign(mkLayer("EST. 2026","Young Serif",{size:50,spacing:24}),{y:big.y-Math.round(big.size*.75)}));return out;},
-  // groot schrijfletter, gestapeld (zoals The Slow Mornings)
-  scriptStack(p){const sf=pick(POOLS.script);let parts=splitWords(p);let pre=null;
-    if(/^the\s/i.test(p)&&parts.length>1){pre="the";parts=splitWords(p.replace(/^the\s+/i,""));}
-    const ls=parts.map(t=>mkLayer(t,sf,{rotate:-6,max:270}));
-    if(pre){const top=ls[0];stack(ls);return [mkLayer("the",pick(POOLS.serif),{size:Math.round(top.size*.36),x:-Math.round(fitW(top)/2)-30,y:top.y}),...ls]}
-    return stack(ls);},
-  // schrijfletter + gespatieerde hoofdletters
-  scriptCaps(p){const [a,b]=splitWords(p);if(!b)return null;const sp=pick([30,45,60]);
-    return stack([mkLayer(a,pick(POOLS.script),{max:260,rotate:pick([0,-4])}),mkLayer(b,pick(POOLS.sans),{upper:true,spacing:sp,max:120,target:700})]);},
-  // dikke hoofdletters + handgeschreven accent (zoals Coffee Lovers club)
-  boldHand(p){const w=p.trim().split(/\s+/);if(w.length<2)return null;const last=w.pop();const bf=pick(POOLS.bold);
-    const lines=w.length>=2&&w.join(" ").length>9?splitWords(w.join(" ")):[w.join(" ")];
-    const big=lines.map(t=>mkLayer(t,bf,{upper:true,max:230,spacing:3}));
-    const acc=mkLayer(last,pick(POOLS.hand),{max:Math.round(big[0].size*.62),target:420,color:"accent",rotate:pick([-8,-10,-12]),dy:-10});
-    acc.x=Math.round(pick([0,40,80])); return stack([...big,acc]);},
-  // klein handgeschreven woordje boven, groot woord eronder
-  handTop(p){const [a,b]=splitWords(p);if(!b)return null;const big=mkLayer(b,pick([...POOLS.bold,"Bebas Neue","Anton"]),{upper:true,max:300});
-    const sm=mkLayer(a,pick(POOLS.hand),{max:Math.round(big.size*.6),target:420,color:"accent",rotate:-8});
-    stack([sm,big]);sm.y-=Math.round(sm.size*.2);sm.x=-Math.round(Math.min(220,fitW(big)/2-fitW(sm)/2));return [sm,big];},
-  // sierlijke serif cursief + kleine gespatieerde hoofdletters
-  serifClean(p){const [a,b]=splitWords(p);const f=pick(POOLS.serif);const ff=FONT_BY[f];
-    const top=mkLayer(a,f,{italic:!!ff.it,max:230,weight:ff.w[0]});if(!b)return [top];
-    return stack([top,mkLayer(b,pick(["DM Sans","Montserrat"]),{upper:true,spacing:pick([50,70]),max:90,target:650,color:pick(["main","accent"])})]);},
-  // één regel met boogje erboven
-  arch(p){const [a,b]=splitWords(p);if(!b)return null;const big=mkLayer(b,pick([...POOLS.script,...POOLS.bold]),{max:260,rotate:0});
-    const arc=mkLayer(a,pick(["DM Sans","Montserrat","Archivo Black"]),{upper:true,spacing:40,size:Math.round(Math.min(80,big.size*.32)),curve:pick([30,40]),color:"accent"});
-    stack([arc,big]);arc.y-=Math.round(arc.size*.9+20);return [arc,big];},
-  // volledig in dikke letters, gestapeld
-  boldStack(p){const bf=pick(POOLS.bold);const parts=splitWords(p);return stack(parts.map((t,i)=>mkLayer(t,bf,{upper:true,max:230,color:i===parts.length-1&&parts.length>1&&Math.random()<.5?"accent":"main"})));},
-  // handgeschreven met contour-woord
-  outline(p){const [a,b]=splitWords(p);if(!b)return null;const f=pick(POOLS.bold);
-    return stack([mkLayer(a,f,{upper:true,max:220}),mkLayer(b,f,{upper:true,max:220,style:"outline"})]);},
-};
-function fitW(l){const em=EMW[l.font]||EMW[poolOf(l.font)]||.5;return [...(l.upper?l.text.toUpperCase():l.text)].length*em*l.size}
-const STYLE_TPL={mix:Object.keys(TEMPLATES),script:["scriptStack","scriptCaps","serifClean","arch","classicClub"],bold:["boldHand","handTop","boldStack","outline","arch","groovy","statementCut"],clean:["scriptCaps","serifClean","handTop","arch","statementCut"],retro:["retroSerif","groovy","classicClub","statementCut"]};
-function generateFor(p,n,cat){
-  const names=[...STYLE_TPL[genStyle]].sort(()=>Math.random()-.5);const out=[];let i=0,guard=0;
-  while(out.length<n&&guard++<40){const fn=TEMPLATES[names[i++%names.length]];const layers=fn(p);if(!layers||!layers.length)continue;
-    const c=GEN_COLORS[genColor];out.push({id:uid(),pro:true,cat,name:p,colors:{main:c.main,accent:c.accent},shadow:0,texture:genStyle==="retro"?pick([0,20,30]):0,layers,seed:false,t:Date.now()+out.length});}
-  return out;
-}
-
-let aiN=4;
-(function setupGenerator(){
-  $("genColors").innerHTML=GEN_COLORS.map((c,i)=>`<button class="chip ${i===0?"on":""}" data-c="${i}"><span style="display:inline-block;width:12px;height:12px;border-radius:50%;background:${c.main};border:1px solid #777"></span><span style="display:inline-block;width:12px;height:12px;border-radius:50%;background:${c.accent}"></span>${c.n}</button>`).join("");
-  const pickOne=(id,attr,fn)=>$(id).addEventListener("click",e=>{const b=e.target.closest(`[${attr}]`);if(!b)return;fn(b.getAttribute(attr));$(id).querySelectorAll("button").forEach(x=>x.classList.toggle("on",x===b))});
-  pickOne("genColors","data-c",v=>genColor=+v);pickOne("genStyle","data-s",v=>genStyle=v);pickOne("genCount","data-n",v=>aiN=+v);
-  const inspire=list=>{$("genText").value=[...list].sort(()=>Math.random()-.5).slice(0,3).join("\n")};
-  $("genInspire").onclick=()=>{const c=$("genCat").value.trim();inspire(PHRASES[c]||PHRASES_EN)};
-  $("genGo").onclick=()=>{if(!isPro()){openPaywall("gen");return}
-    const lines=$("genText").value.split("\n").map(x=>x.trim()).filter(Boolean).slice(0,8),err=$("genErr");err.textContent="";
-    if(!lines.length){err.textContent="Type some text first, or tap 💡 Inspiration.";return}
-    $("genText").blur();
-    const cat=$("genCat").value.trim()||"New designs";const made=lines.flatMap(p=>generateFor(p,aiN,cat));
-    custom=[...made,...custom];if(isCustomCat(cat)&&!customCats.includes(cat))customCats.unshift(cat);saveLocal();
-    loadDesign(made[0]);activeCat=cat;renderLibrary();showTab("lib");toast(`${made.length} designs in ${cat}`);
-  };
-})();
-
 /* ---------------- Webapp (offline) ---------------- */
 if("serviceWorker" in navigator&&location.protocol==="https:"){window.addEventListener("load",()=>navigator.serviceWorker.register("/sw.js").catch(()=>{}))}
 
@@ -1279,7 +1176,7 @@ function proLabel(){return `<span class="proTag">${lockSvg()}PRO</span>`}
 function proRow(label){return `<button class="lockRow" data-pw="feature"><span>${label}</span>${proLabel()}</button>`}
 
 let pwPlan="yearly";
-const PW_REASON={save:"This design is part of Studio Typo Pro",gen:"The generator is part of Studio Typo Pro",feature:"This feature is part of Studio Typo Pro",orn:"This ornament is part of Studio Typo Pro"};
+const PW_REASON={save:"This design is part of Studio Typo Pro",feature:"This feature is part of Studio Typo Pro",orn:"This ornament is part of Studio Typo Pro"};
 function openPaywall(reason){
   const total=SEEDS.length,freeN=FREE_IDS.size;
   $("pwReason").textContent=PW_REASON[reason]||"";$("pwReason").classList.toggle("hidden",!PW_REASON[reason]);
@@ -1316,10 +1213,36 @@ $("pwSim").onchange=e=>{try{localStorage.setItem("typoStudio.simFree",e.target.c
   updateProUI();renderLibrary();if(tab==="edit")renderTool();toast(e.target.checked?"Showing the free version":"Pro unlocked")};
 function updateProUI(){
   const pro=isPro();$("proBtn").classList.toggle("isPro",pro);$("proBtnLabel").textContent=pro?"PRO":"GET PRO";
-  $("genLock").classList.toggle("hidden",pro);
 }
 
 /* ---------------- Start ---------------- */
+/* ---------------- Splash & onboarding ---------------- */
+let onbSeen=false;try{onbSeen=!!localStorage.getItem("typoStudio.onboarded")}catch(e){}
+function hideSplash(){$("splash").classList.add("out");setTimeout(()=>$("splash").remove(),500)}
+async function openOnb(){
+  $("onb").classList.remove("hidden");
+  const stack=$("onbStack");stack.innerHTML="";const pick=["cf4","xm1","tv1"].map(id=>SEEDS.find(d=>d.id===id)).filter(Boolean);
+  for(let i=0;i<pick.length;i++){const d=pick[i];await ensureFonts(d);const c=document.createElement("div");c.className="pwCard card c"+[1,0,2][i]+(d.cat==="Holidays"?" xmas":"");c.appendChild(drawExport(d,.2));stack.appendChild(c)}
+  startEditDemo();
+}
+let demoT=null;
+async function startEditDemo(){
+  const base=SEEDS.find(d=>d.id==="cf1")||SEEDS[0];
+  const steps=[d=>d,d=>{d.layers[0].text="";d.layers[1].text="Sunny";d.layers[2].text="Sundays";return d},
+    d=>{d.layers[0].text="";d.layers[1].text="Sunny";d.layers[2].text="Sundays";d.layers.forEach(l=>{if(l.font==="Yellowtail")l.font="Shrikhand"});return d},
+    d=>{d.layers[0].text="";d.layers[1].text="Sunny";d.layers[2].text="Sundays";d.layers.forEach(l=>{if(l.font==="Yellowtail")l.font="Shrikhand"});d.colors.main="#F6C445";return d},
+    d=>{d.layers[0].text="";d.layers[1].text="Sunny";d.layers[2].text="Sundays";d.layers.forEach(l=>{if(l.font==="Yellowtail")l.font="Shrikhand"});d.colors.main="#F6C445";d.layers.push(O("burst",140,330,-230,{color:"main"}));return d}];
+  const imgs=[];for(const f of steps){const d=f(clone(base));await ensureFonts(d);imgs.push(drawExport(d,.3))}
+  let k=0;const box=$("onbCanvas");const show=()=>{box.innerHTML="";box.appendChild(imgs[k]);document.querySelectorAll(".onbChips span").forEach((c,i)=>c.classList.toggle("on",i===Math.max(0,k-1)));k=(k+1)%imgs.length};
+  show();clearInterval(demoT);demoT=setInterval(show,1400);
+}
+function onbIndex(){const t=$("onbTrack");return Math.round(t.scrollLeft/t.clientWidth)}
+function onbGo(i){const t=$("onbTrack");t.scrollTo({left:i*t.clientWidth,behavior:"smooth"})}
+$("onbTrack").addEventListener("scroll",()=>{const i=onbIndex();document.querySelectorAll("#onbDots i").forEach((d,j)=>d.classList.toggle("on",j===i));$("onbNext").textContent=i===2?"Start creating":"Continue"},{passive:true});
+function closeOnb(){$("onb").classList.add("hidden");clearInterval(demoT);try{localStorage.setItem("typoStudio.onboarded","1")}catch(e){}}
+$("onbNext").onclick=()=>{const i=onbIndex();if(i<2)onbGo(i+1);else closeOnb()};
+$("onbSkip").onclick=closeOnb;
+$("onbHow").onclick=()=>{closeOnb();openHowto()};
 /* ---------------- How to ---------------- */
 function openHowto(){$("howto").classList.remove("hidden");$("howto").querySelector(".pwBox").scrollTop=0}
 function closeHowto(){$("howto").classList.add("hidden");try{localStorage.setItem("typoStudio.howto","1")}catch(e){}}
@@ -1327,7 +1250,7 @@ $("helpBtn").onclick=openHowto;$("htClose").onclick=closeHowto;$("htDone").oncli
 document.addEventListener("click",e=>{if(e.target.closest("[data-howto]")){$("modal").classList.add("hidden");openHowto()}});
 let firstSaveDone=false;try{firstSaveDone=!!localStorage.getItem("typoStudio.howto")}catch(e){}
 loadLocal();updateProUI();
-if(!firstSaveDone)setTimeout(openHowto,700);
+if(!onbSeen){openOnb();setTimeout(hideSplash,900)}else setTimeout(hideSplash,700);
 setDetent(0);setAppH();renderLibrary();
 document.fonts.ready.then(()=>{schedulePreview();renderLibrary()});
 </script>
