@@ -22,6 +22,10 @@ EVERY TEMPLATE IS EDITABLE
 • Change colours, size, spacing, rotation and arcs
 • Drag, pinch and rotate right on your photo
 
+LIVE DESIGNS
+• Designs that fill in today's day, date, time, temperature, weather and your city
+• Location is optional: type it in yourself or let the app look it up once
+
 LITTLE DETAILS, BIG DIFFERENCE
 • Ornaments: sparkles, hearts, drops, stars, swashes, coffee beans and more
 • Travel & holiday icons: suitcase, plane, ticket, snowflake, tree, turkey…
@@ -34,7 +38,7 @@ SEE IT BEFORE YOU POST
 • Share it directly to your favourite social apps
 
 COLLECTIONS
-Trending · Holidays · Thanksgiving · Morning · Weather · Coffee · Breakfast · Weekend · Travel · Vintage · Socials · Quotes & Notes · Cosy · Girly · Movie Night · Monthly · Camera · Viral · New Year
+Trending · Holidays · Live · Thanksgiving · Morning · Weather · Coffee · Breakfast · Weekend · Travel · Vintage · Socials · Quotes & Notes · Cosy · Girly · Movie Night · Monthly · Camera · Viral · New Year
 
 STUDIO TYPO PRO
 Start for free with a selection of designs and the full editor. Unlock every design, all seasonal collections, premium icons and effects with Studio Typo Pro – yearly (with a 7-day free trial) or once for life.
@@ -76,3 +80,8 @@ Studio Typo creates typography stickers as transparent PNG images. Tap a design 
 
 Weergavenaam voor beide: **Studio Typo Pro**
 Beschrijving: *Unlock every design, seasonal collections, premium icons and effects.*
+
+
+## App Privacy (App Store Connect) – update voor Live
+Data type: **Coarse Location** · Not linked to the user · Not used for tracking · Purpose: App Functionality.
+(De locatie gaat enkel van het toestel naar Open-Meteo en BigDataCloud en wordt nergens bewaard.)

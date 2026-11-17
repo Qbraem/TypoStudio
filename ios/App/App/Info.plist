@@ -26,6 +26,8 @@
 	<false/>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>Studio Typo uses your approximate location only to show your city and today's weather in Live designs. Your location is never stored.</string>
 	<key>NSPhotoLibraryAddUsageDescription</key>
 	<string>Studio Typo saves your designs as transparent PNG images to your photo library.</string>
 	<key>NSPhotoLibraryUsageDescription</key>

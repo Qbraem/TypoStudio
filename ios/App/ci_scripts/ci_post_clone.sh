@@ -11,11 +11,8 @@ brew install node
 cd "$CI_PRIMARY_REPOSITORY_PATH"
 
 echo "▸ npm-pakketten installeren…"
-if [ -f package-lock.json ]; then
-  npm ci --legacy-peer-deps
-else
-  npm install --legacy-peer-deps
-fi
+# npm install (niet npm ci): zo komen nieuwe plugins uit package.json altijd mee, ook als package-lock.json achterloopt
+npm install --legacy-peer-deps --no-audit --no-fund
 
 echo "▸ Web-app naar iOS kopiëren (cap sync)…"
 npx cap sync ios

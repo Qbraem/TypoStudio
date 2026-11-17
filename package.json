@@ -2,7 +2,7 @@
   "name": "studio-typo",
   "version": "1.0.0",
   "private": true,
-  "description": "Studio Typo – transparent typography PNGs for social Stories (web + iOS app)",
+  "description": "Studio Typo \u2013 transparent typography PNGs for social Stories (web + iOS app)",
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
@@ -10,7 +10,9 @@
     "ios:sync": "npx cap sync ios",
     "ios:open": "npx cap open ios"
   },
-  "engines": { "node": ">=18" },
+  "engines": {
+    "node": ">=18"
+  },
   "dependencies": {
     "@capacitor/core": "latest",
     "@capacitor/ios": "latest",
@@ -20,7 +22,8 @@
     "@capacitor/status-bar": "latest",
     "@capacitor/splash-screen": "latest",
     "@capacitor-community/media": "latest",
-    "@revenuecat/purchases-capacitor": "latest"
+    "@revenuecat/purchases-capacitor": "latest",
+    "@capacitor/geolocation": "latest"
   },
   "devDependencies": {
     "@capacitor/cli": "latest"
