@@ -18,7 +18,14 @@ echo "▸ Web-app naar iOS kopiëren (cap sync)…"
 npx cap sync ios
 
 echo "▸ Swift-pakketten opnieuw oplossen (Package.resolved bijwerken voor nieuwe plugins)…"
+# Xcode Cloud zet automatisch oplossen standaard uit; even toestaan zodat de lijst opnieuw gemaakt kan worden
+defaults delete com.apple.dt.Xcode IDEPackageOnlyUseVersionsFromResolvedFile 2>/dev/null || true
+defaults delete com.apple.dt.Xcode IDEDisableAutomaticPackageResolution 2>/dev/null || true
+defaults write com.apple.dt.Xcode IDEPackageOnlyUseVersionsFromResolvedFile -bool NO
+defaults write com.apple.dt.Xcode IDEDisableAutomaticPackageResolution -bool NO
 rm -f ios/App/App.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/Package.resolved
-xcodebuild -resolvePackageDependencies -project ios/App/App.xcodeproj -scheme App
+xcodebuild -resolvePackageDependencies -project ios/App/App.xcodeproj -scheme App -disableAutomaticPackageResolution=NO 2>/dev/null \
+  || xcodebuild -resolvePackageDependencies -project ios/App/App.xcodeproj -scheme App
+ls -la ios/App/App.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/ || true
 
 echo "✓ Klaar voor de build"

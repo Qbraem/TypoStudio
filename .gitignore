@@ -5,5 +5,3 @@ ios/App/Pods
 ios/App/App/public
 ios/DerivedData
 
-# opgelost door Xcode / Xcode Cloud bij elke build
-ios/App/App.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/Package.resolved
