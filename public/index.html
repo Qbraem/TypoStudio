@@ -108,6 +108,7 @@ button{cursor:pointer;touch-action:manipulation;-webkit-user-select:none;user-se
 .grpH{display:none}
 .grp:not(.act){display:none}
 .grp>.grpC>.secH:first-child{margin-top:6px}
+.grpHint{text-align:center;margin:6px 0 2px;color:var(--muted)}
 
 /* breed scherm: iPhone Duo ingeklapt (liggend), uitgeklapt liggend, iPad, computer
    -> foto links over de volle hoogte, paneel rechts */
@@ -327,18 +328,27 @@ input[type=range]::-moz-range-thumb{width:28px;height:28px;border-radius:50%;bac
 .proPill svg{width:15px;height:15px}
 .proPill.static{height:26px;padding:0 10px;font-size:11px;vertical-align:middle;box-shadow:none}
 .proTag{display:inline-flex;align-items:center;gap:3px;height:20px;padding:0 7px;border-radius:10px;background:rgba(20,14,10,.62);color:#F3D58A;font-size:10px;font-weight:800;letter-spacing:.6px;backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);border:1px solid rgba(243,213,138,.35)}
-.proTag svg{width:10px;height:10px}
+.proTag svg{width:11px;height:11px}
+.card .proTag,.ornBtn .proTag{width:22px;height:22px;padding:0;justify-content:center;border-radius:11px}
 .favBtn{position:absolute;bottom:2px;right:2px;width:26px;height:26px;border-radius:13px;display:flex;align-items:center;justify-content:center;color:rgba(255,255,255,.85);background:rgba(20,14,10,.35);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px)}
 .favBtn svg{width:14px;height:14px}.favBtn.on{color:#FF6B7F}
 .freeSw{gap:8px;padding:0 12px 0 8px}
 .freeSw .sw{width:34px;height:20px;border-radius:10px;background:#4a3a2e;position:relative;transition:background .2s;display:inline-block;flex:none}
 .freeSw .sw i{position:absolute;top:2px;left:2px;width:16px;height:16px;border-radius:8px;background:#fff;transition:left .2s}
 .freeSw.on{background:var(--panel2);color:var(--text);border-color:#6FCF97}.freeSw.on .sw{background:#4CB782}.freeSw.on .sw i{left:16px}
+/* categorierij: compacter */
+#cats .chip{min-height:32px;padding:0 11px;font-size:13px;border-radius:16px;gap:5px}
+#cats .catIco{width:14px;height:14px}
+#cats .freeSw{gap:6px;padding:0 10px 0 6px}
+#cats .freeSw .sw{width:26px;height:16px;border-radius:8px}
+#cats .freeSw .sw i{top:2px;left:2px;width:12px;height:12px;border-radius:6px}
+#cats .freeSw.on .sw i{left:12px}
+#cats .favChip{padding:0 10px}#cats .favChip svg{width:14px;height:14px}#cats .favChip span{font-size:12px}
 .favChip{color:#FF6B7F;gap:5px;padding:0 13px}.favChip svg{width:17px;height:17px}.favChip span{font-size:13px;color:var(--text)}
 .favChip.on{background:#FF6B7F;border-color:#FF6B7F;color:#fff}.favChip.on span{color:#fff}
 .favEmpty{display:flex;flex-direction:column;align-items:center;gap:6px;padding:26px 10px}.favEmpty svg{width:30px;height:30px;color:#FF6B7F}.favEmpty b{color:var(--text);font-size:16px}
 .card .proTag{position:absolute;top:6px;left:6px}
-.ornBtn{position:relative}.ornBtn .proTag{position:absolute;top:3px;right:3px;height:16px;padding:0 5px;font-size:8px}
+.ornBtn{position:relative}.ornBtn .proTag{position:absolute;top:3px;right:3px;width:18px;height:18px}
 .lockRow{width:100%;display:flex;justify-content:space-between;align-items:center;min-height:44px;background:none;border:0;border-bottom:1px dashed var(--line);color:var(--muted);font-size:14px;padding:0}
 .glIcon{width:44px;height:44px;border-radius:22px;background:linear-gradient(135deg,#F6DE9C,#C9963A)}
 .pwBtn{margin-top:4px;height:44px;padding:0 22px;border:0;border-radius:22px;background:linear-gradient(135deg,#F6DE9C,#C9963A);color:#3a2408;font-weight:800;font-size:15px}
@@ -939,6 +949,8 @@ let custom=[], customCats=[];
 const START_DESIGN=SEEDS.find(d=>d.id==="wk1")||SEEDS[0];
 let cur=clone(START_DESIGN), curSourceId=START_DESIGN.id;
 let activeCat="Suggestions", tab="lib", tool="text", sel=0, fontGroup="All";
+/* bij het openen van een ontwerp: eerste tekstlaag kiezen, niet een ornament */
+function firstTextLayer(){const i=(cur&&cur.layers||[]).findIndex(l=>l.kind!=="shape");return i<0?0:i}
 let hist=[];
 const $=id=>document.getElementById(id);
 function clone(o){return JSON.parse(JSON.stringify(o))}
@@ -1244,14 +1256,14 @@ function showTab(t){
   ["lib","edit"].forEach(x=>$("tab-"+x).classList.toggle("hidden",x!==t));
   $("undoBtn").classList.toggle("hidden",t!=="edit");
   $("sheetBody").scrollTop=0;syncNav();
-  if(t==="edit"){if(!layer())sel=0;view={...VIEW0};layoutSticker();renderLayerChips();renderTool();showCoach()}
+  if(t==="edit"){if(!layer())sel=firstTextLayer();toolGrp=null;view={...VIEW0};layoutSticker();renderLayerChips();renderTool();showCoach()}
   schedulePreview(true);
 }
 $("tabs").addEventListener("click",e=>{const b=e.target.closest("button");if(!b)return;if(b.dataset.gk){setToolGrp(b.dataset.gk);return}if(b.dataset.tab)showTab(b.dataset.tab)});
 
 /* ---------------- Bibliotheek ---------------- */
 let thumbJob=0;
-function loadDesign(d){const onPhoto=document.querySelector("#bgRow .bgBtn.on[data-photo]");if(onPhoto){if(d.cat==="Holidays"&&onPhoto.dataset.photo!=="xmas")setPhoto("xmas");else if(d.cat!=="Holidays"&&onPhoto.dataset.photo==="xmas")setPhoto("golden")}cur=clone(d);curSourceId=d.id;sel=0;hist=[];updUndo();schedulePreview()}
+function loadDesign(d){const onPhoto=document.querySelector("#bgRow .bgBtn.on[data-photo]");if(onPhoto){if(d.cat==="Holidays"&&onPhoto.dataset.photo!=="xmas")setPhoto("xmas");else if(d.cat!=="Holidays"&&onPhoto.dataset.photo==="xmas")setPhoto("golden")}cur=clone(d);curSourceId=d.id;sel=firstTextLayer();toolGrp=null;hist=[];updUndo();schedulePreview()}
 /* ---------------- Favourites & suggestions ---------------- */
 let freeOnly=false;try{freeOnly=localStorage.getItem("typoStudio.freeOnly")==="1"}catch(e){}
 let favs=new Set();try{favs=new Set(JSON.parse(localStorage.getItem("typoStudio.favs")||"[]"))}catch(e){}
@@ -1292,7 +1304,7 @@ function renderLibrary(){
   mk("All","All");if(custom.length)mk("★ My designs","★");
   const now=new Date(),m=now.getMonth(),tgDay=(()=>{const f=new Date(now.getFullYear(),10,1);return 1+((11-f.getDay())%7)+21})();
   const tgSeason=m===9||(m===10&&now.getDate()<=tgDay);
-  let cl=allCats();if(!tgSeason)cl=[...cl.filter(c=>c!=="Thanksgiving"),"Thanksgiving"];
+  const cl=allCats().sort((a,b)=>a.localeCompare(b,"en",{sensitivity:"base",numeric:true}));
   cl.forEach(c=>mk(c+(isCustomCat(c)?" ★":""),c));
 
   let list=allDesigns();if(activeCat==="★")list=custom;else if(activeCat==="Suggestions")list=suggestions();else if(activeCat==="♥")list=list.filter(d=>favs.has(d.id));else if(activeCat!=="All")list=list.filter(d=>d.cat===activeCat);
@@ -1363,7 +1375,7 @@ function alignSvg(a){const L={left:[[4,20],[4,16],[4,20],[4,13]],center:[[4,20],
 function sec(t,k){return k?`<!--G:${k}:${t}-->`:`<div class="secH">${t}</div>`}
 /* gereedschap-groepen: onderaan als toolbar (staand) of inklapbaar rechts (breed) */
 const WIDE=matchMedia("(min-aspect-ratio: 1/1), (min-width: 900px)");
-let toolGrp="text";const openGrps=new Set(["text","font"]);
+let toolGrp=null;const openGrps=new Set();
 const GRP_IC={text:'<path d="M4 6.5h12M10 6.5V19M18.5 9.5V19"/>',font:'<path d="M3.5 18L8.5 5h1L14.5 18M5.5 13.5h7"/><path d="M20.5 18v-5.2a2.8 2.8 0 0 0-5.3-1.2M20.5 15.2c-3-.6-5.5 0-5.5 1.6 0 2 4 1.9 5.5-.3"/>',
   orn:'<path d="M12 3.5l2 5.5 5.5 2-5.5 2-2 5.5-2-5.5-5.5-2 5.5-2z"/>',size:'<path d="M12 3v18M3 12h18M9 6l3-3 3 3M9 18l3 3 3-3M6 9l-3 3 3 3M18 9l3 3-3 3"/>',
   style:'<path d="M5 19L15.5 8.5M14 5l1-2 1 2 2 1-2 1-1 2-1-2-2-1zM19 12l.7-1.3L21 10l-1.3-.7L19 8l-.7 1.3L17 10l1.3.7z"/>',
@@ -1375,17 +1387,17 @@ function buildGroups(h,isShape){
   const parts=h.split(/<!--G:(\w+):(.*?)-->/),groups=[];
   for(let i=1;i<parts.length;i+=3){const k=parts[i],t=parts[i+1],c=parts[i+2],g=groups.find(x=>x.k===k);
     if(g)g.c+=`<div class="secH">${t}</div>`+c;else groups.push({k,t,c})}
-  if(!groups.some(g=>g.k===toolGrp))toolGrp=groups.length?groups[0].k:"text";
+  if(toolGrp&&!groups.some(g=>g.k===toolGrp))toolGrp=null;
   const wide=WIDE.matches;
-  const out=parts[0]+groups.map(g=>{const ic=g.k==="text"&&isShape?"orn":g.k;
+  const out=parts[0]+(!wide&&!toolGrp&&groups.length?'<div class="hint grpHint">Tap a tool below to start editing.</div>':'')+groups.map(g=>{const ic=g.k==="text"&&isShape?"orn":g.k;
     const cls=wide?(openGrps.has(g.k)?"":" closed"):(g.k===toolGrp?" act":"");
     return `<section class="grp${cls}" data-grp="${g.k}"><button class="grpH" data-gh="${g.k}">${icon(ic)}<span>${g.t}</span><svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></button><div class="grpC">${g.c}</div></section>`}).join("");
   $("toolNav").innerHTML=`<button class="back" data-tab="lib" aria-label="Library"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><rect x="3" y="3" width="7.5" height="7.5" rx="2"/><rect x="13.5" y="3" width="7.5" height="7.5" rx="2"/><rect x="3" y="13.5" width="7.5" height="7.5" rx="2"/><rect x="13.5" y="13.5" width="7.5" height="7.5" rx="2"/></svg>Library</button>`
     +groups.map(g=>`<button data-gk="${g.k}" class="${g.k===toolGrp?"on":""}">${icon(g.k==="text"&&isShape?"orn":g.k)}${g.k==="text"&&isShape?"Ornament":GRP_NAME[g.k]}</button>`).join("");
   return out;
 }
-function setToolGrp(k){toolGrp=k;document.querySelectorAll("#toolBody .grp").forEach(g=>g.classList.toggle("act",g.dataset.grp===k));
-  document.querySelectorAll("#toolNav [data-gk]").forEach(b=>b.classList.toggle("on",b.dataset.gk===k));$("sheetBody").scrollTop=0;
+function setToolGrp(k){if(k===toolGrp&&!WIDE.matches)k=null;toolGrp=k;document.querySelectorAll("#toolBody .grp").forEach(g=>g.classList.toggle("act",g.dataset.grp===k));
+  document.querySelectorAll("#toolNav [data-gk]").forEach(b=>b.classList.toggle("on",b.dataset.gk===k));const gh=document.querySelector(".grpHint");if(gh)gh.style.display=k?"none":"";$("sheetBody").scrollTop=0;
   if(k==="font"){const f=document.querySelector(".fontBtn.on"),r=$("fontRow");if(f&&r)r.scrollLeft=f.offsetLeft-r.offsetLeft-(r.clientWidth-f.clientWidth)/2}}
 function syncNav(){const on=tab==="edit"&&!WIDE.matches;$("tabs").classList.toggle("editBar",on);document.querySelector(".shell").classList.toggle("editBar",on);requestAnimationFrame(()=>{fitStage();layoutSticker()})}
 WIDE.addEventListener("change",()=>{syncNav();if(tab==="edit")renderTool()});
@@ -1618,7 +1630,7 @@ function simFree(){try{return localStorage.getItem("typoStudio.simFree")==="1"}c
 function isPro(){return NATIVE?nativePro:!simFree()}
 function lockSvg(){return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="10" rx="2.5"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>'}
 function crownSvg(){return '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M3 8.5l4.5 3.5L12 5l4.5 7L21 8.5 19 18H5z"/><rect x="5" y="19.2" width="14" height="2" rx="1"/></svg>'}
-function proLabel(){return `<span class="proTag">${lockSvg()}PRO</span>`}
+function proLabel(){return `<span class="proTag" aria-label="Pro" title="Pro">${lockSvg()}</span>`}
 function proRow(label){return `<button class="lockRow" data-pw="feature"><span>${label}</span>${proLabel()}</button>`}
 
 let pwPlan="yearly";
