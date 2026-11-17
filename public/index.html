@@ -459,6 +459,30 @@ input[type=range]::-moz-range-thumb{width:28px;height:28px;border-radius:50%;bac
   .htTip{margin-top:14px}
   .htHead h2{font-size:36px}
 }
+
+/* ---------- Na het bewaren: volgende stappen ---------- */
+.asWrap{position:fixed;inset:0;z-index:55;background:rgba(0,0,0,.55);display:flex;align-items:flex-end;justify-content:center}
+.asWrap.hidden{display:none}
+.asBox{width:100%;max-width:520px;max-height:100%;overflow-y:auto;box-sizing:border-box;background:var(--panel);border-radius:24px 24px 0 0;padding:22px calc(20px + var(--sarL,0px)) calc(16px + var(--sab)) calc(20px + var(--sal));box-shadow:0 -12px 40px rgba(0,0,0,.5);animation:asUp .28s ease-out}
+@keyframes asUp{from{transform:translateY(40px);opacity:0}}
+@media (min-width:700px) and (min-height:560px){.asWrap{align-items:center}.asBox{border-radius:24px;padding-bottom:18px}}
+.asHead{display:flex;align-items:center;gap:14px}
+.asHead b{display:block;font-size:19px;font-weight:800}.asHead span{display:block;font-size:13px;color:var(--muted);margin-top:2px}
+.asThumb{width:66px;height:66px;flex:none;border-radius:14px;border:1px solid var(--line);background:#3a2b20 conic-gradient(#4a382b 25%,#3a2b20 0 50%,#4a382b 0 75%,#3a2b20 0) 0 0/14px 14px;display:flex;align-items:center;justify-content:center;overflow:hidden}
+.asThumb img{max-width:88%;max-height:88%;object-fit:contain}
+.asNow{margin:18px 0 8px;font-size:12px;font-weight:800;letter-spacing:1.4px;text-transform:uppercase;color:var(--accent2)}
+.asSteps{list-style:none;margin:0;padding:0;display:grid;gap:8px}
+.asSteps li{display:flex;gap:12px;align-items:flex-start;background:var(--panel2);border:1px solid var(--line);border-radius:14px;padding:11px 12px}
+.asSteps .n{width:24px;height:24px;border-radius:12px;background:var(--accent);color:#fff;font-style:normal;font-weight:800;font-size:13px;display:flex;align-items:center;justify-content:center;flex:none;margin-top:1px}
+.asSteps b{display:block;font-size:14.5px}.asSteps span{display:block;font-size:13px;color:var(--muted);line-height:1.35;margin-top:2px}.asSteps em{font-style:normal;color:var(--text);font-weight:600}
+.asSteps b .stk{display:inline-block;width:13px;height:13px;vertical-align:-2px;margin:0 0 0 4px}
+.asBtns{display:flex;gap:10px;margin-top:16px}
+.asIg{flex:1;height:52px;font-size:16px;display:flex;align-items:center;justify-content:center;gap:8px;background:linear-gradient(135deg,#F58529,#DD2A7B 55%,#8134AF);color:#fff;box-shadow:0 8px 24px rgba(221,42,123,.3)}
+.asIg svg{width:20px;height:20px}
+.asGhost{flex:none;height:52px;padding:0 22px;border-radius:26px;border:1px solid var(--line);background:var(--panel2);color:var(--text);font-weight:700;font-size:15px}
+.asFoot{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:12px;font-size:13px;color:var(--muted)}
+.asOff{display:flex;align-items:center;gap:7px}.asOff input{width:16px;height:16px;accent-color:var(--accent)}
+.asLink{border:0;background:none;color:var(--accent2);font-weight:700;font-size:13px;padding:6px 0}
 </style>
 </head>
 <body>
@@ -553,6 +577,28 @@ input[type=range]::-moz-range-thumb{width:28px;height:28px;border-radius:50%;bac
     </section>
   </div>
   <div class="onbFoot"><div class="onbDots" id="onbDots"><i class="on"></i><i></i><i></i></div><button class="pwCta" id="onbNext">Continue</button><button class="htLink" id="onbHow">How does it work?</button></div>
+</div>
+<div class="asWrap hidden" id="afterSave" role="dialog" aria-modal="true" aria-labelledby="asTitle">
+  <div class="asBox">
+    <div class="asHead">
+      <div class="asThumb"><img id="asImg" alt=""></div>
+      <div><b id="asTitle">Saved to Photos ✓</b><span>A transparent PNG: only the letters, no background.</span></div>
+    </div>
+    <div class="asNow">Now add it to your Story</div>
+    <ol class="asSteps">
+      <li><i class="n">1</i><div><b>Open a Story in Instagram</b><span>Tap <em>+</em> → <em>Story</em> and pick the photo you want to post.</span></div></li>
+      <li><i class="n">2</i><div><b>Tap the sticker icon <span class="stk"></span></b><span>Choose <em>Photo</em> and select your PNG: it's the newest one in your Photos.</span></div></li>
+      <li><i class="n">3</i><div><b>Place it and share</b><span>Pinch to resize, twist to rotate, drag to move. Done!</span></div></li>
+    </ol>
+    <div class="asBtns">
+      <button class="pwCta asIg" id="asOpenIg"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4.2"/><circle cx="17.4" cy="6.6" r="1.1" fill="currentColor" stroke="none"/></svg>Open Instagram</button>
+      <button class="asGhost" id="asDone">Done</button>
+    </div>
+    <div class="asFoot">
+      <label class="asOff"><input type="checkbox" id="asOff"> Don't show after saving</label>
+      <button class="asLink" id="asGuide">Full guide →</button>
+    </div>
+  </div>
 </div>
 <div class="paywall hidden" id="howto" role="dialog" aria-modal="true" aria-labelledby="htTitle">
   <div class="pwBox htBox">
@@ -1232,7 +1278,7 @@ function hideCoach(){const c=$("coach");if(c.classList.contains("hidden"))return
 const PHOTO_CREDIT={sunset:"myx100vi",xmas:"myx100vi",pool:"myx100vi",golden:"myx100vi",agave:"myx100vi",pier:"max.on.the.moveee"};
 function setCredit(photo){const h=PHOTO_CREDIT[photo];$("credit").classList.toggle("hidden",!h);if(h){$("credit").href=`https://www.instagram.com/${h}/`;$("creditName").textContent="© "+h}}
 function setPhoto(photo){const b=document.querySelector(`#bgRow [data-photo="${photo}"]`);if(b)b.click()}
-let igOn=true;try{igOn=localStorage.getItem("typoStudio.ig")!=="0"}catch(e){}
+let igOn=false;try{igOn=localStorage.getItem("typoStudio.ig")==="1"}catch(e){}
 function applyIg(){$("stage").classList.toggle("ig",igOn);if(typeof schedulePreview==="function")requestAnimationFrame(()=>schedulePreview(true));$("igToggle").classList.toggle("on",igOn);$("igToggle").setAttribute("aria-pressed",igOn)}
 $("igToggle").addEventListener("click",e=>{e.stopPropagation();igOn=!igOn;try{localStorage.setItem("typoStudio.ig",igOn?"1":"0")}catch(err){}applyIg();toast(igOn?"Story layout on":"Story layout off")});
 applyIg();
@@ -1521,10 +1567,9 @@ function pngFile(ex){return new File([ex.blob],fileName(),{type:"image/png"})}
 function canShare(ex){try{return !!(navigator.canShare&&navigator.canShare({files:[pngFile(ex)]}))}catch(e){return false}}
 async function shareOrDownload(ex){
   markUsed(cur);
-  if(NATIVE)return nativeSave(ex);
-  setTimeout(()=>{let seen=true;try{seen=!!localStorage.getItem("typoStudio.howtoSaved")}catch(e){}if(!seen){try{localStorage.setItem("typoStudio.howtoSaved","1")}catch(e){}openHowto()}},900);
-  if(canShare(ex)){try{await navigator.share({files:[pngFile(ex)]});return true}catch(e){if(e&&e.name==="AbortError")return true;return false}}
-  const a=document.createElement("a");a.href=ex.url;a.download=fileName();document.body.appendChild(a);a.click();a.remove();toast("PNG downloaded ✓");return true;
+  if(NATIVE){const ok=await nativeSave(ex);if(ok)afterSave(ex,"Saved to Photos ✓");return ok}
+  if(canShare(ex)){try{await navigator.share({files:[pngFile(ex)]});afterSave(ex,"Your PNG is ready ✓");return true}catch(e){if(e&&e.name==="AbortError")return true;return false}}
+  const a=document.createElement("a");a.href=ex.url;a.download=fileName();document.body.appendChild(a);a.click();a.remove();afterSave(ex,"PNG downloaded ✓");return true;
 }
 $("saveImgBtn").onclick=async()=>{
   if(!canUse()&&cur.pro){openPaywall("save");return}
@@ -1707,6 +1752,20 @@ $("onbNext").onclick=()=>{const i=onbIndex();if(i<2)onbGo(i+1);else closeOnb()};
 $("onbSkip").onclick=closeOnb;
 $("onbHow").onclick=()=>{closeOnb();openHowto()};
 /* ---------------- How to ---------------- */
+/* na elk bewaren: korte uitleg hoe je de PNG in je Story zet */
+function afterSave(ex,title){
+  let off=false;try{off=localStorage.getItem("typoStudio.afterSaveOff")==="1"}catch(e){}
+  if(off){toast(title);return}
+  $("asTitle").textContent=title;$("asImg").src=ex.url;$("asOff").checked=false;
+  setTimeout(()=>$("afterSave").classList.remove("hidden"),NATIVE?250:400);
+}
+function closeAfterSave(){$("afterSave").classList.add("hidden");try{localStorage.setItem("typoStudio.afterSaveOff",$("asOff").checked?"1":"0")}catch(e){}}
+$("asDone").onclick=closeAfterSave;
+$("afterSave").addEventListener("click",e=>{if(e.target.id==="afterSave")closeAfterSave()});
+$("asGuide").onclick=()=>{closeAfterSave();openHowto()};
+$("asOpenIg").onclick=()=>{closeAfterSave();if(NATIVE)window.location.href="instagram://story-camera";else window.open("https://www.instagram.com/","_blank","noopener")};
+/* iOS-app bewaart rechtstreeks in Foto's: uitleg daarop afstemmen */
+if(NATIVE){const s2=document.querySelector(".htSteps li:nth-child(2) .htText span");if(s2)s2.innerHTML='Tap <em class="kbd">Save</em>: the PNG goes straight to your Photos. It\'s transparent: only the letters, no background.';const tip=document.querySelector(".htTip");if(tip)tip.style.display="none"}
 function openHowto(){$("howto").classList.remove("hidden");$("howto").querySelector(".pwBox").scrollTop=0}
 function closeHowto(){$("howto").classList.add("hidden");try{localStorage.setItem("typoStudio.howto","1")}catch(e){}}
 $("helpBtn").onclick=openHowto;$("htClose").onclick=closeHowto;$("htDone").onclick=closeHowto;
