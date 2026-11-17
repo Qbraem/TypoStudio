@@ -17,4 +17,8 @@ npm install --legacy-peer-deps --no-audit --no-fund
 echo "▸ Web-app naar iOS kopiëren (cap sync)…"
 npx cap sync ios
 
+echo "▸ Swift-pakketten opnieuw oplossen (Package.resolved bijwerken voor nieuwe plugins)…"
+rm -f ios/App/App.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/Package.resolved
+xcodebuild -resolvePackageDependencies -project ios/App/App.xcodeproj -scheme App
+
 echo "✓ Klaar voor de build"
