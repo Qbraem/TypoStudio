@@ -34,7 +34,7 @@ SEE IT BEFORE YOU POST
 • Share it directly to your favourite social apps
 
 COLLECTIONS
-Trending · Holidays · Thanksgiving · Morning · Weather · Coffee · Breakfast · Weekend · Travel · Vintage · Socials · Quotes & Notes · Cosy · Girly · Movie Night · Monthly · Camera · Viral · 2026
+Trending · Holidays · Thanksgiving · Morning · Weather · Coffee · Breakfast · Weekend · Travel · Vintage · Socials · Quotes & Notes · Cosy · Girly · Movie Night · Monthly · Camera · Viral · New Year
 
 STUDIO TYPO PRO
 Start for free with a selection of designs and the full editor. Unlock every design, all seasonal collections, premium icons and effects with Studio Typo Pro – yearly (with a 7-day free trial) or once for life.
