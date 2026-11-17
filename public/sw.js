@@ -1,5 +1,5 @@
 // Typo Studio service worker: app werkt ook offline
-const VERSION = "typo-v61";
+const VERSION = "typo-v62";
 const SHELL = ["/", "/fonts/fonts.css", "/manifest.webmanifest", "/icons/icon-192.png", "/icons/icon-512.png", "/icons/apple-touch-icon.png",
   "/img/bg-sunset.jpg", "/img/bg-pier.jpg", "/img/th-sunset.jpg", "/img/th-pier.jpg", "/img/bg-xmas.jpg", "/img/th-xmas.jpg", "/img/bg-pool.jpg", "/img/th-pool.jpg", "/img/bg-golden.jpg", "/img/th-golden.jpg", "/img/bg-agave.jpg", "/img/th-agave.jpg"];
 

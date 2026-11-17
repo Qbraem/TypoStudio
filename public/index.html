@@ -503,6 +503,10 @@ input[type=range]::-moz-range-thumb{width:28px;height:28px;border-radius:50%;bac
 .lvGrid .lvWide{grid-column:1/3}
 .lvGrid select.inp{appearance:none;-webkit-appearance:none}
 .lvUnitTgl{display:block;margin:10px auto 0}
+#liveSheet.kb{align-items:flex-start;padding-top:calc(var(--vvt,0px) + max(var(--sat),10px));height:var(--vvh,100%);bottom:auto}
+#liveSheet.kb .asBox{max-height:calc(var(--vvh,100vh) - max(var(--sat),10px) - 10px);border-radius:22px;padding-bottom:16px}
+#liveSheet.kb .asHead,#liveSheet.kb .lvAuto,#liveSheet.kb .lvNote,#liveSheet.kb .lvUnitTgl{display:none}
+#liveSheet.kb .asNow{margin-top:2px}
 
 /* iOS meldt op het binnenscherm van de iPhone Duo (liggend) soms geen bovenmarge, terwijl de statusbalk (klok, batterij) er wel staat.
    In de app houden we daarom altijd minstens die ruimte vrij bovenaan. */
@@ -618,8 +622,8 @@ input[type=range]::-moz-range-thumb{width:28px;height:28px;border-radius:50%;bac
     <p class="lvNote">Your location is only used once to look up your city and the current weather. It's never stored or shared with us.</p>
     <div class="asNow">Or type it in</div>
     <div class="lvGrid">
-      <label>City<input class="inp" id="lvCity" placeholder="e.g. Ghent" maxlength="28" autocomplete="off"></label>
-      <label><span>Temp <i id="lvUnit" style="font-style:normal">°C</i></span><input class="inp" id="lvTemp" inputmode="numeric" placeholder="14" maxlength="4"></label>
+      <label>City<input class="inp" id="lvCity" placeholder="e.g. Ghent" maxlength="28" autocomplete="off" autocorrect="off" enterkeyhint="next"></label>
+      <label><span>Temp <i id="lvUnit" style="font-style:normal">°C</i></span><input class="inp" id="lvTemp" inputmode="decimal" placeholder="14" maxlength="4" enterkeyhint="done"></label>
       <label class="lvWide">Weather<select class="inp" id="lvCond"><option value="0">☀️ Sunny</option><option value="2">⛅ Partly cloudy</option><option value="3">☁️ Cloudy</option><option value="61">🌧️ Rainy</option><option value="71">❄️ Snowy</option><option value="96">🧊 Hail</option><option value="95">⚡ Stormy</option><option value="45">🌫️ Foggy</option></select></label>
     </div>
     <div class="asBtns"><button class="pwCta" id="lvSave" style="flex:1;height:50px;font-size:16px">Use these details</button><button class="asGhost" id="lvClose">Cancel</button></div>
@@ -1704,7 +1708,8 @@ async function refreshLive(){
     fetch(`https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${la}&longitude=${lo}&localityLanguage=en`).then(r=>r.json()).catch(()=>({}))]);
   if(w&&w.current){const c=w.current;LIVE.temp=c.temperature_2m;LIVE.code=c.weather_code;LIVE.feels=c.apparent_temperature;LIVE.hum=c.relative_humidity_2m;LIVE.wind=c.wind_speed_10m}
   if(w&&w.daily){LIVE.hi=w.daily.temperature_2m_max[0];LIVE.lo=w.daily.temperature_2m_min[0]}
-  const city=g.city||g.locality||g.principalSubdivision;if(city)LIVE.city=city;if(g.countryName)LIVE.country=g.countryName;
+  const clean=x=>(x||"").replace(/^(Arrondissement|District|Province of|Provincie|Municipality of|Gemeente|City of|Ville de|Kreis|Landkreis)\s+/i,"").replace(/\s*\(.*?\)\s*$/,"").trim();
+  const city=clean(g.city)||clean(g.locality)||clean(g.principalSubdivision);if(city)LIVE.city=city;if(g.countryName)LIVE.country=g.countryName;
   LIVE.ts=Date.now();LIVE.manual=false;saveLive();
 }
 function liveStatus(){const v=liveVals();return LIVE.ts?`${LIVE.city||"Your City"} · ${v.temp}`:"Add your location"}
@@ -1715,7 +1720,13 @@ function openLive(){if(!needsPlace(cur)){toast("Day, date and time fill in autom
   $("lvCond").value=String(LIVE.code==null?0:LIVE.code);$("lvUnit").textContent="°"+liveUnit();
   $("lvAuto").textContent=LIVE.ts&&!LIVE.manual?"Update with my location":"Use my location";
   $("liveSheet").classList.remove("hidden")}
-function closeLive(){$("liveSheet").classList.add("hidden")}
+function closeLive(){$("liveSheet").classList.add("hidden");$("liveSheet").classList.remove("kb");document.activeElement&&document.activeElement.blur&&document.activeElement.blur()}
+/* toetsenbord open: paneel bovenaan, compact, en nooit onder het toetsenbord */
+(function(){const sh=$("liveSheet"),vv=window.visualViewport;
+  const fit=()=>{if(!vv)return;sh.style.setProperty("--vvh",vv.height+"px");sh.style.setProperty("--vvt",vv.offsetTop+"px")};
+  sh.addEventListener("focusin",e=>{if(e.target.matches("input,select")){sh.classList.add("kb");fit();setTimeout(()=>{fit();e.target.scrollIntoView({block:"center"})},350)}});
+  sh.addEventListener("focusout",()=>setTimeout(()=>{if(!sh.contains(document.activeElement))sh.classList.remove("kb")},120));
+  vv&&vv.addEventListener("resize",fit);vv&&vv.addEventListener("scroll",fit)})();
 async function liveAuto(){const b=$("lvAuto"),t=b.textContent;b.disabled=true;b.textContent="Finding you…";
   try{await refreshLive();closeLive();schedulePreview(true);renderLibrary();renderLayerChips&&tab==="edit"&&renderLayerChips();updateLivePill();hapt&&hapt("LIGHT");toast(`📍 ${LIVE.city||"Location"} · ${liveVals().temp}`)}
   catch(e){toast(String(e.message)==="denied"?"Location is off. You can type it in below, or allow it in Settings.":"Couldn't get your location. Type it in below.")}
@@ -1941,7 +1952,7 @@ function afterSave(ex,title){
 function closeAfterSave(){$("afterSave").classList.add("hidden");try{localStorage.setItem("typoStudio.afterSaveOff",$("asOff").checked?"1":"0")}catch(e){}}
 $("asDone").onclick=closeAfterSave;
 $("livePill").onclick=e=>{e.stopPropagation();openLive()};
-$("lvAuto").onclick=liveAuto;$("lvSave").onclick=liveManual;$("lvClose").onclick=closeLive;
+$("lvAuto").onclick=liveAuto;$("lvCity").addEventListener("keydown",e=>{if(e.key==="Enter"){e.preventDefault();$("lvTemp").focus()}});$("lvTemp").addEventListener("keydown",e=>{if(e.key==="Enter"){e.preventDefault();liveManual()}});$("lvSave").onclick=liveManual;$("lvClose").onclick=closeLive;
 $("liveSheet").addEventListener("click",e=>{if(e.target.id==="liveSheet")closeLive()});
 $("lvUnitTgl").onclick=()=>{LIVE.unit=liveUnit()==="C"?"F":"C";saveLive();$("lvUnit").textContent="°"+LIVE.unit;schedulePreview(true);updateLivePill()};
 $("afterSave").addEventListener("click",e=>{if(e.target.id==="afterSave")closeAfterSave()});
