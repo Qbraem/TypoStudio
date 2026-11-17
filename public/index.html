@@ -1093,7 +1093,11 @@ function clone(o){return JSON.parse(JSON.stringify(o))}
 function uid(){return "d"+Date.now().toString(36)+Math.random().toString(36).slice(2,7)}
 function esc(s){return String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
 function toast(t){const e=$("toast");e.textContent=t;e.classList.add("show");clearTimeout(toast._t);toast._t=setTimeout(()=>e.classList.remove("show"),1900)}
-function allDesigns(){return [...custom,...SEEDS]}
+/* Thanksgiving (4de donderdag van november) is enkel zichtbaar van 1 oktober tot 2 dagen erna */
+function thanksgivingDate(y){const f=new Date(y,10,1);return new Date(y,10,1+((11-f.getDay())%7)+21)}
+function thanksgivingVisible(now=new Date()){const y=now.getFullYear(),end=thanksgivingDate(y);end.setDate(end.getDate()+3);return now>=new Date(y,9,1)&&now<end}
+function seasonHidden(d){return d.cat==="Thanksgiving"&&!d.custom&&!thanksgivingVisible()}
+function allDesigns(){return [...custom,...SEEDS.filter(d=>!seasonHidden(d))]}
 function allCats(){return [...new Set([...customCats,...custom.map(d=>d.cat),...SEED_CATS])]}
 function isCustomCat(c){return !SEED_CATS.includes(c)}
 function layer(){return cur.layers[sel]}
@@ -1445,10 +1449,10 @@ const SEASON_PICKS={0:["y1","y2","y4","cs1","cs2","qt12"],1:["gl3","gl5","mo2","
   4:["mo5","tv1","bf6","wk4","cm2"],5:["mo6","tv7","tv14","tv3","cm2"],6:["mo7","tv6","tv7","tv9","cm1"],7:["mo8","tv14","tv15","tv18","cm6"],
   8:["mo9","cs1","cf1","qt4","wk1"],9:["mo10","hd7","cs2","tg9","cf6"],10:null,11:["xm1","xm17","xm18","xm21","hd1","xm6"]};
 function suggestions(){
-  const now=new Date(),m=now.getMonth(),byId=Object.fromEntries(SEEDS.map(d=>[d.id,d])),by={};SEEDS.forEach(d=>(by[d.cat]=by[d.cat]||[]).push(d));
+  const now=new Date(),m=now.getMonth(),VIS=SEEDS.filter(d=>!seasonHidden(d)),byId=Object.fromEntries(VIS.map(d=>[d.id,d])),by={};VIS.forEach(d=>(by[d.cat]=by[d.cat]||[]).push(d));
   const tgDay=(()=>{const f=new Date(now.getFullYear(),10,1);return 1+((11-f.getDay())%7)+21})();
   let seasonal=SEASON_PICKS[m];
-  if(m===10)seasonal=now.getDate()<=tgDay?["tg1","tg16","tg19","tg3","tg18","xm1"]:["xm1","xm17","hd1","xm18","xm6","tg2"];
+  if(m===10)seasonal=thanksgivingVisible(now)?["tg1","tg16","tg19","tg3","tg18","xm1"]:["xm1","xm17","hd1","xm18","xm6","tg2"];
   const lead=(seasonal||[]).map(id=>byId[id]).filter(Boolean);
   // popular: only templates saved at least 3 times by everyone (or twice on this device), max 9
   const popular=[...globalTop.filter(x=>x.n>=3).map(x=>x.id),...Object.entries(localUse).filter(x=>x[1]>=2).sort((a,b)=>b[1]-a[1]).map(x=>x[0])].map(id=>byId[id]).filter(Boolean).slice(0,9);
@@ -1469,7 +1473,8 @@ function renderLibrary(){
   mk("All","All");if(custom.length)mk("★ My designs","★");
   const now=new Date(),m=now.getMonth(),tgDay=(()=>{const f=new Date(now.getFullYear(),10,1);return 1+((11-f.getDay())%7)+21})();
   const tgSeason=m===9||(m===10&&now.getDate()<=tgDay);
-  const cl=allCats().sort((a,b)=>a.localeCompare(b,"en",{sensitivity:"base",numeric:true}));
+  if(activeCat==="Thanksgiving"&&!thanksgivingVisible())activeCat="Suggestions";
+  const cl=allCats().filter(c=>c!=="Thanksgiving"||thanksgivingVisible()).sort((a,b)=>a.localeCompare(b,"en",{sensitivity:"base",numeric:true}));
   cl.forEach(c=>mk(c+(isCustomCat(c)?" ★":""),c));
 
   let list=allDesigns();if(activeCat==="★")list=custom;else if(activeCat==="Suggestions")list=suggestions();else if(activeCat==="♥")list=list.filter(d=>favs.has(d.id));else if(activeCat!=="All")list=list.filter(d=>d.cat===activeCat);
