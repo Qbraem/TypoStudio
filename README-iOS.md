@@ -3,7 +3,7 @@
 De iOS-app is dezelfde app als de website, verpakt met **Capacitor** en aangevuld met echte iPhone-functies:
 
 - **Bewaren in Foto's** (transparante PNG rechtstreeks in de fotorol)
-- **Delen** via het deelmenu (Instagram, Berichten, AirDrop…)
+- **Delen** via het deelmenu (social apps, Berichten, AirDrop…)
 - **Trillingen (haptics)** bij bewaren en kopen
 - **Studio Typo Pro** via in-app aankopen (RevenueCat + StoreKit)
 - **Volledig offline**: alle lettertypes, foto's en ontwerpen zitten in de app

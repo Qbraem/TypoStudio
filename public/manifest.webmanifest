@@ -1,7 +1,7 @@
 {
   "name": "Studio Typo",
   "short_name": "Studio Typo",
-  "description": "Transparent typography PNGs for Instagram",
+  "description": "Transparent typography PNGs for your social Stories",
   "start_url": "/",
   "scope": "/",
   "display": "standalone",

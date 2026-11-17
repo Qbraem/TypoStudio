@@ -2,7 +2,7 @@
   "name": "studio-typo",
   "version": "1.0.0",
   "private": true,
-  "description": "Studio Typo – transparent typography PNGs for Instagram Stories (web + iOS app)",
+  "description": "Studio Typo – transparent typography PNGs for social Stories (web + iOS app)",
   "main": "server.js",
   "scripts": {
     "start": "node server.js",

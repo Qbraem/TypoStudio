@@ -9,10 +9,10 @@ Studio Typo
 Typography for your Stories
 
 ## Promotional text (170)
-New: a seasonal Holidays & Thanksgiving collection, Vintage designs and 180+ templates to make every Instagram Story stand out.
+New: a seasonal Holidays & Thanksgiving collection, Vintage designs and 180+ templates to make every Story stand out.
 
 ## Description (4000)
-Make your Instagram Stories stand out with beautiful typography.
+Make your social Stories stand out with beautiful typography.
 
 Studio Typo gives you 180+ ready-made text designs for every mood and moment – from slow coffee mornings and weekend brunches to travel diaries, cosy nights, quotes and seasonal holidays. Pick a design, make it yours and save it as a transparent PNG to place on top of any photo.
 
@@ -31,7 +31,7 @@ LITTLE DETAILS, BIG DIFFERENCE
 SEE IT BEFORE YOU POST
 • Preview your design on your own photos with the Story layout on top
 • Save a crisp, transparent PNG straight to your Photos
-• Share it directly to Instagram and other apps
+• Share it directly to your favourite social apps
 
 COLLECTIONS
 Trending · Holidays · Thanksgiving · Coffee · Breakfast · Weekend · Travel · Vintage · Socials · Quotes & Notes · Cosy · Girly · Movie Night · Monthly · Camera · Viral · 2026
@@ -44,7 +44,7 @@ Terms of Use: https://studio-typo.onrender.com/terms.html
 Privacy Policy: https://studio-typo.onrender.com/privacy.html
 
 ## Keywords (100, komma's, geen spaties)
-story,text,fonts,typography,quotes,instagram,lettering,caption,overlay,sticker,png,design,templates
+story,text,fonts,typography,quotes,social,lettering,caption,overlay,sticker,png,design,templates
 
 ## Category
 Primary: Photo & Video — Secondary: Graphics & Design

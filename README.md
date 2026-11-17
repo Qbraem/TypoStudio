@@ -1,6 +1,6 @@
 # Studio Typo
 
-Make transparent typography PNGs for Instagram stories and posts.
+Make transparent typography PNGs for social Stories and posts.
 
 - **Library** with ready-made designs in categories: Coffee, Breakfast, Weekend, Holidays, Cosy, Girly, Movie Night, Monthly, Camera, Trending, 2026
 - **Edit**: text, font, size, position, rotation, spacing, arc, colours, shadow, knock-out, texture, and ornaments (drops, sparkles, hearts, stars, …) — or drag, pinch and rotate directly on the photo

@@ -155,7 +155,7 @@ button{cursor:pointer;touch-action:manipulation;-webkit-user-select:none;user-se
   .fontBtn{min-height:54px}.fontBtn .s{font-size:20px}
 }
 @media (max-height: 560px) and (max-aspect-ratio: 1/1){ .brand{display:none} }
-/* groot scherm: 9:16-kader zoals een Instagram-story */
+/* groot scherm: 9:16-kader zoals een social story */
 @media (min-width: 1100px) and (min-height: 700px){
   .shell{grid-template-columns:minmax(0,1fr) 440px}
 }
@@ -573,7 +573,7 @@ input[type=range]::-moz-range-thumb{width:28px;height:28px;border-radius:50%;bac
     </section>
     <section class="onbSlide">
       <div class="onbArt"><div class="onbShare"><div class="mPhone photo big"><div class="mIgTop"><span></span><span></span><span></span></div><div class="mType">Slow<br>Mornings</div></div><div class="onbPng">PNG</div></div></div>
-      <div class="onbText"><div class="htKicker">SAVE &amp; SHARE</div><h2>Ready for<br>your <i>Story</i></h2><p>Save a transparent PNG to your Camera Roll and place it on top of any photo in Instagram Stories.</p></div>
+      <div class="onbText"><div class="htKicker">SAVE &amp; SHARE</div><h2>Ready for<br>your <i>Story</i></h2><p>Save a transparent PNG to your Camera Roll and place it on top of any photo in your social Stories.</p></div>
     </section>
   </div>
   <div class="onbFoot"><div class="onbDots" id="onbDots"><i class="on"></i><i></i><i></i></div><button class="pwCta" id="onbNext">Continue</button><button class="htLink" id="onbHow">How does it work?</button></div>
@@ -586,7 +586,7 @@ input[type=range]::-moz-range-thumb{width:28px;height:28px;border-radius:50%;bac
     </div>
     <div class="asNow">Now add it to your Story</div>
     <ol class="asSteps">
-      <li><i class="n">1</i><div><b>Open a Story in Instagram</b><span>Tap <em>+</em> → <em>Story</em> and pick the photo you want to post.</span></div></li>
+      <li><i class="n">1</i><div><b>Open a new Story</b><span>In your favourite social app, start a Story and pick the photo you want to post.</span></div></li>
       <li><i class="n">2</i><div><b>Tap the sticker icon <span class="stk"></span></b><span>Choose <em>Photo</em> and select your PNG: it's the newest one in your Photos.</span></div></li>
       <li><i class="n">3</i><div><b>Place it and share</b><span>Pinch to resize, twist to rotate, drag to move. Done!</span></div></li>
     </ol>
@@ -606,7 +606,7 @@ input[type=range]::-moz-range-thumb{width:28px;height:28px;border-radius:50%;bac
     <div class="htHead">
       <div class="htKicker">HOW TO</div>
       <h2 id="htTitle">From Studio <i>Typo</i><br>to your Story</h2>
-      <p>Four quick steps to put your typography on top of any Instagram Story.</p>
+      <p>Four quick steps to put your typography on top of any social Story.</p>
     </div>
     <ol class="htSteps">
       <li>
@@ -621,7 +621,7 @@ input[type=range]::-moz-range-thumb{width:28px;height:28px;border-radius:50%;bac
       </li>
       <li>
         <div class="htNum">3</div>
-        <div class="htText"><b>Open your photo in Stories</b><span>In Instagram, swipe right or tap <em class="kbd">+</em> → <em>Story</em> and pick the photo you want to post.</span></div>
+        <div class="htText"><b>Open your photo in Stories</b><span>In your social app, start a new <em>Story</em> and pick the photo you want to post.</span></div>
         <div class="htArt"><div class="mPhone photo"><div class="mIgTop"><span></span><span></span><span></span></div></div></div>
       </li>
       <li>
@@ -630,7 +630,7 @@ input[type=range]::-moz-range-thumb{width:28px;height:28px;border-radius:50%;bac
         <div class="htArt"><div class="mPhone photo"><div class="mType">Slow<br>Mornings</div><div class="mStick"></div></div></div>
       </li>
     </ol>
-    <div class="htTip"><b>Quick tip</b><span>You can also tap <em>Copy</em> in step 2, then open your Story and tap <em>Add sticker</em> when Instagram offers to paste it.</span></div>
+    <div class="htTip"><b>Quick tip</b><span>You can also tap <em>Copy</em> in step 2, then open your Story and tap <em>Add sticker</em> when the app offers to paste it.</span></div>
     <div class="htFoot"><button class="pwCta" id="htDone">Got it, let's create</button></div>
   </div>
 </div>
@@ -858,7 +858,7 @@ const SEEDS = [
 
   // ---------- Socials (calls to action) ----------
   D("so1","Socials","Follow for More",[L("FOLLOW","Archivo Black",190,0,-190,{spacing:4}),L("FOR","Archivo Black",190,0,0,{spacing:4}),L("MORE","Archivo Black",190,-20,190,{spacing:4}),O("dot",60,300,250,{color:"accent"})],C(W,"#E23B3B")),
-  D("so2","Socials","Please Follow",[L("Please","Playfair Display",190,-60,-110,{italic:true,weight:400}),O("sparkle",80,-420,60,{color:"accent"}),L("FOLLOW","Cormorant Garamond",200,40,70,{weight:600,spacing:2}),L("MY INSTAGRAM","DM Sans",34,-110,190,{spacing:30,weight:700}),O("line",240,300,190,{})],C(W,"#E9C46A")),
+  D("so2","Socials","Please Follow",[L("Please","Playfair Display",190,-60,-110,{italic:true,weight:400}),O("sparkle",80,-420,60,{color:"accent"}),L("FOLLOW","Cormorant Garamond",200,40,70,{weight:600,spacing:2}),L("MY PROFILE","DM Sans",34,-110,190,{spacing:30,weight:700}),O("line",240,300,190,{})],C(W,"#E9C46A")),
   D("so3","Socials","Thanks",[L("Thanks","Sacramento",340,0,-20)]),
   D("so4","Socials","Link in Bio",[L("link","Yellowtail",230,-60,-80,{rotate:-6}),L("IN BIO","Bebas Neue",200,40,100,{spacing:12,color:"accent"}),O("arrow",160,330,-120,{color:"accent",rotate:30})],C(W,"#F2B33D")),
   D("so5","Socials","New Post",[L("NEW","Anton",260,-80,-110),L("post","Shrikhand",230,80,90,{rotate:-6,color:"accent"}),O("sparkles",120,330,-230,{color:"accent"})],C(W,"#F26B50")),
@@ -1591,7 +1591,7 @@ if("serviceWorker" in navigator&&location.protocol==="https:"){window.addEventLi
 
 /* ---------------- iOS app (Capacitor) ----------------
    In the web version none of this runs. Inside the iOS app it uses native plugins:
-   Filesystem + Media (save to Photos), Share (share sheet / Instagram), Haptics,
+   Filesystem + Media (save to Photos), Share (share sheet / social apps), Haptics,
    StatusBar, SplashScreen and RevenueCat (Purchases) for Studio Typo Pro. */
 const CAP=window.Capacitor;
 const NATIVE=!!(CAP&&CAP.isNativePlatform&&CAP.isNativePlatform());
