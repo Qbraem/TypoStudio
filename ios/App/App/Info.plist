@@ -26,6 +26,8 @@
 	<false/>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
+	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+	<string>Studio Typo only uses your approximate location while you use the app, to show your city and today's weather in Live designs. Your location is never stored.</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>Studio Typo uses your approximate location only to show your city and today's weather in Live designs. Your location is never stored.</string>
 	<key>NSPhotoLibraryAddUsageDescription</key>

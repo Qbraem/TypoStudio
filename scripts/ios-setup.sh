@@ -23,6 +23,7 @@ setv CFBundleDisplayName string "Studio Typo"
 setv NSPhotoLibraryAddUsageDescription string "Studio Typo saves your designs as transparent PNG images to your photo library."
 setv NSPhotoLibraryUsageDescription string "Studio Typo saves your designs to your photo library and lets you pick a photo to preview them on."
 setv NSLocationWhenInUseUsageDescription string "Studio Typo uses your approximate location only to show your city and today's weather in Live designs. Your location is never stored."
+setv NSLocationAlwaysAndWhenInUseUsageDescription string "Studio Typo only uses your approximate location while you use the app, to show your city and today's weather in Live designs. Your location is never stored."
 setv ITSAppUsesNonExemptEncryption bool false
 setv UIViewControllerBasedStatusBarAppearance bool true
 setv UIRequiresFullScreen bool false
