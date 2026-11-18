@@ -100,7 +100,7 @@ input,textarea,select,[contenteditable]{-webkit-user-select:text;user-select:tex
   .shell.editBar .stage.ig .credit{top:10px}
   .shell.editBar .ctl{min-height:38px}
 }
-.shell.editBar .sheetBody{padding-top:12px}
+.shell.editBar .sheetBody{padding-top:0}.shell.editBar #tab-edit .stickyTop{padding-top:12px;padding-bottom:4px}
 
 /* Liquid Glass tab bar (portrait): floating capsule over the sheet, content scrolls underneath */
 @media (max-aspect-ratio: 1/1) and (max-width: 899.98px){
@@ -113,7 +113,7 @@ input,textarea,select,[contenteditable]{-webkit-user-select:text;user-select:tex
   .tabs button,#toolNav button{min-height:52px!important;padding:4px 0 3px!important;border-radius:26px;transition:background .2s,color .2s;position:relative}
   .tabs button.on,#toolNav button.on{background:rgba(255,255,255,.12);box-shadow:inset 0 1px 0 rgba(255,255,255,.14)}
   #toolNav{align-items:center;height:100%}
-  #toolNav .back{flex:0 0 52px;margin:0 2px 0 0!important;border-right:0!important;min-height:52px!important}
+  #toolNav .back{flex:1 1 0;margin:0 3px 0 0!important;border-right:0!important;min-height:52px!important}
   #toolNav .back::after{content:"";position:absolute;right:-1px;top:14px;bottom:14px;width:1px;background:rgba(255,255,255,.16)}
   .sheetBody{padding-bottom:calc(84px + var(--tbB))!important}
   .side-status .tabs{padding-bottom:0}
