@@ -31,6 +31,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 /// so it does not depend on Capacitor plugin registration.
 class MainViewController: CAPBridgeViewController, WKScriptMessageHandler {
     private var glassBar: GlassBarView?
+    private var topView: GlassTopView?
 
     override func capacitorDidLoad() {
         webView?.configuration.userContentController.add(self, name: "glassBar")
@@ -41,6 +42,14 @@ class MainViewController: CAPBridgeViewController, WKScriptMessageHandler {
         let cmd = (body["cmd"] as? String) ?? ""
         if cmd == "hide" {
             glassBar?.isHidden = true
+            return
+        }
+        if cmd == "topHide" {
+            topView?.isHidden = true
+            return
+        }
+        if cmd == "top" {
+            handleTop(body)
             return
         }
         guard cmd == "show", let web = webView else { return }
@@ -56,6 +65,7 @@ class MainViewController: CAPBridgeViewController, WKScriptMessageHandler {
         }
         let rect = CGRect(x: n("x"), y: n("y"), width: n("w"), height: n("h"))
         guard rect.width > 10, rect.height > 10, !items.isEmpty else { return }
+        let span = web.convert(CGRect(x: n("bx"), y: 0, width: n("bw") > 10 ? n("bw") : rect.width, height: 1), to: view)
         if glassBar == nil {
             let b = GlassBarView(frame: .zero)
             b.onTap = { [weak self] id in
@@ -69,13 +79,141 @@ class MainViewController: CAPBridgeViewController, WKScriptMessageHandler {
         let target = web.convert(rect, to: view)
         let wasHidden = bar.isHidden
         bar.isHidden = false
-        bar.update(items: items, selected: selected, frame: target, in: view)
+        bar.update(items: items, selected: selected, frame: target, span: span, in: view)
         view.bringSubviewToFront(bar)
         if wasHidden {
             bar.alpha = 0
             UIView.animate(withDuration: 0.18) { bar.alpha = 1 }
         }
+        if let t = topView { view.bringSubviewToFront(t) }
         web.evaluateJavaScript("window.__glassAck&&window.__glassAck()", completionHandler: nil)
+    }
+
+    private func handleTop(_ body: [String: Any]) {
+        guard let web = webView else { return }
+        let raw = (body["buttons"] as? [[String: Any]]) ?? []
+        if topView == nil {
+            let t = GlassTopView(frame: view.bounds)
+            t.onTap = { [weak self] id in
+                let safe = id.replacingOccurrences(of: "'", with: "")
+                self?.webView?.evaluateJavaScript("window.__glassTopTap&&window.__glassTopTap('\(safe)')", completionHandler: nil)
+            }
+            view.addSubview(t)
+            topView = t
+        }
+        guard let tv = topView else { return }
+        tv.frame = view.bounds
+        tv.isHidden = false
+        let specs: [GlassTopView.Spec] = raw.compactMap { d in
+            guard let id = d["id"] as? String, let r = d["frame"] as? [String: Any] else { return nil }
+            func n(_ k: String) -> CGFloat {
+                if let v = r[k] as? NSNumber { return CGFloat(truncating: v) }
+                return 0
+            }
+            let rect = web.convert(CGRect(x: n("x"), y: n("y"), width: n("w"), height: n("h")), to: view)
+            return GlassTopView.Spec(
+                id: id, frame: rect,
+                symbol: (d["icon"] as? String) ?? "",
+                title: (d["title"] as? String) ?? "",
+                prominent: (d["prominent"] as? Bool) ?? false,
+                tint: colorFromHex((d["tint"] as? String) ?? ""),
+                fg: colorFromHex((d["fg"] as? String) ?? ""),
+                enabled: (d["enabled"] as? Bool) ?? true,
+                busy: (d["busy"] as? Bool) ?? false)
+        }
+        tv.apply(specs)
+        view.bringSubviewToFront(tv)
+        web.evaluateJavaScript("window.__glassTopAck&&window.__glassTopAck()", completionHandler: nil)
+    }
+}
+
+func colorFromHex(_ s: String) -> UIColor? {
+    var h = s.trimmingCharacters(in: .whitespaces)
+    if h.hasPrefix("#") { h.removeFirst() }
+    guard h.count == 6, let v = UInt32(h, radix: 16) else { return nil }
+    return UIColor(red: CGFloat((v >> 16) & 0xFF) / 255, green: CGFloat((v >> 8) & 0xFF) / 255, blue: CGFloat(v & 0xFF) / 255, alpha: 1)
+}
+
+/// Top bar buttons as system Liquid Glass buttons (iOS 26+), placed exactly over the web buttons.
+final class GlassTopView: UIView {
+    struct Spec {
+        let id: String
+        let frame: CGRect
+        let symbol: String
+        let title: String
+        let prominent: Bool
+        let tint: UIColor?
+        let fg: UIColor?
+        let enabled: Bool
+        let busy: Bool
+    }
+    var onTap: ((String) -> Void)?
+    private var buttons: [String: UIButton] = [:]
+
+    override init(frame: CGRect) {
+        super.init(frame: frame)
+        backgroundColor = .clear
+        overrideUserInterfaceStyle = .dark
+    }
+
+    required init?(coder: NSCoder) { fatalError("init(coder:) has not been implemented") }
+
+    override func hitTest(_ point: CGPoint, with event: UIEvent?) -> UIView? {
+        let v = super.hitTest(point, with: event)
+        return v === self ? nil : v
+    }
+
+    private func baseConfig(_ prominent: Bool) -> UIButton.Configuration {
+        #if compiler(>=6.2)
+        if #available(iOS 26.0, *) {
+            return prominent ? UIButton.Configuration.prominentGlass() : UIButton.Configuration.glass()
+        }
+        #endif
+        return prominent ? UIButton.Configuration.filled() : UIButton.Configuration.gray()
+    }
+
+    func apply(_ specs: [Spec]) {
+        let ids = Set(specs.map { $0.id })
+        for (id, b) in buttons where !ids.contains(id) {
+            b.removeFromSuperview()
+            buttons[id] = nil
+        }
+        for s in specs {
+            let b: UIButton
+            if let existing = buttons[s.id] {
+                b = existing
+            } else {
+                b = UIButton(type: .system)
+                let id = s.id
+                b.addAction(UIAction { [weak self] _ in
+                    UIImpactFeedbackGenerator(style: .light).impactOccurred()
+                    self?.onTap?(id)
+                }, for: .touchUpInside)
+                addSubview(b)
+                buttons[s.id] = b
+            }
+            var cfg = baseConfig(s.prominent)
+            if !s.symbol.isEmpty {
+                cfg.image = UIImage(systemName: s.symbol, withConfiguration: UIImage.SymbolConfiguration(pointSize: 16, weight: .semibold))
+            }
+            cfg.title = s.title.isEmpty ? nil : s.title
+            cfg.imagePadding = 6
+            cfg.cornerStyle = .capsule
+            cfg.showsActivityIndicator = s.busy
+            cfg.contentInsets = NSDirectionalEdgeInsets(top: 0, leading: 4, bottom: 0, trailing: 4)
+            cfg.titleTextAttributesTransformer = UIConfigurationTextAttributesTransformer { inc in
+                var out = inc
+                out.font = UIFont.systemFont(ofSize: 16, weight: .semibold)
+                return out
+            }
+            if let fg = s.fg { cfg.baseForegroundColor = fg }
+            if !s.prominent, s.fg == nil { cfg.baseForegroundColor = .white }
+            b.configuration = cfg
+            if let t = s.tint { b.tintColor = t }
+            b.isEnabled = s.enabled
+            b.alpha = s.enabled ? 1 : 0.45
+            b.frame = s.frame
+        }
     }
 }
 
@@ -125,7 +263,7 @@ final class GlassBarView: UIView, UITabBarDelegate {
     required init?(coder: NSCoder) { fatalError("init(coder:) has not been implemented") }
 
     /// rect = where the web tab bar sits; container = the view controller's view.
-    func update(items: [(String, String, String)], selected: String, frame rect: CGRect, in container: UIView) {
+    func update(items: [(String, String, String)], selected: String, frame rect: CGRect, span: CGRect, in container: UIView) {
         let sig = items.map { "\($0.0)/\($0.1)/\($0.2)" }.joined(separator: "|")
         if let tb = systemBar {
             let W = container.bounds.width, H = container.bounds.height
@@ -138,8 +276,8 @@ final class GlassBarView: UIView, UITabBarDelegate {
                     UITabBarItem(title: it.1, image: UIImage(systemName: it.2), tag: i)
                 }
             }
-            let h = tb.sizeThatFits(CGSize(width: W, height: H)).height
-            tb.frame = CGRect(x: 0, y: H - h, width: W, height: h)
+            let h = tb.sizeThatFits(CGSize(width: span.width, height: H)).height
+            tb.frame = CGRect(x: span.minX, y: H - h, width: span.width, height: h)
             if let idx = ids.firstIndex(of: selected), let all = tb.items, idx < all.count {
                 if tb.selectedItem !== all[idx] { tb.selectedItem = all[idx] }
             } else {

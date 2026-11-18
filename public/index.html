@@ -50,6 +50,13 @@ input,textarea,select,[contenteditable]{-webkit-user-select:text;user-select:tex
 #sticker{position:absolute;left:0;top:0;width:100%;height:100%;pointer-events:none}
 .bgRow{position:absolute;left:calc(8px + var(--sal));right:8px;bottom:calc(8px + var(--under,0px));display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;padding:4px calc(4px + var(--sarL)) 4px 4px;border-radius:24px;background:rgba(20,14,10,.45);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px)}
 .bgRow::-webkit-scrollbar{display:none}
+.bgToggle{position:absolute;z-index:4;right:calc(10px + var(--sarL));bottom:calc(8px + var(--under,0px));width:44px;height:44px;border-radius:50%;border:1px solid rgba(255,255,255,.22);padding:0;display:flex;align-items:center;justify-content:center;color:#fff;background:rgba(20,14,10,.5);-webkit-backdrop-filter:blur(14px) saturate(170%);backdrop-filter:blur(14px) saturate(170%);box-shadow:inset 0 1px 0 rgba(255,255,255,.2),0 6px 18px rgba(0,0,0,.35)}
+.bgToggle svg{width:22px;height:22px}.stage.bgOpen .bgToggle{background:rgba(242,107,80,.85);border-color:rgba(255,255,255,.5)}
+.stage .bgRow{right:calc(62px + var(--sarL));transition:opacity .2s,transform .25s}
+.stage:not(.bgOpen) .bgRow{opacity:0;pointer-events:none;transform:translateX(24px) scale(.96)}
+.stage.ig .bgToggle{bottom:calc(62px + var(--under,0px))}
+html.ngTop #bgToggle{visibility:hidden!important}
+
 .bgBtn{flex:none;width:36px;height:36px;border-radius:50%;border:2px solid rgba(255,255,255,.25);padding:0;overflow:hidden;background:#333;position:relative}
 .bgBtn img{width:100%;height:100%;object-fit:cover;display:block}
 .bgBtn.on{border-color:#fff}
@@ -96,7 +103,7 @@ input,textarea,select,[contenteditable]{-webkit-user-select:text;user-select:tex
 @media (max-height: 760px){
   .shell.editBar .sheet{max-height:calc(var(--app-h,100vh) * .42)}
   .shell.editBar .stage .igOv{display:none}
-  .shell.editBar .stage.ig .bgRow{bottom:calc(8px + var(--under,0px))}
+  .shell.editBar .stage.ig .bgRow,.shell.editBar .stage.ig .bgToggle{bottom:calc(8px + var(--under,0px))}
   .shell.editBar .stage.ig .credit{top:10px}
   .shell.editBar .ctl{min-height:38px}
 }
@@ -119,6 +126,7 @@ input,textarea,select,[contenteditable]{-webkit-user-select:text;user-select:tex
   .side-status .tabs{padding-bottom:0}
 }
 html.ng .tabs{visibility:hidden!important}
+html.ngTop .top>button{visibility:hidden!important}
 .tabs.editBar>button{display:none}
 .tabs.editBar #toolNav{display:flex}
 #toolNav button{min-width:0;font-size:10.5px;letter-spacing:.1px}
@@ -140,7 +148,7 @@ html.ng .tabs{visibility:hidden!important}
   .stage .igTop{padding-right:10px}
   .stage .igTop{padding-top:calc(var(--sat) + 8px);padding-left:calc(10px + var(--sal))}
   .stage.ig .credit{top:calc(var(--sat) + 58px)}
-  .stage .bgRow{bottom:calc(8px + var(--sab))}.stage.ig .bgRow{bottom:calc(62px + var(--sab))}
+  .stage .bgRow,.stage .bgToggle{bottom:calc(8px + var(--sab))}.stage.ig .bgRow,.stage.ig .bgToggle{bottom:calc(62px + var(--sab))}
   .stage .igBottom{padding-bottom:calc(12px + var(--sab))}
   .grp,.grp:not(.act){display:block}
   .grpH{display:flex;align-items:center;gap:10px;width:100%;border:0;background:none;padding:15px 2px 11px;color:var(--text);font-weight:700;font-size:15px;border-top:1px solid var(--line);text-align:left}
@@ -595,6 +603,7 @@ input[type=range]::-moz-range-thumb{width:28px;height:28px;border-radius:50%;bac
         <button class="bgBtn bg-check" data-bg="check" aria-label="Transparent"></button>
         <label class="bgBtn" aria-label="Your own photo" style="display:flex;align-items:center;justify-content:center;cursor:pointer;background:rgba(255,255,255,.14)"><svg class="addPhoto" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="15" height="14" rx="3"/><circle cx="8.3" cy="10" r="1.6"/><path d="M3.5 17l4.2-4 3.3 3 2.2-2 3.8 3.6"/><path d="M20 3v5M17.5 5.5h5"/></svg><input type="file" accept="image/*" id="photoIn" hidden></label>
       </div>
+      <button class="bgToggle" id="bgToggle" aria-label="Background" aria-expanded="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="15" height="13" rx="3"/><path d="M6 21h12a3 3 0 0 0 3-3V8"/><circle cx="8.5" cy="9.5" r="1.5"/><path d="m3 15 4-3.5 4 3.5 2.5-2 4.5 3.5"/></svg></button>
     </div>
   </main>
 
@@ -1410,7 +1419,7 @@ function schedulePreview(noExport){
     return best;
   }
   st.addEventListener("pointerdown",e=>{
-    if(e.target.closest(".bgRow")||e.target.closest(".credit")||e.target.closest(".livePill")||e.target.closest(".delX")||e.target.closest(".qbar"))return;
+    if(e.target.closest(".bgToggle"))return;if(!e.target.closest(".bgRow"))setBgOpen(false);if(e.target.closest(".bgRow")||e.target.closest(".credit")||e.target.closest(".livePill")||e.target.closest(".delX")||e.target.closest(".qbar"))return;
     st.setPointerCapture(e.pointerId);pts.set(e.pointerId,{x:e.clientX,y:e.clientY});
     if(tab==="edit"){
       if(pts.size===1){const u=toUnits(e.clientX,e.clientY);const h=hit(u);
@@ -1575,6 +1584,7 @@ function suggestions(){
 let _momentKey="";function momentKey(){const n=new Date();return n.toDateString()+"|"+(n.getHours()<5?0:n.getHours()<11?1:n.getHours()<17?2:n.getHours()<22?3:0)}
 function refreshMoment(){const k=momentKey();if(k!==_momentKey){_momentKey=k;if(typeof activeCat!=="undefined"&&activeCat==="Suggestions"&&$("cats"))renderLibrary()}}
 document.addEventListener("visibilitychange",()=>{if(!document.hidden)refreshMoment()});setInterval(refreshMoment,600000);
+function setBgOpen(on){const st=$("stage");if(!st||st.classList.contains("bgOpen")===!!on)return;st.classList.toggle("bgOpen",!!on);$("bgToggle").setAttribute("aria-expanded",on?"true":"false");if(typeof syncGlass==="function")syncGlass()}
 const _ci={};function catIcon(sh){if(_ci[sh])return _ci[sh];const c=document.createElement("canvas");c.width=c.height=64;const x=c.getContext("2d");x.translate(32,32);x.fillStyle=x.strokeStyle="#fff";drawShape(x,sh,26,false);return _ci[sh]=c.toDataURL()}
 function renderLibrary(){
   if(!$("cats"))return;
@@ -2094,20 +2104,32 @@ const GLASS_H=(()=>{try{return NATIVE&&window.webkit&&webkit.messageHandlers&&we
 const SF={Library:"square.grid.2x2",Edit:"slider.horizontal.3",Text:"textformat",Font:"textformat.size",Size:"arrow.up.and.down.and.arrow.left.and.right",Style:"paintbrush.pointed",Colour:"paintpalette",Keep:"bookmark"};
 let glassT=0;
 function glassItems(){const t=$("tabs");if(t.classList.contains("editBar")){const bs=[...document.querySelectorAll("#toolNav button")];return{bs,pre:"n"}}return{bs:[...t.querySelectorAll(":scope>button")],pre:"t"}}
-function glassBlocked(){if(WIDE.matches)return true;if(window.visualViewport&&visualViewport.height<innerHeight*.8)return true;
+function overlayOpen(){return [...document.querySelectorAll(".onb,.paywall,.modal,.asWrap,#splash")].some(e=>!e.classList.contains("hidden")&&!e.classList.contains("out")&&getComputedStyle(e).display!=="none"&&e.getBoundingClientRect().height>0)}
+function glassBlocked(){if(window.visualViewport&&visualViewport.height<innerHeight*.8)return true;
   return [...document.querySelectorAll(".onb,.paywall,.modal,.asWrap,#splash")].some(e=>!e.classList.contains("hidden")&&!e.classList.contains("out")&&getComputedStyle(e).display!=="none"&&e.getBoundingClientRect().height>0)}
 function syncGlass(){if(!GLASS_H)return;clearTimeout(glassT);glassT=setTimeout(syncGlassNow,16)}
 function syncGlassNow(){const t=$("tabs");
-  if(!t||glassBlocked()){document.documentElement.classList.remove("ng");try{GLASS_H.postMessage({cmd:"hide"})}catch(e){}return}
+  if(!t||glassBlocked()){document.documentElement.classList.remove("ng");try{GLASS_H.postMessage({cmd:"hide"})}catch(e){}syncTopGlass();return}
   const r=t.getBoundingClientRect(),{bs,pre}=glassItems(),lab=b=>(b.textContent.trim()||b.getAttribute("aria-label")||"").trim();
   const items=bs.map((b,i)=>({id:pre+i,label:lab(b),icon:SF[lab(b)]||"circle"})),on=bs.findIndex(b=>b.classList.contains("on"));
-  try{GLASS_H.postMessage({cmd:"show",items,selected:on>=0?pre+on:"",frame:{x:r.left,y:r.top,w:r.width,h:r.height}})}catch(e){}}
+  const wide=WIDE.matches;
+  try{GLASS_H.postMessage({cmd:"show",items,selected:on>=0?pre+on:"",frame:{x:r.left,y:r.top,w:r.width,h:r.height,bx:wide?r.left:0,bw:wide?r.width:innerWidth}})}catch(e){}
+  syncTopGlass()}
+const TOPMAP={undoBtn:{icon:"arrow.uturn.backward"},helpBtn:{icon:"questionmark"},proBtn:{icon:"crown.fill",prominent:true,tint:"#E2B04A",fg:"#3A2410"},viewBtn:{icon:"eye"},saveImgBtn:{icon:"arrow.down.to.line",title:"Save",prominent:true,tint:"#F0694F",fg:"#FFFFFF"},bgToggle:{icon:"photo.on.rectangle.angled"}};
+function topButtons(){return Object.keys(TOPMAP).map(id=>{const el=$(id);if(!el||el.classList.contains("hidden")||getComputedStyle(el).display==="none")return null;const r=el.getBoundingClientRect();if(r.width<4)return null;
+  const m=TOPMAP[id];let title=m.title||"";if(id==="proBtn"){const l=$("proBtnLabel");if(l&&l.offsetWidth>0)title=l.textContent.trim()}
+  const open=id==="bgToggle"&&$("stage").classList.contains("bgOpen");
+  return{id,frame:{x:r.left,y:r.top,w:r.width,h:r.height},icon:open?"xmark":m.icon,title,prominent:!!m.prominent||open,tint:open?"#F0694F":(m.tint||""),fg:open?"#FFFFFF":(m.fg||""),enabled:!el.disabled,busy:el.classList.contains("busy")}}).filter(Boolean)}
+function syncTopGlass(){if(!GLASS_H)return;try{if(overlayOpen()){document.documentElement.classList.remove("ngTop");GLASS_H.postMessage({cmd:"topHide"})}else GLASS_H.postMessage({cmd:"top",buttons:topButtons()})}catch(e){}}
+window.__glassTopAck=()=>document.documentElement.classList.add("ngTop");
+window.__glassTopTap=id=>{const el=$(String(id));if(el&&!el.disabled)el.click();syncGlass()};
 window.__glassAck=()=>document.documentElement.classList.add("ng");
 window.__glassTap=id=>{const i=+String(id).slice(1),{bs,pre}=glassItems();if(String(id)[0]===pre&&bs[i])bs[i].click();syncGlass()};
-if(GLASS_H){new MutationObserver(syncGlass).observe(document.body,{subtree:true,attributes:true,attributeFilter:["class"]});
-  if(window.ResizeObserver)new ResizeObserver(syncGlass).observe($("tabs"));
+if(GLASS_H){new MutationObserver(syncGlass).observe(document.body,{subtree:true,attributes:true,attributeFilter:["class","disabled"]});
+  if(window.ResizeObserver){new ResizeObserver(syncGlass).observe($("tabs"));new ResizeObserver(syncGlass).observe($("stage"))}
   window.addEventListener("resize",syncGlass);if(window.visualViewport)visualViewport.addEventListener("resize",syncGlass);
   [300,1000,2500,5000].forEach(t=>setTimeout(syncGlass,t))}
+$("bgToggle").addEventListener("click",e=>{e.stopPropagation();hapt();setBgOpen(!$("stage").classList.contains("bgOpen"))});
 initNative();loadLocal();updateProUI();loadTrending();
 if(!onbSeen){openOnb();setTimeout(hideSplash,900)}else setTimeout(hideSplash,700);
 setDetent(1);setAppH();renderLibrary();
