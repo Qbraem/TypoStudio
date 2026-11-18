@@ -74,7 +74,7 @@ public class GlassTabBarPlugin: CAPPlugin, CAPBridgedPlugin {
             let target = web.convert(rect, to: vc.view)
             let wasHidden = bar.isHidden
             bar.isHidden = false
-            bar.update(items: items, selected: selected, frame: target)
+            bar.update(items: items, selected: selected, frame: target, in: vc.view)
             vc.view.bringSubviewToFront(bar)
             if wasHidden { bar.alpha = 0; UIView.animate(withDuration: 0.18) { bar.alpha = 1 } }
             call.resolve()
@@ -89,7 +89,7 @@ public class GlassTabBarPlugin: CAPPlugin, CAPBridgedPlugin {
     }
 }
 
-final class GlassBarView: UIView {
+final class GlassBarView: UIView, UITabBarDelegate {
     var onTap: ((String) -> Void)?
     private let effectView: UIVisualEffectView
     private let lens = UIView()
@@ -99,12 +99,24 @@ final class GlassBarView: UIView {
     private var signature = ""
     private var selectedId = ""
     private let accent = UIColor(red: 0.949, green: 0.420, blue: 0.314, alpha: 1)
+    /// On iOS 26+ a real system UITabBar is used: Apple draws the Liquid Glass capsule and the sliding lens itself.
+    private var systemBar: UITabBar?
 
     override init(frame: CGRect) {
-        effectView = UIVisualEffectView(effect: GlassBarView.glassEffect())
+        effectView = UIVisualEffectView(effect: UIBlurEffect(style: .systemUltraThinMaterialDark))
         super.init(frame: frame)
         overrideUserInterfaceStyle = .dark
         backgroundColor = .clear
+        if #available(iOS 26.0, *) {
+            let tb = UITabBar()
+            tb.delegate = self
+            tb.tintColor = accent
+            tb.unselectedItemTintColor = UIColor.white.withAlphaComponent(0.92)
+            tb.overrideUserInterfaceStyle = .dark
+            addSubview(tb)
+            systemBar = tb
+            return
+        }
         layer.shadowColor = UIColor.black.cgColor
         layer.shadowOpacity = 0.28
         layer.shadowRadius = 18
@@ -112,8 +124,6 @@ final class GlassBarView: UIView {
         addSubview(effectView)
         lens.backgroundColor = UIColor.white.withAlphaComponent(0.14)
         lens.layer.cornerCurve = .continuous
-        lens.layer.borderWidth = 0.5
-        lens.layer.borderColor = UIColor.white.withAlphaComponent(0.22).cgColor
         lens.alpha = 0
         effectView.contentView.addSubview(lens)
         stack.axis = .horizontal
@@ -124,18 +134,30 @@ final class GlassBarView: UIView {
 
     required init?(coder: NSCoder) { fatalError("init(coder:) has not been implemented") }
 
-    static func glassEffect() -> UIVisualEffect {
-        #if compiler(>=6.2)
-        if #available(iOS 26.0, *) {
-            let g = UIGlassEffect()
-            g.isInteractive = true
-            return g
+    /// rect = where the web tab bar sits; container = the view controller's view.
+    func update(items: [(String, String, String)], selected: String, frame rect: CGRect, in container: UIView) {
+        let sig = items.map { "\($0.0)/\($0.1)/\($0.2)" }.joined(separator: "|")
+        if let tb = systemBar {
+            let W = container.bounds.width, H = container.bounds.height
+            frame = CGRect(x: 0, y: 0, width: W, height: H)
+            isUserInteractionEnabled = true
+            if sig != signature {
+                signature = sig
+                ids = items.map { $0.0 }
+                tb.items = items.enumerated().map { (i, it) in
+                    UITabBarItem(title: it.1, image: UIImage(systemName: it.2), tag: i)
+                }
+            }
+            let h = tb.sizeThatFits(CGSize(width: W, height: H)).height
+            tb.frame = CGRect(x: 0, y: H - h, width: W, height: h)
+            if let idx = ids.firstIndex(of: selected), let all = tb.items, idx < all.count {
+                if tb.selectedItem !== all[idx] { tb.selectedItem = all[idx] }
+            } else {
+                tb.selectedItem = nil
+            }
+            selectedId = selected
+            return
         }
-        #endif
-        return UIBlurEffect(style: .systemUltraThinMaterialDark)
-    }
-
-    func update(items: [(String, String, String)], selected: String, frame rect: CGRect) {
         frame = rect
         let r = rect.height / 2
         effectView.frame = bounds
@@ -143,18 +165,30 @@ final class GlassBarView: UIView {
         effectView.layer.cornerCurve = .continuous
         effectView.clipsToBounds = true
         layer.shadowPath = UIBezierPath(roundedRect: bounds, cornerRadius: r).cgPath
-        let sig = items.map { "\($0.0)/\($0.1)/\($0.2)" }.joined(separator: "|")
         if sig != signature { signature = sig; rebuild(items) }
         stack.frame = effectView.contentView.bounds.insetBy(dx: 5, dy: 0)
         stack.layoutIfNeeded()
         select(selected, animated: !selectedId.isEmpty && selectedId != selected)
     }
 
+    /// Only the system tab bar itself takes touches; the rest of this full-screen host passes them to the web view.
+    override func hitTest(_ point: CGPoint, with event: UIEvent?) -> UIView? {
+        let v = super.hitTest(point, with: event)
+        if systemBar != nil, v === self { return nil }
+        return v
+    }
+
+    func tabBar(_ tabBar: UITabBar, didSelect item: UITabBarItem) {
+        guard item.tag >= 0, item.tag < ids.count else { return }
+        UISelectionFeedbackGenerator().selectionChanged()
+        onTap?(ids[item.tag])
+    }
+
     private func rebuild(_ items: [(String, String, String)]) {
         buttons.forEach { $0.removeFromSuperview() }
         buttons = []
         ids = items.map { $0.0 }
-        for (i, it) in items.enumerated() {
+        for it in items {
             var cfg = UIButton.Configuration.plain()
             cfg.image = UIImage(systemName: it.2, withConfiguration: UIImage.SymbolConfiguration(pointSize: 18, weight: .medium))
             cfg.imagePlacement = .top
@@ -175,7 +209,6 @@ final class GlassBarView: UIView {
             }, for: .touchUpInside)
             stack.addArrangedSubview(b)
             buttons.append(b)
-            _ = i
         }
         selectedId = ""
     }

@@ -1135,7 +1135,7 @@ let custom=[], customCats=[];
 /* startontwerp bij het openen van de app */
 const START_DESIGN=SEEDS.find(d=>d.id==="wk1")||SEEDS[0];
 let cur=clone(START_DESIGN), curSourceId=START_DESIGN.id;
-let activeCat="Suggestions", tab="lib", tool="text", sel=0, fontGroup="All";
+let selShown=true;let activeCat="Suggestions", tab="lib", tool="text", sel=0, fontGroup="All";
 /* bij het openen van een ontwerp: eerste tekstlaag kiezen, niet een ornament */
 function firstTextLayer(){const i=(cur&&cur.layers||[]).findIndex(l=>l.kind!=="shape");return i<0?0:i}
 let hist=[];
@@ -1393,7 +1393,7 @@ function schedulePreview(noExport){
     const dpr=Math.min(3,window.devicePixelRatio||1,1800/Math.max(W,H));
     const pw=Math.round(W*dpr),ph=Math.round(H*dpr);if(cv.width!==pw||cv.height!==ph){cv.width=pw;cv.height=ph}
     const ctx=cv.getContext("2d");ctx.clearRect(0,0,pw,ph);
-    const G=stageGeom(W,H);lastBoxes=drawLayers(ctx,cur,G.size*dpr*view.scale/FRAME,G.cx*dpr,G.cy*dpr,{sel:tab==="edit"?sel:-1,dpr,guideX});
+    const G=stageGeom(W,H);lastBoxes=drawLayers(ctx,cur,G.size*dpr*view.scale/FRAME,G.cx*dpr,G.cy*dpr,{sel:tab==="edit"&&selShown?sel:-1,dpr,guideX});
     const dx=$("delX");if(dx){const c=lastBoxes.selCorner;if(c&&tab==="edit"){dx.hidden=false;dx.style.left=Math.max(14,Math.min(W-14,c.x/dpr))+"px";dx.style.top=Math.max(14,Math.min(H-14,c.y/dpr))+"px"}else dx.hidden=true}
     placeQbar(W,H,dpr);
   });
@@ -1414,10 +1414,10 @@ function schedulePreview(noExport){
     st.setPointerCapture(e.pointerId);pts.set(e.pointerId,{x:e.clientX,y:e.clientY});
     if(tab==="edit"){
       if(pts.size===1){const u=toUnits(e.clientX,e.clientY);const h=hit(u);
-        if(h>=0&&h!==sel){sel=h;renderLayerChips();renderTool()}
-        if(h<0){g=null;return}
+        if(h>=0&&(h!==sel||!selShown)){sel=h;selShown=true;renderLayerChips();renderTool()}
+        if(h<0){g=null;if(selShown){selShown=false;renderLayerChips();schedulePreview(true)}return}
         snap();qDragging=true;g={mode:"drag",sx:e.clientX,sy:e.clientY,x0:layer().x,y0:layer().y,k:u.k,moved:false};hideCoach()}
-      else if(pts.size===2&&layer()){qDragging=true;const [a,b]=[...pts.values()];g={mode:"pinch",d0:Math.hypot(a.x-b.x,a.y-b.y),a0:Math.atan2(b.y-a.y,b.x-a.x),s0:layer().size,r0:layer().rotate||0}}
+      else if(pts.size===2&&layer()&&selShown){qDragging=true;const [a,b]=[...pts.values()];g={mode:"pinch",d0:Math.hypot(a.x-b.x,a.y-b.y),a0:Math.atan2(b.y-a.y,b.x-a.x),s0:layer().size,r0:layer().rotate||0}}
     }else{
       if(pts.size===1)g={mode:"view",sx:e.clientX,sy:e.clientY,x0:view.x,y0:view.y};
       else if(pts.size===2){const [a,b]=[...pts.values()];g={mode:"vpinch",d0:Math.hypot(a.x-b.x,a.y-b.y),s0:view.scale}}
@@ -1493,7 +1493,7 @@ $("tabs").addEventListener("click",e=>{const b=e.target.closest("button");if(!b)
 
 /* ---------------- Bibliotheek ---------------- */
 let thumbJob=0;
-function loadDesign(d){const onPhoto=document.querySelector("#bgRow .bgBtn.on[data-photo]");if(onPhoto){if(d.cat==="Holidays"&&onPhoto.dataset.photo!=="xmas")setPhoto("xmas");else if(d.cat!=="Holidays"&&onPhoto.dataset.photo==="xmas")setPhoto("golden")}cur=clone(d);curSourceId=d.id;sel=firstTextLayer();toolGrp=null;hist=[];updUndo();schedulePreview();updateLivePill();maybeRefreshLive()}
+function loadDesign(d){const onPhoto=document.querySelector("#bgRow .bgBtn.on[data-photo]");if(onPhoto){if(d.cat==="Holidays"&&onPhoto.dataset.photo!=="xmas")setPhoto("xmas");else if(d.cat!=="Holidays"&&onPhoto.dataset.photo==="xmas")setPhoto("golden")}cur=clone(d);curSourceId=d.id;sel=firstTextLayer();selShown=true;toolGrp=null;hist=[];updUndo();schedulePreview();updateLivePill();maybeRefreshLive()}
 /* ---------------- Favourites & suggestions ---------------- */
 let freeOnly=false;try{freeOnly=localStorage.getItem("typoStudio.freeOnly")==="1"}catch(e){}
 let favs=new Set();try{favs=new Set(JSON.parse(localStorage.getItem("typoStudio.favs")||"[]"))}catch(e){}
@@ -1630,18 +1630,18 @@ function change(fn,{chips=false,tool=false}={}){fn();schedulePreview();if(chips)
 
 function renderLayerChips(){
   const box=$("layerChips");box.innerHTML="";
-  cur.layers.forEach((Ly,i)=>{const b=document.createElement("button");b.className="chip layerChip"+(i===sel?" on":"");
+  cur.layers.forEach((Ly,i)=>{const b=document.createElement("button");b.className="chip layerChip"+(i===sel&&selShown?" on":"");
     if(Ly.kind==="shape"){b.textContent="✦ "+(ORNAMENTS[Ly.shape]||"Ornament");b.style.fontSize="15px"}
     else if(Ly.kind==="para"){b.textContent="¶ "+(liveText(Ly.text).split(/\s+/).slice(0,3).join(" ")||"Paragraph");b.style.fontSize="15px"}
     else{b.style.fontFamily=`'${Ly.font}'`;b.style.fontWeight=Ly.weight;b.style.fontStyle=Ly.italic?"italic":"normal";
-    b.textContent=(Ly.upper?liveText(Ly.text).toUpperCase():liveText(Ly.text))||"(empty)";}b.onclick=()=>{sel=i;renderLayerChips();renderTool();schedulePreview(true)};box.appendChild(b)});
+    b.textContent=(Ly.upper?liveText(Ly.text).toUpperCase():liveText(Ly.text))||"(empty)";}b.onclick=()=>{sel=i;selShown=true;renderLayerChips();renderTool();schedulePreview(true)};box.appendChild(b)});
   const addP=document.createElement("button");addP.className="chip acc";addP.textContent="+ Paragraph";
-  addP.onclick=()=>{snap();cur.layers.push(P("Write your own text here. Tap to edit, then adjust width, line height and alignment.","DM Sans",52,0,200,{width:720,lh:1.45}));sel=cur.layers.length-1;renderLayerChips();renderTool();schedulePreview();$("sheetBody").scrollTop=0;setTimeout(()=>{const i=$("tText");if(i){i.focus();i.select()}},60)};
+  addP.onclick=()=>{snap();cur.layers.push(P("Write your own text here. Tap to edit, then adjust width, line height and alignment.","DM Sans",52,0,200,{width:720,lh:1.45}));selShown=true;sel=cur.layers.length-1;renderLayerChips();renderTool();schedulePreview();$("sheetBody").scrollTop=0;setTimeout(()=>{const i=$("tText");if(i){i.focus();i.select()}},60)};
   const add=document.createElement("button");add.className="chip acc";add.textContent="+ Text";
-  add.onclick=()=>{snap();const last=cur.layers[cur.layers.length-1];cur.layers.push(L("tekst","Caveat",140,0,last?Math.min(450,last.y+last.size*.9):0,{color:"accent"}));sel=cur.layers.length-1;tool="text";syncToolbar();renderLayerChips();renderTool();schedulePreview();setTimeout(()=>{const i=document.querySelector("#toolBody input.inp");if(i){i.focus();i.select()}},50)};
+  add.onclick=()=>{snap();const last=cur.layers[cur.layers.length-1];cur.layers.push(L("tekst","Caveat",140,0,last?Math.min(450,last.y+last.size*.9):0,{color:"accent"}));selShown=true;sel=cur.layers.length-1;tool="text";syncToolbar();renderLayerChips();renderTool();schedulePreview();setTimeout(()=>{const i=document.querySelector("#toolBody input.inp");if(i){i.focus();i.select()}},50)};
   box.appendChild(add);box.appendChild(addP);
   const orn=document.createElement("button");orn.className="chip acc";orn.textContent="+ Ornament";
-  orn.onclick=()=>{snap();cur.layers.push(O("sparkle",110,0,-280,{color:"accent"}));sel=cur.layers.length-1;renderLayerChips();renderTool();schedulePreview();$("sheetBody").scrollTop=0};
+  orn.onclick=()=>{snap();cur.layers.push(O("sparkle",110,0,-280,{color:"accent"}));selShown=true;sel=cur.layers.length-1;renderLayerChips();renderTool();schedulePreview();$("sheetBody").scrollTop=0};
   box.appendChild(orn);
   const on=box.querySelector(".chip.on");if(on){const l=on.offsetLeft-box.offsetLeft,r=l+on.offsetWidth;if(l<box.scrollLeft+14)box.scrollLeft=l-14;else if(r>box.scrollLeft+box.clientWidth-14)box.scrollLeft=r-box.clientWidth+14}
 }
