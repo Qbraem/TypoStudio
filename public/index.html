@@ -99,6 +99,23 @@ button{cursor:pointer;touch-action:manipulation;-webkit-user-select:none;user-se
   .shell.editBar .ctl{min-height:38px}
 }
 .shell.editBar .sheetBody{padding-top:12px}
+
+/* Liquid Glass tab bar (portrait): floating capsule over the sheet, content scrolls underneath */
+@media (max-aspect-ratio: 1/1) and (max-width: 899.98px){
+  .shell{--tbB:max(calc(var(--sab) - 8px),10px)}
+  .tabs{position:relative;z-index:5;height:62px;box-sizing:border-box;margin:calc(-1 * (62px + var(--tbB))) calc(12px + var(--sarL)) var(--tbB) calc(12px + var(--sal));padding:0 5px!important;align-items:center;border:0;border-radius:31px;
+    background:linear-gradient(180deg,rgba(255,255,255,.13),rgba(255,255,255,.04) 45%,rgba(255,255,255,.07)),rgba(34,25,20,.46);
+    -webkit-backdrop-filter:blur(22px) saturate(180%);backdrop-filter:blur(22px) saturate(180%);
+    box-shadow:inset 0 1px 0 rgba(255,255,255,.28),inset 0 -1px 0 rgba(255,255,255,.07),inset 1px 0 0 rgba(255,255,255,.06),inset -1px 0 0 rgba(255,255,255,.06),0 14px 34px rgba(0,0,0,.45),0 2px 6px rgba(0,0,0,.25)}
+  .tabs::before{content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;background:radial-gradient(120% 70% at 30% -20%,rgba(255,255,255,.16),transparent 55%)}
+  .tabs button,#toolNav button{min-height:52px!important;padding:4px 0 3px!important;border-radius:26px;transition:background .2s,color .2s;position:relative}
+  .tabs button.on,#toolNav button.on{background:rgba(255,255,255,.12);box-shadow:inset 0 1px 0 rgba(255,255,255,.14)}
+  #toolNav{align-items:center;height:100%}
+  #toolNav .back{flex:0 0 52px;margin:0 2px 0 0!important;border-right:0!important;min-height:52px!important}
+  #toolNav .back::after{content:"";position:absolute;right:-1px;top:14px;bottom:14px;width:1px;background:rgba(255,255,255,.16)}
+  .sheetBody{padding-bottom:calc(84px + var(--tbB))!important}
+  .side-status .tabs{padding-bottom:0}
+}
 .tabs.editBar>button{display:none}
 .tabs.editBar #toolNav{display:flex}
 #toolNav button{min-width:0;font-size:10.5px;letter-spacing:.1px}
@@ -201,6 +218,7 @@ input[type=range]::-moz-range-thumb{width:28px;height:28px;border-radius:50%;bac
 .chip.bfri{background:#0d0d0d;border-color:#F26B50;color:#fff;font-weight:700}.chip.bfri.on{background:#F26B50;border-color:#fff}
 .chip.fall{background:linear-gradient(135deg,#C9652B,#8A3A17);border-color:#E9B77C88;color:#fff;font-weight:700}
 .chip.fall.on{background:linear-gradient(135deg,#F2B266,#D98236);color:#4a1f08;border-color:#fff}
+.card.bfri{background:radial-gradient(120% 90% at 20% 10%,#2a2a2a 0%,#111 55%,#050505 100%)!important;border-color:#F26B5055}
 .card.fall{background:radial-gradient(120% 90% at 20% 10%,#a3532a 0%,#5e2a14 55%,#33160b 100%)!important;border-color:#E9B77C44}
 .card.sel{border:2px solid #fff}
 .card canvas{max-width:74%;max-height:70%}
@@ -1546,8 +1564,9 @@ function renderLibrary(){
   mk("All","All");if(custom.length)mk("★ My designs","★");
   const now=new Date(),m=now.getMonth(),tgDay=(()=>{const f=new Date(now.getFullYear(),10,1);return 1+((11-f.getDay())%7)+21})();
   const tgSeason=m===9||(m===10&&now.getDate()<=tgDay);
-  if(activeCat==="Thanksgiving"&&!thanksgivingVisible())activeCat="Suggestions";
-  const cl=allCats().filter(c=>c!=="Thanksgiving"||thanksgivingVisible()).sort((a,b)=>a.localeCompare(b,"en",{sensitivity:"base",numeric:true}));
+  const bfOn=blackFridayWindow().on;
+  if(activeCat==="Thanksgiving"&&!thanksgivingVisible()||activeCat==="Black Friday"&&!bfOn)activeCat="Suggestions";
+  const cl=allCats().filter(c=>(c!=="Thanksgiving"||thanksgivingVisible())&&(c!=="Black Friday"||bfOn)).sort((a,b)=>a.localeCompare(b,"en",{sensitivity:"base",numeric:true}));
   cl.forEach(c=>mk(c+(isCustomCat(c)?" ★":""),c));
 
   let list=allDesigns();if(activeCat==="★")list=custom;else if(activeCat==="Suggestions")list=suggestions();else if(activeCat==="♥")list=list.filter(d=>favs.has(d.id));else if(activeCat!=="All")list=list.filter(d=>d.cat===activeCat);
@@ -1560,7 +1579,7 @@ function renderLibrary(){
   const cards=list.map(d=>{
     const b=document.createElement("button");const light=lum(d.colors.main)<.45;
     b.className="card"+(d.id===curSourceId?" sel":"");b.setAttribute("aria-label",d.name);
-    if(d.cat==="Holidays")b.classList.add("xmas");else if(d.cat==="Thanksgiving")b.classList.add("fall");
+    if(d.cat==="Holidays")b.classList.add("xmas");else if(d.cat==="Thanksgiving")b.classList.add("fall");else if(d.cat==="Black Friday")b.classList.add("bfri");
     if(!d.seed)b.innerHTML='<span class="mine">★</span>';
     else if(d.pro&&!isPro())b.innerHTML=proLabel();
     const h=document.createElement("span");h.className="favBtn"+(favs.has(d.id)?" on":"");h.setAttribute("role","button");h.setAttribute("aria-label","Favourite");h.innerHTML=heartSvg(favs.has(d.id));
