@@ -1,5 +1,6 @@
 import UIKit
 import Capacitor
+import WebKit
 
 class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     var window: UIWindow?
@@ -26,66 +27,55 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
 // MARK: - Studio Typo: native Liquid Glass tab bar
 
-/// Bridge view controller that registers the app's own native plugins.
-class MainViewController: CAPBridgeViewController {
+/// Bridge view controller. Talks to the web app over a plain WKScriptMessageHandler ("glassBar"),
+/// so it does not depend on Capacitor plugin registration.
+class MainViewController: CAPBridgeViewController, WKScriptMessageHandler {
+    private var glassBar: GlassBarView?
+
     override func capacitorDidLoad() {
-        bridge?.registerPluginInstance(GlassTabBarPlugin())
-    }
-}
-
-/// Shows the bottom tab bar as a real system Liquid Glass view (iOS 26+), placed exactly over the web tab bar.
-/// Falls back to a system material blur on older iOS versions.
-@objc(GlassTabBarPlugin)
-public class GlassTabBarPlugin: CAPPlugin, CAPBridgedPlugin {
-    public let identifier = "GlassTabBarPlugin"
-    public let jsName = "GlassTabBar"
-    public let pluginMethods: [CAPPluginMethod] = [
-        CAPPluginMethod(name: "show", returnType: CAPPluginReturnPromise),
-        CAPPluginMethod(name: "hide", returnType: CAPPluginReturnPromise)
-    ]
-    private var bar: GlassBarView?
-
-    private func num(_ v: JSValue?) -> CGFloat {
-        if let d = v as? Double { return CGFloat(d) }
-        if let i = v as? Int { return CGFloat(i) }
-        if let n = v as? NSNumber { return CGFloat(truncating: n) }
-        return 0
+        webView?.configuration.userContentController.add(self, name: "glassBar")
     }
 
-    @objc func show(_ call: CAPPluginCall) {
-        let raw = call.getArray("items", JSObject.self) ?? []
-        let items: [(String, String, String)] = raw.map { o in
-            ((o["id"] as? String) ?? "", (o["label"] as? String) ?? "", (o["icon"] as? String) ?? "circle")
+    func userContentController(_ userContentController: WKUserContentController, didReceive message: WKScriptMessage) {
+        guard message.name == "glassBar", let body = message.body as? [String: Any] else { return }
+        let cmd = (body["cmd"] as? String) ?? ""
+        if cmd == "hide" {
+            glassBar?.isHidden = true
+            return
         }
-        let selected = call.getString("selected") ?? ""
-        let f = call.getObject("frame") ?? [:]
-        let rect = CGRect(x: num(f["x"]), y: num(f["y"]), width: num(f["w"]), height: num(f["h"]))
-        DispatchQueue.main.async {
-            guard let vc = self.bridge?.viewController, let web = self.bridge?.webView, rect.width > 10, rect.height > 10 else {
-                call.resolve(); return
+        guard cmd == "show", let web = webView else { return }
+        let rawItems = (body["items"] as? [[String: Any]]) ?? []
+        let items: [(String, String, String)] = rawItems.map {
+            (($0["id"] as? String) ?? "", ($0["label"] as? String) ?? "", ($0["icon"] as? String) ?? "circle")
+        }
+        let selected = (body["selected"] as? String) ?? ""
+        let f = (body["frame"] as? [String: Any]) ?? [:]
+        func n(_ k: String) -> CGFloat {
+            if let v = f[k] as? NSNumber { return CGFloat(truncating: v) }
+            return 0
+        }
+        let rect = CGRect(x: n("x"), y: n("y"), width: n("w"), height: n("h"))
+        guard rect.width > 10, rect.height > 10, !items.isEmpty else { return }
+        if glassBar == nil {
+            let b = GlassBarView(frame: .zero)
+            b.onTap = { [weak self] id in
+                let safe = id.replacingOccurrences(of: "'", with: "")
+                self?.webView?.evaluateJavaScript("window.__glassTap&&window.__glassTap('\(safe)')", completionHandler: nil)
             }
-            if self.bar == nil {
-                let b = GlassBarView(frame: .zero)
-                b.onTap = { [weak self] id in self?.notifyListeners("tap", data: ["id": id]) }
-                vc.view.addSubview(b)
-                self.bar = b
-            }
-            guard let bar = self.bar else { call.resolve(); return }
-            let target = web.convert(rect, to: vc.view)
-            let wasHidden = bar.isHidden
-            bar.isHidden = false
-            bar.update(items: items, selected: selected, frame: target, in: vc.view)
-            vc.view.bringSubviewToFront(bar)
-            if wasHidden { bar.alpha = 0; UIView.animate(withDuration: 0.18) { bar.alpha = 1 } }
-            call.resolve()
+            view.addSubview(b)
+            glassBar = b
         }
-    }
-
-    @objc func hide(_ call: CAPPluginCall) {
-        DispatchQueue.main.async {
-            self.bar?.isHidden = true
-            call.resolve()
+        guard let bar = glassBar else { return }
+        let target = web.convert(rect, to: view)
+        let wasHidden = bar.isHidden
+        bar.isHidden = false
+        bar.update(items: items, selected: selected, frame: target, in: view)
+        view.bringSubviewToFront(bar)
+        if wasHidden {
+            bar.alpha = 0
+            UIView.animate(withDuration: 0.18) { bar.alpha = 1 }
         }
+        web.evaluateJavaScript("window.__glassAck&&window.__glassAck()", completionHandler: nil)
     }
 }
 

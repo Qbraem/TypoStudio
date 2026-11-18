@@ -2088,28 +2088,26 @@ document.addEventListener("click",e=>{if(e.target.closest("[data-howto]")){$("mo
 let firstSaveDone=false;try{firstSaveDone=!!localStorage.getItem("typoStudio.howto")}catch(e){}
 $("delX").addEventListener("click",e=>{e.stopPropagation();if(tab!=="edit"||!layer())return;snap();cur.layers.splice(sel,1);sel=Math.max(0,sel-1);toast("Deleted · tap ↶ to undo");change(()=>{},{chips:true,tool:true})});
 
-// Native Liquid Glass tab bar (iOS app): the web bar keeps its place in the layout but is hidden,
-// and the native glass bar is drawn exactly on top of it. Web fallback: the CSS glass capsule.
-let GLASS=null;try{if(NATIVE&&CAP.registerPlugin)GLASS=CAP.registerPlugin("GlassTabBar")}catch(e){}
+// Native Liquid Glass tab bar (iOS app): the web bar keeps its place in the layout; once the native
+// bar confirms it is shown (ack), the web bar is hidden and the system glass bar sits over it.
+const GLASS_H=(()=>{try{return NATIVE&&window.webkit&&webkit.messageHandlers&&webkit.messageHandlers.glassBar}catch(e){return null}})();
 const SF={Library:"square.grid.2x2",Edit:"slider.horizontal.3",Text:"textformat",Font:"textformat.size",Size:"arrow.up.and.down.and.arrow.left.and.right",Style:"paintbrush.pointed",Colour:"paintpalette",Keep:"bookmark"};
-let glassOK=!!GLASS,glassBusy=false,glassQ=false,glassT=0;
+let glassT=0;
 function glassItems(){const t=$("tabs");if(t.classList.contains("editBar")){const bs=[...document.querySelectorAll("#toolNav button")];return{bs,pre:"n"}}return{bs:[...t.querySelectorAll(":scope>button")],pre:"t"}}
 function glassBlocked(){if(WIDE.matches)return true;if(window.visualViewport&&visualViewport.height<innerHeight*.8)return true;
-  return [...document.querySelectorAll(".onb,.paywall,.modal,.asWrap,#splash")].some(e=>!e.classList.contains("hidden")&&getComputedStyle(e).display!=="none"&&getComputedStyle(e).visibility!=="hidden"&&e.getBoundingClientRect().height>0)}
-function syncGlass(){if(!glassOK)return;clearTimeout(glassT);glassT=setTimeout(syncGlassNow,16)}
-function syncGlassNow(){if(!glassOK)return;if(glassBusy){glassQ=true;return}const t=$("tabs");
-  if(!t||glassBlocked()){document.documentElement.classList.remove("ng");glassBusy=true;GLASS.hide().catch(()=>{}).finally(()=>{glassBusy=false;if(glassQ){glassQ=false;syncGlassNow()}});return}
-  document.documentElement.classList.add("ng");
+  return [...document.querySelectorAll(".onb,.paywall,.modal,.asWrap,#splash")].some(e=>!e.classList.contains("hidden")&&!e.classList.contains("out")&&getComputedStyle(e).display!=="none"&&e.getBoundingClientRect().height>0)}
+function syncGlass(){if(!GLASS_H)return;clearTimeout(glassT);glassT=setTimeout(syncGlassNow,16)}
+function syncGlassNow(){const t=$("tabs");
+  if(!t||glassBlocked()){document.documentElement.classList.remove("ng");try{GLASS_H.postMessage({cmd:"hide"})}catch(e){}return}
   const r=t.getBoundingClientRect(),{bs,pre}=glassItems(),lab=b=>(b.textContent.trim()||b.getAttribute("aria-label")||"").trim();
   const items=bs.map((b,i)=>({id:pre+i,label:lab(b),icon:SF[lab(b)]||"circle"})),on=bs.findIndex(b=>b.classList.contains("on"));
-  glassBusy=true;GLASS.show({items,selected:on>=0?pre+on:"",frame:{x:r.left,y:r.top,w:r.width,h:r.height}})
-    .catch(()=>{glassOK=false;document.documentElement.classList.remove("ng")})
-    .finally(()=>{glassBusy=false;if(glassQ){glassQ=false;syncGlassNow()}})}
-if(GLASS){try{GLASS.addListener("tap",e=>{const id=(e&&e.id)||"",i=+id.slice(1),{bs,pre}=glassItems();if(id[0]===pre&&bs[i])bs[i].click();syncGlass()})}catch(e){glassOK=false}
-  new MutationObserver(syncGlass).observe(document.body,{subtree:true,attributes:true,attributeFilter:["class"]});
+  try{GLASS_H.postMessage({cmd:"show",items,selected:on>=0?pre+on:"",frame:{x:r.left,y:r.top,w:r.width,h:r.height}})}catch(e){}}
+window.__glassAck=()=>document.documentElement.classList.add("ng");
+window.__glassTap=id=>{const i=+String(id).slice(1),{bs,pre}=glassItems();if(String(id)[0]===pre&&bs[i])bs[i].click();syncGlass()};
+if(GLASS_H){new MutationObserver(syncGlass).observe(document.body,{subtree:true,attributes:true,attributeFilter:["class"]});
   if(window.ResizeObserver)new ResizeObserver(syncGlass).observe($("tabs"));
   window.addEventListener("resize",syncGlass);if(window.visualViewport)visualViewport.addEventListener("resize",syncGlass);
-  setTimeout(syncGlass,400);setTimeout(syncGlass,1500);setTimeout(syncGlass,3500)}
+  [300,1000,2500,5000].forEach(t=>setTimeout(syncGlass,t))}
 initNative();loadLocal();updateProUI();loadTrending();
 if(!onbSeen){openOnb();setTimeout(hideSplash,900)}else setTimeout(hideSplash,700);
 setDetent(1);setAppH();renderLibrary();
