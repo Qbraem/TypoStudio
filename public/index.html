@@ -196,6 +196,7 @@ input[type=range]::-moz-range-thumb{width:28px;height:28px;border-radius:50%;bac
 .card.xmas{background:radial-gradient(circle at 30% 40%,rgba(255,255,255,.35) 0 .9px,transparent 1.4px) 0 0/58px 58px,radial-gradient(120% 90% at 20% 10%,#b3262b 0%,#6e1418 55%,#3f0b0e 100%)!important;border-color:#E9C46A55}
 .catIco{width:17px;height:17px;flex:none}
 .chip.xmas.on .catIco,.chip.fall.on .catIco{filter:brightness(0) saturate(100%) opacity(.75)}
+.chip.bfri{background:#0d0d0d;border-color:#F26B50;color:#fff;font-weight:700}.chip.bfri.on{background:#F26B50;border-color:#fff}
 .chip.fall{background:linear-gradient(135deg,#C9652B,#8A3A17);border-color:#E9B77C88;color:#fff;font-weight:700}
 .chip.fall.on{background:linear-gradient(135deg,#F2B266,#D98236);color:#4a1f08;border-color:#fff}
 .card.fall{background:radial-gradient(120% 90% at 20% 10%,#a3532a 0%,#5e2a14 55%,#33160b 100%)!important;border-color:#E9B77C44}
@@ -1018,6 +1019,22 @@ const SEEDS = [
   D("cm5","Camera","Through My Lens",T.arch("35mm diaries","Through","my lens"),C(W,"#F2B33D")),
   D("cm6","Camera","Photo Dump",[L("PHOTO","Archivo Black",160,0,-130,{spacing:20}),L("dump","Shrikhand",250,30,90,{rotate:-6,color:"accent"}),O("sparkle",80,-330,110,{color:"accent"})],C(W,"#F2B33D")),
 
+  // ---------- Evening ----------
+  D("ev1","Evening","Good Evening",[L("good","Yellowtail",210,-130,-150,{rotate:-6,color:"accent"}),L("EVENING","Anton",240,0,50),O("sparkle",50,330,-170,{color:"accent"})],C("#F6E9D7","#E9B77C")),
+  D("ev2","Evening","Sunset Lover",[O("sunrise",190,0,-250,{color:"accent"}),L("sunset","Pacifico",240,0,-30),L("LOVER","Montserrat",70,0,150,{weight:800,spacing:34,color:"accent"})],C(W,"#F28B50")),
+  D("ev3","Evening","Night Out",[O("sparkles",80,-400,-260,{color:"accent"}),L("NIGHT","Bebas Neue",340,0,-80,{spacing:6}),L("out","Yellowtail",260,130,100,{rotate:-8,color:"accent"})],C(W,"#E9B77C")),
+  D("ev4","Evening","Wine O'Clock",[L("wine","Lobster",250,0,-90),L("O'CLOCK","Archivo Black",125,0,95,{spacing:10,color:"accent"})],C(W,"#C9556B")),
+  D("ev5","Evening","Date Night",[O("heart",70,330,-200,{color:"accent"}),L("date","Gloock",280,-60,-80),L("night","Yellowtail",230,110,110,{rotate:-6,color:"accent"})],C("#F6E9D7","#F26B50")),
+  D("ev6","Evening","Sweet Dreams",[O("star",60,-340,-230,{color:"accent"}),O("sparkle",40,350,-200,{color:"accent"}),L("sweet","Pacifico",230,0,-80),L("DREAMS","Montserrat",100,0,115,{weight:800,spacing:26,color:"accent"})],C(W,"#A9B8E8")),
+  D("ev7","Evening","Dinner Is Served",[L("dinner","Yellowtail",220,0,-130,{rotate:-5,color:"accent"}),L("IS SERVED","Anton",190,0,50,{spacing:6}),L("BON APPÉTIT","Montserrat",40,0,190,{weight:800,spacing:22,color:"accent"})],C("#F6E9D7","#E9B77C")),
+
+  // ---------- Black Friday ----------
+  D("bfr1","Black Friday","Black Friday",[L("BLACK","Anton",340,0,-100),L("friday","Yellowtail",250,60,95,{rotate:-6,color:"accent"})],C(W,"#F26B50")),
+  D("bfr2","Black Friday","Sale",[O("burst",90,330,-210,{color:"accent"}),L("SALE","Archivo Black",300,0,-30),L("up to 50% off","Caveat",130,0,160,{weight:700,rotate:-4,color:"accent"})],C(W,"#F26B50")),
+  D("bfr3","Black Friday","Today Only",[L("today","Yellowtail",190,-110,-230,{rotate:-8,color:"accent"}),L("ONLY","Anton",360,0,30),L("WHILE STOCKS LAST","Montserrat",40,0,220,{weight:800,spacing:18})],C(W,"#F2B33D")),
+  D("bfr4","Black Friday","Shop Small",[L("shop","Pacifico",210,0,-130),L("SMALL","Bowlby One",190,0,70,{color:"accent"}),O("heart",60,0,220,{color:"accent"})],C(W,"#F28BA0")),
+  D("bfr5","Black Friday","Cyber Monday",[L("CYBER","Bebas Neue",330,0,-90,{spacing:8}),L("monday","Yellowtail",230,70,100,{rotate:-6,color:"accent"})],C(W,"#7FC8E8")),
+
   // ---------- Trending ----------
   D("tr1","Viral","Holy Cow!",T.bubble("Holy","Cow!"),{...C("#F6ECD2",CORAL),texture:25}),
   D("tr2","Viral","Main Character Energy",[L("main character","Yellowtail",160,0,-210,{rotate:-6,color:"accent"}),L("ENERGY","Anton",280,0,50)]),
@@ -1080,7 +1097,7 @@ const SEEDS = [
 // per design: [scale, centreX, centreY], measured with the real fonts so every design is centred and fills the frame evenly
 const SEED_FIX={"cf1":[1.007,-1,10],"cf2":[1.024,0,32],"cf3":[1.2,1,-51],"cf4":[1.082,2,-44],"cf5":[1.16,-1,-41],"cf6":[1.141,2,-29],"cf7":[0.95,2,-34],"cf8":[1.2,18,4],"cf9":[1.12,-1,-75],"cf10":[1.2,-8,26],"bf1":[0.917,4,58],"bf2":[1.059,4,-129],"bf3":[0.977,-32,17],"bf4":[1.0,10,-35],"bf5":[0.754,1,44],"bf6":[1.151,-5,-32],"bf7":[1.091,29,-22],"wk1":[0.809,35,-43],"wk2":[1.045,6,27],"wk3":[0.952,-1,-49],"wk4":[1.053,49,9],"wk5":[0.961,-3,-14],"wk6":[1.01,10,-15],"wk7":[1.061,2,-78],"hd1":[1.05,24,-27],"hd2":[1.16,-8,-52],"hd3":[1.019,-2,-30],"hd4":[0.87,-1,-67],"hd5":[1.2,-2,-24],"hd6":[0.961,1,-12],"hd7":[1.193,-10,-33],"xm1":[0.907,-1,-53],"xm2":[1.01,0,-33],"xm3":[0.873,29,-8],"xm4":[1.007,-1,-45],"xm5":[1.183,-17,-25],"xm6":[0.903,1,-122],"xm7":[1.2,1,-83],"xm8":[1.027,-31,-2],"xm9":[0.832,3,-64],"xm10":[0.758,-2,-10],"xm11":[0.935,-1,-68],"xm12":[0.888,3,-56],"xm13":[1.2,9,-85],"xm14":[0.995,0,-6],"qt1":[1.015,1,-115],"qt2":[0.991,2,-65],"qt3":[1.111,-36,-66],"qt4":[1.126,-9,-17],"qt5":[1.053,5,-1],"qt6":[0.974,-2,31],"qt7":[1.042,-1,0],"qt8":[1.141,0,-72],"qt9":[0.994,-31,-58],"qt10":[1.058,9,-42],"qt11":[1.117,-4,-48],"qt12":[1.163,3,-84],"xm16":[0.791,3,13],"xm17":[0.955,0,-26],"xm18":[1.091,29,-22],"xm19":[0.931,1,40],"xm21":[0.895,0,-114],"vt1":[1.091,-1,-10],"vt2":[1.097,11,-66],"vt3":[0.883,-4,-1],"vt4":[0.933,-2,11],"vt5":[0.986,0,70],"vt6":[0.802,0,22],"vt7":[0.907,1,29],"vt8":[1.074,7,-23],"vt10":[1.2,-22,-10],"vt11":[1.032,-13,0],"vt12":[0.907,1,-40],"vt13":[0.981,6,3],"vt14":[1.2,28,4],"vt15":[1.168,-1,15],"vt16":[0.919,-31,-67],"vt17":[0.998,-3,-13],"so1":[0.923,5,-1],"so2":[0.919,-1,-2],"so3":[0.923,11,-96],"so4":[1.2,102,-21],"so5":[1.2,52,-38],"so6":[1.2,39,53],"so7":[1.2,8,-34],"so8":[1.091,111,-27],"so9":[1.2,1,-7],"so10":[1.102,-1,-19],"hn1":[0.709,10,-41],"hn2":[0.867,1,36],"hn3":[1.062,32,-2],"hn4":[1.009,19,-21],"tg1":[0.87,-3,-60],"tg2":[0.944,1,-48],"tg3":[0.775,2,-165],"tg4":[0.759,-1,-24],"tg5":[0.828,1,-100],"tg6":[0.977,28,-32],"tg7":[1.148,-8,-31],"tg8":[0.835,1,-65],"tg9":[1.154,-6,-30],"tg10":[0.927,5,-20],"tg11":[0.925,-40,-97],"tg12":[1.058,1,-60],"tg13":[1.2,55,-76],"tg15":[0.819,15,-111],"tg16":[0.909,70,-12],"tg17":[0.743,5,-37],"tg18":[1.053,-3,-13],"tg19":[0.877,-3,-6],"tg14":[0.966,-59,24],"tv1":[0.948,27,-57],"tv2":[0.812,1,-33],"tv3":[1.105,8,-28],"tv4":[0.892,-1,-113],"tv5":[1.2,1,-53],"tv6":[1.066,-2,22],"tv7":[1.132,21,-8],"tv8":[1.111,78,52],"tv9":[0.897,0,-112],"tv10":[0.877,25,29],"tv11":[0.791,-3,-33],"tv12":[0.946,-2,-64],"tv15":[1.144,19,-89],"tv16":[0.972,0,-16],"tv17":[0.838,-3,-38],"tv18":[1.029,32,-70],"tv19":[0.881,-9,-120],"tv14":[1.2,54,-51],"cs1":[1.2,16,-22],"cs2":[0.597,0,20],"cs3":[1.069,-5,12],"cs4":[1.2,11,-56],"cs5":[1.2,-24,-45],"cs6":[1.2,0,-14],"gl1":[1.2,-33,-61],"gl2":[1.1,-3,-69],"gl3":[1.197,3,-43],"gl4":[0.94,5,-39],"gl5":[1.012,27,-74],"gl6":[1.2,1,8],"gl7":[1.129,2,-83],"mv1":[1.002,-65,-34],"mv2":[0.616,-2,20],"mv3":[1.2,32,-41],"mv4":[1.2,5,-22],"mv5":[0.838,1,-85],"mv6":[1.12,27,34],"mo1":[1.047,-5,-16],"mo2":[0.892,3,-25],"mo3":[1.151,31,-11],"mo4":[1.091,-1,-33],"mo5":[1.108,-7,-76],"mo6":[1.085,35,24],"mo7":[1.2,-7,38],"mo8":[0.966,-3,-6],"mo9":[0.795,0,-106],"mo10":[1.094,0,19],"mo11":[0.913,0,9],"mo12":[0.679,-1,2],"cm1":[1.2,-45,-86],"cm2":[1.2,2,-38],"cm3":[1.2,12,-19],"cm4":[1.047,35,39],"cm5":[0.852,-1,-22],"cm6":[1.082,20,-8],"tr1":[1.167,0,-33],"tr2":[1.045,6,-84],"tr3":[1.2,-3,-15],"tr4":[1.043,5,-52],"tr5":[0.873,-3,-56],"tr6":[0.87,-1,-132],"tr7":[1.012,19,23],"y1":[1.197,39,-52],"y2":[1.183,-1,-34],"y3":[0.817,34,15],"mn1":[1.19,-21,-34],"mn2":[0.854,0,-55],"mn3":[0.852,3,35],"mn4":[1.047,-31,-63],"mn5":[1.12,-1,-24],"mn6":[1.034,0,-32],"mn7":[0.974,1,-9],"mn8":[1.014,-2,-46],"mn9":[0.979,17,-98],"mn10":[0.809,3,37],"mn11":[1.176,45,-41],"mn12":[1.2,7,-16],"we1":[0.907,-3,-57],"we2":[0.886,-22,58],"we3":[0.961,-37,11],"we4":[1.2,-1,2],"we5":[1.085,53,-70],"we6":[1.043,2,-56],"we7":[0.907,5,-121],"we8":[0.89,2,-68],"we9":[1.005,-2,-31],"we10":[1.2,-11,-1],"we11":[0.877,15,-69],"we12":[0.903,1,-58],"we13":[1.009,-1,-105],"we14":[0.988,-9,-19],"we15":[1.2,-4,-105],"lv1":[1.012,1,22],"lv2":[0.915,-1,-104],"lv3":[0.915,1,-45],"lv4":[1.104,-7,-32],"lv5":[0.911,-1,-82],"lv6":[0.877,-3,-64],"lv7":[0.935,-3,-45],"lv8":[1.197,15,-84],"lv9":[1.141,17,-20],"lv10":[0.919,-1,-17],"wg1":[0.911,-1,12],"wg2":[0.911,-1,12],"wg3":[0.931,-1,-1],"wg4":[0.94,-1,5],"wg5":[0.944,-1,5],"wg6":[1.085,-1,9],"y4":[0.917,2,-57],"y5":[1.053,-1,-53]};
 SEEDS.forEach(d=>{const f=SEED_FIX[d.id];if(!f)return;const [k,cx,cy]=f;d.layers.forEach(Ly=>{Ly.size=Math.round(Ly.size*k);Ly.x=Math.round((Ly.x-cx)*k);Ly.y=Math.round((Ly.y-cy)*k);if(Ly.cutout)Ly.cutout=Math.round(Ly.cutout*k*10)/10;if(Ly.width)Ly.width=Math.round(Ly.width*k)})});
-const NEW_CATS=["Live","Widgets","Thanksgiving","Holidays","Morning","Weather","New Year","Coffee","Breakfast","Weekend","Travel","Vintage","Socials","Quotes & Notes","Cosy","Girly","Movie Night","Monthly","Camera","Viral"];
+const NEW_CATS=["Live","Widgets","Thanksgiving","Holidays","Morning","Evening","Black Friday","Weather","New Year","Coffee","Breakfast","Weekend","Travel","Vintage","Socials","Quotes & Notes","Cosy","Girly","Movie Night","Monthly","Camera","Viral"];
 const SEED_CATS=[...new Set([...NEW_CATS,...SEEDS.map(d=>d.cat)])];
 
 
@@ -1102,7 +1119,8 @@ function toast(t){const e=$("toast");e.textContent=t;e.classList.add("show");cle
 /* Thanksgiving (4de donderdag van november) is enkel zichtbaar van 1 oktober tot 2 dagen erna */
 function thanksgivingDate(y){const f=new Date(y,10,1);return new Date(y,10,1+((11-f.getDay())%7)+21)}
 function thanksgivingVisible(now=new Date()){const y=now.getFullYear(),end=thanksgivingDate(y);end.setDate(end.getDate()+3);return now>=new Date(y,9,1)&&now<end}
-function seasonHidden(d){return d.cat==="Thanksgiving"&&!d.custom&&!thanksgivingVisible()}
+function blackFridayWindow(now=new Date()){const bf=thanksgivingDate(now.getFullYear());bf.setDate(bf.getDate()+1);const a=new Date(bf);a.setDate(a.getDate()-7);const b=new Date(bf);b.setDate(b.getDate()+4);return{bf,on:now>=a&&now<b}}
+function seasonHidden(d){if(d.custom)return false;if(d.cat==="Thanksgiving")return !thanksgivingVisible();if(d.cat==="Black Friday")return !blackFridayWindow().on;return false}
 function allDesigns(){return [...custom,...SEEDS.filter(d=>!seasonHidden(d))]}
 function allCats(){return [...new Set([...customCats,...custom.map(d=>d.cat),...SEED_CATS])]}
 function isCustomCat(c){return !SEED_CATS.includes(c)}
@@ -1460,24 +1478,62 @@ function markUsed(d){if(!d||!d.seed&&!SEEDS.some(x=>x.id===curSourceId))return;c
 const SEASON_PICKS={0:["y1","y2","y4","cs1","cs2","qt12"],1:["gl3","gl5","mo2","gl1","cs3","qt1"],2:["mo3","bf1","bf2","wk3","qt3"],3:["mo4","bf3","wk2","tv7","qt7"],
   4:["mo5","tv1","bf6","wk4","cm2"],5:["mo6","tv7","tv14","tv3","cm2"],6:["mo7","tv6","tv7","tv9","cm1"],7:["mo8","tv14","tv15","tv18","cm6"],
   8:["mo9","cs1","cf1","qt4","wk1"],9:["mo10","hd7","cs2","tg9","cf6"],10:null,11:["xm1","xm17","xm18","xm21","hd1","xm6"]};
+// Moment-aware Trending: special days first, then time of day and weekday, then live weather, then the month.
+function momentPicks(now=new Date()){
+  const h=now.getHours(),dow=now.getDay(),m=now.getMonth(),dd=now.getDate(),P=[],late=[];const add=(...ids)=>P.push(...ids);
+  const bw=blackFridayWindow(now),tg=thanksgivingDate(now.getFullYear()),same=(a,b)=>a.getFullYear()===b.getFullYear()&&a.getMonth()===b.getMonth()&&a.getDate()===b.getDate();
+  // special days
+  if(m===11&&dd===31||m===0&&dd<=2)add("y2","y1","y4","y5");
+  else if(m===11&&dd>=24&&dd<=26)add("xm11","xm1","xm16","xm7","xm3","hd1");
+  else if(m===11&&dd>=27)add("y5","y3","y2","y4");
+  if(same(now,tg))add("tg1","tg16","tg19","tg3");
+  if(bw.on){const cm=new Date(bw.bf);cm.setDate(cm.getDate()+3);
+    const sat=new Date(bw.bf);sat.setDate(sat.getDate()+1);
+    if(same(now,bw.bf))add("bfr1","bfr2","bfr3","bfr4");else if(same(now,cm))add("bfr5","bfr2","bfr3");else if(same(now,sat))add("bfr4","bfr2");
+    else if(now<bw.bf)late.push("bfr1","bfr2");else late.push("bfr2","bfr5")}
+  if(m===9&&dd>=27)add("hd7");
+  if(m===1&&dd>=12&&dd<=14)add("gl5","ev5","gl3");
+  // time of day + weekday
+  const wkend=dow===0||dow===6;
+  if(h>=5&&h<11){
+    if(dow===0)add("wk1","bf3","wk4","gl4");else if(dow===6)add("bf1","wk6","wk5");else if(dow===1)add("mn10","cf3","mn1");
+    add("mn1","mn2","cf1","mn6","cf3","mn9","bf2");
+  }else if(h>=11&&h<17){
+    if(wkend)add(dow===6?"wk6":"wk4","wk5","bf1");else if(dow===5)add("wk3","wk2");
+    add("cf6","cm6","tr5","cm2");
+  }else if(h>=17&&h<22){
+    if(dow===5)add("wk3","wk2","gl6","ev3");else if(dow===6)add("ev3","gl6","ev5");else if(dow===0)add("wk7","mv2","cs6");
+    if(h<19)add("ev2","cm2");add("ev1","ev4","ev7","mv1","mv2","cs1");
+  }else{
+    add("ev6","mv5","wg2","mv6");if(dow===5||dow===6)add("ev3","gl6");
+  }
+  // live weather (only when the user shared it recently)
+  try{if(typeof LIVE!=="undefined"&&LIVE&&LIVE.code!=null&&(!LIVE.ts||Date.now()-LIVE.ts<6*3600e3)){const c=+LIVE.code;
+    if(c>=71&&c<=86)add("we9");else if(c>=95)add("we11");else if(c>=51)add("we7","we15","we12");else if(c<=1)add(h>=5&&h<20?"we3":"wg2","we13");else add("we6","we4")}}catch(e){}
+  return [...P.slice(0,6),...late,...P.slice(6)];
+}
 function suggestions(){
   const now=new Date(),m=now.getMonth(),VIS=SEEDS.filter(d=>!seasonHidden(d)),byId=Object.fromEntries(VIS.map(d=>[d.id,d])),by={};VIS.forEach(d=>(by[d.cat]=by[d.cat]||[]).push(d));
-  const tgDay=(()=>{const f=new Date(now.getFullYear(),10,1);return 1+((11-f.getDay())%7)+21})();
   let seasonal=SEASON_PICKS[m];
   if(m===10)seasonal=thanksgivingVisible(now)?["tg1","tg16","tg19","tg3","tg18","xm1"]:["xm1","xm17","hd1","xm18","xm6","tg2"];
+  const moment=momentPicks(now).map(id=>byId[id]).filter(Boolean);
   const lead=(seasonal||[]).map(id=>byId[id]).filter(Boolean);
   // popular: only templates saved at least 3 times by everyone (or twice on this device), max 9
   const popular=[...globalTop.filter(x=>x.n>=3).map(x=>x.id),...Object.entries(localUse).filter(x=>x[1]>=2).sort((a,b)=>b[1]-a[1]).map(x=>x[0])].map(id=>byId[id]).filter(Boolean).slice(0,9);
   const order=["Coffee","Weekend","Travel","Girly","Quotes & Notes","Cosy","Breakfast","Viral","Movie Night","Camera"];
   const mix=[];for(let r=0;r<2;r++)order.forEach(c=>{const d=by[c]&&by[c][r];if(d)mix.push(d)});
-  const out=[];[...lead,...popular,...mix].forEach(d=>{if(!out.includes(d))out.push(d)});
+  const out=[];[...moment.slice(0,8),...lead.slice(0,4),...popular,...moment.slice(8),...lead.slice(4),...mix].forEach(d=>{if(!out.includes(d))out.push(d)});
   return out.slice(0,24);
 }
+// refresh Trending when the moment changes (app reopened, or every 10 minutes)
+let _momentKey="";function momentKey(){const n=new Date();return n.toDateString()+"|"+(n.getHours()<5?0:n.getHours()<11?1:n.getHours()<17?2:n.getHours()<22?3:0)}
+function refreshMoment(){const k=momentKey();if(k!==_momentKey){_momentKey=k;if(typeof activeCat!=="undefined"&&activeCat==="Suggestions"&&$("cats"))renderLibrary()}}
+document.addEventListener("visibilitychange",()=>{if(!document.hidden)refreshMoment()});setInterval(refreshMoment,600000);
 const _ci={};function catIcon(sh){if(_ci[sh])return _ci[sh];const c=document.createElement("canvas");c.width=c.height=64;const x=c.getContext("2d");x.translate(32,32);x.fillStyle=x.strokeStyle="#fff";drawShape(x,sh,26,false);return _ci[sh]=c.toDataURL()}
 function renderLibrary(){
   if(!$("cats"))return;
   const cats=$("cats");cats.innerHTML="";
-  const mk=(label,val)=>{const b=document.createElement("button");b.className="chip"+(activeCat===val?" on":"")+(val==="Holidays"?" xmas":val==="Thanksgiving"?" fall":"");const ic=val==="Holidays"?"snowflake":val==="Thanksgiving"?"turkey":val==="Live"?"pin":val==="Widgets"?"tile":null;if(ic){b.innerHTML=`<img class="catIco" src="${catIcon(ic)}" alt="">`;b.appendChild(document.createTextNode(label))}else b.textContent=label;b.onclick=()=>{activeCat=val;renderLibrary()};cats.appendChild(b)};
+  const mk=(label,val)=>{const b=document.createElement("button");b.className="chip"+(activeCat===val?" on":"")+(val==="Holidays"?" xmas":val==="Thanksgiving"?" fall":val==="Black Friday"?" bfri":"");const ic=val==="Holidays"?"snowflake":val==="Thanksgiving"?"turkey":val==="Live"?"pin":val==="Widgets"?"tile":val==="Black Friday"?"burst":val==="Evening"?"star":null;if(ic){b.innerHTML=`<img class="catIco" src="${catIcon(ic)}" alt="">`;b.appendChild(document.createTextNode(label))}else b.textContent=label;b.onclick=()=>{activeCat=val;renderLibrary()};cats.appendChild(b)};
   const fr=document.createElement("button");fr.className="chip freeSw"+(freeOnly?" on":"");fr.setAttribute("role","switch");fr.setAttribute("aria-checked",freeOnly);
   fr.innerHTML='<span class="sw"><i></i></span>Free';fr.onclick=()=>{freeOnly=!freeOnly;try{localStorage.setItem("typoStudio.freeOnly",freeOnly?"1":"0")}catch(e){}renderLibrary()};cats.appendChild(fr);
   mk("Trending","Suggestions");{const t=cats.lastChild;t.innerHTML=`<svg class="catIco" viewBox="0 0 24 24" fill="currentColor"><path d="M12.5 2.5c.6 3.1-1.2 4.8-2.7 6.4C8.2 10.6 7 12.2 7 14.6A5 5 0 0 0 12 19.6a5 5 0 0 0 5-5c0-2.2-1-3.7-1.9-4.8-.2 1.3-.9 2.2-1.9 2.6.5-3.4-.1-6.6-.7-9.9z"/></svg>Trending`}
