@@ -1486,7 +1486,7 @@ function showTab(t){
   ["lib","edit"].forEach(x=>$("tab-"+x).classList.toggle("hidden",x!==t));
   $("undoBtn").classList.toggle("hidden",t!=="edit");
   $("sheetBody").scrollTop=0;syncNav();
-  if(t==="edit"){if(!layer())sel=firstTextLayer();toolGrp=null;view={...VIEW0};layoutSticker();renderLayerChips();renderTool();showCoach()}
+  if(t==="edit"){if(!layer())sel=firstTextLayer();toolGrp=null;layoutSticker();renderLayerChips();renderTool();showCoach()}
   schedulePreview(true);
 }
 $("tabs").addEventListener("click",e=>{const b=e.target.closest("button");if(!b)return;if(b.dataset.gk){setToolGrp(b.dataset.gk);return}if(b.dataset.tab)showTab(b.dataset.tab)});
