@@ -196,6 +196,8 @@ input[type=range]::-moz-range-thumb{width:28px;height:28px;border-radius:50%;bac
 .card.xmas{background:radial-gradient(circle at 30% 40%,rgba(255,255,255,.35) 0 .9px,transparent 1.4px) 0 0/58px 58px,radial-gradient(120% 90% at 20% 10%,#b3262b 0%,#6e1418 55%,#3f0b0e 100%)!important;border-color:#E9C46A55}
 .catIco{width:17px;height:17px;flex:none}
 .chip.xmas.on .catIco,.chip.fall.on .catIco{filter:brightness(0) saturate(100%) opacity(.75)}
+.delX{position:absolute;z-index:6;width:26px;height:26px;margin:-13px 0 0 -13px;border-radius:50%;border:2px solid #fff;background:#E5483A;color:#fff;display:flex;align-items:center;justify-content:center;padding:0;box-shadow:0 2px 8px rgba(0,0,0,.4);touch-action:manipulation}.delX[hidden]{display:none}.delX svg{width:12px;height:12px;stroke:#fff;stroke-width:3;stroke-linecap:round}
+.delX::after{content:"";position:absolute;inset:-10px}
 .chip.bfri{background:#0d0d0d;border-color:#F26B50;color:#fff;font-weight:700}.chip.bfri.on{background:#F26B50;border-color:#fff}
 .chip.fall{background:linear-gradient(135deg,#C9652B,#8A3A17);border-color:#E9B77C88;color:#fff;font-weight:700}
 .chip.fall.on{background:linear-gradient(135deg,#F2B266,#D98236);color:#4a1f08;border-color:#fff}
@@ -551,6 +553,7 @@ input[type=range]::-moz-range-thumb{width:28px;height:28px;border-radius:50%;bac
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M21.5 3 3 10.2l7.2 2.6L21.5 3zM10.2 12.8l2.6 8.2L21.5 3"/></svg></div>
       </div>
       <canvas id="sticker"></canvas>
+      <button class="delX" id="delX" hidden aria-label="Delete this text"><svg viewBox="0 0 12 12"><path d="M2 2l8 8M10 2l-8 8"/></svg></button>
 <button class="livePill hidden" id="livePill" type="button"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 22s7-6.2 7-12a7 7 0 0 0-14 0c0 5.8 7 12 7 12zm0-9.2a2.8 2.8 0 1 1 0-5.6 2.8 2.8 0 0 1 0 5.6z"/></svg><span id="livePillTxt">Add your location</span></button>
       <a class="credit" id="credit" href="https://www.instagram.com/myx100vi/" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="2.5" y="2.5" width="19" height="19" rx="5.5"/><circle cx="12" cy="12" r="4.3"/><circle cx="17.4" cy="6.6" r="1.1" fill="currentColor" stroke="none"/></svg><span id="creditName">© myx100vi</span></a>
       <div class="coach hidden" id="coach">Tap a text · drag to move · pinch to resize and rotate</div>
@@ -1319,7 +1322,8 @@ function drawLayers(ctx,d,s,Cx,Cy,opts={}){
   }
   if(selBox){const B=selBox,dp=opts.dpr||1,p=8*dp;ctx.save();ctx.translate(B.x,B.y);ctx.rotate(B.rot);ctx.lineWidth=1.5*dp;ctx.setLineDash([6*dp,5*dp]);
     ctx.strokeStyle="rgba(0,0,0,.55)";ctx.strokeRect(-B.l-p+1,-B.t-p+1,B.l+B.r+2*p,B.t+B.b+2*p);
-    ctx.strokeStyle="rgba(255,255,255,.95)";ctx.strokeRect(-B.l-p,-B.t-p,B.l+B.r+2*p,B.t+B.b+2*p);ctx.restore()}
+    ctx.strokeStyle="rgba(255,255,255,.95)";ctx.strokeRect(-B.l-p,-B.t-p,B.l+B.r+2*p,B.t+B.b+2*p);ctx.restore();
+    const cx=B.r+p,cy=-B.t-p,co=Math.cos(B.rot),si=Math.sin(B.rot);boxes.selCorner={x:B.x+cx*co-cy*si,y:B.y+cx*si+cy*co}}
   if(opts.guideX){ctx.save();ctx.strokeStyle="rgba(242,107,80,.95)";ctx.lineWidth=1.5*(opts.dpr||1);ctx.beginPath();ctx.moveTo(Cx,0);ctx.lineTo(Cx,ctx.canvas.height);ctx.stroke();ctx.restore()}
   return boxes;
 }
@@ -1365,6 +1369,7 @@ function schedulePreview(noExport){
     const pw=Math.round(W*dpr),ph=Math.round(H*dpr);if(cv.width!==pw||cv.height!==ph){cv.width=pw;cv.height=ph}
     const ctx=cv.getContext("2d");ctx.clearRect(0,0,pw,ph);
     const G=stageGeom(W,H);lastBoxes=drawLayers(ctx,cur,G.size*dpr*view.scale/FRAME,G.cx*dpr,G.cy*dpr,{sel:tab==="edit"?sel:-1,dpr,guideX});
+    const dx=$("delX");if(dx){const c=lastBoxes.selCorner;if(c&&tab==="edit"){dx.hidden=false;dx.style.left=Math.max(14,Math.min(W-14,c.x/dpr))+"px";dx.style.top=Math.max(14,Math.min(H-14,c.y/dpr))+"px"}else dx.hidden=true}
   });
 }
 // tik / sleep / knijp
@@ -1379,7 +1384,7 @@ function schedulePreview(noExport){
     return best;
   }
   st.addEventListener("pointerdown",e=>{
-    if(e.target.closest(".bgRow")||e.target.closest(".credit")||e.target.closest(".livePill"))return;
+    if(e.target.closest(".bgRow")||e.target.closest(".credit")||e.target.closest(".livePill")||e.target.closest(".delX"))return;
     st.setPointerCapture(e.pointerId);pts.set(e.pointerId,{x:e.clientX,y:e.clientY});
     if(tab==="edit"){
       if(pts.size===1){const u=toUnits(e.clientX,e.clientY);const h=hit(u);
@@ -2039,6 +2044,7 @@ function closeHowto(){$("howto").classList.add("hidden");try{localStorage.setIte
 $("helpBtn").onclick=openHowto;$("htClose").onclick=closeHowto;$("htDone").onclick=closeHowto;
 document.addEventListener("click",e=>{if(e.target.closest("[data-howto]")){$("modal").classList.add("hidden");openHowto()}});
 let firstSaveDone=false;try{firstSaveDone=!!localStorage.getItem("typoStudio.howto")}catch(e){}
+$("delX").addEventListener("click",e=>{e.stopPropagation();if(tab!=="edit"||!layer())return;snap();cur.layers.splice(sel,1);sel=Math.max(0,sel-1);toast("Deleted · tap ↶ to undo");change(()=>{},{chips:true,tool:true})});
 initNative();loadLocal();updateProUI();loadTrending();
 if(!onbSeen){openOnb();setTimeout(hideSplash,900)}else setTimeout(hideSplash,700);
 setDetent(1);setAppH();renderLibrary();
