@@ -1986,7 +1986,7 @@ function initNative(){
 // Prices are placeholders until they are set in App Store Connect.
 /* BETA (TestFlight): alles is vrij te gebruiken (opslaan, PRO-ornamenten, knock-out, textuur).
    Paywall en PRO-labels blijven zichtbaar. Zet op false voor de App Store-release. */
-const BETA_UNLOCK_ALL=true;
+const BETA_UNLOCK_ALL=false;
 function canUse(){return BETA_UNLOCK_ALL||isPro()}
 const PRO={yearly:{price:"€12.99",perMonth:"€1.08",trialDays:7},lifetime:{price:"€24.99",regular:"€41.99"}};
 const FREE_PER_CAT=3;
