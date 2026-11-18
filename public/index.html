@@ -24,6 +24,8 @@
 html,body{margin:0;height:100%;background:var(--bg);color:var(--text);font-family:"DM Sans",-apple-system,system-ui,sans-serif;overflow:hidden;overscroll-behavior:none}
 button,input,select,textarea{font:inherit;color:inherit}
 button{cursor:pointer;touch-action:manipulation;-webkit-user-select:none;user-select:none}
+body,.shell,.stage,.stage *,.sheet,.tabs,.top{-webkit-user-select:none;user-select:none;-webkit-touch-callout:none;-webkit-tap-highlight-color:transparent}
+input,textarea,select,[contenteditable]{-webkit-user-select:text;user-select:text;-webkit-touch-callout:default}
 .hidden{display:none!important}
 
 /* ---------- App shell (iPhone eerst) ---------- */
@@ -116,6 +118,7 @@ button{cursor:pointer;touch-action:manipulation;-webkit-user-select:none;user-se
   .sheetBody{padding-bottom:calc(84px + var(--tbB))!important}
   .side-status .tabs{padding-bottom:0}
 }
+html.ng .tabs{visibility:hidden!important}
 .tabs.editBar>button{display:none}
 .tabs.editBar #toolNav{display:flex}
 #toolNav button{min-width:0;font-size:10.5px;letter-spacing:.1px}
@@ -213,6 +216,9 @@ input[type=range]::-moz-range-thumb{width:28px;height:28px;border-radius:50%;bac
 .card.xmas{background:radial-gradient(circle at 30% 40%,rgba(255,255,255,.35) 0 .9px,transparent 1.4px) 0 0/58px 58px,radial-gradient(120% 90% at 20% 10%,#b3262b 0%,#6e1418 55%,#3f0b0e 100%)!important;border-color:#E9C46A55}
 .catIco{width:17px;height:17px;flex:none}
 .chip.xmas.on .catIco,.chip.fall.on .catIco{filter:brightness(0) saturate(100%) opacity(.75)}
+.qbar{position:absolute;z-index:7;display:flex;align-items:center;gap:7px;padding:7px 9px;border-radius:999px;background:rgba(30,22,17,.62);-webkit-backdrop-filter:blur(20px) saturate(170%);backdrop-filter:blur(20px) saturate(170%);box-shadow:inset 0 1px 0 rgba(255,255,255,.22),0 8px 24px rgba(0,0,0,.4);touch-action:manipulation}
+.qbar[hidden]{display:none}.qbar .qd{width:26px;height:26px;border-radius:50%;border:2px solid rgba(255,255,255,.35);padding:0;flex:none}.qbar .qd.on{border-color:#fff;box-shadow:0 0 0 2px rgba(242,107,80,.9)}
+.qbar .qsep{width:1px;height:20px;background:rgba(255,255,255,.18)}.qbar .qpick{width:28px;height:28px}.qbar .qpick svg{width:13px;height:13px}
 .delX{position:absolute;z-index:6;width:26px;height:26px;margin:-13px 0 0 -13px;border-radius:50%;border:2px solid #fff;background:#E5483A;color:#fff;display:flex;align-items:center;justify-content:center;padding:0;box-shadow:0 2px 8px rgba(0,0,0,.4);touch-action:manipulation}.delX[hidden]{display:none}.delX svg{width:12px;height:12px;stroke:#fff;stroke-width:3;stroke-linecap:round}
 .delX::after{content:"";position:absolute;inset:-10px}
 .chip.bfri{background:#0d0d0d;border-color:#F26B50;color:#fff;font-weight:700}.chip.bfri.on{background:#F26B50;border-color:#fff}
@@ -571,6 +577,7 @@ input[type=range]::-moz-range-thumb{width:28px;height:28px;border-radius:50%;bac
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M21.5 3 3 10.2l7.2 2.6L21.5 3zM10.2 12.8l2.6 8.2L21.5 3"/></svg></div>
       </div>
       <canvas id="sticker"></canvas>
+      <div class="qbar" id="qbar" hidden></div>
       <button class="delX" id="delX" hidden aria-label="Delete this text"><svg viewBox="0 0 12 12"><path d="M2 2l8 8M10 2l-8 8"/></svg></button>
 <button class="livePill hidden" id="livePill" type="button"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 22s7-6.2 7-12a7 7 0 0 0-14 0c0 5.8 7 12 7 12zm0-9.2a2.8 2.8 0 1 1 0-5.6 2.8 2.8 0 0 1 0 5.6z"/></svg><span id="livePillTxt">Add your location</span></button>
       <a class="credit" id="credit" href="https://www.instagram.com/myx100vi/" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="2.5" y="2.5" width="19" height="19" rx="5.5"/><circle cx="12" cy="12" r="4.3"/><circle cx="17.4" cy="6.6" r="1.1" fill="currentColor" stroke="none"/></svg><span id="creditName">© myx100vi</span></a>
@@ -1341,7 +1348,7 @@ function drawLayers(ctx,d,s,Cx,Cy,opts={}){
   if(selBox){const B=selBox,dp=opts.dpr||1,p=8*dp;ctx.save();ctx.translate(B.x,B.y);ctx.rotate(B.rot);ctx.lineWidth=1.5*dp;ctx.setLineDash([6*dp,5*dp]);
     ctx.strokeStyle="rgba(0,0,0,.55)";ctx.strokeRect(-B.l-p+1,-B.t-p+1,B.l+B.r+2*p,B.t+B.b+2*p);
     ctx.strokeStyle="rgba(255,255,255,.95)";ctx.strokeRect(-B.l-p,-B.t-p,B.l+B.r+2*p,B.t+B.b+2*p);ctx.restore();
-    const cx=B.r+p,cy=-B.t-p,co=Math.cos(B.rot),si=Math.sin(B.rot);boxes.selCorner={x:B.x+cx*co-cy*si,y:B.y+cx*si+cy*co}}
+    const cx=B.r+p,cy=-B.t-p,co=Math.cos(B.rot),si=Math.sin(B.rot);boxes.selCorner={x:B.x+cx*co-cy*si,y:B.y+cx*si+cy*co};const R=(px,py)=>({x:B.x+px*co-py*si,y:B.y+px*si+py*co}),pts=[R(-B.l-p,-B.t-p),R(B.r+p,-B.t-p),R(-B.l-p,B.b+p),R(B.r+p,B.b+p)];boxes.selRect={l:Math.min(...pts.map(q=>q.x)),r:Math.max(...pts.map(q=>q.x)),t:Math.min(...pts.map(q=>q.y)),b:Math.max(...pts.map(q=>q.y))}}
   if(opts.guideX){ctx.save();ctx.strokeStyle="rgba(242,107,80,.95)";ctx.lineWidth=1.5*(opts.dpr||1);ctx.beginPath();ctx.moveTo(Cx,0);ctx.lineTo(Cx,ctx.canvas.height);ctx.stroke();ctx.restore()}
   return boxes;
 }
@@ -1388,6 +1395,7 @@ function schedulePreview(noExport){
     const ctx=cv.getContext("2d");ctx.clearRect(0,0,pw,ph);
     const G=stageGeom(W,H);lastBoxes=drawLayers(ctx,cur,G.size*dpr*view.scale/FRAME,G.cx*dpr,G.cy*dpr,{sel:tab==="edit"?sel:-1,dpr,guideX});
     const dx=$("delX");if(dx){const c=lastBoxes.selCorner;if(c&&tab==="edit"){dx.hidden=false;dx.style.left=Math.max(14,Math.min(W-14,c.x/dpr))+"px";dx.style.top=Math.max(14,Math.min(H-14,c.y/dpr))+"px"}else dx.hidden=true}
+    placeQbar(W,H,dpr);
   });
 }
 // tik / sleep / knijp
@@ -1402,14 +1410,14 @@ function schedulePreview(noExport){
     return best;
   }
   st.addEventListener("pointerdown",e=>{
-    if(e.target.closest(".bgRow")||e.target.closest(".credit")||e.target.closest(".livePill")||e.target.closest(".delX"))return;
+    if(e.target.closest(".bgRow")||e.target.closest(".credit")||e.target.closest(".livePill")||e.target.closest(".delX")||e.target.closest(".qbar"))return;
     st.setPointerCapture(e.pointerId);pts.set(e.pointerId,{x:e.clientX,y:e.clientY});
     if(tab==="edit"){
       if(pts.size===1){const u=toUnits(e.clientX,e.clientY);const h=hit(u);
         if(h>=0&&h!==sel){sel=h;renderLayerChips();renderTool()}
         if(h<0){g=null;return}
-        snap();g={mode:"drag",sx:e.clientX,sy:e.clientY,x0:layer().x,y0:layer().y,k:u.k,moved:false};hideCoach()}
-      else if(pts.size===2&&layer()){const [a,b]=[...pts.values()];g={mode:"pinch",d0:Math.hypot(a.x-b.x,a.y-b.y),a0:Math.atan2(b.y-a.y,b.x-a.x),s0:layer().size,r0:layer().rotate||0}}
+        snap();qDragging=true;g={mode:"drag",sx:e.clientX,sy:e.clientY,x0:layer().x,y0:layer().y,k:u.k,moved:false};hideCoach()}
+      else if(pts.size===2&&layer()){qDragging=true;const [a,b]=[...pts.values()];g={mode:"pinch",d0:Math.hypot(a.x-b.x,a.y-b.y),a0:Math.atan2(b.y-a.y,b.x-a.x),s0:layer().size,r0:layer().rotate||0}}
     }else{
       if(pts.size===1)g={mode:"view",sx:e.clientX,sy:e.clientY,x0:view.x,y0:view.y};
       else if(pts.size===2){const [a,b]=[...pts.values()];g={mode:"vpinch",d0:Math.hypot(a.x-b.x,a.y-b.y),s0:view.scale}}
@@ -1431,7 +1439,7 @@ function schedulePreview(noExport){
       const [a,b]=[...pts.values()];view.scale=Math.max(.4,Math.min(1.6,g.s0*Math.hypot(a.x-b.x,a.y-b.y)/g.d0));layoutSticker();
     }
   });
-  const up=e=>{pts.delete(e.pointerId);if(pts.size===0){if(g&&g.mode==="view"&&guideX){guideX=false;layoutSticker()}if(g&&(g.mode==="drag"||g.mode==="pinch")){guideX=false;schedulePreview();renderTool(true);renderLayerChips()}g=null}
+  const up=e=>{pts.delete(e.pointerId);if(pts.size===0){if(qDragging){qDragging=false;schedulePreview(true)}if(g&&g.mode==="view"&&guideX){guideX=false;layoutSticker()}if(g&&(g.mode==="drag"||g.mode==="pinch")){guideX=false;schedulePreview();renderTool(true);renderLayerChips()}g=null}
     else if(g&&g.mode==="pinch"){g=null}};
   st.addEventListener("pointerup",up);st.addEventListener("pointercancel",up);
   st.addEventListener("dblclick",()=>{if(tab!=="edit"){view={...VIEW0};layoutSticker()}});
@@ -1501,6 +1509,21 @@ function markUsed(d){if(!d||!d.seed&&!SEEDS.some(x=>x.id===curSourceId))return;c
 const SEASON_PICKS={0:["y1","y2","y4","cs1","cs2","qt12"],1:["gl3","gl5","mo2","gl1","cs3","qt1"],2:["mo3","bf1","bf2","wk3","qt3"],3:["mo4","bf3","wk2","tv7","qt7"],
   4:["mo5","tv1","bf6","wk4","cm2"],5:["mo6","tv7","tv14","tv3","cm2"],6:["mo7","tv6","tv7","tv9","cm1"],7:["mo8","tv14","tv15","tv18","cm6"],
   8:["mo9","cs1","cf1","qt4","wk1"],9:["mo10","hd7","cs2","tg9","cf6"],10:null,11:["xm1","xm17","xm18","xm21","hd1","xm6"]};
+
+// Floating quick bar above the selected text/ornament: colour in one tap
+const QSW=["#FFFFFF","#F6E9D7","#E9B77C","#F26B50","#111111"];let qKey="",qDragging=false;
+function renderQbar(){const q=$("qbar"),Ly=layer();if(!q||!Ly)return;const c=Ly.color||"main",hex=colorOf(cur,c).toUpperCase();
+  const dot=(v,bg,lab)=>`<button class="qd${(c===v||(!["main","accent"].includes(c)&&v===hex))?" on":""}" data-qc="${v}" aria-label="${lab}" style="background:${bg}"></button>`;
+  q.innerHTML=dot("main",cur.colors.main,"Main colour")+dot("accent",cur.colors.accent,"Accent colour")+`<span class="qsep"></span>`+
+    QSW.filter(x=>x!==cur.colors.main.toUpperCase()&&x!==cur.colors.accent.toUpperCase()).slice(0,4).map(x=>dot(x,x,x)).join("")+
+    `<label class="swPick qpick" aria-label="Pick any colour"><span class="in" style="${["main","accent"].includes(c)||QSW.includes(hex)?"":"background:"+hex}"><svg viewBox="0 0 24 24"><path d="m14.5 4.5 5 5M17 2l5 5-3 3-5-5zM14 7l-9 9-1.5 4.5L8 19l9-9"/></svg></span><input type="color" value="${/^#[0-9a-f]{6}$/i.test(hex)?hex:"#ffffff"}"></label>`;
+  q.querySelectorAll("[data-qc]").forEach(b=>b.addEventListener("click",e=>{e.stopPropagation();snap();Ly.color=b.dataset.qc;qKey="";hapt();schedulePreview();renderTool()}));
+  const inp=q.querySelector("input");inp.addEventListener("focus",snap);inp.addEventListener("input",()=>{Ly.color=inp.value.toUpperCase();q.querySelector(".qpick .in").style.background=inp.value;schedulePreview()});inp.addEventListener("change",()=>{qKey="";renderTool()})}
+function placeQbar(W,H,dpr){const q=$("qbar");if(!q)return;const r=lastBoxes.selRect,Ly=layer();
+  if(!r||tab!=="edit"||!Ly||qDragging){q.hidden=true;return}
+  const k=sel+"|"+(Ly.color||"main")+"|"+cur.colors.main+cur.colors.accent;if(k!==qKey||!q.innerHTML){qKey=k;renderQbar()}
+  q.hidden=false;const w=q.offsetWidth||250,h=q.offsetHeight||44,cx=(r.l+r.r)/2/dpr;let y=r.t/dpr-h-14;if(y<8)y=r.b/dpr+14;if(y+h>H-8)y=Math.max(8,H-h-8);
+  q.style.left=Math.max(8,Math.min(W-w-8,cx-w/2))+"px";q.style.top=y+"px"}
 // Moment-aware Trending: special days first, then time of day and weekday, then live weather, then the month.
 function momentPicks(now=new Date()){
   const h=now.getHours(),dow=now.getDay(),m=now.getMonth(),dd=now.getDate(),P=[],late=[];const add=(...ids)=>P.push(...ids);
@@ -1700,7 +1723,7 @@ function renderTool(light){
       ${Ly.kind==="para"?"":(canUse()?rng("Knock-out","cutout",0,40,Ly.cutout||0):proRow("Knock-out"))}${Ly.kind==="para"?"":`<div class="hint" style="margin:-4px 0 8px">Cuts a gap into the text underneath (like ‘More coffee please’). Make sure this text is in front.</div>`}
       <div class="chips wrap"><button class="chip" data-a="center">${ci("center")}Centre</button><button class="chip" data-a="straight">${ci("straight")}Level</button><button class="chip" data-a="up">${ci("up")}Forward</button><button class="chip" data-a="down">${ci("down")}Back</button><button class="chip" data-a="dup">${ci("dup")}Copy</button><button class="chip" data-a="del" style="color:#ff9b87">${ci("del")}Delete</button></div>`;
   }else h+=`<div class="empty">No text. Tap “+ Text”.</div>`;
-  h+=sec("Colours &amp; finish","colour")+(Ly&&Ly.kind!=="shape"?`<div class="lab" style="margin-top:0">This text uses</div><div class="chips wrap"><button class="chip ${Ly.color!=="accent"?"on":""}" data-c="main"><span class="dot" style="background:${cur.colors.main}"></span>Main</button><button class="chip ${Ly.color==="accent"?"on":""}" data-c="accent"><span class="dot" style="background:${cur.colors.accent}"></span>Accent</button></div>`:"")+`<div class="lab" style="${Ly&&Ly.kind!=="shape"?"":"margin-top:0"}">Main colour</div><div class="sw" id="swMain"></div><div class="lab">Accent colour</div><div class="sw" id="swAccent"></div>`+rng("Shadow","shadow",0,80,cur.shadow||0,1,true)+(canUse()?rng("Texture","texture",0,100,cur.texture||0,1,true):proRow("Texture"))+`<div class="hint" style="margin-top:-4px">Texture gives a printed, worn retro look.</div>`;
+  h+=sec("Colours &amp; finish","colour")+(Ly&&Ly.kind!=="shape"?`<div class="lab" style="margin-top:0">This text uses</div><div class="chips wrap"><button class="chip ${!Ly.color||Ly.color==="main"?"on":""}" data-c="main"><span class="dot" style="background:${cur.colors.main}"></span>Main</button><button class="chip ${Ly.color==="accent"?"on":""}" data-c="accent"><span class="dot" style="background:${cur.colors.accent}"></span>Accent</button></div>`:"")+`<div class="lab" style="${Ly&&Ly.kind!=="shape"?"":"margin-top:0"}">Main colour</div><div class="sw" id="swMain"></div><div class="lab">Accent colour</div><div class="sw" id="swAccent"></div>`+rng("Shadow","shadow",0,80,cur.shadow||0,1,true)+(canUse()?rng("Texture","texture",0,100,cur.texture||0,1,true):proRow("Texture"))+`<div class="hint" style="margin-top:-4px">Texture gives a printed, worn retro look.</div>`;
   const isMine=custom.some(d=>d.id===curSourceId);
   h+=sec("Save as template","save")+`<input class="inp" id="sName" value="${esc(cur.name)}" placeholder="Name">
     <select class="inp" id="sCat" style="margin-top:8px">${allCats().map(c=>`<option ${c===cur.cat?"selected":""}>${esc(c)}</option>`).join("")}<option value="__new">+ New category…</option></select>
@@ -2064,6 +2087,29 @@ $("helpBtn").onclick=openHowto;$("htClose").onclick=closeHowto;$("htDone").oncli
 document.addEventListener("click",e=>{if(e.target.closest("[data-howto]")){$("modal").classList.add("hidden");openHowto()}});
 let firstSaveDone=false;try{firstSaveDone=!!localStorage.getItem("typoStudio.howto")}catch(e){}
 $("delX").addEventListener("click",e=>{e.stopPropagation();if(tab!=="edit"||!layer())return;snap();cur.layers.splice(sel,1);sel=Math.max(0,sel-1);toast("Deleted · tap ↶ to undo");change(()=>{},{chips:true,tool:true})});
+
+// Native Liquid Glass tab bar (iOS app): the web bar keeps its place in the layout but is hidden,
+// and the native glass bar is drawn exactly on top of it. Web fallback: the CSS glass capsule.
+let GLASS=null;try{if(NATIVE&&CAP.registerPlugin)GLASS=CAP.registerPlugin("GlassTabBar")}catch(e){}
+const SF={Library:"square.grid.2x2",Edit:"slider.horizontal.3",Text:"textformat",Font:"textformat.size",Size:"arrow.up.and.down.and.arrow.left.and.right",Style:"paintbrush.pointed",Colour:"paintpalette",Keep:"bookmark"};
+let glassOK=!!GLASS,glassBusy=false,glassQ=false,glassT=0;
+function glassItems(){const t=$("tabs");if(t.classList.contains("editBar")){const bs=[...document.querySelectorAll("#toolNav button")];return{bs,pre:"n"}}return{bs:[...t.querySelectorAll(":scope>button")],pre:"t"}}
+function glassBlocked(){if(WIDE.matches)return true;if(window.visualViewport&&visualViewport.height<innerHeight*.8)return true;
+  return [...document.querySelectorAll(".onb,.paywall,.modal,.asWrap,#splash")].some(e=>!e.classList.contains("hidden")&&getComputedStyle(e).display!=="none"&&getComputedStyle(e).visibility!=="hidden"&&e.getBoundingClientRect().height>0)}
+function syncGlass(){if(!glassOK)return;clearTimeout(glassT);glassT=setTimeout(syncGlassNow,16)}
+function syncGlassNow(){if(!glassOK)return;if(glassBusy){glassQ=true;return}const t=$("tabs");
+  if(!t||glassBlocked()){document.documentElement.classList.remove("ng");glassBusy=true;GLASS.hide().catch(()=>{}).finally(()=>{glassBusy=false;if(glassQ){glassQ=false;syncGlassNow()}});return}
+  document.documentElement.classList.add("ng");
+  const r=t.getBoundingClientRect(),{bs,pre}=glassItems(),lab=b=>(b.textContent.trim()||b.getAttribute("aria-label")||"").trim();
+  const items=bs.map((b,i)=>({id:pre+i,label:lab(b),icon:SF[lab(b)]||"circle"})),on=bs.findIndex(b=>b.classList.contains("on"));
+  glassBusy=true;GLASS.show({items,selected:on>=0?pre+on:"",frame:{x:r.left,y:r.top,w:r.width,h:r.height}})
+    .catch(()=>{glassOK=false;document.documentElement.classList.remove("ng")})
+    .finally(()=>{glassBusy=false;if(glassQ){glassQ=false;syncGlassNow()}})}
+if(GLASS){try{GLASS.addListener("tap",e=>{const id=(e&&e.id)||"",i=+id.slice(1),{bs,pre}=glassItems();if(id[0]===pre&&bs[i])bs[i].click();syncGlass()})}catch(e){glassOK=false}
+  new MutationObserver(syncGlass).observe(document.body,{subtree:true,attributes:true,attributeFilter:["class"]});
+  if(window.ResizeObserver)new ResizeObserver(syncGlass).observe($("tabs"));
+  window.addEventListener("resize",syncGlass);if(window.visualViewport)visualViewport.addEventListener("resize",syncGlass);
+  setTimeout(syncGlass,400);setTimeout(syncGlass,1500);setTimeout(syncGlass,3500)}
 initNative();loadLocal();updateProUI();loadTrending();
 if(!onbSeen){openOnb();setTimeout(hideSplash,900)}else setTimeout(hideSplash,700);
 setDetent(1);setAppH();renderLibrary();
