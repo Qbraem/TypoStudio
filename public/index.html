@@ -1319,10 +1319,16 @@ function lum(hex){const m=/^#?([0-9a-f]{6})$/i.exec(hex||"");if(!m)return 1;cons
 /* ---------------- Voorbeeld op de foto ---------------- */
 const STAGE_K=1.05;
 /* vrije ruimte op de foto: zonder de Story-balken en de fotorij, zodat de typo nooit onder de knoppen valt */
-function stageGeom(W,H){const st=$("stage"),ov=st.querySelector(".igOv"),ig=st.classList.contains("ig")&&!!ov&&getComputedStyle(ov).display!=="none",sa=document.querySelector(".stageArea");
+function stageGeom(W,H){const st=$("stage"),ov=st.querySelector(".igOv"),sa=document.querySelector(".stageArea"),port=!WIDE.matches;
+  const ig=port?(st.classList.contains("ig")&&!!ov):(st.classList.contains("ig")&&!!ov&&getComputedStyle(ov).display!=="none");
   const u=parseFloat(getComputedStyle(sa).getPropertyValue("--under"))||0,row=$("bgRow")?$("bgRow").offsetHeight:44;
-  const top=ig?58:10,bot=u+row+(ig?66:16),h=Math.max(H*.5,H-top-bot);
-  return{size:Math.min(W*.96,h*STAGE_K),cx:W*view.x/100,cy:top+h*view.y/100}}var previewQueued=false,lastBoxes=[],guideX=false;
+  const top=ig?58:10,bot=u+row+(ig?66:16);
+  // Portrait: size/position against a fixed reference height (library sheet at default detent), so the
+  // typography keeps its size and stays glued to the photo when the sheet grows/shrinks or Edit opens.
+  let HR=H;if(port){const sh=$("sheet"),tb=$("tabs"),ah=window.visualViewport?visualViewport.height:innerHeight;
+    if(tab!=="edit"&&tb)geomTabsRef=tb.offsetHeight;HR=H+(sh?sh.offsetHeight:0)+(tb?tb.offsetHeight:0)-DETENTS[1]*ah-(geomTabsRef||0)}
+  const h=Math.max(HR*.5,HR-top-bot);
+  return{size:Math.min(W*.96,h*STAGE_K),cx:W*view.x/100,cy:top+h*view.y/100-(HR-H)/2}}var geomTabsRef=null;var previewQueued=false,lastBoxes=[],guideX=false;
 const VIEW0={x:50,y:46,scale:.85};let view={...VIEW0};
 function layoutSticker(){schedulePreview(true)}
 function schedulePreview(noExport){
@@ -1373,12 +1379,12 @@ function schedulePreview(noExport){
       layer().size=Math.round(Math.max(20,Math.min(480,g.s0*d/g.d0)));
       let rot=g.r0+(an-g.a0)*180/Math.PI;if(Math.abs(rot)<2.5)rot=0;const lim=layer().kind==="shape"?180:45;layer().rotate=Math.round(Math.max(-lim,Math.min(lim,rot)));schedulePreview(true);
     }else if(g.mode==="view"){
-      view.x=Math.max(10,Math.min(90,g.x0+(e.clientX-g.sx)/r.width*100));view.y=Math.max(10,Math.min(90,g.y0+(e.clientY-g.sy)/r.height*100));layoutSticker();
+      view.x=Math.max(10,Math.min(90,g.x0+(e.clientX-g.sx)/r.width*100));guideX=Math.abs(view.x-50)<2.2;if(guideX)view.x=50;view.y=Math.max(10,Math.min(90,g.y0+(e.clientY-g.sy)/r.height*100));layoutSticker();
     }else if(g.mode==="vpinch"&&pts.size===2){
       const [a,b]=[...pts.values()];view.scale=Math.max(.4,Math.min(1.6,g.s0*Math.hypot(a.x-b.x,a.y-b.y)/g.d0));layoutSticker();
     }
   });
-  const up=e=>{pts.delete(e.pointerId);if(pts.size===0){if(g&&(g.mode==="drag"||g.mode==="pinch")){guideX=false;schedulePreview();renderTool(true);renderLayerChips()}g=null}
+  const up=e=>{pts.delete(e.pointerId);if(pts.size===0){if(g&&g.mode==="view"&&guideX){guideX=false;layoutSticker()}if(g&&(g.mode==="drag"||g.mode==="pinch")){guideX=false;schedulePreview();renderTool(true);renderLayerChips()}g=null}
     else if(g&&g.mode==="pinch"){g=null}};
   st.addEventListener("pointerup",up);st.addEventListener("pointercancel",up);
   st.addEventListener("dblclick",()=>{if(tab!=="edit"){view={...VIEW0};layoutSticker()}});
