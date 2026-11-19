@@ -97,11 +97,8 @@ html.ngTop #bgToggle{visibility:hidden!important}
 .tabs button.on{color:var(--accent)}
 #toolNav{display:none;flex:1;min-width:0}
 /* staand bewerken: paneel zo hoog als de inhoud, foto krijgt de rest */
-.shell.editBar .sheet{height:auto!important;max-height:calc(var(--app-h,100vh) * .5);min-height:150px;transition:none}
-.shell.editBar .grab{display:none}
 /* lage schermen (iPhone Duo buitenscherm, kleine iPhones): tijdens bewerken telt elke pixel foto */
 @media (max-height: 760px){
-  .shell.editBar .sheet{max-height:calc(var(--app-h,100vh) * .42)}
   .shell.editBar .stage .igOv{display:none}
   .shell.editBar .stage.ig .bgRow,.shell.editBar .stage.ig .bgToggle{bottom:calc(8px + var(--under,0px))}
   .shell.editBar .stage.ig .credit{top:10px}
@@ -126,7 +123,12 @@ html.ngTop #bgToggle{visibility:hidden!important}
   .side-status .tabs{padding-bottom:0}
 }
 html.ng .tabs{visibility:hidden!important}
+@media (min-aspect-ratio: 1/1), (min-width: 900px){
+  html.ng .tabs{height:calc(44px + var(--sab));box-sizing:border-box;margin-top:calc(-1 * (44px + var(--sab)));position:relative;z-index:5}
+  html.ng .sheetBody{padding-bottom:calc(96px + var(--sab))!important}
+}
 html.ngTop .top>button{visibility:hidden!important}
+html.ngTop .top>#proBtn{visibility:visible!important}
 .tabs.editBar>button{display:none}
 .tabs.editBar #toolNav{display:flex}
 #toolNav button{min-width:0;font-size:10.5px;letter-spacing:.1px}
@@ -1477,8 +1479,8 @@ $("igToggle").addEventListener("click",e=>{e.stopPropagation();igOn=!igOn;try{lo
 applyIg();
 /* ---------------- Sheet (bottom sheet met grijper) ---------------- */
 /* paneelstanden: ingeklapt (enkel categorieën), normaal, groot */
-const DETENTS=[.17,.40,.70];let detent=1;
-function setDetent(i){detent=i;applySheetH();$("sheet").style.height="";setTimeout(()=>{fitStage();layoutSticker()},280)}
+const DETENTS=[.17,.40,.70];let detent=1;const detByTab={lib:1,edit:1};
+function setDetent(i){detent=i;detByTab[tab==="edit"?"edit":"lib"]=i;applySheetH();$("sheet").style.height="";setTimeout(()=>{fitStage();layoutSticker()},280)}
 function applySheetH(){const H=window.visualViewport?visualViewport.height:innerHeight;document.documentElement.style.setProperty("--sheet-h",Math.round(DETENTS[detent]*H)+"px")}
 (function sheetDrag(){
   const gb=$("grab"),sh=$("sheet");let sy=0,h0=0,moved=false;
@@ -1494,7 +1496,7 @@ function showTab(t){
   tab=t;document.querySelectorAll("#tabs button").forEach(b=>b.classList.toggle("on",b.dataset.tab===t));
   ["lib","edit"].forEach(x=>$("tab-"+x).classList.toggle("hidden",x!==t));
   $("undoBtn").classList.toggle("hidden",t!=="edit");
-  $("sheetBody").scrollTop=0;syncNav();
+  $("sheetBody").scrollTop=0;if(!WIDE.matches&&detByTab[t]!==detent)setDetent(detByTab[t]);syncNav();
   if(t==="edit"){if(!layer())sel=firstTextLayer();toolGrp=null;layoutSticker();renderLayerChips();renderTool();showCoach()}
   schedulePreview(true);
 }
@@ -2115,9 +2117,9 @@ function syncGlassNow(){const t=$("tabs");
   const wide=WIDE.matches;
   try{GLASS_H.postMessage({cmd:"show",items,selected:on>=0?pre+on:"",frame:{x:r.left,y:r.top,w:r.width,h:r.height,bx:wide?r.left:0,bw:wide?r.width:innerWidth}})}catch(e){}
   syncTopGlass()}
-const TOPMAP={undoBtn:{icon:"arrow.uturn.backward"},helpBtn:{icon:"questionmark"},proBtn:{icon:"crown.fill",prominent:true,tint:"#E2B04A",fg:"#3A2410"},viewBtn:{icon:"eye"},saveImgBtn:{icon:"arrow.down.to.line",title:"Save",prominent:true,tint:"#F0694F",fg:"#FFFFFF"},bgToggle:{icon:"photo.on.rectangle.angled"}};
+const TOPMAP={undoBtn:{icon:"arrow.uturn.backward"},helpBtn:{icon:"questionmark"},viewBtn:{icon:"eye"},saveImgBtn:{icon:"arrow.down.to.line",title:"Save",prominent:true,tint:"#F0694F",fg:"#FFFFFF"},bgToggle:{icon:"photo.on.rectangle.angled"}};
 function topButtons(){return Object.keys(TOPMAP).map(id=>{const el=$(id);if(!el||el.classList.contains("hidden")||getComputedStyle(el).display==="none")return null;const r=el.getBoundingClientRect();if(r.width<4)return null;
-  const m=TOPMAP[id];let title=m.title||"";if(id==="proBtn"){const l=$("proBtnLabel");if(l&&l.offsetWidth>0)title=l.textContent.trim()}
+  const m=TOPMAP[id];let title=m.title||"";
   const open=id==="bgToggle"&&$("stage").classList.contains("bgOpen");
   return{id,frame:{x:r.left,y:r.top,w:r.width,h:r.height},icon:open?"xmark":m.icon,title,prominent:!!m.prominent||open,tint:open?"#F0694F":(m.tint||""),fg:open?"#FFFFFF":(m.fg||""),enabled:!el.disabled,busy:el.classList.contains("busy")}}).filter(Boolean)}
 function syncTopGlass(){if(!GLASS_H)return;try{if(overlayOpen()){document.documentElement.classList.remove("ngTop");GLASS_H.postMessage({cmd:"topHide"})}else GLASS_H.postMessage({cmd:"top",buttons:topButtons()})}catch(e){}}
