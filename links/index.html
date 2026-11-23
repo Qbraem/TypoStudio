@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="loading">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
@@ -11,6 +11,11 @@
 <meta property="og:url" content="https://qbraem.be/">
 <link rel="canonical" href="https://qbraem.be/">
 <meta name="theme-color" content="#b9926a">
+<link rel="preload" href="fonts/ArchivoBlack-400.woff" as="font" type="font/woff" crossorigin>
+<link rel="preload" href="fonts/Caveat-700.woff" as="font" type="font/woff" crossorigin>
+<link rel="preload" href="fonts/InstrumentSerif-400-italic.woff" as="font" type="font/woff" crossorigin>
+<link rel="preload" href="fonts/LMMono.otf" as="font" type="font/otf" crossorigin>
+<link rel="preload" href="me.jpg" as="image">
 <link rel="icon" href="face.jpg">
 <link rel="apple-touch-icon" href="face.jpg">
 <style>
@@ -119,8 +124,10 @@ main{width:100%;max-width:430px;position:relative}
 .hl .new{position:absolute;right:2px;top:-38px;z-index:3;font-family:"Caveat",cursive;font-weight:700;font-size:31px;color:#fffaf2;text-shadow:0 1px 2px rgba(60,35,15,.25);transform:rotate(-9deg);pointer-events:none;line-height:1}
 .hl .new:after{content:"";position:absolute;left:-30px;top:20px;width:26px;height:16px;border-bottom:2.6px solid #fffaf2;border-left:2.6px solid #fffaf2;border-radius:0 0 0 14px;transform:rotate(-30deg)}
 @media (prefers-reduced-motion:no-preference){
-  .hl path{stroke-dasharray:1;stroke-dashoffset:1;animation:draw 1.1s .9s cubic-bezier(.6,.1,.3,1) forwards}
-  .hl .new{opacity:0;animation:pop .4s 1.8s ease-out forwards}
+  .hl path{stroke-dasharray:1;stroke-dashoffset:1}
+  .hl .new{opacity:0}
+  html.ready .hl path{animation:draw 1.1s .9s cubic-bezier(.6,.1,.3,1) forwards}
+  html.ready .hl .new{animation:pop .4s 1.8s ease-out forwards}
   @keyframes draw{to{stroke-dashoffset:0}}
   @keyframes pop{from{opacity:0;transform:rotate(-9deg) scale(.6)}to{opacity:1;transform:rotate(-9deg) scale(1)}}
 }
@@ -143,15 +150,69 @@ main{width:100%;max-width:430px;position:relative}
 footer{margin-top:34px;text-align:center;font-size:10.5px;color:#5b4026;line-height:1.7}
 footer a{color:inherit}
 @media (prefers-reduced-motion:no-preference){
-  .file,.pola,.folder,.ticket,.note{animation:drop .6s cubic-bezier(.2,.8,.2,1) both}
-  .folder{animation-delay:.18s}
-  .ticket:nth-child(1){animation-delay:.24s}.ticket:nth-child(2){animation-delay:.3s}.ticket:nth-child(3){animation-delay:.36s}.ticket:nth-child(4){animation-delay:.42s}.ticket:nth-child(5){animation-delay:.48s}
-  .note{animation-delay:.5s}
+  html.ready .file,html.ready .folder,html.ready .tickets>*,html.ready .note{animation:drop .6s cubic-bezier(.2,.8,.2,1) both}
+  html.ready .file{animation-delay:.05s}html.ready .folder{animation-delay:.15s}
+  html.ready .tickets>:nth-child(1){animation-delay:.22s}html.ready .tickets>:nth-child(2){animation-delay:.29s}html.ready .tickets>:nth-child(3){animation-delay:.36s}html.ready .tickets>:nth-child(4){animation-delay:.43s}
+  html.ready .note{animation-delay:.5s}
   @keyframes drop{from{opacity:0;translate:0 14px}to{opacity:1;translate:0 0}}
 }
+
+/* ---------- loader: printing & stamping a ticket ---------- */
+html.loading,html.loading body{overflow:hidden}
+#ld{position:fixed;inset:0;z-index:100;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:26px;
+  background:var(--grain),radial-gradient(120% 80% at 50% 30%,#c9a47c 0%,var(--kraft) 60%,#a7805a 100%);
+  background-size:220px 220px,100% 100%;background-blend-mode:multiply,normal;
+  font-family:ui-monospace,"SF Mono",Menlo,"Courier New",monospace;transition:opacity .55s ease,transform .7s cubic-bezier(.7,0,.3,1)}
+#ld.out{opacity:0;transform:translateY(-14px);pointer-events:none}
+#ld .stage{position:relative;width:270px;height:124px;animation:tin .7s cubic-bezier(.2,.9,.25,1.15) both}
+#ld .tk{position:absolute;inset:0;display:flex;border-radius:6px;color:var(--ink);
+  background:var(--grain),var(--mustard);background-size:220px,100%;background-blend-mode:multiply,normal;
+  filter:drop-shadow(0 14px 16px rgba(60,35,15,.35)) drop-shadow(0 2px 3px rgba(60,35,15,.2));
+  -webkit-mask:radial-gradient(circle 9px at calc(100% - 74px) 0,#0000 97%,#000) top/100% 51% no-repeat,radial-gradient(circle 9px at calc(100% - 74px) 100%,#0000 97%,#000) bottom/100% 51% no-repeat;
+          mask:radial-gradient(circle 9px at calc(100% - 74px) 0,#0000 97%,#000) top/100% 51% no-repeat,radial-gradient(circle 9px at calc(100% - 74px) 100%,#0000 97%,#000) bottom/100% 51% no-repeat}
+#ld .tk .m{flex:1;padding:14px 14px 12px 16px;display:flex;flex-direction:column;justify-content:space-between;border-right:2px dashed rgba(31,43,92,.5)}
+#ld .tk .s{width:74px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;font-weight:800}
+#ld .tk .s b{font-size:28px;line-height:1}
+#ld .tk .s i{font-style:normal;font-size:9px;letter-spacing:.14em}
+#ld .sm{font-size:9.5px;letter-spacing:.16em;opacity:.8;display:flex;justify-content:space-between}
+#ld .ty{font-size:21px;font-weight:800;letter-spacing:.02em;white-space:nowrap;overflow:hidden;width:0;border-right:2px solid var(--ink);
+  animation:type 1s steps(9,end) .55s forwards,caret .5s step-end 6}
+#ld .bars{display:flex;gap:6px}#ld .bars i{flex:1;height:1.5px;background:rgba(31,43,92,.5);transform:scaleX(0);transform-origin:left;animation:bar .35s ease-out forwards}
+#ld .bars i:nth-child(1){animation-delay:1.45s}#ld .bars i:nth-child(2){animation-delay:1.55s}#ld .bars i:nth-child(3){animation-delay:1.65s}
+/* the stamp */
+#ld .stamp2{position:absolute;left:73%;top:56%;width:92px;height:92px;margin:-46px 0 0 -46px;border-radius:50%;
+  border:3px solid var(--red);box-shadow:inset 0 0 0 4px rgba(0,0,0,0),inset 0 0 0 6px var(--red);color:var(--red);
+  display:grid;place-items:center;text-align:center;font-weight:800;font-size:10.5px;letter-spacing:.18em;line-height:1.35;background:rgba(232,181,62,.35);
+  opacity:0;transform:scale(2.4) rotate(-24deg);mix-blend-mode:multiply;animation:stamp .32s cubic-bezier(.5,0,.75,0) 1.85s forwards}
+#ld .stamp2 span{display:block;font-size:18px;letter-spacing:.02em}
+#ld .cap{font-size:12px;letter-spacing:.2em;text-transform:uppercase;color:#4a3420;min-height:1em}
+#ld .cap .d::after{content:"";animation:dots 1.2s steps(4,end) infinite}
+@keyframes tin{from{opacity:0;transform:translateY(40px) rotate(-8deg)}to{opacity:1;transform:translateY(0) rotate(-2deg)}}
+@keyframes type{to{width:9.6ch}}
+@keyframes caret{50%{border-color:transparent}}
+@keyframes bar{to{transform:scaleX(1)}}
+@keyframes stamp{0%{opacity:0;transform:scale(2.4) rotate(-24deg)}70%{opacity:.95;transform:scale(.94) rotate(-12deg)}100%{opacity:.9;transform:scale(1) rotate(-12deg)}}
+@keyframes shake{0%,100%{transform:rotate(-2deg)}30%{transform:translateY(3px) rotate(-1deg) scale(.985)}60%{transform:translateY(-1px) rotate(-2.5deg)}}
+@keyframes dots{0%{content:""}25%{content:"."}50%{content:".."}75%{content:"..."}}
+#ld.hit .stage{animation:shake .3s ease-out}
+@media (prefers-reduced-motion:reduce){#ld .stage,#ld .ty,#ld .bars i,#ld .stamp2{animation-duration:.01s!important;animation-delay:0s!important}#ld .ty{width:9.6ch}}
 </style>
 </head>
 <body>
+<div id="ld" role="status" aria-label="Loading">
+  <div class="stage">
+    <div class="tk">
+      <div class="m">
+        <div class="sm"><span>ADMIT ONE</span><span>No. 001</span></div>
+        <div class="ty">QBRAEM.BE</div>
+        <div class="bars"><i></i><i></i><i></i></div>
+      </div>
+      <div class="s"><b>✶</b><i>ENTRY</i></div>
+    </div>
+    <div class="stamp2"><div>ALL<span>GOOD!</span>ACCESS</div></div>
+  </div>
+  <div class="cap" id="ldcap">Printing your ticket<span class="d"></span></div>
+</div>
 <main>
 
   <section class="file paper">
@@ -245,5 +306,25 @@ footer a{color:inherit}
 
   <footer class="mono">Filed with care in Belgium<br>© Quinten Braem</footer>
 </main>
+<script>
+(function(){
+  var d=document.documentElement,ld=document.getElementById('ld'),cap=document.getElementById('ldcap');
+  var rm=matchMedia('(prefers-reduced-motion: reduce)').matches, MIN=rm?600:3200, t0=Date.now();
+  if(!rm){
+    setTimeout(function(){cap.innerHTML='Stamping<span class="d"></span>'},1500);
+    setTimeout(function(){ld.classList.add('hit')},2150);
+    setTimeout(function(){cap.textContent='Enjoy the show ✶'},2350);
+  }
+  var fonts=(document.fonts&&document.fonts.ready)?document.fonts.ready:Promise.resolve();
+  var loaded=new Promise(function(r){if(document.readyState==='complete')r();else addEventListener('load',r)});
+  var done=false;
+  function go(){if(done)return;done=true;
+    var wait=Math.max(0,MIN-(Date.now()-t0));
+    setTimeout(function(){ld.classList.add('out');d.classList.remove('loading');d.classList.add('ready');
+      setTimeout(function(){ld.remove()},800)},wait)}
+  Promise.all([fonts,loaded]).then(go,go);
+  setTimeout(go,6000);
+})();
+</script>
 </body>
 </html>
