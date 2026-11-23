@@ -31,7 +31,7 @@ body{overflow-x:hidden}
 body{min-height:100vh;color:var(--ink);font-family:"Typewriter",ui-monospace,"Courier New",monospace;
   background:var(--grain),radial-gradient(140% 90% at 50% 0%,#c9a47c 0%,var(--kraft) 55%,#a7805a 100%);
   background-size:220px 220px,100% 100%;background-blend-mode:multiply,normal;
-  padding:calc(34px + env(safe-area-inset-top)) 18px calc(40px + env(safe-area-inset-bottom));
+  padding:calc(18px + env(safe-area-inset-top)) 16px calc(40px + env(safe-area-inset-bottom));
   display:flex;justify-content:center;-webkit-font-smoothing:antialiased}
 main{width:100%;max-width:430px;position:relative}
 .mono{font-family:"Typewriter",ui-monospace,monospace;text-transform:uppercase;letter-spacing:.12em}
@@ -40,35 +40,34 @@ main{width:100%;max-width:430px;position:relative}
 .paper{background:var(--grain),var(--paper);background-size:220px,100%;background-blend-mode:multiply,normal;
   box-shadow:0 1px 0 rgba(255,255,255,.4) inset,0 14px 28px -10px rgba(60,35,15,.45),0 3px 6px rgba(60,35,15,.18)}
 
-/* ---------- personal file card ---------- */
-.file{position:relative;padding:22px 20px 20px;border-radius:4px;transform:rotate(-1.2deg);margin-top:168px}
-.file .head{display:flex;justify-content:space-between;align-items:flex-start;gap:10px}
-.file .no{font-size:10.5px;color:#6b6250}
-.file h1{font-family:"Archivo Black",sans-serif;font-size:29px;line-height:.95;letter-spacing:-.01em;margin-top:6px;max-width:60%}
-.file h1 span{display:block;font-family:"Instrument Serif",serif;font-style:italic;font-weight:400;font-size:22px;letter-spacing:0;color:var(--red);margin-top:6px}
-.fields{margin-top:18px;border:1.5px solid var(--ink)}
-.row{display:flex;align-items:baseline;gap:10px;min-height:38px;padding:6px 10px;border-top:1.5px solid var(--ink)}
-.row:first-child{border-top:0}
-.row b{flex:none;width:96px;font-weight:400;font-size:10.5px;color:#4b4a5e}
-.row .v{font-family:"Caveat",cursive;font-weight:700;font-size:19px;line-height:1.05;color:var(--ink);text-transform:uppercase;letter-spacing:.01em}
-.row .v a{color:inherit;text-decoration:none;border-bottom:2px solid var(--mustard)}
-.li{position:absolute;right:16px;top:104px;z-index:3;display:flex;align-items:center;gap:7px;text-decoration:none;color:var(--ink);transform:rotate(2.5deg)}
-.li .in{width:24px;height:24px;border-radius:5px;background:var(--ink);color:var(--paper);display:grid;place-items:center;font-family:"Archivo Black",sans-serif;font-size:13px;letter-spacing:-.02em;line-height:1;box-shadow:0 2px 4px rgba(60,35,15,.25)}
-.li span{font-family:"Caveat",cursive;font-weight:700;font-size:19px;line-height:1;border-bottom:2px solid var(--mustard)}
-.li:active{transform:rotate(2.5deg) scale(.96)}
-.stamp{position:absolute;right:16px;bottom:-16px;transform:rotate(-8deg);padding:5px 10px;border:2px solid var(--red);color:var(--red);
-  font-size:11px;border-radius:4px;background:rgba(243,234,216,.6);mix-blend-mode:multiply}
-
-/* polaroid */
-.pola{position:absolute;right:4px;top:-168px;width:172px;padding:10px 10px 34px;border-radius:2px;transform:rotate(4deg);z-index:2}
-.pola img{display:block;width:100%;height:auto;aspect-ratio:4/5;object-fit:cover;filter:saturate(1.05) contrast(1.02)}
-.pola .cap{position:absolute;left:0;right:0;bottom:6px;text-align:center;font-family:"Caveat",cursive;font-size:20px;color:var(--ink)}
-.clip{position:absolute;top:-22px;right:26px;width:26px;height:64px;z-index:3;transform:rotate(-6deg)}
-.tape{position:absolute;left:24px;top:-12px;width:84px;height:24px;background:rgba(232,181,62,.72);transform:rotate(-5deg);z-index:3;
+/* ---------- personal file card (compact, mobile-first) ---------- */
+.file{position:relative;margin-top:14px;padding:16px 14px 14px 14px;border-radius:4px;transform:rotate(-.8deg);
+  display:grid;grid-template-columns:112px 1fr;column-gap:14px;align-items:start}
+.pola{position:relative;margin:-30px 0 0 -4px;padding:6px 6px 22px;border-radius:2px;transform:rotate(-4deg);z-index:2}
+.pola img{display:block;width:100%;height:auto;aspect-ratio:4/5;object-fit:cover}
+.pola .cap{position:absolute;left:0;right:0;bottom:3px;text-align:center;font-family:"Caveat",cursive;font-size:15px;color:var(--ink)}
+.clip{position:absolute;top:-16px;right:14px;width:18px;height:46px;z-index:3;transform:rotate(-6deg)}
+.tape{position:absolute;right:22px;top:-10px;width:70px;height:20px;background:rgba(232,181,62,.72);transform:rotate(4deg);z-index:3;
   box-shadow:0 1px 2px rgba(0,0,0,.12);clip-path:polygon(3% 0,97% 4%,100% 50%,96% 100%,2% 96%,0 50%)}
+.who{min-width:0;padding-top:2px}
+.file .no{font-size:9px;color:#6b6250;letter-spacing:.1em}
+.file h1{font-family:"Archivo Black",sans-serif;font-size:25px;line-height:.95;letter-spacing:-.01em;margin-top:5px}
+.file h1 span{display:block;font-family:"Instrument Serif",serif;font-style:italic;font-weight:400;font-size:19px;letter-spacing:0;color:var(--red);margin-top:4px}
+.li{display:inline-flex;align-items:center;gap:6px;margin-top:9px;text-decoration:none;color:var(--ink)}
+.li .in{width:20px;height:20px;border-radius:4px;background:var(--ink);color:var(--paper);display:grid;place-items:center;font-family:"Archivo Black",sans-serif;font-size:11px;line-height:1}
+.li span+span{font-family:"Caveat",cursive;font-weight:700;font-size:17px;line-height:1;border-bottom:2px solid var(--mustard)}
+.fields{grid-column:1/-1;margin-top:12px;border:1.5px solid var(--ink);display:grid;grid-template-columns:1fr 1fr}
+.row{display:flex;flex-direction:column;gap:1px;padding:6px 9px 7px}
+.row+.row{border-left:1.5px solid var(--ink)}
+.row.wide{grid-column:1/-1;border-left:0;border-top:1.5px solid var(--ink);flex-direction:row;align-items:baseline;gap:8px}
+.row b{font-weight:400;font-size:8.5px;color:#4b4a5e;letter-spacing:.12em}
+.row .v{font-family:"Caveat",cursive;font-weight:700;font-size:17px;line-height:1.05;color:var(--ink);text-transform:uppercase}
+.row .v a{color:inherit;text-decoration:none;border-bottom:2px solid var(--mustard)}
+.stamp{position:absolute;right:10px;bottom:-11px;transform:rotate(-8deg);padding:3px 7px;border:2px solid var(--red);color:var(--red);
+  font-size:9px;border-radius:4px;background:rgba(243,234,216,.7)}
 
 /* ---------- folder tab heading ---------- */
-.folder{margin-top:52px;position:relative;height:64px}
+.folder{margin-top:30px;position:relative;height:64px}
 .folder .tab{position:absolute;left:0;top:0;height:40px;padding:0 22px;display:flex;align-items:center;border-radius:12px 18px 0 0;
   background:var(--grain),var(--kraft-d);background-size:220px,100%;background-blend-mode:multiply,normal}
 .folder .tab h2{font-family:"Instrument Serif",serif;font-style:italic;font-weight:400;font-size:27px;color:var(--paper);line-height:1}
@@ -77,9 +76,9 @@ main{width:100%;max-width:430px;position:relative}
 .folder .sub{position:absolute;right:14px;top:44px;font-size:10px;color:#ecdcc0}
 
 /* ---------- tickets ---------- */
-.tickets{display:flex;flex-direction:column;gap:16px;margin-top:-6px;position:relative}
-.ticket{--stub:88px;--bg:var(--mustard);--fg:var(--ink);--line:rgba(31,43,92,.55);
-  position:relative;display:flex;min-height:112px;text-decoration:none;color:var(--fg);
+.tickets{display:flex;flex-direction:column;gap:12px;margin-top:-6px;position:relative}
+.ticket{--stub:78px;--bg:var(--mustard);--fg:var(--ink);--line:rgba(31,43,92,.55);
+  position:relative;display:flex;min-height:96px;text-decoration:none;color:var(--fg);
   background:var(--grain),var(--bg);background-size:220px,100%;background-blend-mode:multiply,normal;
   border-radius:6px;filter:drop-shadow(0 10px 12px rgba(60,35,15,.28)) drop-shadow(0 2px 3px rgba(60,35,15,.18));
   -webkit-mask:radial-gradient(circle 9px at calc(100% - var(--stub)) 0,#0000 97%,#000) top/100% 51% no-repeat,
@@ -91,15 +90,15 @@ main{width:100%;max-width:430px;position:relative}
 .ticket:nth-child(even){transform:rotate(.7deg)}
 .ticket:hover{transform:translateY(-3px) rotate(0)}
 .ticket:active{transform:scale(.98)}
-.ticket .main{flex:1;min-width:0;padding:13px 14px 12px 16px;display:flex;flex-direction:column;justify-content:space-between;
+.ticket .main{flex:1;min-width:0;padding:11px 12px 10px 14px;display:flex;flex-direction:column;justify-content:space-between;
   border-right:2px dashed var(--line)}
 .ticket .top{display:flex;justify-content:space-between;gap:8px;font-size:9.5px;opacity:.85}
-.ticket .title{font-family:"Archivo Black",sans-serif;font-size:25px;line-height:1;letter-spacing:-.005em;margin:8px 0 6px;text-transform:uppercase}
+.ticket .title{font-family:"Archivo Black",sans-serif;font-size:22px;line-height:1;letter-spacing:-.005em;margin:6px 0 4px;text-transform:uppercase}
 .ticket .handle{font-size:12.5px;letter-spacing:.04em}
 .ticket .lines{display:flex;gap:6px;margin-top:8px}
 .ticket .lines i{flex:1;height:1.5px;background:var(--line)}
 .ticket .stub{width:var(--stub);flex:none;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;text-align:center;padding:8px 6px}
-.ticket .stub .big{font-family:"Archivo Black",sans-serif;font-size:30px;line-height:1}
+.ticket .stub .big{font-family:"Archivo Black",sans-serif;font-size:26px;line-height:1}
 .ticket .stub .sm{font-size:9px;line-height:1.3}
 .ticket .stub .emo{font-size:22px;line-height:1}
 .t-tech{--bg:var(--mustard)}
@@ -145,7 +144,7 @@ footer{margin-top:34px;text-align:center;font-size:10.5px;color:#5b4026;line-hei
 footer a{color:inherit}
 @media (prefers-reduced-motion:no-preference){
   .file,.pola,.folder,.ticket,.note{animation:drop .6s cubic-bezier(.2,.8,.2,1) both}
-  .pola{animation-delay:.12s}.folder{animation-delay:.18s}
+  .folder{animation-delay:.18s}
   .ticket:nth-child(1){animation-delay:.24s}.ticket:nth-child(2){animation-delay:.3s}.ticket:nth-child(3){animation-delay:.36s}.ticket:nth-child(4){animation-delay:.42s}.ticket:nth-child(5){animation-delay:.48s}
   .note{animation-delay:.5s}
   @keyframes drop{from{opacity:0;translate:0 14px}to{opacity:1;translate:0 0}}
@@ -157,26 +156,20 @@ footer a{color:inherit}
 
   <section class="file paper">
     <figure class="pola paper">
-      <svg class="clip" viewBox="0 0 26 64" aria-hidden="true"><path d="M8 20V8a5 5 0 0 1 10 0v40a8 8 0 0 1-16 0V14" fill="none" stroke="#8d8f94" stroke-width="2.6" stroke-linecap="round"/><path d="M8 20V8a5 5 0 0 1 10 0v40a8 8 0 0 1-16 0V14" fill="none" stroke="#d8dadd" stroke-width="1" stroke-linecap="round" transform="translate(-.6 -.6)"/></svg>
+      <svg class="clip" viewBox="0 0 26 64" aria-hidden="true"><path d="M8 20V8a5 5 0 0 1 10 0v40a8 8 0 0 1-16 0V14" fill="none" stroke="#8d8f94" stroke-width="2.8" stroke-linecap="round"/></svg>
       <img src="me.jpg" alt="Quinten in front of a yellow wall" width="720" height="900">
       <figcaption class="cap">that's me ☺</figcaption>
     </figure>
     <div class="tape" aria-hidden="true"></div>
-    <a class="li" href="https://www.linkedin.com/in/quinten-braem-b2769028/"><span class="in">in</span><span>find me on LinkedIn →</span></a>
-
-    <div class="head">
-      <div>
-        <div class="no mono">Personal file · No. 001</div>
-        <h1>QUINTEN BRAEM<span>meet the maker</span></h1>
-      </div>
+    <div class="who">
+      <div class="no mono">Personal file · No. 001</div>
+      <h1>QUINTEN BRAEM<span>meet the maker</span></h1>
+      <a class="li" href="https://www.linkedin.com/in/quinten-braem-b2769028/"><span class="in">in</span><span>find me on LinkedIn →</span></a>
     </div>
-
     <div class="fields">
-      <div class="row"><b class="mono">Name:</b><span class="v">Quinten</span></div>
-      <div class="row"><b class="mono">Instagram:</b><span class="v"><a href="https://www.instagram.com/qbraem/">@qbraem</a></span></div>
-      <div class="row"><b class="mono">Based in:</b><span class="v">Belgium 🇧🇪</span></div>
-      <div class="row"><b class="mono">Into:</b><span class="v">tech, Disney &amp; photography</span></div>
-      <div class="row"><b class="mono">Currently:</b><span class="v">building my own app ✶</span></div>
+      <div class="row"><b class="mono">Based in</b><span class="v">Belgium 🇧🇪</span></div>
+      <div class="row"><b class="mono">Into</b><span class="v">tech · Disney · photos</span></div>
+      <div class="row wide"><b class="mono">Currently</b><span class="v">building <a href="https://apps.apple.com/app/id6835602280">Studio Typo</a> ✶</span></div>
     </div>
     <div class="stamp mono">Approved</div>
   </section>
