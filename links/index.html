@@ -3,119 +3,227 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Quinten · @qbraem</title>
-<meta name="description" content="All my channels in one place: tech, Disney magic, photo journal and Studio Typo.">
-<meta property="og:title" content="Quinten · @qbraem">
-<meta property="og:description" content="All my channels in one place.">
-<meta property="og:image" content="studiotypo.png">
-<meta name="theme-color" content="#120d0a">
-<link rel="icon" href="studiotypo.png">
+<title>Quinten Braem · @qbraem</title>
+<meta name="description" content="Quinten's personal file: tech, Disney magic, a photo journal and Studio Typo.">
+<meta property="og:title" content="Quinten Braem · @qbraem">
+<meta property="og:description" content="Tech, Disney magic, photo journal & Studio Typo.">
+<meta property="og:image" content="face.jpg">
+<meta name="theme-color" content="#b9926a">
+<link rel="icon" href="face.jpg">
+<link rel="apple-touch-icon" href="face.jpg">
 <style>
-@font-face{font-family:"DM Sans";src:url(fonts/DMSans-400.woff) format("woff");font-weight:400;font-display:swap}
-@font-face{font-family:"DM Sans";src:url(fonts/DMSans-500.woff) format("woff");font-weight:500;font-display:swap}
-@font-face{font-family:"DM Sans";src:url(fonts/DMSans-700.woff) format("woff");font-weight:700;font-display:swap}
-@font-face{font-family:"Yellowtail";src:url(fonts/Yellowtail-400.woff) format("woff");font-display:swap}
-:root{--bg:#120d0a;--panel:#1f1712;--line:#3a2c22;--text:#f6ece0;--muted:#b39d89;--accent:#f26b50;--gold:#d9b27a}
-*{box-sizing:border-box;margin:0}
-html{background:var(--bg)}
-body{min-height:100vh;font-family:"DM Sans",system-ui,sans-serif;color:var(--text);
-  background:radial-gradient(120% 70% at 30% 0%,#3a2114 0%,#1f140e 45%,var(--bg) 100%) no-repeat;
-  display:flex;justify-content:center;padding:calc(48px + env(safe-area-inset-top)) 20px calc(40px + env(safe-area-inset-bottom));
-  -webkit-font-smoothing:antialiased}
-main{width:100%;max-width:440px;display:flex;flex-direction:column;align-items:center}
-.mono{width:96px;height:96px;border-radius:50%;display:grid;place-items:center;
-  background:radial-gradient(circle at 35% 30%,#3a2114,#1f140e);border:1.5px solid var(--line);
-  box-shadow:0 10px 30px rgba(0,0,0,.45),inset 0 1px 0 rgba(255,255,255,.06)}
-.mono span{font-family:"Yellowtail",cursive;font-size:54px;line-height:1;color:var(--text);transform:translate(-2px,2px)}
-.mono span i{font-style:normal;color:var(--accent)}
-h1{margin-top:20px;font-size:15px;font-weight:700;letter-spacing:.32em;text-transform:uppercase;display:flex;align-items:baseline;gap:8px}
-h1 .script{font-family:"Yellowtail",cursive;font-size:44px;letter-spacing:0;text-transform:none;font-weight:400;color:var(--accent)}
-.rule{width:150px;height:0;border-top:2px dashed var(--gold);opacity:.7;margin:10px 0 12px}
-.handle{color:var(--muted);font-size:15px;font-weight:500;text-decoration:none}
-.bio{margin-top:10px;color:var(--muted);font-size:14.5px;line-height:1.5;text-align:center;max-width:320px}
-.label{align-self:flex-start;margin:34px 0 12px 4px;font-size:11.5px;font-weight:700;letter-spacing:.22em;text-transform:uppercase;color:var(--gold)}
-.list{width:100%;display:flex;flex-direction:column;gap:12px}
-a.card{display:flex;align-items:center;gap:14px;padding:14px 16px;border-radius:20px;text-decoration:none;color:inherit;
-  background:linear-gradient(180deg,rgba(255,255,255,.055),rgba(255,255,255,.025));border:1px solid var(--line);
-  box-shadow:0 6px 18px rgba(0,0,0,.25);transition:transform .15s ease,border-color .15s ease,background .15s ease}
-a.card:hover{transform:translateY(-2px);border-color:#5a4433}
-a.card:active{transform:scale(.98)}
-.ico{flex:none;width:46px;height:46px;border-radius:14px;display:grid;place-items:center;font-size:22px;background:#2a1f18;border:1px solid var(--line)}
-.ico img{width:100%;height:100%;border-radius:13px;display:block}
-.txt{flex:1;min-width:0}
-.t{font-size:16px;font-weight:700;letter-spacing:.01em}
-.s{margin-top:2px;font-size:13.5px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.arr{flex:none;color:var(--muted);font-size:18px;transition:transform .15s ease}
-a.card:hover .arr{transform:translateX(3px);color:var(--text)}
-/* featured app card */
-.feat{width:100%;margin-top:30px;padding:20px;border-radius:26px;position:relative;overflow:hidden;
-  background:linear-gradient(160deg,#3a2114 0%,#24170f 60%,#1a120d 100%);border:1px solid #4a3426;box-shadow:0 14px 36px rgba(0,0,0,.4)}
-.feat:before{content:"";position:absolute;inset:-40% -30% auto auto;width:220px;height:220px;border-radius:50%;background:radial-gradient(circle,rgba(242,107,80,.22),transparent 70%)}
-.feat .top{display:flex;align-items:center;gap:14px;position:relative}
-.feat .top img{width:62px;height:62px;border-radius:15px;box-shadow:0 6px 16px rgba(0,0,0,.4)}
-.feat .name{font-size:13px;font-weight:700;letter-spacing:.3em;text-transform:uppercase;display:flex;align-items:baseline;gap:6px}
-.feat .name .script{font-family:"Yellowtail",cursive;font-size:30px;letter-spacing:0;text-transform:none;font-weight:400;color:var(--accent)}
-.feat .sub{font-size:13.5px;color:var(--muted);margin-top:2px}
-.feat p{position:relative;margin-top:14px;font-size:14.5px;line-height:1.5;color:#e9dccd}
-.btns{position:relative;display:flex;gap:10px;margin-top:16px}
-.btn{flex:1;display:flex;align-items:center;justify-content:center;gap:8px;height:46px;border-radius:999px;font-weight:700;font-size:14.5px;text-decoration:none}
-.btn.pri{background:var(--accent);color:#fff;box-shadow:0 6px 16px rgba(242,107,80,.35)}
-.btn.sec{background:rgba(255,255,255,.06);border:1px solid #5a4433;color:var(--text)}
-.btn:active{transform:scale(.97)}
-footer{margin-top:40px;font-size:12.5px;color:#7d6a5a;text-align:center}
-footer a{color:var(--muted);text-decoration:none}
-footer .script{font-family:"Yellowtail",cursive;font-size:17px;color:var(--accent)}
+@font-face{font-family:"Archivo Black";src:url(fonts/ArchivoBlack-400.woff) format("woff");font-display:swap}
+@font-face{font-family:"Caveat";src:url(fonts/Caveat-400.woff) format("woff");font-weight:400;font-display:swap}
+@font-face{font-family:"Caveat";src:url(fonts/Caveat-700.woff) format("woff");font-weight:700;font-display:swap}
+@font-face{font-family:"Instrument Serif";src:url(fonts/InstrumentSerif-400.woff) format("woff");font-display:swap}
+@font-face{font-family:"Instrument Serif";src:url(fonts/InstrumentSerif-400-italic.woff) format("woff");font-style:italic;font-display:swap}
+@font-face{font-family:"Typewriter";src:url(fonts/LMMono.otf) format("opentype");font-display:swap}
+:root{
+  --kraft:#b9926a;--kraft-d:#8a6646;--paper:#f3ead8;--paper-2:#ede1c8;
+  --mustard:#e8b53e;--mustard-d:#c9952a;--ink:#1f2b5c;--red:#c4452f;--olive:#8c8a3c;
+  --grain:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 .16 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{background:var(--kraft);overflow-x:hidden}
+body{overflow-x:hidden}
+body{min-height:100vh;color:var(--ink);font-family:"Typewriter",ui-monospace,"Courier New",monospace;
+  background:var(--grain),radial-gradient(140% 90% at 50% 0%,#c9a47c 0%,var(--kraft) 55%,#a7805a 100%);
+  background-size:220px 220px,100% 100%;background-blend-mode:multiply,normal;
+  padding:calc(34px + env(safe-area-inset-top)) 18px calc(40px + env(safe-area-inset-bottom));
+  display:flex;justify-content:center;-webkit-font-smoothing:antialiased}
+main{width:100%;max-width:430px;position:relative}
+.mono{font-family:"Typewriter",ui-monospace,monospace;text-transform:uppercase;letter-spacing:.12em}
+.hand{font-family:"Caveat",cursive}
+/* paper surfaces */
+.paper{background:var(--grain),var(--paper);background-size:220px,100%;background-blend-mode:multiply,normal;
+  box-shadow:0 1px 0 rgba(255,255,255,.4) inset,0 14px 28px -10px rgba(60,35,15,.45),0 3px 6px rgba(60,35,15,.18)}
+
+/* ---------- personal file card ---------- */
+.file{position:relative;padding:22px 20px 20px;border-radius:4px;transform:rotate(-1.2deg);margin-top:168px}
+.file .head{display:flex;justify-content:space-between;align-items:flex-start;gap:10px}
+.file .no{font-size:10.5px;color:#6b6250}
+.file h1{font-family:"Archivo Black",sans-serif;font-size:29px;line-height:.95;letter-spacing:-.01em;margin-top:6px;max-width:60%}
+.file h1 span{display:block;font-family:"Instrument Serif",serif;font-style:italic;font-weight:400;font-size:22px;letter-spacing:0;color:var(--red);margin-top:6px}
+.fields{margin-top:18px;border:1.5px solid var(--ink)}
+.row{display:flex;align-items:baseline;gap:10px;min-height:44px;padding:6px 10px;border-top:1.5px solid var(--ink)}
+.row:first-child{border-top:0}
+.row b{flex:none;width:96px;font-weight:400;font-size:10.5px;color:#4b4a5e}
+.row .v{font-family:"Caveat",cursive;font-weight:700;font-size:23px;line-height:1.05;color:var(--ink);text-transform:uppercase;letter-spacing:.01em}
+.row .v a{color:inherit;text-decoration:none;border-bottom:2px solid var(--mustard)}
+.stamp{position:absolute;right:16px;bottom:-16px;transform:rotate(-8deg);padding:5px 10px;border:2px solid var(--red);color:var(--red);
+  font-size:11px;border-radius:4px;background:rgba(243,234,216,.6);mix-blend-mode:multiply}
+
+/* polaroid */
+.pola{position:absolute;right:4px;top:-168px;width:172px;padding:10px 10px 34px;border-radius:2px;transform:rotate(4deg);z-index:2}
+.pola img{display:block;width:100%;height:auto;aspect-ratio:4/5;object-fit:cover;filter:saturate(1.05) contrast(1.02)}
+.pola .cap{position:absolute;left:0;right:0;bottom:6px;text-align:center;font-family:"Caveat",cursive;font-size:20px;color:var(--ink)}
+.clip{position:absolute;top:-22px;right:26px;width:26px;height:64px;z-index:3;transform:rotate(-6deg)}
+.tape{position:absolute;left:24px;top:-12px;width:84px;height:24px;background:rgba(232,181,62,.72);transform:rotate(-5deg);z-index:3;
+  box-shadow:0 1px 2px rgba(0,0,0,.12);clip-path:polygon(3% 0,97% 4%,100% 50%,96% 100%,2% 96%,0 50%)}
+
+/* ---------- folder tab heading ---------- */
+.folder{margin-top:52px;position:relative;height:64px}
+.folder .tab{position:absolute;left:0;top:0;height:40px;padding:0 22px;display:flex;align-items:center;border-radius:12px 18px 0 0;
+  background:var(--grain),var(--kraft-d);background-size:220px,100%;background-blend-mode:multiply,normal}
+.folder .tab h2{font-family:"Instrument Serif",serif;font-style:italic;font-weight:400;font-size:27px;color:var(--paper);line-height:1}
+.folder .body{position:absolute;left:0;right:0;top:36px;height:28px;border-radius:0 10px 0 0;
+  background:var(--grain),var(--kraft-d);background-size:220px,100%;background-blend-mode:multiply,normal;box-shadow:0 8px 14px -8px rgba(60,35,15,.4)}
+.folder .sub{position:absolute;right:14px;top:44px;font-size:10px;color:#ecdcc0}
+
+/* ---------- tickets ---------- */
+.tickets{display:flex;flex-direction:column;gap:16px;margin-top:-6px;position:relative}
+.ticket{--stub:88px;--bg:var(--mustard);--fg:var(--ink);--line:rgba(31,43,92,.55);
+  position:relative;display:flex;min-height:112px;text-decoration:none;color:var(--fg);
+  background:var(--grain),var(--bg);background-size:220px,100%;background-blend-mode:multiply,normal;
+  border-radius:6px;filter:drop-shadow(0 10px 12px rgba(60,35,15,.28)) drop-shadow(0 2px 3px rgba(60,35,15,.18));
+  -webkit-mask:radial-gradient(circle 9px at calc(100% - var(--stub)) 0,#0000 97%,#000) top/100% 51% no-repeat,
+               radial-gradient(circle 9px at calc(100% - var(--stub)) 100%,#0000 97%,#000) bottom/100% 51% no-repeat;
+          mask:radial-gradient(circle 9px at calc(100% - var(--stub)) 0,#0000 97%,#000) top/100% 51% no-repeat,
+               radial-gradient(circle 9px at calc(100% - var(--stub)) 100%,#0000 97%,#000) bottom/100% 51% no-repeat;
+  transition:transform .18s ease}
+.ticket:nth-child(odd){transform:rotate(-.6deg)}
+.ticket:nth-child(even){transform:rotate(.7deg)}
+.ticket:hover{transform:translateY(-3px) rotate(0)}
+.ticket:active{transform:scale(.98)}
+.ticket .main{flex:1;min-width:0;padding:13px 14px 12px 16px;display:flex;flex-direction:column;justify-content:space-between;
+  border-right:2px dashed var(--line)}
+.ticket .top{display:flex;justify-content:space-between;gap:8px;font-size:9.5px;opacity:.85}
+.ticket .title{font-family:"Archivo Black",sans-serif;font-size:25px;line-height:1;letter-spacing:-.005em;margin:8px 0 6px;text-transform:uppercase}
+.ticket .handle{font-size:12.5px;letter-spacing:.04em}
+.ticket .lines{display:flex;gap:6px;margin-top:8px}
+.ticket .lines i{flex:1;height:1.5px;background:var(--line)}
+.ticket .stub{width:var(--stub);flex:none;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;text-align:center;padding:8px 6px}
+.ticket .stub .big{font-family:"Archivo Black",sans-serif;font-size:30px;line-height:1}
+.ticket .stub .sm{font-size:9px;line-height:1.3}
+.ticket .stub .emo{font-size:22px;line-height:1}
+.t-tech{--bg:var(--mustard)}
+.t-disney{--bg:var(--red);--fg:#f6ead6;--line:rgba(246,234,214,.6)}
+.t-photo{--bg:var(--paper);--fg:var(--ink)}
+.t-photo .barcode{height:22px;width:58px;background:repeating-linear-gradient(90deg,var(--ink) 0 2px,transparent 2px 3px,var(--ink) 3px 4px,transparent 4px 7px,var(--ink) 7px 10px,transparent 10px 11px)}
+.t-app{--bg:var(--ink);--fg:#f3ead8;--line:rgba(232,181,62,.6)}
+.t-app .title{color:var(--mustard)}
+.t-app .appico{width:40px;height:40px;border-radius:10px;box-shadow:0 3px 8px rgba(0,0,0,.35)}
+
+/* ---------- hello note ---------- */
+.note{display:block;margin-top:40px;padding:18px 18px 16px;transform:rotate(1.4deg);text-decoration:none;color:var(--ink);
+  background:var(--grain),#d9b54a;background-size:220px,100%;background-blend-mode:multiply,normal;
+  box-shadow:0 14px 26px -10px rgba(60,35,15,.5),0 2px 4px rgba(60,35,15,.2)}
+.note h3{font-family:"Archivo Black",sans-serif;font-size:26px;text-align:center;letter-spacing:.02em}
+.note .grid{margin-top:12px;border-top:1.5px solid var(--ink)}
+.note .r{display:flex;border-bottom:1.5px solid var(--ink);min-height:42px}
+.note .r>div{flex:1;padding:6px 4px;display:flex;align-items:baseline;gap:8px}
+.note .r>div+div{border-left:1.5px solid var(--ink);flex:0 0 38%;padding-left:10px}
+.note small{font-family:"Instrument Serif",serif;font-size:17px}
+.note .hw{font-family:"Caveat",cursive;font-weight:700;font-size:24px;line-height:1}
+.note .msg{padding:8px 4px 4px;display:flex;gap:8px;align-items:baseline}
+.note .msg .hw{font-size:26px}
+.note .cta{margin-top:6px;text-align:right;font-size:11px}
+
+footer{margin-top:34px;text-align:center;font-size:10.5px;color:#5b4026;line-height:1.7}
+footer a{color:inherit}
 @media (prefers-reduced-motion:no-preference){
-  main>*{animation:up .5s cubic-bezier(.2,.7,.2,1) both}
-  main>*:nth-child(2){animation-delay:.04s}main>*:nth-child(3){animation-delay:.08s}main>*:nth-child(4){animation-delay:.12s}
-  main>*:nth-child(5){animation-delay:.16s}main>*:nth-child(6){animation-delay:.2s}main>*:nth-child(7){animation-delay:.24s}main>*:nth-child(8){animation-delay:.28s}
-  @keyframes up{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+  .file,.pola,.folder,.ticket,.note{animation:drop .6s cubic-bezier(.2,.8,.2,1) both}
+  .pola{animation-delay:.12s}.folder{animation-delay:.18s}
+  .ticket:nth-child(1){animation-delay:.24s}.ticket:nth-child(2){animation-delay:.3s}.ticket:nth-child(3){animation-delay:.36s}.ticket:nth-child(4){animation-delay:.42s}
+  .note{animation-delay:.5s}
+  @keyframes drop{from{opacity:0;translate:0 14px}to{opacity:1;translate:0 0}}
 }
 </style>
 </head>
 <body>
 <main>
-  <div class="mono" aria-hidden="true"><span>Q<i>.</i></span></div>
-  <h1>Hi, I'm <span class="script">Quinten</span></h1>
-  <div class="rule"></div>
-  <a class="handle" href="https://www.instagram.com/qbraem/">@qbraem</a>
-  <p class="bio">Tech, Disney magic, photography — and the maker of Studio Typo.</p>
 
-  <section class="feat">
-    <div class="top">
-      <img src="studiotypo.png" alt="Studio Typo app icon">
+  <section class="file paper">
+    <figure class="pola paper">
+      <svg class="clip" viewBox="0 0 26 64" aria-hidden="true"><path d="M8 20V8a5 5 0 0 1 10 0v40a8 8 0 0 1-16 0V14" fill="none" stroke="#8d8f94" stroke-width="2.6" stroke-linecap="round"/><path d="M8 20V8a5 5 0 0 1 10 0v40a8 8 0 0 1-16 0V14" fill="none" stroke="#d8dadd" stroke-width="1" stroke-linecap="round" transform="translate(-.6 -.6)"/></svg>
+      <img src="me.jpg" alt="Quinten in front of a yellow wall" width="720" height="900">
+      <figcaption class="cap">that's me ☺</figcaption>
+    </figure>
+    <div class="tape" aria-hidden="true"></div>
+
+    <div class="head">
       <div>
-        <div class="name">Studio <span class="script">Typo</span></div>
-        <div class="sub">My app · iPhone &amp; iPad</div>
+        <div class="no mono">Personal file · No. 001</div>
+        <h1>QUINTEN BRAEM<span>meet the maker</span></h1>
       </div>
     </div>
-    <p>Typography stickers for your stories. 230+ editable designs, Live titles with your city &amp; weather.</p>
-    <div class="btns">
-      <a class="btn pri" href="https://apps.apple.com/app/id6835602280">Get the app</a>
-      <a class="btn sec" href="https://www.instagram.com/studiotypoapp/">@studiotypoapp</a>
+
+    <div class="fields">
+      <div class="row"><b class="mono">Name:</b><span class="v">Quinten</span></div>
+      <div class="row"><b class="mono">Instagram:</b><span class="v"><a href="https://www.instagram.com/qbraem/">@qbraem</a></span></div>
+      <div class="row"><b class="mono">Based in:</b><span class="v">Belgium 🇧🇪</span></div>
+      <div class="row"><b class="mono">Into:</b><span class="v">tech, Disney &amp; photography</span></div>
+      <div class="row"><b class="mono">Currently:</b><span class="v">building my own app ✶</span></div>
     </div>
+    <div class="stamp mono">Approved</div>
   </section>
 
-  <div class="label">My other channels</div>
-  <div class="list">
-    <a class="card" href="https://www.instagram.com/qbraem.studio/">
-      <div class="ico">📱</div>
-      <div class="txt"><div class="t">Tech channel</div><div class="s">@qbraem.studio</div></div>
-      <div class="arr">→</div>
+  <div class="folder">
+    <div class="body"></div>
+    <div class="tab"><h2>my channels</h2></div>
+    <div class="sub mono">4 tickets inside</div>
+  </div>
+
+  <div class="tickets">
+    <a class="ticket t-tech" href="https://www.instagram.com/qbraem.studio/">
+      <div class="main">
+        <div class="top mono"><span>Admit one</span><span>Instagram</span></div>
+        <div>
+          <div class="title">Tech channel</div>
+          <div class="handle mono">@qbraem.studio</div>
+        </div>
+        <div class="lines"><i></i><i></i><i></i></div>
+      </div>
+      <div class="stub"><div class="emo">📱</div><div class="big">01</div><div class="sm mono">Tech<br>Pass</div></div>
     </a>
-    <a class="card" href="https://www.instagram.com/quinten_en_david/">
-      <div class="ico">✨</div>
-      <div class="txt"><div class="t">Disney magic</div><div class="s">@quinten_en_david</div></div>
-      <div class="arr">→</div>
+
+    <a class="ticket t-disney" href="https://www.instagram.com/quinten_en_david/">
+      <div class="main">
+        <div class="top mono"><span>Day pass</span><span>Instagram</span></div>
+        <div>
+          <div class="title">Disney magic</div>
+          <div class="handle mono">@quinten_en_david</div>
+        </div>
+        <div class="lines"><i></i><i></i><i></i></div>
+      </div>
+      <div class="stub"><div class="emo">✨</div><div class="big">02</div><div class="sm mono">Park<br>Entry</div></div>
     </a>
-    <a class="card" href="https://www.instagram.com/myx100vi/">
-      <div class="ico">📸</div>
-      <div class="txt"><div class="t">Photo journal</div><div class="s">@myx100vi</div></div>
-      <div class="arr">→</div>
+
+    <a class="ticket t-photo" href="https://www.instagram.com/myx100vi/">
+      <div class="main">
+        <div class="top mono"><span>Film · 36 exp.</span><span>Instagram</span></div>
+        <div>
+          <div class="title">Photo journal</div>
+          <div class="handle mono">@myx100vi</div>
+        </div>
+        <div class="barcode" aria-hidden="true"></div>
+      </div>
+      <div class="stub"><div class="emo">📸</div><div class="big">03</div><div class="sm mono">Roll<br>No.</div></div>
+    </a>
+
+    <a class="ticket t-app" href="https://apps.apple.com/app/id6835602280">
+      <div class="main">
+        <div class="top mono"><span>My app</span><span>App Store</span></div>
+        <div>
+          <div class="title">Studio Typo</div>
+          <div class="handle mono">typography for your stories</div>
+        </div>
+        <div class="lines"><i></i><i></i><i></i></div>
+      </div>
+      <div class="stub"><img class="appico" src="studiotypo.png" alt=""><div class="big" style="font-size:20px">04</div><div class="sm mono">Get it</div></div>
     </a>
   </div>
 
-  <footer>Titles made with <a href="https://apps.apple.com/app/id6835602280"><span class="script">Studio Typo</span></a></footer>
+  <a class="note" href="https://ig.me/m/qbraem">
+    <h3>HELLO NOTE</h3>
+    <div class="grid">
+      <div class="r"><div><small>to:</small><span class="hw">you</span></div><div><small>date:</small><span class="hw">today</span></div></div>
+      <div class="msg"><small>note:</small><span class="hw">thanks for stopping by — say hi anytime!</span></div>
+    </div>
+    <div class="cta mono">Send me a message →</div>
+  </a>
+
+  <footer class="mono">Filed with care in Belgium<br>© Quinten Braem</footer>
 </main>
 </body>
 </html>
