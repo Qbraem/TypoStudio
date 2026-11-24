@@ -184,9 +184,9 @@ function bounds(L,k){ // half sizes + centre offset in story units
   const px=L.s*SW*k/FRAME,t=titleBitmap(L,px),sc=1/k;return{hw:t.c.width*sc/2*(px/t.px),hh:t.c.height*sc/2*(px/t.px),dx:(t.ox+t.c.width/2)*sc*(px/t.px),dy:(t.oy+t.c.height/2)*sc*(px/t.px)}}
 
 /* ---------- paper stickers (stamp, note, sticky note, ticket, postcard, frame, postmark, tape) ---------- */
-const PAPERS=["#F4E9D2","#FFFFFF","#F2DD6E","#C9A57A","#F2C4B8","#CFE2EE","#CBD5B5","#1F1A17"];
-const INKS=["#23336B","#2A1D14","#C4452F","#111111","#FFFFFF","#8A5A2B"];
-const STK_FONTS={layers:[["DM Serif Display",400],["DM Sans",700],["Caveat",700],["Homemade Apple",400],["Great Vibes",400],["Playfair Display",700],["Bebas Neue",400]].map(([font,weight])=>({font,weight,text:"Aa",italic:false}))};
+const PAPERS=["#F4E9D2","#FFFFFF","#F2DD6E","#C9A57A","#F2C4B8","#CFE2EE","#CBD5B5","#1F1A17","#E0412F","#23704A","#1F3E8C","#C9C5F0","#E8642C","#F3A6C8"];
+const INKS=["#23336B","#2A1D14","#C4452F","#111111","#FFFFFF","#8A5A2B","#23704A","#E8642C","#F2DD6E"];
+const STK_FONTS={layers:[["DM Serif Display",400],["DM Sans",700],["Caveat",700],["Homemade Apple",400],["Great Vibes",400],["Playfair Display",700],["Bebas Neue",400]].concat(window.STK_PACK_FONTS||[]).map(([font,weight])=>({font,weight,text:"Aa",italic:false}))};
 let stkFontsOk=false;
 function stkFonts(){if(stkFontsOk)return;stkFontsOk=true;ensureFonts(STK_FONTS).then(()=>{stCache.clear();draw()}).catch(()=>{})}
 const F=(w,px,f)=>`${w} ${px}px "${f}", serif`;
@@ -245,9 +245,12 @@ const STK={
     draw(x,W,H,L){const u=W/100;x.globalAlpha=.78;x.fillStyle=L.paper;x.beginPath();x.moveTo(0,0);for(let i=0;i<=8;i++)x.lineTo((i%2?2.5:0)*u,i*H/8);x.lineTo(W,H);for(let i=8;i>=0;i--)x.lineTo(W-(i%2?2.5:0)*u,i*H/8);x.closePath();x.fill();
       x.globalAlpha=.12;x.strokeStyle="#fff";x.lineWidth=.6*u;for(let i=0;i<4;i++){x.beginPath();x.moveTo(5*u,H*(.2+i*.2));x.lineTo(W-5*u,H*(.2+i*.2));x.stroke()}x.globalAlpha=1}}
 };
-const STK_ORDER=["stamp","ministamp","sticky","note","ticket","postcard","frame","postmark","tape"];
-const STK_FIELDS={top:"Top line",title:"Title",bottom:"Bottom lines",text:"Text",sign:"Signature",label:"Label",date:"Date",code:"Number",hello:"Greeting",place:"Place",msg:"Message"};
-function newStk(kind){const k=STK[kind];return{id:uidS(),t:"stk",kind,x:SW/2,y:SH*.5,w:SW*k.w,rot:kind==="tape"?-8:kind==="frame"?0:-3,paper:k.paper,ink:k.ink,f:clone(k.f),shadow:kind!=="postmark"&&kind!=="tape",hidden:false}}
+const STK_TRAVEL=["stamp","ministamp","sticky","note","ticket","postcard","frame","postmark","tape"];STK_TRAVEL.forEach(k=>STK[k].cat="travel");
+if(window.STK_PACK)Object.assign(STK,window.STK_PACK({F,fit,lines,spaced,scallop,wave}));
+const STK_CATS=(window.STK_CATS||[["travel","Travel & paper"]]).filter(([c])=>Object.values(STK).some(d=>d.cat===c));
+const STK_ORDER=Object.keys(STK);const stkOf=c=>STK_ORDER.filter(k=>STK[k].cat===c);
+const STK_FIELDS={top:"Top line",title:"Title",bottom:"Bottom lines",text:"Text",sign:"Signature",label:"Label",date:"Date",code:"Number",hello:"Greeting",place:"Place",msg:"Message",t1:"Time 1",t2:"Time 2",t3:"Time 3",d1:"Day 1",d2:"Day 2",d3:"Day 3"};
+function newStk(kind){const k=STK[kind];return{id:uidS(),t:"stk",kind,x:SW/2,y:SH*.5,w:SW*k.w,rot:k.rot!=null?k.rot:kind==="tape"?-8:kind==="frame"?0:-3,paper:k.paper,ink:k.ink,f:clone(k.f),shadow:!k.noShadow&&kind!=="postmark"&&kind!=="tape",hidden:false}}
 const stCache=new Map();const STM=.1; // margin around a sticker canvas (room for shadows & postmarks)
 function stkBitmap(L,pxW){stkFonts();const def=STK[L.kind];if(!def)return null;const key=JSON.stringify([L.kind,L.paper,L.ink,L.f])+"|"+Math.round(pxW);let t=stCache.get(L.id);if(t&&t.key===key)return t;if(ST.gesture&&t)return t;
   const W=Math.max(8,Math.round(pxW)),H=Math.round(W*def.r),m=Math.round(W*STM),c=document.createElement("canvas");c.width=W+2*m;c.height=H+2*m;const x=c.getContext("2d");x.translate(m,m);try{def.draw(x,W,H,L)}catch(e){}
@@ -459,8 +462,8 @@ function renderPanel(){const p=$s("stPanel");if(!p)return;
     h+=`<div class="sHead"><b>${def.name}</b><div class="sChips">${chip(svg("plus",2)+"Add",false,'data-act="stkAll"')}${chip(svg("copy")+"Duplicate",false,'data-act="dupS"')}${chip(svg("trash")+"Delete",false,'data-act="del" class="warn"')}</div></div>`;
     Object.keys(def.f).forEach(n=>{const v=String(L.f[n]==null?"":L.f[n]).replace(/&/g,"&amp;").replace(/</g,"&lt;");const big=def.big.includes(n)||/\n/.test(L.f[n]);
       h+=row(STK_FIELDS[n]||n,big?`<textarea class="sInp sTa" rows="${n==="text"&&L.kind==="note"?4:2}" data-k="f:${n}">${v}</textarea>`:`<input class="sInp sTx" maxlength="60" value="${v.replace(/"/g,"&quot;")}" data-k="f:${n}">`)});
-    if(def.paper)h+=row(L.kind==="tape"?"Colour":"Paper",`<div class="sSw">${PAPERS.map(c=>`<button class="sDot${L.paper===c?" on":""}" data-paper="${c}" style="background:${c}" aria-label="${c}"></button>`).join("")}</div>`);
-    if(!["frame","tape"].includes(L.kind))h+=row("Ink",`<div class="sSw">${INKS.map(c=>`<button class="sDot${L.ink===c?" on":""}" data-ink="${c}" style="background:${c}" aria-label="${c}"></button>`).join("")}</div>`);
+    const sw=(a,b,c)=>[...new Set([b,c,...a].filter(Boolean))];if(def.paper)h+=row(L.kind==="tape"?"Colour":"Paper",`<div class="sSw">${sw(PAPERS,def.paper,L.paper).map(c=>`<button class="sDot${L.paper===c?" on":""}" data-paper="${c}" style="background:${c}" aria-label="${c}"></button>`).join("")}</div>`);
+    if(!def.noInk&&!["frame","tape"].includes(L.kind))h+=row("Ink",`<div class="sSw">${sw(INKS,def.ink,L.ink).map(c=>`<button class="sDot${L.ink===c?" on":""}" data-ink="${c}" style="background:${c}" aria-label="${c}"></button>`).join("")}</div>`);
     h+=`<div class="sRow sTogRow"><span>${svg("shadow")}Shadow</span><button class="sTog${L.shadow?" on":""}" role="switch" aria-checked="${L.shadow}" data-act="shadow" aria-label="Shadow"><i></i></button></div>`}
   else if(t==="photo"){
     if(L&&L.t==="photo"){h+=`<div class="sHead"><b>Photo sticker</b><div class="sChips">${chip(svg("swap")+"Replace",false,'data-act="replace"')}${chip(svg("trash")+"Delete",false,'data-act="del" class="warn"')}</div></div>`;
@@ -469,7 +472,8 @@ function renderPanel(){const p=$s("stPanel");if(!p)return;
       h+=`<div class="sRow sTogRow"><span>${svg("shadow")}Shadow</span><button class="sTog${L.shadow?" on":""}" role="switch" aria-checked="${L.shadow}" data-act="shadow" aria-label="Shadow"><i></i></button></div>`;
       if(L.frame==="polaroid")h+=row("Caption",`<input class="sInp" maxlength="40" placeholder="Write on the polaroid…" value="${(L.cap||"").replace(/"/g,"&quot;")}" data-k="cap">`)}
     else{const ph=S.layers.filter(x=>x.t==="photo");h+=`<div class="sHead"><b>Stickers</b><span class="sSub">Tap to add</span></div>`;
-      h+=`<div class="sStk">${STK_ORDER.map(k=>`<button class="sStkBtn" data-stk="${k}"><span data-stkth="${k}"></span><i>${STK[k].name}</i></button>`).join("")}</div><div class="sLabel">Photo stickers</div>`;
+      if(!STK_CATS.some(([c])=>c===ST.stkCat))ST.stkCat=STK_CATS[0][0];h+=`<div class="sChips sCats">${STK_CATS.map(([c,l])=>chip(l,ST.stkCat===c,`data-stkcat="${c}"`)).join("")}</div>`;
+      h+=`<div class="sStk">${stkOf(ST.stkCat).map(k=>`<button class="sStkBtn" data-stk="${k}"><span data-stkth="${k}"></span><i>${STK[k].name}</i></button>`).join("")}</div><div class="sLabel">Photo stickers</div>`;
       h+=`<div class="sStrip">${ph.map(x=>`<button class="sThumb" data-selp="${x.id}"><img src="${thumbOf(x.key)}" alt=""></button>`).join("")}<button class="sThumb add big" data-act="addPhoto">${svg("plus",2)}<i>Photo sticker</i></button></div>`;
       h+=`<p class="sHint">${ph.length?"Tap a photo sticker on your story to frame, crop or move it. Pinch to resize, twist to rotate.":"Add an extra photo on top of your story, like a sticker. Your main photo is set under Background."}</p>`}}
   else if(t==="text"){h+=`<div class="sHead"><b>Text</b></div>`;
@@ -507,6 +511,7 @@ async function panelClick(e){const b=e.target.closest("button,[data-lay]");if(!b
   if(d.grad!=null){snapS();S.bg.grad=+d.grad;changed();renderPanel();return}
   if(d.frame&&L){snapS();L.frame=d.frame;$s("stMini").dataset.k="";changed();renderPanel();return}
   if(d.asp&&L){snapS();L.aspect=d.asp;changed();renderPanel();return}
+  if(d.stkcat){ST.stkCat=d.stkcat;renderPanel();const c=document.querySelector(`#stPanel [data-stkcat="${d.stkcat}"]`);c&&c.scrollIntoView({block:"nearest",inline:"center"});return}
   if(d.stk){snapS();const n=newStk(d.stk);n.y=SH*(.42+((S.layers.filter(x=>x.t==="stk").length%3)*.08));S.layers.push(n);ST.sel=n.id;if(!wide())ST.tool=null;changed();renderPanel();toast(STK[d.stk].name+" added");return}
   if(d.paper&&L){snapS();L.paper=d.paper;changed();renderPanel();return}
   if(d.ink&&L){snapS();L.ink=d.ink;changed();renderPanel();return}
@@ -600,6 +605,8 @@ async function open(){build();await loadDoc();if(wide()&&!ST.tool)ST.tool="bg";s
 function close(){stopEdit();stopPick();hide();persist();hapt()}
 function onPro(){updTop();if(isPro()&&ST.pending&&ST.open){const m=ST.pending;ST.pending=null;setTimeout(()=>exportStory(m),450)}}
 
-window.STORY={open,close,get picking(){return ST.picking&&ST.open},addPicked,get open_(){return ST.open},onPro};
+window.STORY={open,close,get picking(){return ST.picking&&ST.open},addPicked,get open_(){return ST.open},onPro,
+  sheet(cat,bg){return ensureFonts(STK_FONTS).then(()=>{const ks=cat?stkOf(cat):STK_ORDER,cols=4,cw=300,c=document.createElement("canvas");c.width=cols*cw;c.height=Math.ceil(ks.length/cols)*cw;const x=c.getContext("2d");x.fillStyle=bg||"#7a5a40";x.fillRect(0,0,c.width,c.height);
+    ks.forEach((k,i)=>{const L=newStk(k),d=STK[k],W=200,H=W*d.r,sc=Math.min(1,240/H);x.save();x.translate((i%cols)*cw+cw/2,Math.floor(i/cols)*cw+cw/2-10);x.scale(sc,sc);x.rotate((L.rot||0)*Math.PI/180);if(L.shadow){x.shadowColor="rgba(0,0,0,.35)";x.shadowBlur=12;x.shadowOffsetY=5}const t=document.createElement("canvas");t.width=W;t.height=H;d.draw(t.getContext("2d"),W,H,L);x.drawImage(t,-W/2,-H/2);x.restore();x.fillStyle="#fff";x.font="14px sans-serif";x.textAlign="center";x.fillText(d.name,(i%cols)*cw+cw/2,Math.floor(i/cols)*cw+cw-8)});return c.toDataURL("image/png")})}};
 if(typeof PW_REASON==="object")PW_REASON.story="Saving stories is part of Studio Typo Pro";
 })();
