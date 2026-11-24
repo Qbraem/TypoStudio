@@ -1,7 +1,7 @@
 /* Studio Typo – Story Builder sticker pack (categories). Original designs, drawn on canvas.
    Every sticker: {name,cat,r (h/w),w (share of story width),paper,ink,f (editable text),big,draw(x,W,H,L)} */
 window.STK_CATS=[["xmas","Christmas"],["winter","Winter sport"],["outdoor","Outdoor"],["morning","Morning"],["weather","Weather"],["socials","Socials"],["urban","Urban"],["pack","Packaging"],["love","Love"],["pride","Pride"],["kudos","Kudos"],["travel","Travel & paper"]];
-window.STK_PACK_FONTS=[["Archivo Black",400],["Pacifico",400],["Yellowtail",400],["Satisfy",400],["Kaushan Script",400],["Shrikhand",400],["Fraunces",900],["Young Serif",400],["Rye",400],["Abril Fatface",400],["Bowlby One",400],["Fredoka",700],["Luckiest Guy",400],["Gochi Hand",400],["Sansita Swashed",800],["Sacramento",400],["Lilita One",400],["Anton",400]];
+window.STK_PACK_FONTS=[["Archivo Black",400],["Pacifico",400],["Yellowtail",400],["Satisfy",400],["Kaushan Script",400],["Shrikhand",400],["Fraunces",900],["Young Serif",400],["Rye",400],["Abril Fatface",400],["Bowlby One",400],["Fredoka",700],["Luckiest Guy",400],["Gochi Hand",400],["Sansita Swashed",800],["Sacramento",400],["Lilita One",400],["Anton",400],["Bagel Fat One",400],["Cherry Bomb One",400]];
 window.STK_PACK=function(h){
 const {F,fit,spaced,scallop}=h,PI=Math.PI,E="#FFFFFF";
 const RB=["#E40303","#FF8C00","#FFED00","#008026","#24408E","#732982"];
@@ -44,6 +44,11 @@ function sparkle(x,cx,cy,s,col,lw){x.save();x.strokeStyle=col;x.lineWidth=lw;x.l
 function arrow(x,cx,cy,s,ang,col,lw){x.save();x.translate(cx,cy);x.rotate(ang);x.strokeStyle=col;x.lineWidth=lw;x.lineCap="butt";x.lineJoin="miter";x.beginPath();x.moveTo(-s,0);x.lineTo(s-lw*.5,0);x.stroke();x.beginPath();x.moveTo(s*.2,-s*.8);x.lineTo(s,0);x.lineTo(s*.2,s*.8);x.stroke();x.restore()}
 function heartIn(x,txt,font,px,cx,cy,maxW,heartCol){const parts=String(txt).split("\u2665");let p=px;const w=()=>{x.font=font(p);return parts.reduce((a,t)=>a+x.measureText(t).width,0)+(parts.length-1)*p*.95};while(w()>maxW&&p>2)p*=.94;let X=cx-w()/2;x.textAlign="left";x.textBaseline="middle";const col=x.fillStyle;
   parts.forEach((t,i)=>{x.fillStyle=col;x.fillText(t,X,cy);X+=x.measureText(t).width;if(i<parts.length-1){x.fillStyle=heartCol;x.beginPath();heart(x,X+p*.47,cy-p*.02,p*.42);x.fill();X+=p*.95}});x.fillStyle=col;return p}
+function torn(x,X,Y,W,H,seed,j){const r=rnd(seed),P=[],n=Math.round((W+H)/(j*2.2));const per=2*(W+H);for(let i=0;i<n;i++){let d=i/n*per,px,py;if(d<W){px=X+d;py=Y}else if(d<W+H){px=X+W;py=Y+d-W}else if(d<2*W+H){px=X+W-(d-W-H);py=Y+H}else{px=X;py=Y+H-(d-2*W-H)}P.push([px+(r()-.5)*j,py+(r()-.5)*j])}x.moveTo(P[0][0],P[0][1]);P.forEach(q=>x.lineTo(q[0],q[1]));x.closePath()}
+function union(x,parts,fill,ink,lw){x.save();x.lineJoin="round";x.lineCap="round";x.strokeStyle=ink;x.lineWidth=lw*2;parts.forEach(f=>{x.beginPath();f();x.stroke()});x.fillStyle=fill;parts.forEach(f=>{x.beginPath();f();x.fill()});x.restore()}
+function rot(x,cx,cy,a,f){return()=>{x.save();x.translate(cx,cy);x.rotate(a);f();x.restore()}}
+function eye(x,cx,cy,r,ink,lw,lx,ly){x.save();x.beginPath();x.ellipse(cx,cy,r*.82,r,0,0,7);x.fillStyle="#FFFFFF";x.fill();x.strokeStyle=ink;x.lineWidth=lw;x.stroke();x.fillStyle=ink;x.beginPath();x.ellipse(cx+r*lx,cy+r*ly,r*.36,r*.44,0,0,7);x.fill();x.restore()}
+function italic(x,f){x.save();x.transform(1,0,-.2,1,0,0);f();x.restore()}
 const ff=(w,f)=>p=>F(w,p,f);
 const BLK=ff(400,"Archivo Black"),SANS=ff(700,"DM Sans"),SER=ff(400,"DM Serif Display"),YS=ff(400,"Young Serif"),BEB=ff(400,"Bebas Neue"),FRA=ff(900,"Fraunces"),CAV=ff(700,"Caveat");
 
@@ -181,21 +186,67 @@ letitsnow:{name:"Snow badge",cat:"weather",r:1,w:.34,paper:"#DCEBF5",ink:"#1E2F5
   draw(x,W,H,L){const u=W/100,c=W/2;cut(x,()=>wavy(x,c,c,44*u,2.6*u,14),L.paper,2.5*u);ico(x,"snowflake",c,H*.27,8*u,L.ink);x.fillStyle=L.ink;T(x,L.f.text,ff(400,"Young Serif"),15*u,c,H*.6,W*.6,{lh:.95,maxH:H*.42})}},
 
 /* ================= SOCIALS ================= */
-linkbio:{name:"Speech bubble",cat:"socials",r:.6,w:.44,paper:"#FFFFFF",ink:"#111111",f:{text:"Link in bio"},big:[],
+linkbio:{name:"Speech bubble",cat:"socials",hidden:true,r:.6,w:.44,paper:"#FFFFFF",ink:"#111111",f:{text:"Link in bio"},big:[],
   draw(x,W,H,L){const u=W/100,P=()=>{RR(x,3*u,3*u,W-6*u,H*.72,10*u);x.moveTo(W*.36,H*.72);x.lineTo(W*.16,H-3*u);x.lineTo(W*.22,H*.72)};line(x,P,L.ink,3.2*u);cut(x,P,L.paper,0);x.fillStyle=L.ink;T(x,L.f.text,BLK,11*u,W/2,3*u+H*.36,W*.8)}},
 likes:{name:"Like count",cat:"socials",r:.5,w:.34,paper:"#FF3040",ink:"#FFFFFF",f:{text:"1.2K"},big:[],rot:0,
   draw(x,W,H,L){const u=W/100;cut(x,()=>{RR(x,2*u,2*u,W-4*u,H*.74,10*u);x.moveTo(W*.42,H*.74);x.lineTo(W*.5,H-3*u);x.lineTo(W*.58,H*.74)},L.paper,0);x.fillStyle=L.ink;x.beginPath();heart(x,W*.27,2*u+H*.36,9*u);x.fill();T(x,L.f.text,ff(700,"DM Sans"),20*u,W*.62,2*u+H*.37,W*.5)}},
-follow:{name:"Follow button",cat:"socials",r:.3,w:.4,paper:"#3797F0",ink:"#FFFFFF",f:{text:"Follow"},big:[],rot:0,
+follow:{name:"Follow button",cat:"socials",hidden:true,r:.3,w:.4,paper:"#3797F0",ink:"#FFFFFF",f:{text:"Follow"},big:[],rot:0,
   draw(x,W,H,L){const u=W/100;cut(x,()=>RR(x,2*u,2*u,W-4*u,H-4*u,7*u),L.paper,2*u);x.fillStyle=L.ink;T(x,"+ "+L.f.text,SANS,13*u,W/2,H/2,W*.8)}},
-newpost:{name:"New post",cat:"socials",r:1,w:.34,paper:"#FF5FA2",ink:"#FFFFFF",f:{text:"New\npost!"},big:["text"],
+newpost:{name:"New post",cat:"socials",hidden:true,r:1,w:.34,paper:"#FF5FA2",ink:"#FFFFFF",f:{text:"New\npost!"},big:["text"],
   draw(x,W,H,L){const u=W/100,c=W/2;cut(x,()=>burst(x,c,c,46*u,34*u,12),L.paper,3*u);x.save();x.translate(c,c+2*u);x.rotate(-.12);x.fillStyle=L.ink;T(x,String(L.f.text).toUpperCase(),ff(400,"Luckiest Guy"),20*u,0,0,W*.56,{lh:.92,maxH:H*.5});x.restore()}},
-dms:{name:"DM pill",cat:"socials",r:.4,w:.5,paper:"#111111",ink:"#F2DD6E",f:{text:"Slide into\nmy DMs"},big:["text"],rot:4,
+dms:{name:"DM pill",cat:"socials",hidden:true,r:.4,w:.5,paper:"#111111",ink:"#F2DD6E",f:{text:"Slide into\nmy DMs"},big:["text"],rot:4,
   draw(x,W,H,L){const u=W/100;cut(x,()=>RR(x,2*u,2*u,W-4*u,H-4*u,H),L.paper,2*u);x.save();x.translate(W*.2,H/2);x.rotate(-.35);x.fillStyle=L.ink;x.beginPath();poly(x,[[0,.5],[1,0],[.62,1],[.45,.62]],-8*u,-7*u,16*u,14*u);x.fill();x.restore();x.fillStyle=L.ink;T(x,L.f.text,BLK,9*u,W*.6,H/2,W*.56,{lh:1.02,maxH:H*.6})}},
-tapmore:{name:"Tap for more",cat:"socials",r:.28,w:.48,paper:"#F2DD6E",ink:"#111111",f:{text:"Tap for more"},big:[],rot:-3,
+tapmore:{name:"Tap for more",cat:"socials",hidden:true,r:.28,w:.48,paper:"#F2DD6E",ink:"#111111",f:{text:"Tap for more"},big:[],rot:-3,
   draw(x,W,H,L){const u=W/100;cut(x,()=>RR(x,2*u,2*u,W-4*u,H-4*u,6*u),L.paper,2*u);x.fillStyle=L.ink;T(x,L.f.text,SANS,11*u,W*.44,H/2,W*.66);line(x,()=>{x.moveTo(W*.84,H*.32);x.lineTo(W*.9,H*.5);x.lineTo(W*.84,H*.68)},L.ink,2*u)}},
-mention:{name:"Mention",cat:"socials",r:.26,w:.46,paper:"#FFFFFF",ink:"#D62976",f:{text:"@yourname"},big:[],rot:0,noInk:true,
+mention:{name:"Mention",cat:"socials",hidden:true,r:.26,w:.46,paper:"#FFFFFF",ink:"#D62976",f:{text:"@yourname"},big:[],rot:0,noInk:true,
   draw(x,W,H,L){const u=W/100;cut(x,()=>RR(x,2*u,2*u,W-4*u,H-4*u,5*u),L.paper,0);const g=x.createLinearGradient(W*.1,0,W*.9,0);g.addColorStop(0,"#F58529");g.addColorStop(.5,"#DD2A7B");g.addColorStop(1,"#8134AF");x.fillStyle=g;T(x,String(L.f.text).toUpperCase(),BLK,11*u,W/2,H/2,W*.84)}},
 
+/* ---- socials v2: like, live, follow, friends, invited, streaming, binge ---- */
+tapestrip:{name:"Tape label",cat:"socials",r:.17,w:.62,paper:"#F4EEDC",ink:"#111111",f:{text:"More likes"},big:[],rot:-14,
+  draw(x,W,H,L){const u=W/100,r=rnd(9);cut(x,()=>{x.moveTo(1*u,0);x.lineTo(W-1*u,0);for(let i=0;i<=6;i++)x.lineTo(W-(r()*1.6)*u,i*H/6);x.lineTo(1*u,H);for(let i=6;i>=0;i--)x.lineTo((r()*1.6)*u,i*H/6);x.closePath()},L.paper,0);x.fillStyle=L.ink;italic(x,()=>T(x,String(L.f.text).toUpperCase(),BLK,H*.66,W/2+H*.1,H*.54,W*.88))}},
+peace:{name:"Peace hand",cat:"socials",r:1.12,w:.28,paper:"#A8F07A",ink:"#1B4D2B",f:{},big:[],rot:-8,
+  draw(x,W,H,L){const u=W/100,lw=3.2*u,I=L.ink,fing=(cx,cy,a,len)=>rot(x,cx,cy,a,()=>RR(x,-8*u,-len,16*u,len+8*u,8*u));
+    const parts=[fing(40*u,62*u,-.2,52*u),fing(60*u,62*u,.2,50*u),()=>x.arc(73*u,70*u,10*u,0,7),()=>x.arc(70*u,88*u,9*u,0,7),()=>RR(x,26*u,56*u,52*u,50*u,15*u),rot(x,30*u,78*u,-.5,()=>RR(x,-14*u,-8*u,40*u,16*u,8*u))];
+    union(x,parts,L.paper,I,lw);line(x,()=>{x.moveTo(64*u,70*u);x.quadraticCurveTo(70*u,79*u,79*u,78*u);x.moveTo(62*u,88*u);x.lineTo(66*u,92*u)},I,lw);line(x,()=>{x.save();x.translate(30*u,78*u);x.rotate(-.5);RR(x,-14*u,-8*u,40*u,16*u,8*u);x.restore()},I,lw);
+    x.fillStyle=L.paper;x.save();x.translate(30*u,78*u);x.rotate(-.5);x.fillRect(-12*u,-6.2*u,30*u,8*u);x.restore();line(x,()=>{x.moveTo(50*u,56*u);x.lineTo(50*u,64*u)},I,lw*.8)}},
+torn:{name:"Torn paper",cat:"socials",r:.62,w:.44,paper:"#F5A3C7",ink:"#D7263D",f:{text:"binge\nmode"},big:["text"],rot:-6,
+  draw(x,W,H,L){const u=W/100;cut(x,()=>torn(x,4*u,4*u,W-8*u,H-8*u,21,5*u),mix(L.paper,"#FFFFFF",.6),0);cut(x,()=>torn(x,7*u,7*u,W-14*u,H-14*u,4,4*u),L.paper,0);x.fillStyle=L.ink;T(x,L.f.text,ff(400,"Bagel Fat One"),24*u,W/2,H*.5,W*.76,{lh:.82,maxH:H*.7})}},
+torn2:{name:"Torn label",cat:"socials",r:.66,w:.4,paper:"#F6D23C",ink:"#1F6B3A",f:{text:"Don't\nstop\nnow"},big:["text"],rot:4,
+  draw(x,W,H,L){const u=W/100;cut(x,()=>torn(x,4*u,4*u,W-8*u,H-8*u,33,5*u),mix(L.paper,"#FFFFFF",.55),0);cut(x,()=>torn(x,7*u,7*u,W-14*u,H-14*u,12,4*u),L.paper,0);x.fillStyle=L.ink;T(x,String(L.f.text).toUpperCase(),ff(400,"Cherry Bomb One"),22*u,W/2,H*.52,W*.74,{lh:.82,maxH:H*.74})}},
+livestream:{name:"Live streaming",cat:"socials",r:.36,w:.5,paper:"#FFFFFF",ink:"#111111",f:{top:"Live",text:"Streaming"},big:[],rot:0,
+  draw(x,W,H,L){const u=W/100,R="#E8322E";cut(x,()=>RR(x,2*u,2*u,W-4*u,H-4*u,7*u),L.paper,0);cut(x,()=>{RR(x,7*u,H/2-9*u,22*u,18*u,4.5*u);x.moveTo(27*u,H/2);x.lineTo(36*u,H/2-8*u);x.lineTo(36*u,H/2+8*u);x.closePath()},R,0);
+    x.fillStyle="#FFFFFF";x.beginPath();poly(x,[[0,0],[1,.5],[0,1]],15*u,H/2-5*u,8*u,10*u);x.fill();
+    italic(x,()=>{x.fillStyle=R;x.font=BLK(12*u);x.textAlign="left";x.textBaseline="alphabetic";x.fillText(String(L.f.top).toUpperCase(),44*u+H*.1,H*.5);x.fillStyle=L.ink;const p=fit(x,String(L.f.text).toUpperCase(),BLK,8*u,W-50*u);x.font=BLK(p);x.fillText(String(L.f.text).toUpperCase(),44*u+H*.16,H*.5+p*1.1)})}},
+livebadge:{name:"Live badge",cat:"socials",r:.42,w:.26,paper:"#FF2D55",ink:"#FFFFFF",f:{text:"Live"},big:[],rot:-8,
+  draw(x,W,H,L){const u=W/100;cut(x,()=>RR(x,3*u,3*u,W-6*u,H-6*u,7*u),L.paper,3*u);x.fillStyle=L.ink;x.beginPath();x.arc(20*u,H/2,5*u,0,7);x.fill();line(x,()=>x.arc(20*u,H/2,9*u,-.9,.9),L.ink,2*u);line(x,()=>x.arc(20*u,H/2,9*u,PI-.9,PI+.9),L.ink,2*u);T(x,String(L.f.text).toUpperCase(),BLK,18*u,W*.62,H*.53,W*.56)}},
+nametag:{name:"Name tag",cat:"socials",r:.66,w:.46,paper:"#E4322B",ink:"#111111",f:{top:"Hello, I'm",text:"Invited"},big:[],rot:-8,
+  draw(x,W,H,L){const u=W/100;cut(x,()=>RR(x,2*u,2*u,W-4*u,H-4*u,6*u),L.paper,2*u);cut(x,()=>RR(x,6*u,H*.36,W-12*u,H*.52,2*u),"#FFFFFF",0);x.fillStyle="#FFFFFF";S(x,L.f.top,BLK,9*u,W/2,H*.2,.8*u,W*.84);x.fillStyle=L.ink;T(x,L.f.text,ff(400,"Kaushan Script"),15*u,W/2,H*.62,W*.8)}},
+eyes:{name:"Googly eyes",cat:"socials",r:.72,w:.24,paper:"#FFFFFF",ink:"#111111",f:{},big:[],rot:-6,
+  draw(x,W,H,L){const u=W/100;union(x,[()=>x.ellipse(30*u,H/2,24*u,30*u,0,0,7),()=>x.ellipse(70*u,H/2,24*u,30*u,0,0,7)],L.paper,L.ink,4*u);x.fillStyle=L.ink;[[34,0],[74,0]].forEach(([a])=>{x.beginPath();x.ellipse(a*u,H/2+3*u,10*u,12*u,0,0,7);x.fill()});x.fillStyle="#FFFFFF";[[37],[77]].forEach(([a])=>{x.beginPath();x.arc(a*u,H/2-1*u,3*u,0,7);x.fill()})}},
+flame:{name:"Flame",cat:"socials",r:1.2,w:.2,paper:"#FF6A1F",ink:"#FFC93C",f:{},big:[],rot:0,
+  draw(x,W,H,L){const u=W/100,F1=(s,oy)=>{x.moveTo(50*u,H*(.04+oy));x.bezierCurveTo(70*u,H*(.22+oy),95*u*s+50*u*(1-s),H*.45,90*u*s+50*u*(1-s),H*.68);x.bezierCurveTo(88*u*s+50*u*(1-s),H*.9,70*u,H*.96,50*u,H*.96);x.bezierCurveTo(30*u,H*.96,12*u*s+50*u*(1-s),H*.9,10*u*s+50*u*(1-s),H*.68);x.bezierCurveTo(8*u*s+50*u*(1-s),H*.5,24*u*s+50*u*(1-s),H*.4,32*u*s+50*u*(1-s),H*(.3+oy*.5));x.bezierCurveTo(36*u,H*(.42+oy*.3),44*u,H*(.4+oy*.3),44*u,H*(.3+oy*.2));x.bezierCurveTo(44*u,H*(.2+oy),48*u,H*(.1+oy),50*u,H*(.04+oy));x.closePath()};
+    x.save();x.translate(50*u,H*.95);x.scale(.92,.92);x.translate(-50*u,-H*.95);cut(x,()=>F1(1,0),L.paper,4*u);cut(x,()=>{x.save();x.translate(50*u,H*.95);x.scale(.55,.55);x.translate(-50*u,-H*.95);F1(1,.1);x.restore()},L.ink,0);x.restore()}},
+eyeglobe:{name:"Globe with eyes",cat:"socials",r:1,w:.26,paper:"#FFFFFF",ink:"#2F55E8",f:{},big:[],rot:6,
+  draw(x,W,H,L){const u=W/100;cut(x,()=>x.arc(46*u,54*u,40*u,0,7),L.paper,3*u);ico(x,"globe",46*u,54*u,38*u,L.ink);union(x,[()=>x.ellipse(58*u,28*u,11*u,14*u,0,0,7),()=>x.ellipse(79*u,28*u,11*u,14*u,0,0,7)],"#FFFFFF","#111",2.4*u);x.fillStyle="#111";[61,82].forEach(a=>{x.beginPath();x.arc(a*u,32*u,5.5*u,0,7);x.fill()})}},
+ilove:{name:"I heart my",cat:"socials",r:.5,w:.48,paper:null,ink:"#111111",f:{text:"My friends"},big:[],noShadow:true,rot:-3,
+  draw(x,W,H,L){const u=W/100;x.fillStyle=L.ink;x.lineJoin="round";x.font=BLK(22*u);x.textAlign="left";x.textBaseline="middle";x.strokeStyle="#FFFFFF";x.lineWidth=4*u;x.strokeText("I",33*u,H*.3);x.fillText("I",33*u,H*.3);
+    cut(x,()=>heart(x,58*u,H*.3,12*u),"#E0313F",2*u);x.fillStyle=L.ink;T(x,String(L.f.text).toUpperCase(),BLK,15*u,W/2,H*.74,W*.94,{stroke:"#FFFFFF",sw:4*u})}},
+followcur:{name:"Follow pill",cat:"socials",r:.4,w:.42,paper:"#FFFFFF",ink:"#111111",f:{text:"Follow"},big:[],rot:0,
+  draw(x,W,H,L){const u=W/100;cut(x,()=>RR(x,13*u,8*u,W-16*u,H-14*u,H),L.paper,2.5*u);line(x,()=>RR(x,16*u,11*u,W-22*u,H-20*u,H),L.ink,1.6*u);x.fillStyle=L.ink;T(x,L.f.text,SANS,12*u,13*u+(W-16*u)/2,8*u+(H-14*u)/2,W*.6);
+    const C=()=>poly(x,[[0,0],[0,1],[.28,.74],[.48,1.1],[.62,1.02],[.44,.68],[.8,.66]],3*u,2*u,9*u,12*u);cut(x,C,L.ink,1.4*u)}},
+ringtext:{name:"Circle text",cat:"socials",r:1,w:.3,paper:"#FFFFFF",ink:"#111111",f:{text:"Friends & co. \u00b7 Friends & co. \u00b7 "},big:[],
+  draw(x,W,H,L){const u=W/100,c=W/2;cut(x,()=>x.arc(c,c,46*u,0,7),L.paper,0);x.fillStyle=L.ink;x.font=ff(400,"Young Serif")(10*u);ring(x,L.f.text,c,c,34*u);x.beginPath();heart(x,c,c+1*u,6*u);x.fill()}},
+keynote:{name:"Key caps note",cat:"socials",r:.62,w:.44,paper:"#E9F56B",ink:"#111111",f:{text:"Please like\n& subscribe",code:"LIKE"},big:["text"],rot:6,
+  draw(x,W,H,L){const u=W/100;cut(x,()=>RR(x,2*u,2*u,W-4*u,H-4*u,7*u),L.paper,0);line(x,()=>RR(x,2*u,2*u,W-4*u,H-4*u,7*u),L.ink,1.2*u);x.fillStyle=L.ink;T(x,L.f.text,SANS,10*u,10*u,H*.34,W*.8,{align:"left",lh:1.05,maxH:H*.4});
+    [...String(L.f.code).replace(/\s/g,"").toUpperCase()].slice(0,6).forEach((ch,i)=>{const X=10*u+i*13*u,Y=H*.62;line(x,()=>RR(x,X,Y,11*u,11*u,2.4*u),L.ink,1*u);x.fillStyle=L.ink;T(x,ch,SANS,6.4*u,X+5.5*u,Y+5.8*u,9*u)})}},
+friendsarch:{name:"Arch badge",cat:"socials",r:.58,w:.46,paper:"#F3A6D8",ink:"#1A1A1A",f:{text:"Best friends"},big:[],rot:0,
+  draw(x,W,H,L){const u=W/100,c=W/2,cy=H-12*u,R1=42*u,R2=23*u,Rm=(R1+R2)/2,w=(R1-R2)/2,P=()=>{x.arc(c,cy,R1,PI,0);x.arc(c+Rm,cy,w,0,PI);x.arc(c,cy,R2,0,PI,true);x.arc(c-Rm,cy,w,0,PI);x.closePath()};
+    union(x,[P],L.paper,L.ink,1.6*u);x.fillStyle=L.ink;const t=String(L.f.text).toUpperCase(),sp=arcFit(x,t,BLK,9*u,Rm,2.1,.8*u);arcT(x,t,c,cy,Rm,-PI/2,sp,false);[[-1],[1]].forEach(([s])=>ico(x,"star",c+s*Rm*Math.cos(.28),cy-Rm*Math.sin(.28),2.6*u,L.ink))}},
+antisocial:{name:"Script oval",cat:"socials",r:.42,w:.5,paper:"#2F55E8",ink:"#FFFFFF",f:{top:"anti-social but",text:"always invited"},big:[],rot:-8,
+  draw(x,W,H,L){const u=W/100;cut(x,()=>x.ellipse(W/2,H/2,W/2-1*u,H/2-1*u,0,0,7),L.paper,0);x.fillStyle=L.ink;T(x,L.f.top,ff(400,"Young Serif"),8*u,W/2,H*.36,W*.7);T(x,L.f.text,ff(400,"Satisfy"),12*u,W/2,H*.62,W*.74)}},
+invite:{name:"Invitation",cat:"socials",r:.6,w:.48,paper:"#1E2440",ink:"#F4E3C1",f:{top:"You're",text:"invited",bottom:"Movie night \u00b7 Fri 8 pm"},big:[],rot:4,
+  draw(x,W,H,L){const u=W/100;cut(x,()=>notch(x,0,0,W,H,7*u),L.paper,0);x.save();x.setLineDash([1.4*u,1.4*u]);line(x,()=>notch(x,5*u,5*u,W-10*u,H-10*u,5*u),L.ink,.6*u);x.restore();x.fillStyle=L.ink;S(x,L.f.top,SANS,5.4*u,W/2,H*.24,1.6*u,W*.6);
+    T(x,L.f.text,ff(400,"Great Vibes"),22*u,W/2,H*.5,W*.8);S(x,L.f.bottom,SANS,4.2*u,W/2,H*.78,.8*u,W*.78);[.24,.76].forEach(a=>sparkle(x,W*a,H*.24,2.4*u,L.ink,.6*u))}},
 /* ================= URBAN ================= */
 cityclub:{name:"Run club box",cat:"urban",hidden:true,r:.78,w:.36,paper:"#111111",ink:"#FFFFFF",f:{top:"Antwerp run club",title:"ANT"},big:[],
   draw(x,W,H,L){const u=W/100;cut(x,()=>RR(x,2*u,2*u,W-4*u,H-4*u,4*u),L.paper,2*u);x.fillStyle=L.ink;S(x,L.f.top,SANS,5.6*u,W/2,H*.2,1*u,W*.84);line(x,()=>RR(x,14*u,H*.34,W-28*u,H*.5,2*u),L.ink,2*u);x.fillStyle=L.ink;T(x,L.f.title,BEB,34*u,W/2,H*.6,W*.6)}},
@@ -301,6 +352,30 @@ mine:{name:"Love pill",cat:"love",r:.34,w:.44,paper:"#F3A6C8",ink:"#C8323F",f:{t
 sentlove:{name:"Love stamp",cat:"love",r:1.22,w:.3,paper:"#F7D9DE",ink:"#C8323F",f:{top:"Sent with",text:"love"},big:[],
   draw(x,W,H,L){const u=W/100;x.fillStyle=L.paper;x.fillRect(0,0,W,H);scallop(x,0,0,W,H,2.6*u);line(x,()=>x.rect(7*u,7*u,W-14*u,H-14*u),L.ink,.6*u);x.fillStyle=L.ink;x.beginPath();heart(x,W/2,H*.38,22*u);x.fill();x.fillStyle=L.ink;S(x,L.f.top,SANS,5.4*u,W/2,H*.68,1*u,W*.7);T(x,L.f.text,ff(400,"Great Vibes"),20*u,W/2,H*.82,W*.72)}},
 
+hellodear:{name:"Heart note",cat:"love",r:.88,w:.42,paper:"#F7B8D2",ink:"#E0412F",f:{title:"Hello",text:"my dear"},big:[],rot:8,
+  draw(x,W,H,L){const u=W/100;cut(x,()=>heart(x,W/2,H*.5,40*u),L.paper,0);line(x,()=>heart(x,W/2,H*.5,35*u),L.ink,.8*u);x.save();x.translate(W/2,H*.46);x.rotate(-.1);x.fillStyle=L.ink;T(x,String(L.f.title).toUpperCase(),BLK,12.5*u,0,0,W*.54);T(x,String(L.f.text).toUpperCase(),BLK,6.4*u,1*u,10*u,W*.4);x.restore()}},
+tulip:{name:"Tulip",cat:"love",r:1.05,w:.28,paper:"#F7C4B0",ink:"#E0412F",f:{},big:[],rot:-4,
+  draw(x,W,H,L){const u=W/100;cut(x,()=>{x.moveTo(50*u,4*u);x.bezierCurveTo(85*u,2*u,98*u,30*u,95*u,58*u);x.bezierCurveTo(92*u,90*u,62*u,H-2*u,42*u,H-3*u);x.bezierCurveTo(12*u,H-6*u,2*u,70*u,4*u,46*u);x.bezierCurveTo(6*u,18*u,24*u,5*u,50*u,4*u);x.closePath()},L.paper,0);
+    const pk="#EE6FA8";x.fillStyle=pk;x.beginPath();x.moveTo(50*u,90*u);x.bezierCurveTo(30*u,92*u,12*u,84*u,14*u,72*u);x.bezierCurveTo(18*u,60*u,40*u,62*u,50*u,90*u);x.fill();x.beginPath();x.moveTo(52*u,90*u);x.bezierCurveTo(60*u,62*u,84*u,56*u,86*u,70*u);x.bezierCurveTo(88*u,84*u,70*u,92*u,52*u,90*u);x.fill();
+    line(x,()=>{x.moveTo(51*u,50*u);x.lineTo(51*u,90*u)},pk,3*u);x.fillStyle=L.ink;x.beginPath();x.moveTo(30*u,22*u);x.lineTo(40*u,30*u);x.lineTo(50*u,16*u);x.lineTo(60*u,30*u);x.lineTo(70*u,22*u);x.bezierCurveTo(74*u,42*u,66*u,54*u,51*u,54*u);x.bezierCurveTo(36*u,54*u,27*u,42*u,30*u,22*u);x.fill()}},
+selflove:{name:"Lilac oval",cat:"love",r:.52,w:.48,paper:"#C9A3CF",ink:"#8E1730",f:{title:"Self love",text:"is in"},big:[],rot:6,
+  draw(x,W,H,L){const u=W/100;cut(x,()=>x.ellipse(W/2,H/2,W/2-1*u,H/2-1*u,0,0,7),L.paper,0);x.fillStyle=L.ink;T(x,String(L.f.title).toUpperCase(),BLK,13*u,W/2,H*.42,W*.76);T(x,String(L.f.text).toUpperCase(),BLK,7*u,W/2,H*.68,W*.5)}},
+loveair:{name:"Love circle",cat:"love",r:1,w:.36,paper:"#E8452E",ink:"#F7C4B0",f:{text:"Love is in the air \u00b7 Love is in the air \u00b7 "},big:[],
+  draw(x,W,H,L){const u=W/100,c=W/2;cut(x,()=>x.arc(c,c,48*u,0,7),L.paper,0);x.fillStyle=L.ink;x.font=SANS(8*u);ring(x,String(L.f.text).toUpperCase(),c,c,39*u);x.beginPath();heart(x,c,c+1*u,20*u);x.fill()}},
+cute:{name:"Bubble word",cat:"love",r:.5,w:.42,paper:"#F7C4B0",ink:"#E0412F",f:{text:"Cute"},big:[],noShadow:false,rot:-6,
+  draw(x,W,H,L){const u=W/100;x.fillStyle=L.ink;x.lineJoin="round";const f=ff(400,"Bagel Fat One"),t=String(L.f.text).toUpperCase(),p=fit(x,t,f,40*u,W*.8);x.font=f(p);x.textAlign="center";x.textBaseline="middle";x.strokeStyle=L.paper;x.lineWidth=p*.42;x.strokeText(t,W/2,H*.54);x.fillStyle=L.ink;x.fillText(t,W/2,H*.54)}},
+sparkle4:{name:"Sparkle",cat:"love",r:1,w:.2,paper:"#F7C4B0",ink:"#F7C4B0",f:{},big:[],noInk:true,rot:0,
+  draw(x,W,H,L){const u=W/100,c=W/2;cut(x,()=>{x.moveTo(c,2*u);x.quadraticCurveTo(c+6*u,c-6*u,W-2*u,c);x.quadraticCurveTo(c+6*u,c+6*u,c,H-2*u);x.quadraticCurveTo(c-6*u,c+6*u,2*u,c);x.quadraticCurveTo(c-6*u,c-6*u,c,2*u);x.closePath()},L.paper,0)}},
+cherries:{name:"Cherries & bow",cat:"love",r:1.18,w:.3,paper:"#F6C9D2",ink:"#C4161C",f:{},big:[],rot:0,
+  draw(x,W,H,L){const u=W/100,I=L.ink;cut(x,()=>RR(x,3*u,3*u,W-6*u,H-6*u,22*u),L.paper,0);const lw=1.4*u;
+    line(x,()=>{x.moveTo(50*u,24*u);x.bezierCurveTo(28*u,8*u,14*u,14*u,18*u,26*u);x.bezierCurveTo(22*u,36*u,40*u,30*u,50*u,24*u);x.moveTo(50*u,24*u);x.bezierCurveTo(72*u,8*u,86*u,14*u,82*u,26*u);x.bezierCurveTo(78*u,36*u,60*u,30*u,50*u,24*u);
+      x.moveTo(47*u,26*u);x.bezierCurveTo(40*u,40*u,30*u,44*u,24*u,52*u);x.moveTo(53*u,26*u);x.bezierCurveTo(60*u,40*u,70*u,42*u,78*u,50*u);x.moveTo(49*u,26*u);x.quadraticCurveTo(40*u,50*u,30*u,76*u);x.moveTo(51*u,26*u);x.quadraticCurveTo(62*u,52*u,70*u,74*u)},I,lw);
+    x.fillStyle=L.paper;x.beginPath();x.arc(50*u,24*u,4*u,0,7);x.fill();line(x,()=>x.arc(50*u,24*u,4*u,0,7),I,lw);
+    [[29,94],[71,92]].forEach(([a,b])=>{x.fillStyle=I;x.beginPath();x.moveTo(a*u,(b-17)*u);x.bezierCurveTo((a+27)*u,(b-26)*u,(a+28)*u,(b+18)*u,a*u,(b+18)*u);x.bezierCurveTo((a-28)*u,(b+18)*u,(a-27)*u,(b-26)*u,a*u,(b-17)*u);x.fill();
+      x.fillStyle="rgba(255,255,255,.75)";x.beginPath();x.ellipse((a-9)*u,(b-6)*u,5*u,2.4*u,-.5,0,7);x.fill()})}},
+xoxooval:{name:"XOXO oval",cat:"love",r:.48,w:.46,paper:"#F2A9C4",ink:"#C4161C",f:{text:"XOXO",top:"Hugs and kisses"},big:[],rot:-4,
+  draw(x,W,H,L){const u=W/100;cut(x,()=>x.ellipse(W/2,H/2,W/2-1*u,H/2-1*u,0,0,7),L.paper,0);line(x,()=>x.ellipse(W/2,H/2,W/2-4*u,H/2-4*u,0,0,7),L.ink,.6*u);x.fillStyle=L.ink;T(x,String(L.f.text).toUpperCase(),ff(400,"Rye"),17*u,W/2,H*.53,W*.6);
+    S(x,L.f.top,ff(400,"Young Serif"),3.6*u,W/2,H*.18,.5*u,W*.5);S(x,L.f.top,ff(400,"Young Serif"),3.6*u,W/2,H*.84,.5*u,W*.5);[[11,1],[89,1]].forEach(([a])=>{x.beginPath();heart(x,a*u,H/2,2.6*u);x.fill()})}},
 /* ================= PRIDE ================= */
 rbheart:{name:"Rainbow heart",cat:"pride",r:.92,w:.3,paper:null,ink:"#FFFFFF",f:{},big:[],noInk:true,
   draw(x,W,H,L){const u=W/100;cut(x,()=>heart(x,W/2,H*.52,38*u),null,3*u);x.save();clip(x,()=>heart(x,W/2,H*.52,38*u));RB.forEach((c,i)=>{x.fillStyle=c;x.fillRect(0,H*.17+i*H*.75/6,W,H*.75/6+1)});x.restore()}},
