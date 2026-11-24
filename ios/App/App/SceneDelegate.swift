@@ -13,10 +13,18 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         window?.makeKeyAndVisible()
 
         SceneDelegateProxy.shared.scene(scene, willConnectTo: session, options: connectionOptions)
+
+        // Cold start via a deep link (e.g. an In-App Event): keep it until the web app is ready.
+        if let url = connectionOptions.urlContexts.first?.url {
+            (window?.rootViewController as? MainViewController)?.openDeepLink(url)
+        }
     }
 
     func scene(_ scene: UIScene, openURLContexts URLContexts: Set<UIOpenURLContext>) {
         SceneDelegateProxy.shared.scene(scene, openURLContexts: URLContexts)
+        if let url = URLContexts.first?.url {
+            (window?.rootViewController as? MainViewController)?.openDeepLink(url)
+        }
     }
 
     func scene(_ scene: UIScene, continue userActivity: NSUserActivity) {
@@ -32,14 +40,32 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 class MainViewController: CAPBridgeViewController, WKScriptMessageHandler {
     private var glassBar: GlassBarView?
     private var topView: GlassTopView?
+    /// Deep link (studiotypo://…) waiting for the web app to say it is ready.
+    private var pendingDeepLink: URL?
+    private var webReady = false
 
     override func capacitorDidLoad() {
         webView?.configuration.userContentController.add(self, name: "glassBar")
     }
 
+    /// Opens studiotypo://category/<name> (or another studiotypo:// link) inside the web app.
+    func openDeepLink(_ url: URL) {
+        guard url.scheme?.lowercased() == "studiotypo" else { return }
+        guard webReady, let web = webView else { pendingDeepLink = url; return }
+        pendingDeepLink = nil
+        guard let data = try? JSONSerialization.data(withJSONObject: [url.absoluteString]),
+              let arg = String(data: data, encoding: .utf8) else { return }
+        web.evaluateJavaScript("window.__openDeepLink&&window.__openDeepLink(\(arg)[0])", completionHandler: nil)
+    }
+
     func userContentController(_ userContentController: WKUserContentController, didReceive message: WKScriptMessage) {
         guard message.name == "glassBar", let body = message.body as? [String: Any] else { return }
         let cmd = (body["cmd"] as? String) ?? ""
+        if cmd == "deeplinkReady" {
+            webReady = true
+            if let url = pendingDeepLink { openDeepLink(url) }
+            return
+        }
         if cmd == "hide" {
             glassBar?.isHidden = true
             return

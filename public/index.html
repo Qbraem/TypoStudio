@@ -2146,6 +2146,28 @@ initNative();loadLocal();updateProUI();loadTrending();
 if(!onbSeen){openOnb();setTimeout(hideSplash,900)}else setTimeout(hideSplash,700);
 setDetent(1);setAppH();renderLibrary();
 document.fonts.ready.then(()=>{schedulePreview();renderLibrary()});
+/* ---------------- Deep links (In-App Events) ----------------
+   studiotypo://category/holidays · studiotypo://story · website: ?cat=holidays */
+const DL_ALIAS={christmas:"Holidays",xmas:"Holidays",kerst:"Holidays",holiday:"Holidays",newyear:"New Year",nye:"New Year",trending:"Suggestions",suggestions:"Suggestions",all:"All"};
+function openDeepLink(raw){try{
+  const u=new URL(String(raw)),web=/^https?:$/.test(u.protocol);
+  const parts=web?[]:(u.host+"/"+u.pathname).split("/").filter(Boolean).map(x=>decodeURIComponent(x).toLowerCase());
+  const kind=parts[0]||(u.searchParams.get("cat")?"category":"");
+  const want=(parts[1]||u.searchParams.get("cat")||"").toLowerCase().replace(/[\s_-]+/g,"");
+  if(!kind)return false;
+  if(!$("onb").classList.contains("hidden"))closeOnb();
+  if(kind==="story"){if(window.STORY&&!STORY.open_)STORY.open();return true}
+  if(kind!=="category"||!want)return false;
+  if(window.STORY&&STORY.open_)STORY.close();
+  const cats=[...new Set([...NEW_CATS,...allDesigns().map(d=>d.cat)])];
+  const cat=DL_ALIAS[want]||cats.find(c=>c.toLowerCase().replace(/[\s_-]+/g,"")===want);
+  if(!cat)return false;
+  activeCat=cat;showTab("lib");renderLibrary();
+  setTimeout(()=>{const on=document.querySelector("#cats .chip.on");if(on)on.scrollIntoView({inline:"center",block:"nearest",behavior:"smooth"})},60);
+  return true}catch(e){return false}}
+window.__openDeepLink=openDeepLink;
+if(GLASS_H){try{GLASS_H.postMessage({cmd:"deeplinkReady"})}catch(e){}}
+else if(new URLSearchParams(location.search).get("cat"))openDeepLink(location.href);
 </script>
 </body>
 </html>

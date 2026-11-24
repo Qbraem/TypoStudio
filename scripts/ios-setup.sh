@@ -27,6 +27,13 @@ setv NSLocationAlwaysAndWhenInUseUsageDescription string "Studio Typo only uses 
 setv ITSAppUsesNonExemptEncryption bool false
 setv UIViewControllerBasedStatusBarAppearance bool true
 setv UIRequiresFullScreen bool false
+# Deep links (In-App Events): studiotypo://category/holidays
+$PB -c "Delete :CFBundleURLTypes" "$PL" 2>/dev/null || true
+$PB -c "Add :CFBundleURLTypes array" "$PL"
+$PB -c "Add :CFBundleURLTypes:0 dict" "$PL"
+$PB -c "Add :CFBundleURLTypes:0:CFBundleURLName string be.qbraem.studiotypo.app" "$PL"
+$PB -c "Add :CFBundleURLTypes:0:CFBundleURLSchemes array" "$PL"
+$PB -c "Add :CFBundleURLTypes:0:CFBundleURLSchemes:0 string studiotypo" "$PL"
 $PB -c "Delete :UISupportedInterfaceOrientations" "$PL" 2>/dev/null || true
 $PB -c "Add :UISupportedInterfaceOrientations array" "$PL"
 for o in Portrait LandscapeLeft LandscapeRight; do $PB -c "Add :UISupportedInterfaceOrientations: string UIInterfaceOrientation$o" "$PL"; done
