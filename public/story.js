@@ -334,7 +334,7 @@ function build(){if($s("storyEd"))return;
 const wide=()=>WIDE.matches;
 function updTop(){if(!$s("stUndo"))return;$s("stUndo").disabled=ST.editing?!hist.length:!ST.hist.length;$s("stLock").hidden=canUse()}
 function syncEmpty(){const e=$s("stEmpty");if(e)e.hidden=!!bgSource()||S.layers.some(L=>L.t==="photo")||S.bg.type!=="gradient"||!!ST.editing}
-function setTool(t){ST.tool=t;renderPanel();draw()}
+function setTool(t){ST.tool=t;if(t)ST.lastTool=t;renderPanel();draw()}
 function renderMini(L){const m=$s("stMini");const key=L.id+L.t+(L.shadow?1:0);if(m.dataset.k===key)return;m.dataset.k=key;
   const b=(a,ic,l,on)=>`<button data-a="${a}"${on?' class="on"':""}>${svg(ic)}<span>${l}</span></button>`;
   const i=(a,ic,l)=>`<button data-a="${a}" class="io" aria-label="${l}">${svg(ic)}</button>`;
@@ -355,7 +355,7 @@ function row(label,inner,sec){return`<div class="sRow"${sec?` data-sec="${sec}"`
 function chip(l,on,attrs){return`<button class="sChip${on?" on":""}" ${attrs}>${l}</button>`}
 function slider(label,name,v,min,max,step,fmt){return`<label class="sSlide"><span>${label}</span><input type="range" min="${min}" max="${max}" step="${step}" value="${v}" data-k="${name}"><output>${fmt(v)}</output></label>`}
 function renderPanel(){const p=$s("stPanel");if(!p)return;
-  const ed=!!ST.editing;$s("stEdit").hidden=!ed||(!wide()&&!toolGrp);$s("stEdTip").hidden=!ed||wide()||!!toolGrp;$s("stDockEdit").hidden=!ed;document.querySelector("#storyEd .sDockTools").hidden=ed;$s("stLib").hidden=!ST.picking;syncEmpty();
+  const ed=!!ST.editing;if(wide()&&!ed&&!ST.picking&&!ST.tool)ST.tool=ST.lastTool||"bg";$s("stEdit").dataset.g=toolGrp||"";$s("stEdit").hidden=!ed||(!wide()&&!toolGrp);$s("stEdTip").hidden=!ed||wide()||!!toolGrp;$s("stDockEdit").hidden=!ed;document.querySelector("#storyEd .sDockTools").hidden=ed;$s("stLib").hidden=!ST.picking;syncEmpty();
   if(ed||ST.picking){p.hidden=true;return}
   document.querySelectorAll("#stDock button").forEach(b=>{const on=b.dataset.tool===ST.tool;b.classList.toggle("on",on);b.setAttribute("aria-pressed",on)});
   if(!ST.tool){p.hidden=true;return}p.hidden=false;let h="";const t=ST.tool,L=selL();
@@ -455,7 +455,7 @@ function editTitle(id){const L=layerById(id);if(!L)return;stopPick();if(ST.editi
   ST.editing=id;ST.sel=id;ST.ed={cur,sel,tab,hist,toolGrp,selShown};
   cur=L.d;sel=firstTextLayer();selShown=true;hist=[];tab="edit";toolGrp=null;
   mount("layerChips",$s("stEdChips"));mount("toolBody",$s("stEdBody"));mount("toolNav",$s("stEdNav"));
-  renderLayerChips();renderTool();ST.tool=null;renderPanel();draw()}
+  if(wide())toolGrp="text";renderLayerChips();renderTool();if(wide())setToolGrp("text");ST.tool=null;renderPanel();draw()}
 function finishEdit(){if(!ST.editing)return;const L=layerById(ST.editing);if(L){L.d=cur;ttCache.delete(L.id)}
   unmount("layerChips");unmount("toolBody");unmount("toolNav");
   const e=ST.ed||{};cur=e.cur||cur;sel=e.sel||0;tab=e.tab||"lib";hist=e.hist||[];toolGrp=e.toolGrp||null;selShown=e.selShown!==false;ST.editing=null;ST.ed=null;
