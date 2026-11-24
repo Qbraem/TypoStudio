@@ -164,8 +164,8 @@ function titleBitmap(L,px){ // px = canvas px per design unit
   let t=ttCache.get(L.id);if(t&&t.key===key)return t;
   if(ST.gesture&&t)return t; // keep the old bitmap while pinching; re-render when the gesture ends
   const S0=Math.min(4096,Math.ceil(2000*px)),c=document.createElement("canvas");c.width=c.height=S0;
-  try{drawLayers(c.getContext("2d"),L.d,px,S0/2,S0/2)}catch(e){}
-  const tr=trimO(c);t={key,c:tr.c,ox:tr.x0-S0/2,oy:tr.y0-S0/2,px};ttCache.set(L.id,t);return t}
+  let boxes=[];try{boxes=drawLayers(c.getContext("2d"),L.d,px,S0/2,S0/2)||[]}catch(e){}
+  const tr=trimO(c);t={key,c:tr.c,ox:tr.x0-S0/2,oy:tr.y0-S0/2,px,boxes};ttCache.set(L.id,t);return t}
 function trimO(c){const w=c.width,h=c.height,d=c.getContext("2d").getImageData(0,0,w,h).data;let x0=w,y0=h,x1=-1,y1=-1;
   for(let y=0;y<h;y+=1){const row=y*w*4;for(let x=0;x<w;x+=2){if(d[row+x*4+3]>6){if(x<x0)x0=x;if(x>x1)x1=x;if(y<y0)y0=y;if(y>y1)y1=y}}}
   if(x1<0){const e=document.createElement("canvas");e.width=e.height=2;return{c:e,x0:w/2,y0:h/2}}
@@ -202,7 +202,8 @@ function render(ctx,W,H,o={}){
   if(S.fx.vig){const g=ctx.createRadialGradient(W/2,H/2,Math.min(W,H)*.35,W/2,H/2,Math.hypot(W,H)*.56);g.addColorStop(0,"rgba(0,0,0,0)");g.addColorStop(1,"rgba(0,0,0,.6)");ctx.fillStyle=g;ctx.fillRect(0,0,W,H)}
   if(S.fx.grain){const p=ctx.createPattern(grain(),"repeat"),sc=Math.max(.6,k*1.6);ctx.save();ctx.globalAlpha=.16;ctx.globalCompositeOperation="overlay";ctx.scale(sc,sc);ctx.fillStyle=p;ctx.fillRect(0,0,W/sc,H/sc);ctx.restore()}
   // editor-only overlays
-  if(o.sel){const L=selL();if(L&&!L.hidden){const B=bounds(L,k),p=10*(o.dpr||1);ctx.save();ctx.translate(L.x*k,L.y*k);ctx.rotate((L.rot||0)*Math.PI/180);
+  if(o.sel&&ST.editing){const L=layerById(ST.editing);if(L)drawLineSel(ctx,L,k,o.dpr)}
+  else if(o.sel){const L=selL();if(L&&!L.hidden){const B=bounds(L,k),p=10*(o.dpr||1);ctx.save();ctx.translate(L.x*k,L.y*k);ctx.rotate((L.rot||0)*Math.PI/180);
     const X=(B.dx-B.hw)*k-p,Y=(B.dy-B.hh)*k-p,w=B.hw*2*k+2*p,h=B.hh*2*k+2*p;ctx.lineWidth=1.5*(o.dpr||1);ctx.setLineDash([6*(o.dpr||1),5*(o.dpr||1)]);
     ctx.strokeStyle="rgba(0,0,0,.5)";ctx.strokeRect(X+1,Y+1,w,h);ctx.strokeStyle="#fff";ctx.strokeRect(X,Y,w,h);ctx.restore()}}
   if(o.guideX){ctx.save();ctx.strokeStyle="rgba(242,107,80,.95)";ctx.lineWidth=1.5*(o.dpr||1);ctx.beginPath();ctx.moveTo(W/2,0);ctx.lineTo(W/2,H);ctx.stroke();ctx.restore()}
@@ -245,6 +246,16 @@ function placeChrome(cw,ch,dpr){const L=selL(),del=$s("stDel"),mini=$s("stMini")
   let my=10;if(!wide()){const d=$s("stDock").getBoundingClientRect();my=Math.min(ch-mh-10,d.top-box.top-mh-12)}
   mini.style.top=my+"px";mini.style.left=clamp((cw-mw)/2,6,cw-mw-6)+"px"}
 
+/* ---------- lines inside a title (while editing it) ---------- */
+function toDesign(L,px,py){const a=-(L.rot||0)*Math.PI/180,dx=px-L.x,dy=py-L.y,u=L.s*SW/FRAME;return{x:(dx*Math.cos(a)-dy*Math.sin(a))/u,y:(dx*Math.sin(a)+dy*Math.cos(a))/u}}
+function lineAt(L,px,py){const t=ttCache.get(L.id);if(!t||!t.boxes)return -1;const p=toDesign(L,px,py),d=L.d;
+  for(let i=d.layers.length-1;i>=0;i--){const Ly=d.layers[i],B=t.boxes[i];if(!B)continue;const a=-(Ly.rotate||0)*Math.PI/180,x=p.x-Ly.x,y=p.y-Ly.y,lx=x*Math.cos(a)-y*Math.sin(a),ly=x*Math.sin(a)+y*Math.cos(a),pad=24;
+    if(lx>=-B.l-pad&&lx<=B.r+pad&&ly>=-B.t-pad&&ly<=B.b+pad)return i}return -1}
+function drawLineSel(ctx,L,k,dpr){const t=ttCache.get(L.id),i=sel,Ly=L.d.layers[i],B=t&&t.boxes&&t.boxes[i];if(!Ly||!B)return;const u=L.s*SW/FRAME*k,p=8*(dpr||1);
+  ctx.save();ctx.translate(L.x*k,L.y*k);ctx.rotate((L.rot||0)*Math.PI/180);ctx.translate(Ly.x*u,Ly.y*u);ctx.rotate((Ly.rotate||0)*Math.PI/180);
+  ctx.lineWidth=1.5*(dpr||1);ctx.setLineDash([6*(dpr||1),5*(dpr||1)]);ctx.strokeStyle="rgba(0,0,0,.5)";ctx.strokeRect(-B.l*u-p+1,-B.t*u-p+1,(B.l+B.r)*u+2*p,(B.t+B.b)*u+2*p);
+  ctx.strokeStyle="#fff";ctx.strokeRect(-B.l*u-p,-B.t*u-p,(B.l+B.r)*u+2*p,(B.t+B.b)*u+2*p);ctx.restore()}
+
 /* ---------- hit test & gestures ---------- */
 function hit(px,py){const cv=$s("stCanvas"),k=cv.clientWidth/SW;
   for(let i=S.layers.length-1;i>=0;i--){const L=S.layers[i];if(L.hidden)continue;const B=bounds(L,k*Math.min(2,window.devicePixelRatio||1)),a=-(L.rot||0)*Math.PI/180,dx=px-L.x,dy=py-L.y;
@@ -256,6 +267,8 @@ function gestures(){const cv=$s("stCanvas"),pts=new Map();let g=null,lastTap={t:
   cv.addEventListener("pointerdown",e=>{e.preventDefault();cv.setPointerCapture&&cv.setPointerCapture(e.pointerId);const u=unit(e);pts.set(e.pointerId,u);
     if(pts.size===1){const L=hit(u.x,u.y);
       if(ST.editing&&(!L||L.id!==ST.editing)){finishEdit();g=null;return}
+      if(ST.editing){const i=lineAt(L,u.x,u.y);if(i>=0){if(i!==sel){sel=i;selShown=true;renderLayerChips();renderTool();hapt()}const Ly=L.d.layers[i],q=toDesign(L,u.x,u.y);
+          g={mode:"line",L,Ly,sx:q.x,sy:q.y,ox:Ly.x,oy:Ly.y,moved:false,hs:false};draw();return}g=null;return}
       if(!L){const had=!!ST.sel;if(had){ST.sel=null;renderPanel();draw()}
         g=bgSource()&&!ST.editing?{mode:"bg",sx:u.x,sy:u.y,ox:S.bg.ox||0,oy:S.bg.oy||0,snap:JSON.stringify(S),moved:false}:null;return}
       const now=Date.now();if(L.t==="title"&&lastTap.id===L.id&&now-lastTap.t<320){lastTap={t:0,id:null};editTitle(L.id);return}lastTap={t:now,id:L.id};
@@ -263,6 +276,8 @@ function gestures(){const cv=$s("stCanvas"),pts=new Map();let g=null,lastTap={t:
     else if(pts.size===2){if((g&&g.mode==="bg")||(!selL()&&bgSource()&&!ST.editing)){const t=two();g={mode:"bgpinch",d0:t.d,cx:t.cx,cy:t.cy,z0:S.bg.z||1,ox:S.bg.ox||0,oy:S.bg.oy||0,snap:g?g.snap:JSON.stringify(S),moved:true};ST.gesture=true;return}
       const L=selL()||(g&&g.L);if(!L)return;const t=two();g={mode:"pinch",L,d0:t.d,a0:t.a,cx:t.cx,cy:t.cy,ox:L.x,oy:L.y,w0:L.w,s0:L.s,r0:L.rot||0,snap:g?g.snap:JSON.stringify(S),moved:true};ST.gesture=true}});
   cv.addEventListener("pointermove",e=>{if(!pts.has(e.pointerId))return;const u=unit(e);pts.set(e.pointerId,u);if(!g)return;
+    if(g.mode==="line"&&pts.size===1){const q=toDesign(g.L,u.x,u.y),dx=q.x-g.sx,dy=q.y-g.sy;if(!g.moved&&Math.hypot(dx,dy)*g.L.s*SW/FRAME<6)return;if(!g.moved){g.moved=true;snap()}
+      g.Ly.x=Math.round(g.ox+dx);g.Ly.y=Math.round(g.oy+dy);ttCache.delete(g.L.id);draw();return}
     if(g.mode==="bg"&&pts.size===1){const dx=u.x-g.sx,dy=u.y-g.sy;if(!g.moved&&Math.hypot(dx,dy)<6)return;g.moved=true;ST.gesture=true;S.bg.ox=g.ox+dx;S.bg.oy=g.oy+dy;draw();return}
     if(g.mode==="bgpinch"&&pts.size===2){const t=two();S.bg.z=clamp(g.z0*t.d/g.d0,1,5);S.bg.ox=g.ox+(t.cx-g.cx);S.bg.oy=g.oy+(t.cy-g.cy);draw();return}
     if(g.mode==="drag"&&pts.size===1){const dx=u.x-g.sx,dy=u.y-g.sy;if(!g.moved&&Math.hypot(dx,dy)<6)return;g.moved=true;ST.gesture=true;let nx=g.ox+dx;guide=Math.abs(nx-SW/2)<14;if(guide)nx=SW/2;g.L.x=clamp(nx,-SW*.3,SW*1.3);g.L.y=clamp(g.oy+dy,-SH*.2,SH*1.2);draw()}
@@ -270,7 +285,7 @@ function gestures(){const cv=$s("stCanvas"),pts=new Map();let g=null,lastTap={t:
       if(g.L.t==="photo")g.L.w=clamp(g.w0*f,SW*.12,SW*2.2);else g.L.s=clamp(g.s0*f,.12,3.2);
       let r=g.r0+(t.a-g.a0)*180/Math.PI;r=((r+180)%360+360)%360-180;for(const s of[0,90,-90,180,-180])if(Math.abs(r-s)<4)r=s;g.L.rot=r;
       g.L.x=g.ox+(t.cx-g.cx);g.L.y=g.oy+(t.cy-g.cy);draw()}});
-  const end=e=>{pts.delete(e.pointerId);if(pts.size===0){if(g&&g.moved){if(g.mode==="bg"||g.mode==="bgpinch")clampBg();ST.hist.push(g.snap);if(ST.hist.length>60)ST.hist.shift();ST.fut=[];ST.gesture=false;guide=false;changed();
+  const end=e=>{pts.delete(e.pointerId);if(pts.size===0&&g&&g.mode==="line"){if(g.moved){renderTool(true);updTop()}g=null;draw();return}if(pts.size===0){if(g&&g.moved){if(g.mode==="bg"||g.mode==="bgpinch")clampBg();ST.hist.push(g.snap);if(ST.hist.length>60)ST.hist.shift();ST.fut=[];ST.gesture=false;guide=false;changed();
       if(ST.tool)renderPanel()}g=null;ST.gesture=false;guide=false;draw()}
     else if(pts.size===1&&g&&g.mode==="bgpinch"){const [u]=[...pts.values()];g={mode:"bg",sx:u.x,sy:u.y,ox:S.bg.ox,oy:S.bg.oy,snap:g.snap,moved:true}}
     else if(pts.size===1&&g&&g.mode==="pinch"){const [u]=[...pts.values()];g={mode:"drag",L:g.L,sx:u.x,sy:u.y,ox:g.L.x,oy:g.L.y,snap:g.snap,moved:true}}};
@@ -294,7 +309,8 @@ function build(){if($s("storyEd"))return;
       <button class="sSave" id="stSave" aria-label="Save story">${svg("down",2.2)}<span class="sSaveL">Save</span><i class="sLock" id="stLock">${svg("lock",2.6)}</i></button>
     </header>
     <section class="sPanel" id="stPanel" hidden></section>
-    <section class="sPanel sEdit" id="stEdit" hidden aria-label="Edit text"><div class="sEdHead"><b>Edit text</b><span class="sSub">Tap a line to change it</span></div><div class="sEdChips" id="stEdChips"></div><div class="sEdBody" id="stEdBody"></div></section>
+    <section class="sPanel sEdit" id="stEdit" hidden aria-label="Edit text"><div class="sEdChips" id="stEdChips" hidden></div><div class="sEdBody" id="stEdBody"></div></section>
+    <div class="sEdTip" id="stEdTip" hidden>Tap a line on your story, then pick a tool</div>
     <section class="sPanel sLib" id="stLib" hidden aria-label="Library"><div class="sHead"><b>Add a design</b><button class="sChip" id="stLibClose">Close</button></div><div id="stLibHost"></div></section>
     <nav class="sDock sGlass" id="stDock" aria-label="Story tools">
       <div class="sDockTools">${[["bg","Background"],["photo","Photo"],["text","Text"],["fx","Effects"],["layers","Layers"]].map(([k,l])=>`<button data-tool="${k}" aria-pressed="false">${svg(k)}<span>${l}</span></button>`).join("")}</div>
@@ -304,7 +320,7 @@ function build(){if($s("storyEd"))return;
   document.body.appendChild(el);
   $s("stToSticker").onclick=close;$s("stUndo").onclick=undoS;
   $s("stDone").onclick=()=>{hapt();finishEdit()};$s("stLibClose").onclick=()=>{hapt();stopPick()};
-  $s("stEdNav").addEventListener("click",e=>{const b=e.target.closest("button");if(!b)return;e.stopPropagation();if(b.dataset.gk){hapt();setToolGrp(b.dataset.gk);draw()}});
+  $s("stEdNav").addEventListener("click",e=>{const b=e.target.closest("button");if(!b)return;e.stopPropagation();if(b.dataset.gk){hapt();setToolGrp(b.dataset.gk);renderPanel();draw()}});
   $s("stSave").onclick=()=>exportStory("save");
   $s("stDock").addEventListener("click",e=>{const b=e.target.closest("button[data-tool]");if(!b)return;hapt();setTool(ST.tool===b.dataset.tool&&!wide()?null:b.dataset.tool)});
   $s("stDel").addEventListener("click",e=>{e.stopPropagation();const L=selL();if(!L)return;snapS();S.layers=S.layers.filter(x=>x!==L);ST.sel=null;toast("Deleted · tap ↶ to undo");changed();renderPanel()});
@@ -339,7 +355,7 @@ function row(label,inner,sec){return`<div class="sRow"${sec?` data-sec="${sec}"`
 function chip(l,on,attrs){return`<button class="sChip${on?" on":""}" ${attrs}>${l}</button>`}
 function slider(label,name,v,min,max,step,fmt){return`<label class="sSlide"><span>${label}</span><input type="range" min="${min}" max="${max}" step="${step}" value="${v}" data-k="${name}"><output>${fmt(v)}</output></label>`}
 function renderPanel(){const p=$s("stPanel");if(!p)return;
-  const ed=!!ST.editing;$s("stEdit").hidden=!ed;$s("stDockEdit").hidden=!ed;document.querySelector("#storyEd .sDockTools").hidden=ed;$s("stLib").hidden=!ST.picking;syncEmpty();
+  const ed=!!ST.editing;$s("stEdit").hidden=!ed||(!wide()&&!toolGrp);$s("stEdTip").hidden=!ed||wide()||!!toolGrp;$s("stDockEdit").hidden=!ed;document.querySelector("#storyEd .sDockTools").hidden=ed;$s("stLib").hidden=!ST.picking;syncEmpty();
   if(ed||ST.picking){p.hidden=true;return}
   document.querySelectorAll("#stDock button").forEach(b=>{const on=b.dataset.tool===ST.tool;b.classList.toggle("on",on);b.setAttribute("aria-pressed",on)});
   if(!ST.tool){p.hidden=true;return}p.hidden=false;let h="";const t=ST.tool,L=selL();
