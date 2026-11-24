@@ -248,7 +248,7 @@ const STK={
 const STK_TRAVEL=["stamp","ministamp","sticky","note","ticket","postcard","frame","postmark","tape"];STK_TRAVEL.forEach(k=>STK[k].cat="travel");
 if(window.STK_PACK)Object.assign(STK,window.STK_PACK({F,fit,lines,spaced,scallop,wave}));
 const STK_CATS=(window.STK_CATS||[["travel","Travel & paper"]]).filter(([c])=>Object.values(STK).some(d=>d.cat===c));
-const STK_ORDER=Object.keys(STK);const stkOf=c=>STK_ORDER.filter(k=>STK[k].cat===c);
+const STK_ORDER=Object.keys(STK);const stkOf=c=>STK_ORDER.filter(k=>STK[k].cat===c&&!STK[k].hidden);
 const STK_FIELDS={top:"Top line",title:"Title",bottom:"Bottom lines",text:"Text",sign:"Signature",label:"Label",date:"Date",code:"Number",hello:"Greeting",place:"Place",msg:"Message",t1:"Time 1",t2:"Time 2",t3:"Time 3",d1:"Day 1",d2:"Day 2",d3:"Day 3"};
 function newStk(kind){const k=STK[kind];return{id:uidS(),t:"stk",kind,x:SW/2,y:SH*.5,w:SW*k.w,rot:k.rot!=null?k.rot:kind==="tape"?-8:kind==="frame"?0:-3,paper:k.paper,ink:k.ink,f:clone(k.f),shadow:!k.noShadow&&kind!=="postmark"&&kind!=="tape",hidden:false}}
 const stCache=new Map();const STM=.1; // margin around a sticker canvas (room for shadows & postmarks)

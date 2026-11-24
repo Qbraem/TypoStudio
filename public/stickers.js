@@ -1,7 +1,7 @@
 /* Studio Typo – Story Builder sticker pack (categories). Original designs, drawn on canvas.
    Every sticker: {name,cat,r (h/w),w (share of story width),paper,ink,f (editable text),big,draw(x,W,H,L)} */
 window.STK_CATS=[["xmas","Christmas"],["winter","Winter sport"],["outdoor","Outdoor"],["morning","Morning"],["weather","Weather"],["socials","Socials"],["urban","Urban"],["pack","Packaging"],["love","Love"],["pride","Pride"],["kudos","Kudos"],["travel","Travel & paper"]];
-window.STK_PACK_FONTS=[["Archivo Black",400],["Pacifico",400],["Yellowtail",400],["Satisfy",400],["Kaushan Script",400],["Shrikhand",400],["Fraunces",900],["Young Serif",400],["Rye",400],["Abril Fatface",400],["Bowlby One",400],["Fredoka",700],["Luckiest Guy",400],["Gochi Hand",400],["Sansita Swashed",800],["Sacramento",400],["Lilita One",400]];
+window.STK_PACK_FONTS=[["Archivo Black",400],["Pacifico",400],["Yellowtail",400],["Satisfy",400],["Kaushan Script",400],["Shrikhand",400],["Fraunces",900],["Young Serif",400],["Rye",400],["Abril Fatface",400],["Bowlby One",400],["Fredoka",700],["Luckiest Guy",400],["Gochi Hand",400],["Sansita Swashed",800],["Sacramento",400],["Lilita One",400],["Anton",400]];
 window.STK_PACK=function(h){
 const {F,fit,spaced,scallop}=h,PI=Math.PI,E="#FFFFFF";
 const RB=["#E40303","#FF8C00","#FFED00","#008026","#24408E","#732982"];
@@ -41,6 +41,9 @@ function skis(x,cx,cy,s,col){x.save();x.translate(cx,cy);x.fillStyle=col;[-.62,.
 function pole(x,cx,cy,s,col){x.save();x.strokeStyle=x.fillStyle=col;x.lineWidth=s*.07;x.lineCap="round";x.beginPath();x.moveTo(cx,cy-s*.55);x.lineTo(cx,cy+s*.55);x.stroke();x.beginPath();x.arc(cx,cy+s*.4,s*.13,0,7);x.lineWidth=s*.05;x.stroke();x.beginPath();RR(x,cx-s*.06,cy-s*.62,s*.12,s*.22,s*.05);x.fill();x.restore()}
 function rnd(seed){let s=seed;return()=>(s=(s*16807)%2147483647)/2147483647}
 function sparkle(x,cx,cy,s,col,lw){x.save();x.strokeStyle=col;x.lineWidth=lw;x.lineCap="round";x.beginPath();for(let i=0;i<4;i++){const a=i*PI/4;x.moveTo(cx-Math.cos(a)*s*(i%2?.6:1),cy-Math.sin(a)*s*(i%2?.6:1));x.lineTo(cx+Math.cos(a)*s*(i%2?.6:1),cy+Math.sin(a)*s*(i%2?.6:1))}x.stroke();x.restore()}
+function arrow(x,cx,cy,s,ang,col,lw){x.save();x.translate(cx,cy);x.rotate(ang);x.strokeStyle=col;x.lineWidth=lw;x.lineCap="butt";x.lineJoin="miter";x.beginPath();x.moveTo(-s,0);x.lineTo(s-lw*.5,0);x.stroke();x.beginPath();x.moveTo(s*.2,-s*.8);x.lineTo(s,0);x.lineTo(s*.2,s*.8);x.stroke();x.restore()}
+function heartIn(x,txt,font,px,cx,cy,maxW,heartCol){const parts=String(txt).split("\u2665");let p=px;const w=()=>{x.font=font(p);return parts.reduce((a,t)=>a+x.measureText(t).width,0)+(parts.length-1)*p*.95};while(w()>maxW&&p>2)p*=.94;let X=cx-w()/2;x.textAlign="left";x.textBaseline="middle";const col=x.fillStyle;
+  parts.forEach((t,i)=>{x.fillStyle=col;x.fillText(t,X,cy);X+=x.measureText(t).width;if(i<parts.length-1){x.fillStyle=heartCol;x.beginPath();heart(x,X+p*.47,cy-p*.02,p*.42);x.fill();X+=p*.95}});x.fillStyle=col;return p}
 const ff=(w,f)=>p=>F(w,p,f);
 const BLK=ff(400,"Archivo Black"),SANS=ff(700,"DM Sans"),SER=ff(400,"DM Serif Display"),YS=ff(400,"Young Serif"),BEB=ff(400,"Bebas Neue"),FRA=ff(900,"Fraunces"),CAV=ff(700,"Caveat");
 
@@ -194,24 +197,76 @@ mention:{name:"Mention",cat:"socials",r:.26,w:.46,paper:"#FFFFFF",ink:"#D62976",
   draw(x,W,H,L){const u=W/100;cut(x,()=>RR(x,2*u,2*u,W-4*u,H-4*u,5*u),L.paper,0);const g=x.createLinearGradient(W*.1,0,W*.9,0);g.addColorStop(0,"#F58529");g.addColorStop(.5,"#DD2A7B");g.addColorStop(1,"#8134AF");x.fillStyle=g;T(x,String(L.f.text).toUpperCase(),BLK,11*u,W/2,H/2,W*.84)}},
 
 /* ================= URBAN ================= */
-cityclub:{name:"Run club box",cat:"urban",r:.78,w:.36,paper:"#111111",ink:"#FFFFFF",f:{top:"Antwerp run club",title:"ANT"},big:[],
+cityclub:{name:"Run club box",cat:"urban",hidden:true,r:.78,w:.36,paper:"#111111",ink:"#FFFFFF",f:{top:"Antwerp run club",title:"ANT"},big:[],
   draw(x,W,H,L){const u=W/100;cut(x,()=>RR(x,2*u,2*u,W-4*u,H-4*u,4*u),L.paper,2*u);x.fillStyle=L.ink;S(x,L.f.top,SANS,5.6*u,W/2,H*.2,1*u,W*.84);line(x,()=>RR(x,14*u,H*.34,W-28*u,H*.5,2*u),L.ink,2*u);x.fillStyle=L.ink;T(x,L.f.title,BEB,34*u,W/2,H*.6,W*.6)}},
-sundown:{name:"Sundown club",cat:"urban",r:.6,w:.48,paper:"#F4F1EA",ink:"#E2552B",f:{top:"Sun down",title:"Social club"},big:[],rot:6,
+sundown:{name:"Sundown club",cat:"urban",hidden:true,r:.6,w:.48,paper:"#F4F1EA",ink:"#E2552B",f:{top:"Sun down",title:"Social club"},big:[],rot:6,
   draw(x,W,H,L){const u=W/100;cut(x,()=>RR(x,2*u,2*u,W-4*u,H-4*u,2*u),L.paper,2*u);x.fillStyle=L.ink;T(x,L.f.top,SER,15*u,W/2,H*.26,W*.84);x.save();x.beginPath();x.rect(0,0,W,H*.78);x.clip();x.beginPath();x.arc(W/2,H*.78,15*u,PI,0);x.fill();x.restore();
     x.fillStyle=L.paper;[0,1,2].forEach(i=>x.fillRect(W*.3,H*(.62+i*.055),W*.4,1.2*u));x.fillStyle=L.ink;T(x,L.f.title,ff(400,"Yellowtail"),11*u,W/2,H*.88,W*.8)}},
-slowsunday:{name:"Club circle",cat:"urban",r:1,w:.34,paper:"#F2DD6E",ink:"#1E2F5C",f:{top:"Slow sunday runs",title:"26"},big:[],
+slowsunday:{name:"Club circle",cat:"urban",hidden:true,r:1,w:.34,paper:"#F2DD6E",ink:"#1E2F5C",f:{top:"Slow sunday runs",title:"26"},big:[],
   draw(x,W,H,L){const u=W/100,c=W/2;cut(x,()=>x.arc(c,c,46*u,0,7),L.paper,2.5*u);x.fillStyle=L.ink;const t=String(L.f.top).toUpperCase(),sp=arcFit(x,t,SANS,8*u,35*u,3.6,1*u);arcT(x,t,c,c,35*u,-PI/2,sp,false);
     x.fillStyle=L.ink;x.beginPath();x.arc(c,c+3*u,18*u,0,7);x.fill();x.fillStyle=L.paper;T(x,L.f.title,BEB,20*u,c,c+4*u,W*.3)}},
-triclub:{name:"Triangle",cat:"urban",r:.9,w:.36,paper:"#111111",ink:"#FF6A2B",f:{title:"Run club",bottom:"Amsterdam"},big:[],
+triclub:{name:"Triangle",cat:"urban",hidden:true,r:.9,w:.36,paper:"#111111",ink:"#FF6A2B",f:{title:"Run club",bottom:"Amsterdam"},big:[],
   draw(x,W,H,L){const u=W/100,b=2*u;cut(x,()=>poly(x,[[.5,.04],[.97,.96],[.03,.96]],0,0,W,H),L.paper,b);x.fillStyle=L.ink;T(x,String(L.f.title).toUpperCase(),BLK,9*u,W/2,H*.62,W*.5);S(x,"× × ×",SANS,6*u,W/2,H*.45,1*u);S(x,L.f.bottom,SANS,4.6*u,W/2,H*.78,1*u,W*.66)}},
-nighttag:{name:"Bold tag",cat:"urban",r:1.3,w:.28,paper:"#FF5A1F",ink:"#111111",f:{title:"Night\nriders"},big:["title"],rot:-8,
+nighttag:{name:"Bold tag",cat:"urban",hidden:true,r:1.3,w:.28,paper:"#FF5A1F",ink:"#111111",f:{title:"Night\nriders"},big:["title"],rot:-8,
   draw(x,W,H,L){const u=W/100;cut(x,()=>RR(x,2*u,2*u,W-4*u,H-4*u,8*u),L.paper,2.5*u);x.fillStyle=L.ink;T(x,String(L.f.title).toUpperCase(),BEB,34*u,W/2,H*.62,W*.8,{lh:.9,maxH:H*.62});ico(x,"bolt",W/2,H*.2,11*u,L.ink)}},
-schedule:{name:"Timetable",cat:"urban",r:.56,w:.5,paper:"#FFFFFF",ink:"#111111",f:{t1:"12:30",t2:"13:00",t3:"13:30",text:"Lunch run crew"},big:[],rot:0,
+schedule:{name:"Timetable",cat:"urban",hidden:true,r:.56,w:.5,paper:"#FFFFFF",ink:"#111111",f:{t1:"12:30",t2:"13:00",t3:"13:30",text:"Lunch run crew"},big:[],rot:0,
   draw(x,W,H,L){const u=W/100;cut(x,()=>RR(x,0,0,W,H,5*u),L.paper,0);x.fillStyle=L.ink;["t1","t2","t3"].forEach((k,i)=>{const y=H*(.2+i*.3);x.font=SANS(5.4*u);x.textAlign="left";x.textBaseline="middle";x.fillText(L.f[k],7*u,y);line(x,()=>{x.moveTo(25*u,y);x.lineTo(W-6*u,y)},L.ink+"55",.4*u)});
     cut(x,()=>RR(x,27*u,H*.3,W-34*u,H*.36,2.5*u),"#B8A9F5",0);x.fillStyle=L.ink;T(x,L.f.text,SANS,7*u,27*u+(W-34*u)/2,H*.48,W-42*u)}},
-nextstop:{name:"Metro sign",cat:"urban",r:.4,w:.56,paper:"#1E2F5C",ink:"#FFFFFF",f:{top:"Next stop",title:"Weekend"},big:[],rot:0,
+nextstop:{name:"Metro sign",cat:"urban",hidden:true,r:.4,w:.56,paper:"#1E2F5C",ink:"#FFFFFF",f:{top:"Next stop",title:"Weekend"},big:[],rot:0,
   draw(x,W,H,L){const u=W/100;cut(x,()=>RR(x,2*u,2*u,W-4*u,H-4*u,3*u),L.paper,2*u);x.fillStyle=L.ink;x.textAlign="left";x.font=SANS(5*u);x.textBaseline="middle";x.fillText(String(L.f.top).toUpperCase(),23*u,H*.3);
     const p=fit(x,L.f.title,SANS,15*u,W*.68);x.font=SANS(p);x.fillText(L.f.title,23*u,H*.6);[["#E0412F",.32],["#F2B33D",.5],["#3FA34D",.68]].forEach(([c,y])=>{x.fillStyle=c;x.beginPath();x.arc(12*u,H*y,4*u,0,7);x.fill()});x.fillStyle=L.ink;x.fillRect(11.4*u,H*.32,1.2*u,H*.36)}},
+
+/* ================= URBAN (wayfinding, city guides, signs) ================= */
+wayfind:{name:"Airport sign",cat:"urban",r:1.18,w:.34,paper:"#FFD400",ink:"#111111",f:{title:"B",text:"Gates B1\u2013B12\nBaggage claim\nTaxi & trains",label:"Connecting flights",bottom:"250m"},big:["text"],rot:0,
+  draw(x,W,H,L){const u=W/100,P=L.paper,I=L.ink;cut(x,()=>RR(x,2*u,2*u,W-4*u,H-4*u,3*u),P,2*u);x.fillStyle=I;x.fillRect(7*u,7*u,22*u,22*u);x.fillStyle=P;T(x,L.f.title,SANS,19*u,18*u,18.5*u,18*u);arrow(x,36*u,18*u,6*u,-PI/2,I,2.2*u);
+    x.fillStyle=I;x.font=SANS(4.6*u);x.textAlign="left";x.textBaseline="middle";String(L.f.text).split("\n").slice(0,4).forEach((t,i)=>{const y=10*u+i*6.4*u;x.lineWidth=.6*u;x.strokeStyle=I;x.strokeRect(45*u,y-1.8*u,3.6*u,3.6*u);x.fillText(t,51*u,y)});
+    line(x,()=>{x.moveTo(7*u,35*u);x.lineTo(W-7*u,35*u)},I,.6*u);[[22,-PI*.75],[50,0],[78,-PI/4]].forEach(([cx,a])=>{x.fillStyle=I;x.beginPath();x.arc(cx*u,50*u,12*u,0,7);x.fill();arrow(x,cx*u,50*u,6*u,a,P,2.6*u)});
+    x.fillStyle=I;x.fillRect(7*u,67*u,W-14*u,11*u);x.fillStyle=P;x.beginPath();x.arc(13.5*u,72.5*u,3.2*u,0,7);x.fill();x.fillStyle=I;T(x,"\u2708",SANS,4*u,13.5*u,72.8*u,5*u);x.fillStyle=P;x.font=SANS(5.4*u);x.textAlign="left";x.textBaseline="middle";x.fillText(L.f.label,20*u,72.8*u);
+    x.fillStyle=I;const p=fit(x,L.f.bottom,SANS,22*u,W*.6);x.font=SANS(p);x.textAlign="left";x.fillText(L.f.bottom,7*u,H-17*u);arrow(x,W-17*u,H-17*u,7*u,-PI/4,I,3*u)}},
+station:{name:"Station sign",cat:"urban",r:.7,w:.58,paper:"#1A1A1A",ink:"#FFFFFF",f:{title:"Central\nStation",code:"BDFMNQR",text:"Exit on Main Street"},big:["title"],rot:0,
+  draw(x,W,H,L){const u=W/100;cut(x,()=>RR(x,2.5*u,2.5*u,W-5*u,H-5*u,1*u),L.paper,2.5*u,"#1E4FBF");x.fillStyle=L.ink;x.fillRect(7*u,7*u,W-14*u,.5*u);
+    const ls=String(L.f.title).split("\n").slice(0,2),p=fit(x,ls.join("\n"),SANS,10*u,W-16*u);x.font=SANS(p);x.textAlign="left";x.textBaseline="alphabetic";ls.forEach((t,i)=>x.fillText(t,8*u,10*u+p*.9+i*p*.98));
+    const cs=[...String(L.f.code).replace(/\s/g,"")].slice(0,8),cy=10*u+p*.9+(ls.length-1)*p*.98+9*u,half=Math.ceil(cs.length/2);cs.forEach((c,i)=>{const cx=13.5*u+i*12*u;x.fillStyle=i<half&&cs.length>3?"#8E8E8E":"#F2F2F2";x.beginPath();x.arc(cx,cy,5.4*u,0,7);x.fill();x.fillStyle="#1A1A1A";T(x,c.toUpperCase(),SANS,6.6*u,cx,cy+.3*u,8*u)});
+    x.fillStyle=L.ink;x.fillRect(7*u,H-15*u,W-14*u,.4*u);x.font=SANS(4.6*u);x.textAlign="left";x.textBaseline="middle";const t=String(L.f.text);x.fillText(t,8*u,H-9.5*u,W-16*u)}},
+wink:{name:"Wink smiley",cat:"urban",r:1,w:.22,paper:"#F6C443",ink:"#111111",f:{},big:[],rot:-8,
+  draw(x,W,H,L){const u=W/100,c=W/2;cut(x,()=>x.arc(c,c,45*u,0,7),L.paper,3*u);line(x,()=>x.arc(c,c,40*u,0,7),L.ink,6*u);x.fillStyle=L.ink;x.beginPath();x.ellipse(39*u,40*u,3.6*u,6*u,0,0,7);x.fill();
+    line(x,()=>{x.moveTo(57*u,41*u);x.quadraticCurveTo(62*u,35*u,67*u,40*u)},L.ink,4*u);line(x,()=>{x.moveTo(29*u,55*u);x.quadraticCurveTo(46*u,76*u,70*u,52*u)},L.ink,6*u)}},
+smile:{name:"Smiley",cat:"urban",r:1,w:.22,paper:"#F5795C",ink:"#D9452E",f:{},big:[],rot:6,
+  draw(x,W,H,L){const u=W/100,c=W/2;cut(x,()=>x.arc(c,c,45*u,0,7),L.paper,2.5*u);x.fillStyle=L.ink;[[38,38],[62,38]].forEach(([a,b])=>{x.beginPath();x.ellipse(a*u,b*u,3.4*u,7*u,0,0,7);x.fill()});line(x,()=>x.arc(c,c+2*u,27*u,.2*PI,.8*PI),L.ink,4*u);line(x,()=>{x.moveTo(21*u,58*u);x.lineTo(26*u,54*u);x.moveTo(79*u,58*u);x.lineTo(74*u,54*u)},L.ink,3*u)}},
+highlight:{name:"Highlight label",cat:"urban",r:.42,w:.52,paper:"#B9C6F5",ink:"#111111",f:{top:"Antwerp",title:"with",text:"you"},big:[],rot:0,
+  draw(x,W,H,L){const u=W/100,pd=3.6*u,t1=String(L.f.top).toUpperCase(),t2=String(L.f.title).toUpperCase(),t3=String(L.f.text).toUpperCase();let p=17*u;const m=q=>{x.font=SANS(q);return Math.max(x.measureText(t1).width+pd*2,x.measureText(t2).width+x.measureText(t3).width+pd*4.4)};while(m(p)>W-4*u&&p>3)p*=.95;p=Math.min(p,(H-5.2*u)/2.64);
+    const rh=p*1.32,y1=H/2-rh-1.6*u,y2=H/2+1.6*u,X=2*u;x.font=SANS(p);x.textAlign="left";x.textBaseline="middle";const w1=x.measureText(t1).width+pd*2,w2=x.measureText(t2).width+pd*2,w3=x.measureText(t3).width+pd*2;
+    cut(x,()=>RR(x,X,y1,w1,rh,1.6*u),L.paper,0);x.fillStyle=L.ink;x.fillText(t1,X+pd,y1+rh*.53);cut(x,()=>RR(x,X+w2*.5,y2,w2*.5+w3+pd*.4,rh,rh/2),L.paper,0);cut(x,()=>RR(x,X,y2,w2,rh,rh/2),L.ink,0);
+    x.fillStyle=L.paper;x.fillText(t2,X+pd,y2+rh*.53);x.fillStyle=L.ink;x.fillText(t3,X+w2+pd*.6,y2+rh*.53)}},
+cityguide:{name:"City guide",cat:"urban",r:1.32,w:.34,paper:"#2FA35A",ink:"#FFFFFF",f:{top:"Weekend guide",title:"Berlin"},big:[],rot:-5,
+  draw(x,W,H,L){const u=W/100;cut(x,()=>RR(x,0,0,W,H,1.2*u),L.paper,0);x.save();clip(x,()=>RR(x,0,0,W,H,1.2*u));x.fillStyle=L.ink;x.font=SANS(3.6*u);x.textAlign="left";x.textBaseline="middle";x.fillText(String(L.f.top).toUpperCase(),6*u,7*u);x.textAlign="right";x.fillText("No. 01",W-6*u,7*u);
+    const nm=String(L.f.title);let ls=[nm,nm,nm],font=BLK;x.font=font(40*u);let p=Math.min(40*u,40*u*(W-10*u)/x.measureText(nm).width);
+    if(p<20*u&&nm.length>4){const h2=Math.ceil(nm.length/2),a=nm.slice(0,h2),b=nm.slice(h2);ls=[a,b,a,b,a];x.font=font(40*u);p=Math.min(36*u,40*u*(W-10*u)/Math.max(x.measureText(a).width,x.measureText(b).width))}
+    if(ls.length===3){const n=Math.max(3,Math.floor((H-30*u)/(p*.9)));ls=Array(n).fill(nm)}p=Math.min(p,(H-30*u)/(ls.length*.9));x.font=font(p);x.textAlign="left";x.textBaseline="alphabetic";ls.forEach((t,i)=>x.fillText(t,4*u,14*u+p*.78+i*p*.9));
+    x.fillStyle="#FFFFFF";x.fillRect(6*u,H-16*u,18*u,11*u);x.fillStyle="#111";const r=rnd(5);let a=7.5*u;while(a<22.5*u){const w=(r()<.5?.5:1.1)*u;x.fillRect(a,H-14.5*u,w,7*u);a+=w+.6*u}x.restore()}},
+ridemore:{name:"Bike badge",cat:"urban",r:1.1,w:.32,paper:"#F2E9D2",ink:"#15343A",f:{top:"Ride more",bottom:"Drive less"},big:[],
+  draw(x,W,H,L){const u=W/100,b=2.5*u,G="#3FA36B";cut(x,()=>RR(x,b,b,W-2*b,H-2*b,6*u),L.ink,b);x.save();clip(x,()=>RR(x,b+3*u,b+3*u,W-2*b-6*u,H-2*b-6*u,4*u));x.fillStyle=L.paper;x.fillRect(0,H*.27,W,H*.46);x.fillStyle=G;x.fillRect(0,H*.73,W,H);x.restore();
+    x.fillStyle=L.paper;T(x,String(L.f.top).toUpperCase(),ff(400,"Anton"),15*u,W/2,H*.16,W*.8);x.fillStyle=L.paper;T(x,String(L.f.bottom).toUpperCase(),ff(400,"Anton"),15*u,W/2,H*.85,W*.8);
+    const y=H*.58,lw=2.6*u;line(x,()=>{x.moveTo(42*u,y);x.arc(28*u,y,14*u,0,7);x.moveTo(86*u,y);x.arc(72*u,y,14*u,0,7)},L.ink,lw);
+    line(x,()=>{x.moveTo(28*u,y);x.lineTo(48*u,y);x.lineTo(40*u,y-20*u);x.closePath();x.moveTo(48*u,y);x.lineTo(66*u,y-19*u);x.lineTo(40*u,y-19*u);x.moveTo(66*u,y-19*u);x.lineTo(72*u,y);x.moveTo(66*u,y-19*u);x.lineTo(62*u,y-25*u);x.lineTo(70*u,y-26*u);x.moveTo(35*u,y-22*u);x.lineTo(45*u,y-22*u)},L.ink,lw);
+    [[16,H/u*.33],[86,H/u*.35],[12,H/u*.45],[90,H/u*.47]].forEach(([a,c],i)=>ico(x,"star",a*u,c*u,(i%2?1.6:2.2)*u,L.ink))}},
+raffle:{name:"Raffle ticket",cat:"urban",r:.58,w:.5,paper:"#E8D9BE",ink:"#C9302C",f:{text:"good\nthings\nare\ncoming",code:"48645235"},big:["text"],rot:-4,
+  draw(x,W,H,L){const u=W/100;cut(x,()=>x.rect(0,0,W,H),L.paper,0);x.save();x.globalCompositeOperation="destination-out";for(let i=0;i<=12;i++){x.beginPath();x.arc(0,i*H/12,1.6*u,0,7);x.arc(W,i*H/12,1.6*u,0,7);x.fill()}x.restore();
+    x.save();x.globalAlpha=.08;const r=rnd(3);for(let i=0;i<220;i++){x.fillStyle=r()<.5?"#000":"#fff";x.fillRect(r()*W,r()*H,.6*u,.6*u)}x.restore();
+    line(x,()=>{x.rect(5*u,6*u,W-10*u,H-12*u);x.moveTo(20*u,6*u);x.lineTo(20*u,H-6*u);x.moveTo(W-20*u,6*u);x.lineTo(W-20*u,H-6*u)},L.ink,1*u);
+    x.fillStyle=L.ink;[[12.5*u,-PI/2],[W-12.5*u,PI/2]].forEach(([cx,a])=>{x.save();x.translate(cx,H/2);x.rotate(a);T(x,L.f.code,SANS,6.6*u,0,0,H*.74);x.restore()});
+    x.fillStyle="#1A1A1A";const ls=String(L.f.text).split("\n"),p=fit(x,ls.join("\n"),SANS,10*u,W-48*u);let pp=Math.min(p,(H-20*u)/(ls.length*1.05));x.font=SANS(pp);x.textAlign="left";x.textBaseline="middle";ls.forEach((t,i)=>x.fillText(t,27*u,H/2+(i-(ls.length-1)/2)*pp*1.05))}},
+globe:{name:"Globe badge",cat:"urban",r:1,w:.3,paper:"#F26B2E",ink:"#1A1A1A",f:{text:"Weekend lover"},big:[],rot:10,
+  draw(x,W,H,L){const u=W/100,c=W/2;cut(x,()=>x.arc(c,c,45*u,0,7),L.paper,2.5*u);x.fillStyle=L.ink;const t=String(L.f.text).toUpperCase(),sp=arcFit(x,t,BLK,9*u,33*u,2.6,1*u);arcT(x,t,c,c,33*u,-PI*.62,sp,false);
+    x.fillStyle="#FFFFFF";x.beginPath();x.arc(c,c+8*u,17*u,0,7);x.fill();ico(x,"globe",c,c+8*u,16*u,L.ink);x.save();x.setLineDash([2*u,2*u]);line(x,()=>x.arc(c,c+8*u,24*u,PI*.95,PI*1.7),L.ink,1*u);x.restore();arrow(x,c+12*u,c-14*u,3*u,.4,L.ink,1*u)}},
+iheart:{name:"I heart",cat:"urban",r:.92,w:.26,paper:"#FFFFFF",ink:"#111111",f:{text:"BXL"},big:[],rot:-4,
+  draw(x,W,H,L){const u=W/100;cut(x,()=>RR(x,2*u,2*u,W-4*u,H-4*u,6*u),L.paper,2*u);const y=ff(400,"Young Serif");x.fillStyle=L.ink;x.font=y(38*u);x.textAlign="center";x.textBaseline="alphabetic";x.fillText("I",28*u,H*.47);x.fillStyle="#E0313F";x.beginPath();heart(x,64*u,H*.32,17*u);x.fill();
+    x.fillStyle=L.ink;const p=fit(x,L.f.text,y,38*u,W-14*u);x.font=y(p);x.fillText(L.f.text,W/2,H*.88)}},
+starbadge:{name:"Star badge",cat:"urban",r:1,w:.28,paper:"#111111",ink:"#FFFFFF",f:{text:"City lights \u00b7 late nights \u00b7 "},big:[],
+  draw(x,W,H,L){const u=W/100,c=W/2;cut(x,()=>x.arc(c,c,45*u,0,7),L.paper,2.5*u);line(x,()=>x.arc(c,c,29*u,0,7),L.ink,.6*u);x.fillStyle=L.ink;x.font=SANS(6*u);ring(x,String(L.f.text).toUpperCase(),c,c,36.5*u);x.beginPath();burst(x,c,c,18*u,5*u,8);x.fill()}},
+plate:{name:"License plate",cat:"urban",r:.5,w:.5,paper:"#F4EEDC",ink:"#1E2F5C",f:{top:"Belgium",text:"I \u2665 BXL",bottom:"Capital of Europe"},big:[],rot:-6,
+  draw(x,W,H,L){const u=W/100;cut(x,()=>RR(x,1*u,1*u,W-2*u,H-2*u,5*u),L.paper,0);line(x,()=>RR(x,3.5*u,3.5*u,W-7*u,H-7*u,3.5*u),L.ink,1.2*u);x.fillStyle="#9A9A9A";[[12,9],[W/u-12,9],[12,H/u-9],[W/u-12,H/u-9]].forEach(([a,b])=>{x.beginPath();x.arc(a*u,b*u,1.4*u,0,7);x.fill()});
+    x.fillStyle=L.ink;S(x,L.f.top,SANS,5*u,W/2,H*.2,1.6*u,W*.6);x.fillStyle="#C8323F";heartIn(x,L.f.text,BLK,20*u,W/2,H*.54,W*.82,"#C8323F");x.fillStyle=L.ink;x.font=ff(400,"Satisfy")(6*u);x.textAlign="center";x.fillText(L.f.bottom,W/2,H*.82)}},
 
 /* ================= PACKAGING ================= */
 smallbatch:{name:"Wordmark",cat:"pack",r:.26,w:.56,paper:"#2B4FC7",ink:"#FFFFFF",f:{text:"Small Batch"},big:[],rot:-6,
