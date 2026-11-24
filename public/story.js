@@ -35,7 +35,8 @@ const IC={
   drop:'<path d="M12 3.5s6 6.4 6 10.5a6 6 0 0 1-12 0c0-4.1 6-10.5 6-10.5z"/>',
   lib:'<rect x="3" y="3" width="7.5" height="7.5" rx="2"/><rect x="13.5" y="3" width="7.5" height="7.5" rx="2"/><rect x="3" y="13.5" width="7.5" height="7.5" rx="2"/><rect x="13.5" y="13.5" width="7.5" height="7.5" rx="2"/>',
   copy:'<rect x="8" y="8" width="12" height="12" rx="2"/><path d="M16 8V5a1 1 0 0 0-1-1H5a1 1 0 0 0-1 1v10a1 1 0 0 0 1 1h3"/>',
-  check:'<path d="M5 12.5l4.5 4.5L19 7.5"/>'
+  check:'<path d="M5 12.5l4.5 4.5L19 7.5"/>',
+  stk:'<path d="M20 12.5V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h6.5z"/><path d="M20 12.5h-5.5a2 2 0 0 0-2 2V20"/>'
 };
 const svg=(k,w=1.9)=>`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="${w}" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${IC[k]}</svg>`;
 const uidS=()=>Math.random().toString(36).slice(2,9);
@@ -155,7 +156,7 @@ const phCache=new Map(); // photo key|fx|size -> filtered canvas
 function photoCanvas(L,iw,ih){const o=IMG.get(L.key);if(!o)return null;const m=fxMatrix(S.fx.name,S.fx.amount);
   const W=Math.max(8,Math.round(iw)),H=Math.max(8,Math.round(ih)),bw=Math.ceil(W/64)*64;const key=[L.key,L.aspect,S.fx.name,S.fx.amount,bw].join("|");
   let c=phCache.get(key);if(c)return c;const Hb=Math.round(bw*H/W);c=cover(o.src,o.w,o.h,bw,Hb);applyMatrix(c,m);if(phCache.size>24)phCache.clear();phCache.set(key,c);return c}
-function invalidate(){bgCache.key="";baseCache.key="";phCache.clear();ttCache.clear()}
+function invalidate(){bgCache.key="";baseCache.key="";phCache.clear();ttCache.clear();if(typeof stCache!=="undefined")stCache.clear()}
 
 /* ---------- title bitmaps (drawLayers draws with destination-out for cut-outs/texture, so each title gets its own canvas) ---------- */
 const ttCache=new Map();
@@ -179,7 +180,91 @@ function photoBox(L){const w=L.w,h=w/aspectOf(L);let l=0,r=0,t=0,b=0;
   return{w,h,l,r,t,b,W:w+l+r,H:h+t+b}}
 function bounds(L,k){ // half sizes + centre offset in story units
   if(L.t==="photo"){const B=photoBox(L);return{hw:B.W/2,hh:B.H/2,dx:0,dy:0}}
+  if(L.t==="stk"){const d=STK[L.kind]||{r:1};return{hw:L.w/2,hh:L.w*d.r/2,dx:0,dy:0}}
   const px=L.s*SW*k/FRAME,t=titleBitmap(L,px),sc=1/k;return{hw:t.c.width*sc/2*(px/t.px),hh:t.c.height*sc/2*(px/t.px),dx:(t.ox+t.c.width/2)*sc*(px/t.px),dy:(t.oy+t.c.height/2)*sc*(px/t.px)}}
+
+/* ---------- paper stickers (stamp, note, sticky note, ticket, postcard, frame, postmark, tape) ---------- */
+const PAPERS=["#F4E9D2","#FFFFFF","#F2DD6E","#C9A57A","#F2C4B8","#CFE2EE","#CBD5B5","#1F1A17"];
+const INKS=["#23336B","#2A1D14","#C4452F","#111111","#FFFFFF","#8A5A2B"];
+const STK_FONTS={layers:[["DM Serif Display",400],["DM Sans",700],["Caveat",700],["Homemade Apple",400],["Great Vibes",400],["Playfair Display",700],["Bebas Neue",400]].map(([font,weight])=>({font,weight,text:"Aa",italic:false}))};
+let stkFontsOk=false;
+function stkFonts(){if(stkFontsOk)return;stkFontsOk=true;ensureFonts(STK_FONTS).then(()=>{stCache.clear();draw()}).catch(()=>{})}
+const F=(w,px,f)=>`${w} ${px}px "${f}", serif`;
+function lines(x,txt,maxW){const out=[];String(txt||"").split("\n").forEach(par=>{const ws=par.split(/\s+/).filter(Boolean);if(!ws.length){out.push("");return}let l=ws[0];for(let i=1;i<ws.length;i++){const t=l+" "+ws[i];if(x.measureText(t).width>maxW){out.push(l);l=ws[i]}else l=t}out.push(l)});return out}
+function fit(x,txt,font,px,maxW,min=.45){let p=px;x.font=font(p);while(p>px*min&&Math.max(...String(txt).split("\n").map(s=>x.measureText(s).width))>maxW){p*=.94;x.font=font(p)}return p}
+function spaced(x,txt,cx,y,sp){const s=String(txt).toUpperCase(),w=[...s].reduce((a,c)=>a+x.measureText(c).width+sp,-sp);let px=cx-w/2;x.textAlign="left";for(const c of s){x.fillText(c,px,y);px+=x.measureText(c).width+sp}x.textAlign="center"}
+function scallop(x,X,Y,W,H,r){x.save();x.globalCompositeOperation="destination-out";const n=Math.max(4,Math.round(W/(r*2.7))),m=Math.max(4,Math.round(H/(r*2.7)));
+  for(let i=0;i<=n;i++){x.beginPath();x.arc(X+i*W/n,Y,r,0,7);x.arc(X+i*W/n,Y+H,r,0,7);x.fill()}for(let j=0;j<=m;j++){x.beginPath();x.arc(X,Y+j*H/m,r,0,7);x.arc(X+W,Y+j*H/m,r,0,7);x.fill()}x.restore()}
+function wave(x,X,Y,W,amp,n){x.beginPath();for(let i=0;i<=40;i++){const t=i/40;x.lineTo(X+t*W,Y+Math.sin(t*Math.PI*2*n)*amp)}x.stroke()}
+const STK={
+  stamp:{name:"Stamp",r:1.24,w:.5,paper:"#F4E9D2",ink:"#23336B",f:{top:"Current mood",title:"taking\na break",bottom:"September\nout of office"},big:["title","bottom"],
+    draw(x,W,H,L){const u=W/100,f=L.f,p=L.paper,ink=L.ink;x.fillStyle=p;x.fillRect(0,0,W,H);scallop(x,0,0,W,H,2.2*u);
+      x.strokeStyle=ink;x.lineWidth=.45*u;x.strokeRect(7*u,7*u,W-14*u,H-14*u);x.fillStyle=ink;x.textAlign="center";x.textBaseline="middle";
+      x.save();x.translate(W/2,H*.15);x.lineWidth=.9*u;x.lineCap="round";for(let i=-3;i<=3;i++){x.save();x.rotate(i*.33);x.beginPath();x.moveTo(0,1.5*u);x.quadraticCurveTo(1.2*u,-3*u,0,-7.5*u);x.stroke();x.restore()}x.restore();
+      x.font=F(700,4*u,"DM Sans");spaced(x,f.top,W/2,H*.27,.55*u);
+      const tl=String(f.title).split("\n"),tp=fit(x,tl.join("\n"),q=>F(400,q,"DM Serif Display"),17*u,W*.74);tl.forEach((t,i)=>x.fillText(t,W/2,H*.47+(i-(tl.length-1)/2)*tp*.92));
+      x.font=F(700,3.7*u,"DM Sans");String(f.bottom).split("\n").forEach((t,i,a)=>spaced(x,t,W/2,H*.72+(i-(a.length-1)/2)*5*u,.45*u));
+      x.lineWidth=.6*u;for(let i=0;i<3;i++)wave(x,W*.62,H*.85+i*2.2*u,W*.26,.8*u,2.5)}},
+  ministamp:{name:"Mini stamp",r:.7,w:.48,paper:"#F4E9D2",ink:"#2A1D14",f:{text:"Some places\ndeserve a stamp"},big:["text"],
+    draw(x,W,H,L){const u=W/100;x.fillStyle=L.paper;x.fillRect(0,0,W,H);scallop(x,0,0,W,H,2.1*u);x.strokeStyle=L.ink;x.globalAlpha=.35;x.lineWidth=.35*u;x.strokeRect(6*u,6*u,W-12*u,H-12*u);x.globalAlpha=1;
+      x.fillStyle=L.ink;x.textAlign="center";x.textBaseline="middle";const tl=String(L.f.text).split("\n"),tp=fit(x,tl.join("\n"),q=>F(700,q,"Caveat"),13*u,W*.78);tl.forEach((t,i)=>x.fillText(t,W/2,H*.53+(i-(tl.length-1)/2)*tp*1.02));
+      x.save();x.globalAlpha=.55;x.strokeStyle=L.ink;x.lineWidth=.55*u;x.beginPath();x.arc(W*.12,H*.14,9*u,0,7);x.stroke();x.beginPath();x.arc(W*.12,H*.14,6.8*u,0,7);x.stroke();for(let i=0;i<3;i++)wave(x,W*.22,H*.08+i*2.6*u,W*.26,.9*u,2.5);x.restore()}},
+  note:{name:"Note",r:1.28,w:.6,paper:"#FBF8F1",ink:"#2A2E45",f:{text:"We write notes that feel lighter. Little words to remember the slow days, the sun and the people who make them good.",sign:"With love, me"},big:["text"],
+    draw(x,W,H,L){const u=W/100;x.fillStyle=L.paper;x.fillRect(0,0,W,H);const g=x.createLinearGradient(0,0,W,H);g.addColorStop(0,"rgba(255,255,255,.25)");g.addColorStop(1,"rgba(0,0,0,.05)");x.fillStyle=g;x.fillRect(0,0,W,H);
+      x.fillStyle=L.ink;x.textAlign="left";x.textBaseline="alphabetic";x.font=F(400,4.6*u,"Homemade Apple");const ls=lines(x,L.f.text,W*.8);let y=H*.17;const lh=7.4*u;ls.slice(0,Math.floor((H*.66)/lh)).forEach(t=>{x.fillText(t,W*.1,y);y+=lh});
+      x.font=F(400,4.4*u,"Homemade Apple");x.textAlign="right";x.fillText(L.f.sign||"",W*.9,H*.9);
+      x.save();x.translate(W*.78,-H*.02);x.rotate(.12);x.strokeStyle="#8d9095";x.lineWidth=1.1*u;x.lineCap="round";x.beginPath();x.moveTo(0,11*u);x.lineTo(0,-1*u);x.arc(2.6*u,-1*u,2.6*u,Math.PI,0);x.lineTo(5.2*u,15*u);x.arc(1.4*u,15*u,3.8*u,0,Math.PI);x.lineTo(-2.4*u,3*u);x.stroke();x.restore()}},
+  sticky:{name:"Sticky note",r:1,w:.56,paper:"#F2DD6E",ink:"#25306B",f:{top:"Coffee thoughts",text:"Your urgency isn't always their emergency.",bottom:"Monday · 9 am"},big:["text"],
+    draw(x,W,H,L){const u=W/100;x.fillStyle=L.paper;x.fillRect(0,0,W,H);const g=x.createLinearGradient(0,H*.6,W,H);g.addColorStop(0,"rgba(0,0,0,0)");g.addColorStop(1,"rgba(0,0,0,.12)");x.fillStyle=g;x.fillRect(0,0,W,H);
+      x.fillStyle=L.ink;x.textAlign="center";x.textBaseline="middle";x.font=F(700,3.6*u,"DM Sans");spaced(x,L.f.top,W/2,H*.12,.6*u);spaced(x,L.f.bottom,W/2,H*.9,.6*u);
+      let px=12*u;x.font=F(700,px,"Caveat");let ls=lines(x,L.f.text,W*.8);while(ls.length*px*1.05>H*.62&&px>5*u){px*=.92;x.font=F(700,px,"Caveat");ls=lines(x,L.f.text,W*.8)}ls.forEach((t,i)=>x.fillText(t,W/2,H*.51+(i-(ls.length-1)/2)*px*1.02))}},
+  ticket:{name:"Ticket",r:.44,w:.68,paper:"#F4E9D2",ink:"#2A1D14",f:{label:"Admit one",title:"Ibiza",date:"19.06.2026",code:"No. 0042"},big:[],
+    draw(x,W,H,L){const u=W/100,sx=W*.74;x.fillStyle=L.paper;x.fillRect(0,0,W,H);x.save();x.globalCompositeOperation="destination-out";x.beginPath();x.arc(sx,0,3.2*u,0,7);x.arc(sx,H,3.2*u,0,7);x.fill();x.beginPath();x.arc(0,H/2,2.4*u,0,7);x.arc(W,H/2,2.4*u,0,7);x.fill();x.restore();
+      x.strokeStyle=L.ink;x.globalAlpha=.5;x.setLineDash([1.4*u,1.4*u]);x.lineWidth=.45*u;x.beginPath();x.moveTo(sx,5*u);x.lineTo(sx,H-5*u);x.stroke();x.setLineDash([]);x.globalAlpha=1;
+      x.fillStyle=L.ink;x.textBaseline="middle";x.textAlign="left";x.font=F(700,2.6*u,"DM Sans");spaced(x,L.f.label,W*.2,H*.18,.5*u);x.textAlign="left";x.font=F(700,2.4*u,"DM Sans");x.globalAlpha=.7;x.fillText("DATE",W*.06,H*.78);x.fillText("FROM",W*.3,H*.78);x.globalAlpha=1;
+      x.font=F(700,3*u,"DM Sans");x.fillText(L.f.date,W*.06,H*.88);x.fillText("Gate 7",W*.3,H*.88);
+      const tp=fit(x,L.f.title,q=>F(400,q,"Bebas Neue"),19*u,W*.62);x.font=F(400,tp,"Bebas Neue");x.fillText(L.f.title,W*.06,H*.5);
+      x.lineWidth=.35*u;x.beginPath();x.moveTo(W*.06,H*.68);x.lineTo(W*.68,H*.68);x.stroke();
+      x.save();x.translate(W*.87,H/2);x.rotate(-Math.PI/2);x.textAlign="center";x.font=F(400,7*u,"Bebas Neue");x.fillText(L.f.code,0,0);x.restore();
+      x.save();x.translate(W*.87,H*.16);x.lineWidth=.5*u;x.beginPath();x.arc(0,0,2.3*u,0,7);x.stroke();for(let i=0;i<8;i++){x.rotate(Math.PI/4);x.beginPath();x.moveTo(3.2*u,0);x.lineTo(4.4*u,0);x.stroke()}x.restore()}},
+  postcard:{name:"Postcard",r:.66,w:.82,paper:"#F4E9D2",ink:"#2A1D14",f:{hello:"Welcome to",place:"Last Minute",msg:"Sun, salt and slow mornings. Wish you were here!"},big:["msg"],
+    draw(x,W,H,L){const u=W/100,dv=W*.56;x.fillStyle=L.paper;x.fillRect(0,0,W,H);
+      const sw=2.2*u;x.save();x.beginPath();x.rect(0,H-sw*1.6,W,sw*1.6);x.clip();for(let i=-2;i<W/sw+2;i++){x.fillStyle=i%2?"#2B4C8C":"#C4452F";x.beginPath();x.moveTo(i*sw*2,H);x.lineTo(i*sw*2+sw,H);x.lineTo(i*sw*2+sw*2.6,H-sw*1.6);x.lineTo(i*sw*2+sw*1.6,H-sw*1.6);x.fill()}x.restore();
+      x.strokeStyle=L.ink;x.globalAlpha=.35;x.lineWidth=.35*u;x.beginPath();x.moveTo(dv,8*u);x.lineTo(dv,H-10*u);x.stroke();for(let i=0;i<4;i++){x.beginPath();x.moveTo(dv+5*u,H*.5+i*6.5*u);x.lineTo(W-6*u,H*.5+i*6.5*u);x.stroke()}x.globalAlpha=1;
+      x.setLineDash([1*u,1*u]);x.strokeRect(W-21*u,7*u,14*u,17*u);x.setLineDash([]);x.save();x.translate(W-14*u,15.5*u);x.lineWidth=.5*u;x.beginPath();x.arc(0,0,2.6*u,0,7);x.stroke();x.restore();
+      x.fillStyle="#C4452F";x.textAlign="left";x.textBaseline="alphabetic";x.font=F(400,6.4*u,"Great Vibes");x.fillText(L.f.hello,6*u,22*u);
+      x.fillStyle=L.ink;const pp=fit(x,L.f.place,q=>F(700,q,"Playfair Display"),8.5*u,dv-12*u);x.font=F(700,pp,"Playfair Display");x.fillText(L.f.place,6*u,22*u+pp*1.05);
+      x.font=F(700,2.5*u,"DM Sans");x.globalAlpha=.75;const ls=lines(x,L.f.msg,dv-13*u);ls.slice(0,7).forEach((t,i)=>x.fillText(t,6*u,22*u+pp*1.05+7*u+i*3.6*u));x.globalAlpha=1}},
+  frame:{name:"Stamp frame",r:1.25,w:.74,paper:"#FFFFFF",ink:"#2A1D14",f:{},big:[],
+    draw(x,W,H,L){const u=W/100;x.fillStyle=L.paper;x.fillRect(0,0,W,H);scallop(x,0,0,W,H,2.4*u);x.save();x.globalCompositeOperation="destination-out";x.fillRect(9*u,9*u,W-18*u,H-18*u);x.restore()}},
+  postmark:{name:"Postmark",r:.48,w:.5,paper:null,ink:"#2A1D14",f:{place:"Welcome to Paris",date:"24 NOV 2026"},big:[],
+    draw(x,W,H,L){const u=W/100,R=H*.44,cx=R+1*u,cy=H/2;x.strokeStyle=L.ink;x.fillStyle=L.ink;x.globalAlpha=.85;x.lineWidth=.7*u;x.beginPath();x.arc(cx,cy,R,0,7);x.stroke();x.beginPath();x.arc(cx,cy,R*.66,0,7);x.stroke();
+      x.font=F(700,3.2*u,"DM Sans");x.textAlign="center";x.textBaseline="middle";const t=String(L.f.place).toUpperCase()+" · ",n=t.length;for(let i=0;i<n;i++){const a=-Math.PI/2+(i/n)*Math.PI*2;x.save();x.translate(cx+Math.cos(a)*R*.83,cy+Math.sin(a)*R*.83);x.rotate(a+Math.PI/2);x.fillText(t[i],0,0);x.restore()}
+      x.font=F(700,3.4*u,"DM Sans");x.fillText(L.f.date,cx,cy);x.lineWidth=.7*u;for(let i=0;i<4;i++)wave(x,cx+R*1.1,cy-6*u+i*4*u,W-cx-R*1.1-2*u,1.2*u,3);x.globalAlpha=1}},
+  tape:{name:"Tape",r:.26,w:.34,paper:"#E8C46A",ink:"#2A1D14",f:{},big:[],
+    draw(x,W,H,L){const u=W/100;x.globalAlpha=.78;x.fillStyle=L.paper;x.beginPath();x.moveTo(0,0);for(let i=0;i<=8;i++)x.lineTo((i%2?2.5:0)*u,i*H/8);x.lineTo(W,H);for(let i=8;i>=0;i--)x.lineTo(W-(i%2?2.5:0)*u,i*H/8);x.closePath();x.fill();
+      x.globalAlpha=.12;x.strokeStyle="#fff";x.lineWidth=.6*u;for(let i=0;i<4;i++){x.beginPath();x.moveTo(5*u,H*(.2+i*.2));x.lineTo(W-5*u,H*(.2+i*.2));x.stroke()}x.globalAlpha=1}}
+};
+const STK_ORDER=["stamp","ministamp","sticky","note","ticket","postcard","frame","postmark","tape"];
+const STK_FIELDS={top:"Top line",title:"Title",bottom:"Bottom lines",text:"Text",sign:"Signature",label:"Label",date:"Date",code:"Number",hello:"Greeting",place:"Place",msg:"Message"};
+function newStk(kind){const k=STK[kind];return{id:uidS(),t:"stk",kind,x:SW/2,y:SH*.5,w:SW*k.w,rot:kind==="tape"?-8:kind==="frame"?0:-3,paper:k.paper,ink:k.ink,f:clone(k.f),shadow:kind!=="postmark"&&kind!=="tape",hidden:false}}
+const stCache=new Map();const STM=.1; // margin around a sticker canvas (room for shadows & postmarks)
+function stkBitmap(L,pxW){stkFonts();const def=STK[L.kind];if(!def)return null;const key=JSON.stringify([L.kind,L.paper,L.ink,L.f])+"|"+Math.round(pxW);let t=stCache.get(L.id);if(t&&t.key===key)return t;if(ST.gesture&&t)return t;
+  const W=Math.max(8,Math.round(pxW)),H=Math.round(W*def.r),m=Math.round(W*STM),c=document.createElement("canvas");c.width=W+2*m;c.height=H+2*m;const x=c.getContext("2d");x.translate(m,m);try{def.draw(x,W,H,L)}catch(e){}
+  t={key,c,W,H,m};stCache.set(L.id,t);return t}
+function drawStk(x,L,k){const t=stkBitmap(L,L.w*k);if(!t)return;const f=L.w*k/t.W;if(L.shadow){x.shadowColor="rgba(0,0,0,.35)";x.shadowBlur=26*k;x.shadowOffsetY=10*k}
+  x.drawImage(t.c,(-t.W/2-t.m)*f,(-t.H/2-t.m)*f,t.c.width*f,t.c.height*f);x.shadowColor="transparent"}
+function stkThumb(kind){const L=newStk(kind),def=STK[kind];if(kind==="postmark")L.ink="#F6E9D7";const W=120,H=Math.round(W*def.r),m=Math.round(W*STM),c=document.createElement("canvas");c.width=W+2*m;c.height=H+2*m;const x=c.getContext("2d");x.translate(m,m);try{def.draw(x,W,H,L)}catch(e){}return c}
+
+/* ---------- story titles: typography only, edited like any other title ---------- */
+function storyTitles(){if(typeof L!=="function"||typeof D!=="function")return[];return[
+  D("sx1","Story","Film title",[L("aftersun","Montserrat",320,0,-30,{weight:800,spacing:-10}),L("Directed by you   |   Starring the weekend   |   2026","DM Sans",30,0,135,{weight:700,spacing:5,upper:true})],{colors:{main:"#FFFFFF",accent:"#F26B50"}}),
+  D("sx2","Story","Current mood",[L("Current mood","DM Sans",42,0,-230,{weight:700,spacing:16,upper:true,color:"accent"}),L("taking","DM Serif Display",230,0,-75),L("a break","DM Serif Display",230,0,120),L("September · out of office","DM Sans",38,0,275,{weight:700,spacing:10,upper:true,color:"accent"})],{colors:{main:"#F6E9D7",accent:"#E9B77C"}}),
+  D("sx3","Story","Postcard title",[L("Welcome to","Great Vibes",150,-90,-85,{rotate:-4,color:"accent"}),L("Last Minute","Playfair Display",200,0,70,{weight:400})],{colors:{main:"#FFFFFF",accent:"#F26B50"}}),
+  D("sx4","Story","Handwritten caption",[L("One of Mallorca's most","Caveat",118,0,-62,{weight:400}),L("beautiful walks","Caveat",118,0,62,{weight:400})],{colors:{main:"#FFFFFF",accent:"#F26B50"}}),
+  D("sx5","Story","Coffee thoughts",[L("Coffee thoughts","DM Sans",40,0,-230,{weight:700,spacing:16,upper:true,color:"accent"}),L("Your urgency","Homemade Apple",105,0,-85),L("isn't always","Homemade Apple",105,0,45),L("their emergency.","Homemade Apple",105,0,175)],{colors:{main:"#FFFFFF",accent:"#E9B77C"}})
+]}
+let STT=null;const sTitles=()=>STT||(STT=storyTitles());
 
 /* ---------- renderer ---------- */
 let grainTile=null;
@@ -196,7 +281,7 @@ function render(ctx,W,H,o={}){
   if(b.dim>0&&(bc||b.type!=="color")){ctx.fillStyle=`rgba(0,0,0,${b.dim})`;ctx.fillRect(0,0,W,H)}
   // layers
   for(const L of S.layers){if(L.hidden)continue;ctx.save();ctx.translate(L.x*k,L.y*k);ctx.rotate((L.rot||0)*Math.PI/180);
-    if(L.t==="photo")drawPhoto(ctx,L,k);else drawTitle(ctx,L,k);ctx.restore()}
+    if(L.t==="photo")drawPhoto(ctx,L,k);else if(L.t==="stk")drawStk(ctx,L,k);else drawTitle(ctx,L,k);ctx.restore()}
   // finishing
   if(S.fx.leak){const g=ctx.createRadialGradient(W*.05,H*.08,0,W*.05,H*.08,W*.95);g.addColorStop(0,"rgba(255,140,60,.55)");g.addColorStop(.45,"rgba(255,90,60,.18)");g.addColorStop(1,"rgba(255,90,60,0)");ctx.globalCompositeOperation="screen";ctx.fillStyle=g;ctx.fillRect(0,0,W,H);ctx.globalCompositeOperation="source-over"}
   if(S.fx.vig){const g=ctx.createRadialGradient(W/2,H/2,Math.min(W,H)*.35,W/2,H/2,Math.hypot(W,H)*.56);g.addColorStop(0,"rgba(0,0,0,0)");g.addColorStop(1,"rgba(0,0,0,.6)");ctx.fillStyle=g;ctx.fillRect(0,0,W,H)}
@@ -282,7 +367,7 @@ function gestures(){const cv=$s("stCanvas"),pts=new Map();let g=null,lastTap={t:
     if(g.mode==="bgpinch"&&pts.size===2){const t=two();S.bg.z=clamp(g.z0*t.d/g.d0,1,5);S.bg.ox=g.ox+(t.cx-g.cx);S.bg.oy=g.oy+(t.cy-g.cy);draw();return}
     if(g.mode==="drag"&&pts.size===1){const dx=u.x-g.sx,dy=u.y-g.sy;if(!g.moved&&Math.hypot(dx,dy)<6)return;g.moved=true;ST.gesture=true;let nx=g.ox+dx;guide=Math.abs(nx-SW/2)<14;if(guide)nx=SW/2;g.L.x=clamp(nx,-SW*.3,SW*1.3);g.L.y=clamp(g.oy+dy,-SH*.2,SH*1.2);draw()}
     else if(g.mode==="pinch"&&pts.size===2){const t=two(),f=clamp(t.d/g.d0,.15,8);
-      if(g.L.t==="photo")g.L.w=clamp(g.w0*f,SW*.12,SW*2.2);else g.L.s=clamp(g.s0*f,.12,3.2);
+      if(g.L.t!=="title")g.L.w=clamp(g.w0*f,SW*.08,SW*2.2);else g.L.s=clamp(g.s0*f,.12,3.2);
       let r=g.r0+(t.a-g.a0)*180/Math.PI;r=((r+180)%360+360)%360-180;for(const s of[0,90,-90,180,-180])if(Math.abs(r-s)<4)r=s;g.L.rot=r;
       g.L.x=g.ox+(t.cx-g.cx);g.L.y=g.oy+(t.cy-g.cy);draw()}});
   const end=e=>{pts.delete(e.pointerId);if(pts.size===0&&g&&g.mode==="line"){if(g.moved){renderTool(true);updTop()}g=null;draw();return}if(pts.size===0){if(g&&g.moved){if(g.mode==="bg"||g.mode==="bgpinch")clampBg();ST.hist.push(g.snap);if(ST.hist.length>60)ST.hist.shift();ST.fut=[];ST.gesture=false;guide=false;changed();
@@ -290,7 +375,7 @@ function gestures(){const cv=$s("stCanvas"),pts=new Map();let g=null,lastTap={t:
     else if(pts.size===1&&g&&g.mode==="bgpinch"){const [u]=[...pts.values()];g={mode:"bg",sx:u.x,sy:u.y,ox:S.bg.ox,oy:S.bg.oy,snap:g.snap,moved:true}}
     else if(pts.size===1&&g&&g.mode==="pinch"){const [u]=[...pts.values()];g={mode:"drag",L:g.L,sx:u.x,sy:u.y,ox:g.L.x,oy:g.L.y,snap:g.snap,moved:true}}};
   cv.addEventListener("pointerup",end);cv.addEventListener("pointercancel",end);
-  cv.addEventListener("wheel",e=>{const L=selL();if(!L){if(!bgSource())return;e.preventDefault();S.bg.z=clamp((S.bg.z||1)*Math.exp(-e.deltaY*.0015),1,5);draw();clearTimeout(ST.wt);ST.wt=setTimeout(()=>{clampBg();changed()},300);return}e.preventDefault();const f=Math.exp(-e.deltaY*.0015);if(L.t==="photo")L.w=clamp(L.w*f,SW*.12,SW*2.2);else L.s=clamp(L.s*f,.12,3.2);draw();clearTimeout(ST.wt);ST.wt=setTimeout(()=>changed(),300)},{passive:false})}
+  cv.addEventListener("wheel",e=>{const L=selL();if(!L){if(!bgSource())return;e.preventDefault();S.bg.z=clamp((S.bg.z||1)*Math.exp(-e.deltaY*.0015),1,5);draw();clearTimeout(ST.wt);ST.wt=setTimeout(()=>{clampBg();changed()},300);return}e.preventDefault();const f=Math.exp(-e.deltaY*.0015);if(L.t!=="title")L.w=clamp(L.w*f,SW*.08,SW*2.2);else L.s=clamp(L.s*f,.12,3.2);draw();clearTimeout(ST.wt);ST.wt=setTimeout(()=>changed(),300)},{passive:false})}
 
 /* ---------- UI ---------- */
 function build(){if($s("storyEd"))return;
@@ -313,7 +398,7 @@ function build(){if($s("storyEd"))return;
     <div class="sEdTip" id="stEdTip" hidden>Tap a line on your story, then pick a tool</div>
     <section class="sPanel sLib" id="stLib" hidden aria-label="Library"><div class="sHead"><b>Add a design</b><button class="sChip" id="stLibClose">Close</button></div><div id="stLibHost"></div></section>
     <nav class="sDock sGlass" id="stDock" aria-label="Story tools">
-      <div class="sDockTools">${[["bg","Background"],["photo","Photo"],["text","Text"],["fx","Effects"],["layers","Layers"]].map(([k,l])=>`<button data-tool="${k}" aria-pressed="false">${svg(k)}<span>${l}</span></button>`).join("")}</div>
+      <div class="sDockTools">${[["bg","Background"],["photo","Stickers"],["text","Text"],["fx","Effects"],["layers","Layers"]].map(([k,l])=>`<button data-tool="${k}" aria-pressed="false">${svg(k==="photo"?"stk":k)}<span>${l}</span></button>`).join("")}</div>
       <div class="sDockEdit" id="stDockEdit" hidden><button class="sDone" id="stDone">${svg("check",2.4)}<span>Done</span></button><div class="sEdNav" id="stEdNav"></div></div>
     </nav>
   </div>`;
@@ -335,14 +420,16 @@ const wide=()=>WIDE.matches;
 function updTop(){if(!$s("stUndo"))return;$s("stUndo").disabled=ST.editing?!hist.length:!ST.hist.length;$s("stLock").hidden=canUse()}
 function syncEmpty(){const e=$s("stEmpty");if(e)e.hidden=!!bgSource()||S.layers.some(L=>L.t==="photo")||S.bg.type!=="gradient"||!!ST.editing}
 function setTool(t){ST.tool=t;if(t)ST.lastTool=t;renderPanel();draw()}
-function renderMini(L){const m=$s("stMini");const key=L.id+L.t+(L.shadow?1:0);if(m.dataset.k===key)return;m.dataset.k=key;
+function renderMini(L){const m=$s("stMini");const key=L.id+L.t+(L.shadow?1:0)+(L.kind||"");if(m.dataset.k===key)return;m.dataset.k=key;
   const b=(a,ic,l,on)=>`<button data-a="${a}"${on?' class="on"':""}>${svg(ic)}<span>${l}</span></button>`;
   const i=(a,ic,l)=>`<button data-a="${a}" class="io" aria-label="${l}">${svg(ic)}</button>`;
+  if(L.t==="stk"){m.innerHTML=b("sedit","edit",STK[L.kind]&&Object.keys(STK[L.kind].f).length?"Edit":"Colour")+b("shadow","shadow","Shadow",L.shadow)+i("dup","copy","Duplicate")+i("front","front","Bring to front")+i("back","back","Send to back");return}
   m.innerHTML=L.t==="photo"?b("frame","frame","Frame")+b("crop","crop","Crop")+b("shadow","shadow","Shadow",L.shadow)+i("front","front","Bring to front")+i("back","back","Send to back")
     :b("edit","edit","Edit text")+i("dup","copy","Duplicate")+i("front","front","Bring to front")+i("back","back","Send to back")}
 function miniAction(a){const L=selL();if(!L)return;hapt();
   if(a==="frame"||a==="crop"){setTool("photo");setTimeout(()=>{const s=$s("stPanel").querySelector(a==="crop"?"[data-sec=aspect]":"[data-sec=frame]");s&&s.scrollIntoView({block:"nearest"})},30);return}
   if(a==="edit"){editTitle(L.id);return}
+  if(a==="sedit"){setTool("photo");return}
   snapS();
   if(a==="shadow"){L.shadow=!L.shadow;$s("stMini").dataset.k=""}
   else if(a==="front"){S.layers=S.layers.filter(x=>x!==L);S.layers.push(L)}
@@ -368,18 +455,27 @@ function renderPanel(){const p=$s("stPanel");if(!p)return;
       h+=row("",`<div class="sStrip">${th}</div>`)+slider("Blur","blur",b.blur,0,40,1,v=>v)+slider("Dim","dim",Math.round(b.dim*100),0,70,1,v=>v+"%")}
     else if(b.type==="color"){h+=row("",`<div class="sSw">${COLORS.map(c=>`<button class="sDot${b.color===c?" on":""}" data-col="${c}" style="background:${c}" aria-label="${c}"></button>`).join("")}<label class="sDot pick" aria-label="Pick a colour"><input type="color" value="${b.color}" data-k="color"></label></div>`)}
     else{h+=row("",`<div class="sSw">${GRADS.map((g,i)=>`<button class="sDot gr${b.grad===i?" on":""}" data-grad="${i}" style="background:linear-gradient(160deg,${g[0]},${g[1]})" aria-label="Gradient ${i+1}"></button>`).join("")}</div>`)+slider("Dim","dim",Math.round(b.dim*100),0,70,1,v=>v+"%")}}
+  else if(t==="photo"&&L&&L.t==="stk"){const def=STK[L.kind];
+    h+=`<div class="sHead"><b>${def.name}</b><div class="sChips">${chip(svg("plus",2)+"Add",false,'data-act="stkAll"')}${chip(svg("copy")+"Duplicate",false,'data-act="dupS"')}${chip(svg("trash")+"Delete",false,'data-act="del" class="warn"')}</div></div>`;
+    Object.keys(def.f).forEach(n=>{const v=String(L.f[n]==null?"":L.f[n]).replace(/&/g,"&amp;").replace(/</g,"&lt;");const big=def.big.includes(n)||/\n/.test(L.f[n]);
+      h+=row(STK_FIELDS[n]||n,big?`<textarea class="sInp sTa" rows="${n==="text"&&L.kind==="note"?4:2}" data-k="f:${n}">${v}</textarea>`:`<input class="sInp sTx" maxlength="60" value="${v.replace(/"/g,"&quot;")}" data-k="f:${n}">`)});
+    if(def.paper)h+=row(L.kind==="tape"?"Colour":"Paper",`<div class="sSw">${PAPERS.map(c=>`<button class="sDot${L.paper===c?" on":""}" data-paper="${c}" style="background:${c}" aria-label="${c}"></button>`).join("")}</div>`);
+    if(!["frame","tape"].includes(L.kind))h+=row("Ink",`<div class="sSw">${INKS.map(c=>`<button class="sDot${L.ink===c?" on":""}" data-ink="${c}" style="background:${c}" aria-label="${c}"></button>`).join("")}</div>`);
+    h+=`<div class="sRow sTogRow"><span>${svg("shadow")}Shadow</span><button class="sTog${L.shadow?" on":""}" role="switch" aria-checked="${L.shadow}" data-act="shadow" aria-label="Shadow"><i></i></button></div>`}
   else if(t==="photo"){
     if(L&&L.t==="photo"){h+=`<div class="sHead"><b>Photo sticker</b><div class="sChips">${chip(svg("swap")+"Replace",false,'data-act="replace"')}${chip(svg("trash")+"Delete",false,'data-act="del" class="warn"')}</div></div>`;
       h+=row("Frame",`<div class="sFrames">${FRAMES.map(([v,l])=>`<button class="sFrame f-${v}${L.frame===v?" on":""}" data-frame="${v}"><span><img src="${thumbOf(L.key)}" alt=""></span>${l}</button>`).join("")}</div>`,"frame");
       h+=row("Crop",`<div class="sChips wrap">${ASPECTS.map(([v,l])=>chip(l,(L.aspect||"orig")===v,`data-asp="${v}"`)).join("")}</div>`,"aspect");
       h+=`<div class="sRow sTogRow"><span>${svg("shadow")}Shadow</span><button class="sTog${L.shadow?" on":""}" role="switch" aria-checked="${L.shadow}" data-act="shadow" aria-label="Shadow"><i></i></button></div>`;
       if(L.frame==="polaroid")h+=row("Caption",`<input class="sInp" maxlength="40" placeholder="Write on the polaroid…" value="${(L.cap||"").replace(/"/g,"&quot;")}" data-k="cap">`)}
-    else{const ph=S.layers.filter(x=>x.t==="photo");h+=`<div class="sHead"><b>Photo stickers</b></div>`;
+    else{const ph=S.layers.filter(x=>x.t==="photo");h+=`<div class="sHead"><b>Stickers</b><span class="sSub">Tap to add</span></div>`;
+      h+=`<div class="sStk">${STK_ORDER.map(k=>`<button class="sStkBtn" data-stk="${k}"><span data-stkth="${k}"></span><i>${STK[k].name}</i></button>`).join("")}</div><div class="sLabel">Photo stickers</div>`;
       h+=`<div class="sStrip">${ph.map(x=>`<button class="sThumb" data-selp="${x.id}"><img src="${thumbOf(x.key)}" alt=""></button>`).join("")}<button class="sThumb add big" data-act="addPhoto">${svg("plus",2)}<i>Photo sticker</i></button></div>`;
       h+=`<p class="sHint">${ph.length?"Tap a photo sticker on your story to frame, crop or move it. Pinch to resize, twist to rotate.":"Add an extra photo on top of your story, like a sticker. Your main photo is set under Background."}</p>`}}
   else if(t==="text"){h+=`<div class="sHead"><b>Text</b></div>`;
     if(L&&L.t==="title")h+=`<div class="sBig"><button class="sBigBtn pri" data-act="editT">${svg("edit")}<span><b>Edit this text</b><small>Change words, fonts and colours</small></span></button><button class="sBigBtn" data-act="dupT">${svg("copy")}<span><b>Duplicate</b><small>Use it twice</small></span></button></div>`;
     h+=`<div class="sBig"><button class="sBigBtn" data-act="addCur"><span class="sCurTh" id="stCurTh"></span><span><b>Add current design</b><small>${(cur.name||"Your design").replace(/</g,"&lt;")}</small></span></button><button class="sBigBtn" data-act="pickLib">${svg("lib")}<span><b>Choose from Library</b><small>230+ designs</small></span></button></div>`;
+    h+=`<div class="sLabel">Story titles</div><div class="sStrip sTitles">${sTitles().map((d,i)=>`<button class="sTitleBtn" data-stt="${i}" aria-label="${d.name}"><span data-sttth="${i}"></span></button>`).join("")}</div>`;
     h+=`<p class="sHint">Tip: double-tap a title on your story to edit its text.</p>`}
   else if(t==="fx"){const f=S.fx,src=firstPhoto()||bgSource()&&{key:bgSource().key};
     h+=`<div class="sHead"><b>Effects</b><span class="sSub">On your photos &amp; background</span></div>`;
@@ -388,13 +484,15 @@ function renderPanel(){const p=$s("stPanel");if(!p)return;
     h+=`<div class="sChips">${chip(svg("grain")+"Grain",f.grain,'data-fxt="grain"')}${chip(svg("vig")+"Vignette",f.vig,'data-fxt="vig"')}${chip(svg("sun")+"Light leak",f.leak,'data-fxt="leak"')}</div>`;
     p.innerHTML=h;fxPreviews(src&&src.key);return}
   else if(t==="layers"){h+=`<div class="sHead"><b>Layers</b><span class="sSub">Top to bottom</span></div><div class="sLayers">`;
-    [...S.layers].reverse().forEach(x=>{const nm=x.t==="title"?(x.d.name||firstText(x.d)||"Title"):"Photo",sub=x.t==="title"?"Title":(FRAMES.find(f=>f[0]===x.frame)||[0,""])[1]+" photo";
-      h+=`<div class="sLay${ST.sel===x.id?" on":""}" data-lay="${x.id}"><span class="sLayTh${x.t==="title"?" t":""}">${x.t==="photo"?`<img src="${thumbOf(x.key)}" alt="">`:`<canvas width="88" height="88" data-tth="${x.id}"></canvas>`}</span>
+    [...S.layers].reverse().forEach(x=>{const nm=x.t==="title"?(x.d.name||firstText(x.d)||"Title"):x.t==="stk"?(STK[x.kind]||{}).name:"Photo",sub=x.t==="title"?"Title":x.t==="stk"?"Sticker":(FRAMES.find(f=>f[0]===x.frame)||[0,""])[1]+" photo";
+      h+=`<div class="sLay${ST.sel===x.id?" on":""}" data-lay="${x.id}"><span class="sLayTh${x.t==="title"?" t":""}">${x.t==="photo"?`<img src="${thumbOf(x.key)}" alt="">`:x.t==="stk"?`<span data-lstk="${x.kind}"></span>`:`<canvas width="88" height="88" data-tth="${x.id}"></canvas>`}</span>
         <span class="sLayTx"><b>${String(nm).replace(/</g,"&lt;")}</b><small>${sub}</small></span>
         <button data-lup="${x.id}" aria-label="Move up">${svg("up")}</button><button data-ldn="${x.id}" aria-label="Move down">${svg("dn")}</button>
         <button data-lvis="${x.id}" aria-label="${x.hidden?"Show":"Hide"}">${svg(x.hidden?"eyeOff":"eye")}</button></div>`});
-    h+=`</div><button class="sReset" data-act="reset">Start a new story</button>`;p.innerHTML=h;layerThumbs();return}
-  p.innerHTML=h;if(t==="text")curThumb()}
+    h+=`</div><button class="sReset" data-act="reset">Start a new story</button>`;p.innerHTML=h;layerThumbs();p.querySelectorAll("[data-lstk]").forEach(el=>el.appendChild(stkThumb(el.dataset.lstk)));return}
+  p.innerHTML=h;if(t==="text"){curThumb();titleThumbs()}if(t==="photo")stkThumbs()}
+function stkThumbs(){document.querySelectorAll("#stPanel [data-stkth]").forEach(el=>{if(el.firstChild)return;el.appendChild(stkThumb(el.dataset.stkth))});if(!stkFontsOk){stkFonts()}else ensureFonts(STK_FONTS).then(()=>document.querySelectorAll("#stPanel [data-stkth]").forEach(el=>{el.innerHTML="";el.appendChild(stkThumb(el.dataset.stkth))}))}
+function titleThumbs(){document.querySelectorAll("#stPanel [data-sttth]").forEach(el=>{const d=sTitles()[+el.dataset.sttth];if(!d)return;ensureFonts(d).then(()=>{try{const c=drawExport(d,.07);el.innerHTML="";el.appendChild(c)}catch(e){}})})}
 function firstText(d){const l=(d.layers||[]).find(x=>x.text);return l?l.text:""}
 function curThumb(){const el=$s("stCurTh");if(!el)return;ensureFonts(cur).then(()=>{try{const c=drawExport(cur,.06);el.innerHTML="";el.appendChild(c)}catch(e){}})}
 function layerThumbs(){document.querySelectorAll("#stPanel canvas[data-tth]").forEach(c=>{const L=layerById(c.dataset.tth);if(!L)return;ensureFonts(L.d).then(()=>{try{const e=drawExport(L.d,.05),x=c.getContext("2d"),f=Math.min(88/e.width,88/e.height);x.clearRect(0,0,88,88);x.drawImage(e,(88-e.width*f)/2,(88-e.height*f)/2,e.width*f,e.height*f)}catch(err){}})})}
@@ -409,6 +507,10 @@ async function panelClick(e){const b=e.target.closest("button,[data-lay]");if(!b
   if(d.grad!=null){snapS();S.bg.grad=+d.grad;changed();renderPanel();return}
   if(d.frame&&L){snapS();L.frame=d.frame;$s("stMini").dataset.k="";changed();renderPanel();return}
   if(d.asp&&L){snapS();L.aspect=d.asp;changed();renderPanel();return}
+  if(d.stk){snapS();const n=newStk(d.stk);n.y=SH*(.42+((S.layers.filter(x=>x.t==="stk").length%3)*.08));S.layers.push(n);ST.sel=n.id;if(!wide())ST.tool=null;changed();renderPanel();toast(STK[d.stk].name+" added");return}
+  if(d.paper&&L){snapS();L.paper=d.paper;changed();renderPanel();return}
+  if(d.ink&&L){snapS();L.ink=d.ink;changed();renderPanel();return}
+  if(d.stt!=null){const tt=sTitles()[+d.stt];if(!tt)return;snapS();const n=newTitle(tt);n.y=S.layers.some(x=>x.t==="title")?SH*.72:SH*.22;S.layers.push(n);ST.sel=n.id;if(!wide())ST.tool=null;changed();renderPanel();toast("Added to your story");return}
   if(d.selp){ST.sel=d.selp;renderPanel();draw();return}
   if(d.fx){snapS();S.fx.name=d.fx;changed();renderPanel();return}
   if(d.fxt){snapS();S.fx[d.fxt]=!S.fx[d.fxt];changed();renderPanel();return}
@@ -421,6 +523,8 @@ async function panelClick(e){const b=e.target.closest("button,[data-lay]");if(!b
     case"replace":{if(!L)return;const f=await pickFile();if(!f)return;const k=await importFile(f);snapS();L.key=k;invalidate();changed();renderPanel();return}
     case"del":{if(!L)return;snapS();S.layers=S.layers.filter(x=>x!==L);ST.sel=null;changed();renderPanel();return}
     case"shadow":{if(!L)return;snapS();L.shadow=!L.shadow;$s("stMini").dataset.k="";changed();renderPanel();return}
+    case"stkAll":{ST.sel=null;renderPanel();draw();return}
+    case"dupS":{if(!L)return;snapS();const n=JSON.parse(JSON.stringify(L));n.id=uidS();n.x+=40;n.y+=60;S.layers.push(n);ST.sel=n.id;changed();renderPanel();return}
     case"editT":return L&&editTitle(L.id);
     case"dupT":{if(!L)return;snapS();const n=JSON.parse(JSON.stringify(L));n.id=uidS();n.y+=160;S.layers.push(n);ST.sel=n.id;changed();renderPanel();return}
     case"addCur":{snapS();const n=newTitle(cur);n.y=S.layers.some(x=>x.t==="title")?SH*.78:SH*.2;S.layers.push(n);ST.sel=n.id;if(!wide())ST.tool=null;changed();renderPanel();toast("Added to your story");return}
@@ -430,8 +534,8 @@ async function panelClick(e){const b=e.target.closest("button,[data-lay]");if(!b
 let inpT=0,inpSnap=null;
 function panelInput(e){const t=e.target,k=t.dataset.k;if(!k)return;if(!inpSnap)inpSnap=JSON.stringify(S);const L=selL();
   if(k==="blur"){S.bg.blur=+t.value}else if(k==="dim"){S.bg.dim=+t.value/100}else if(k==="amount"){S.fx.amount=+t.value/100}
-  else if(k==="cap"&&L){L.cap=t.value}else if(k==="color"){S.bg.color=t.value}
-  const o=t.parentElement.querySelector("output");if(o)o.textContent=k==="dim"?t.value+"%":t.value;
+  else if(k==="cap"&&L){L.cap=t.value}else if(k.startsWith("f:")&&L&&L.f){L.f[k.slice(2)]=t.value}else if(k==="color"){S.bg.color=t.value}
+  const o=t.parentElement&&t.parentElement.querySelector("output");if(o)o.textContent=k==="dim"?t.value+"%":t.value;
   draw();clearTimeout(inpT);inpT=setTimeout(commitInput,500)}
 function panelChange(e){if(e.target.dataset.k)commitInput()}
 function commitInput(){clearTimeout(inpT);if(inpSnap){ST.hist.push(inpSnap);if(ST.hist.length>60)ST.hist.shift();ST.fut=[];inpSnap=null;changed()}}
@@ -466,7 +570,7 @@ function stopEdit(){if(ST.editing)finishEdit()}
 if(typeof schedulePreview==="function"){const sp=schedulePreview;schedulePreview=function(n){sp(n);if(ST.editing&&ST.open){const L=layerById(ST.editing);if(L){L.d=cur;ttCache.delete(L.id)}draw()}}}
 
 /* ---------- export ---------- */
-async function renderExport(){await Promise.all(S.layers.filter(L=>L.t==="title").map(L=>ensureFonts(L.d)));
+async function renderExport(){await Promise.all(S.layers.filter(L=>L.t==="title").map(L=>ensureFonts(L.d)).concat([ensureFonts(STK_FONTS)]));stCache.clear();
   const c=document.createElement("canvas");c.width=SW;c.height=SH;ttCache.clear();render(c.getContext("2d"),SW,SH,{});ttCache.clear();
   return new Promise(r=>c.toBlob(b=>r(b),"image/jpeg",.93))}
 async function exportStory(mode){
