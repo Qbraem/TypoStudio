@@ -1,6 +1,6 @@
 /* Studio Typo – Story Builder sticker pack (categories). Original designs, drawn on canvas.
    Every sticker: {name,cat,r (h/w),w (share of story width),paper,ink,f (editable text),big,draw(x,W,H,L)} */
-window.STK_CATS=[["xmas","Christmas"],["winter","Winter sport"],["outdoor","Outdoor"],["morning","Morning"],["weather","Weather"],["socials","Socials"],["urban","Urban"],["pack","Packaging"],["love","Love"],["pride","Pride"],["kudos","Kudos"],["travel","Travel & paper"]];
+window.STK_CATS=[["xmas","Christmas"],["winter","Winter"],["morning","Morning"],["weather","Weather"],["socials","Socials"],["urban","Urban"],["pack","Packaging"],["love","Love"],["travel","Travel & paper"]];
 window.STK_PACK_FONTS=[["Archivo Black",400],["Pacifico",400],["Yellowtail",400],["Satisfy",400],["Kaushan Script",400],["Shrikhand",400],["Fraunces",900],["Young Serif",400],["Rye",400],["Abril Fatface",400],["Bowlby One",400],["Fredoka",700],["Luckiest Guy",400],["Gochi Hand",400],["Sansita Swashed",800],["Sacramento",400],["Lilita One",400],["Anton",400],["Bagel Fat One",400],["Cherry Bomb One",400]];
 window.STK_PACK=function(h){
 const {F,fit,spaced,scallop}=h,PI=Math.PI,E="#FFFFFF";
@@ -439,5 +439,6 @@ goalmet:{name:"Target",cat:"kudos",r:.5,w:.44,paper:"#BFE3C8",ink:"#1E2F5C",f:{t
   draw(x,W,H,L){const u=W/100;cut(x,()=>RR(x,2*u,2*u,W-4*u,H-4*u,8*u),L.paper,2.5*u);line(x,()=>RR(x,2*u,2*u,W-4*u,H-4*u,8*u),L.ink,1.2*u);const cx=W*.22,cy=H/2;[14,9.5,5].forEach((r,i)=>{x.beginPath();x.arc(cx,cy,r*u,0,7);x.fillStyle=i%2?L.paper:"#E0412F";x.fill()});
     line(x,()=>{x.moveTo(cx,cy);x.lineTo(cx+12*u,cy-12*u)},L.ink,1.4*u);x.fillStyle=L.ink;T(x,String(L.f.text).toUpperCase(),BLK,10*u,W*.66,H/2,W*.48)}}
 };
+for(const k in P){const d=P[k];if(d.cat==="outdoor")d.cat="winter";if(d.cat==="pride"||d.cat==="kudos")d.hidden=true;}
 for(const k in P){const d=P[k];if(d.cat==="socials"&&!d.hidden&&!d.clean&&d.paper!==null){const o=d.draw;let seed=[...k].reduce((a,c)=>a+c.charCodeAt(0),1);d.draw=function(x,W,H,L){o.call(this,x,W,H,L);paperFx(x,W,H,seed)}}}
 return P;};
