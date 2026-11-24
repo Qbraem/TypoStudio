@@ -365,7 +365,8 @@ input[type=range]::-moz-range-thumb{width:28px;height:28px;border-radius:50%;bac
 .htLink{background:none;border:0;color:var(--accent2);font-weight:700;font-size:13px;padding:6px 0;text-decoration:underline}
 .paraInp{min-height:130px;line-height:1.45;font-size:16px}
 .alignChips .chip{min-width:52px;justify-content:center}
-.native .pwDemo{display:none!important}
+.native .pwDemo,.native .pwWebNote{display:none!important}
+.pwWebNote{margin:14px 0 0;font-size:12px;color:var(--muted);text-align:center}
 /* ---------- Pro ---------- */
 .proPill{display:inline-flex;align-items:center;gap:5px;height:34px;padding:0 12px;border:0;border-radius:17px;background:linear-gradient(135deg,#F6DE9C,#C9963A);color:#3a2408;font-weight:800;font-size:12px;letter-spacing:.8px;box-shadow:0 2px 10px rgba(201,150,58,.35)}
 .proPill svg{width:15px;height:15px}
@@ -770,7 +771,7 @@ html.native .modeSeg{background:rgba(40,31,25,.55);-webkit-backdrop-filter:blur(
       <p class="pwFine" id="pwFine"></p>
       <div class="pwLinks"><button id="pwRestore">Restore Purchases</button><span>·</span><a href="/terms.html" target="_blank" rel="noopener">Terms of Use</a><span>·</span><a href="/privacy.html" target="_blank" rel="noopener">Privacy Policy</a></div>
       <p class="pwFreeInfo" id="pwFreeInfo"></p>
-      <label class="pwDemo"><span><b>Web preview.</b> Purchases will be available in the iOS app.<br>Simulate the free version</span><input type="checkbox" id="pwSim"><i></i></label>
+      <p class="pwWebNote">Studio Typo Pro is available in the app for iPhone &amp; iPad.</p>
     </div></div>
   </div>
 </div>
@@ -2017,7 +2018,9 @@ SEEDS.forEach(d=>{d.pro=!FREE_IDS.has(d.id)});
 const PRO_ORN=new Set(["turkey","suitcase","plane","ticket","pin","globe","snowflake","tree","bauble","gift","holly","leaf","pumpkin","pie"]);
 // Web version: the owner's own tool, so Pro is unlocked. "Simulate free version" shows the app as a free user sees it.
 function simFree(){try{return localStorage.getItem("typoStudio.simFree")==="1"}catch(e){return false}}
-function isPro(){return NATIVE?nativePro:!simFree()}
+function isPro(){return NATIVE?nativePro:devPro()}
+/* Web: Pro is only sold in the iOS app, so the website is the free version (devPro = hidden switch for testing) */
+function devPro(){try{return localStorage.getItem("typoStudio.devPro")==="1"}catch(e){return false}}
 function lockSvg(){return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="10" rx="2.5"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>'}
 function crownSvg(){return '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M3 8.5l4.5 3.5L12 5l4.5 7L21 8.5 19 18H5z"/><rect x="5" y="19.2" width="14" height="2" rx="1"/></svg>'}
 function proLabel(){return `<span class="proTag" aria-label="Pro" title="Pro">${lockSvg()}</span>`}
@@ -2030,7 +2033,6 @@ function openPaywall(reason){
   $("pwReason").textContent=PW_REASON[reason]||"";$("pwReason").classList.toggle("hidden",!PW_REASON[reason]);
   $("pwCount").textContent=`${Math.floor(total/10)*10}+`;
   $("pwFreeInfo").textContent=`Free: ${freeN} designs and the full editor. Pro: everything.`;
-  $("pwSim").checked=simFree();
   renderPlans();$("paywall").classList.remove("hidden");$("paywall").scrollTop=0;renderPwHero();
 }
 function closePaywall(){$("paywall").classList.add("hidden")}
@@ -2038,6 +2040,7 @@ function renderPlans(){
   document.querySelectorAll(".plan").forEach(p=>p.classList.toggle("on",p.dataset.plan===pwPlan));
   const y=PRO.yearly;$("pwYearly").textContent=y.price;$("pwPerMonth").textContent=y.perMonth;$("pwLifetime").textContent=PRO.lifetime.price;$("pwRegular").textContent=PRO.lifetime.regular;
   $("pwCta").textContent=pwPlan==="yearly"?`Start ${y.trialDays}-day free trial`:`Get lifetime – ${PRO.lifetime.price}`;
+  if(!NATIVE){$("pwCta").textContent="Get the app – free on the App Store";$("pwFine").textContent="Pro is sold in the Studio Typo app for iPhone & iPad. Download it for free, then start your 7-day free trial in the app.";return}
   $("pwFine").innerHTML=pwPlan==="yearly"
     ?`${y.trialDays} days free, then ${y.price} per year. The subscription renews automatically unless it is cancelled at least 24 hours before the end of the current period. Payment is charged to your Apple ID account. Manage or cancel any time in Settings › Apple ID › Subscriptions.`
     :`Launch price: one-time purchase of ${PRO.lifetime.price}. After the launch period the lifetime price will be ${PRO.lifetime.regular}. No subscription – unlocks Pro forever on all devices with your Apple ID.`;
@@ -2055,10 +2058,9 @@ document.addEventListener("click",e=>{const b=e.target.closest("[data-pw]");if(b
 $("proBtn").onclick=()=>openPaywall();
 $("pwClose").onclick=closePaywall;
 document.querySelectorAll(".plan").forEach(p=>p.onclick=()=>{pwPlan=p.dataset.plan;renderPlans()});
-$("pwCta").onclick=()=>NATIVE?buyPlan(pwPlan):toast("Purchases will be available in the iOS app");
-$("pwRestore").onclick=()=>NATIVE?restorePurchases():toast("Restore Purchases will be available in the iOS app");
-$("pwSim").onchange=e=>{try{localStorage.setItem("typoStudio.simFree",e.target.checked?"1":"0")}catch(err){}
-  updateProUI();renderLibrary();if(tab==="edit")renderTool();toast(e.target.checked?"Showing the free version":"Pro unlocked")};
+const APP_URL="https://apps.apple.com/app/id6835602280";
+$("pwCta").onclick=()=>NATIVE?buyPlan(pwPlan):window.open(APP_URL,"_blank","noopener");
+$("pwRestore").onclick=()=>NATIVE?restorePurchases():toast("Open the Studio Typo app to restore your purchase");
 function updateProUI(){
   if(window.STORY)try{STORY.onPro()}catch(e){}
   const pro=isPro();$("proBtn").classList.toggle("isPro",pro);$("proBtnLabel").textContent=pro?"PRO":"GET PRO";$("proBtn").setAttribute("aria-label",pro?"Studio Typo Pro is active":"Get Studio Typo Pro");
