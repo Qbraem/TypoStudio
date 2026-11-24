@@ -11,7 +11,7 @@ html.storyOpen .shell{visibility:hidden}
 .sStageCol{position:absolute;inset:0}
 .sCanvasWrap{position:absolute;left:calc(8px + var(--sal));right:calc(8px + var(--sar));top:calc(max(var(--sat),10px) + 58px);bottom:calc(var(--sab) + 10px);display:flex;align-items:center;justify-content:center}
 .sCanvasBox{position:relative;flex:none}
-#sCanvas{display:block;border-radius:18px;touch-action:none;box-shadow:0 0 0 1px rgba(255,255,255,.06),0 20px 60px rgba(0,0,0,.5)}
+#stCanvas{display:block;border-radius:18px;touch-action:none;box-shadow:0 0 0 1px rgba(255,255,255,.06),0 20px 60px rgba(0,0,0,.5)}
 .sDel{position:absolute;width:28px;height:28px;margin:-14px 0 0 -14px;border-radius:50%!important;background:#E5484D!important;border:2px solid #fff!important;display:grid;place-items:center;z-index:3;box-shadow:0 2px 8px rgba(0,0,0,.35)}
 .sDel svg{width:11px;height:11px;stroke:#fff;stroke-width:2.4;stroke-linecap:round;fill:none}
 .sMini{position:absolute;z-index:3;display:flex;gap:2px;padding:4px;border-radius:999px;background:rgba(32,24,19,.66);-webkit-backdrop-filter:blur(22px) saturate(1.6);backdrop-filter:blur(22px) saturate(1.6);border:1px solid rgba(255,255,255,.13);box-shadow:0 10px 28px rgba(0,0,0,.4);white-space:nowrap}
@@ -19,7 +19,7 @@ html.storyOpen .shell{visibility:hidden}
 .sMini button svg{width:16px;height:16px}
 .sMini button.io{width:38px;padding:0!important;justify-content:center}
 .sMini button.on{background:rgba(246,233,215,.16)!important}
-.sEmpty{position:absolute;left:50%;top:58%;transform:translate(-50%,-50%);width:min(78%,300px);padding:22px 18px!important;border-radius:26px;background:rgba(32,24,19,.55)!important;-webkit-backdrop-filter:blur(20px);backdrop-filter:blur(20px);border:1.5px dashed rgba(246,233,215,.45)!important;display:flex;flex-direction:column;align-items:center;gap:6px;text-align:center;z-index:2}
+.sEmpty{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:min(78%,300px);padding:22px 18px!important;border-radius:26px;background:rgba(32,24,19,.55)!important;-webkit-backdrop-filter:blur(20px);backdrop-filter:blur(20px);border:1.5px dashed rgba(246,233,215,.45)!important;display:flex;flex-direction:column;align-items:center;gap:6px;text-align:center;z-index:2}
 .sEmpty .sEmptyIc{width:54px;height:54px;border-radius:50%;background:var(--accent);display:grid;place-items:center;color:#fff;margin-bottom:6px;box-shadow:0 8px 22px rgba(242,107,80,.45)}
 .sEmpty .sEmptyIc svg{width:28px;height:28px}
 .sEmpty b{font-size:17px}.sEmpty small{font-size:12.5px;color:rgba(246,233,215,.75);line-height:1.4}
@@ -31,8 +31,8 @@ html.storyOpen .shell{visibility:hidden}
 .sFlex{flex:1}
 .sBtn{width:42px;height:42px;border-radius:50%!important;display:grid;place-items:center;flex:none}
 .sBtn svg{width:19px;height:19px}.sBtn:disabled{opacity:.45}
-.sSeg{display:flex;padding:3px;border-radius:999px;height:42px;width:156px;flex:none}
-.sSeg button{flex:1;border-radius:999px;font-size:13px!important;font-weight:600!important;color:rgba(246,233,215,.72)!important}
+.sSeg{display:flex;padding:3px;border-radius:999px;height:42px;flex:none}
+.sSeg button{flex:none;padding:0 11px!important;white-space:nowrap;border-radius:999px;font-size:12.5px!important;font-weight:600!important;color:rgba(246,233,215,.72)!important}
 .sSeg button.on{background:var(--text)!important;color:#2a1d12!important;font-weight:700!important}
 .sSave{position:relative;height:42px;padding:0 16px 0 12px!important;border-radius:999px;background:var(--accent)!important;color:#fff!important;font-weight:700!important;font-size:15px!important;display:flex;align-items:center;gap:6px;flex:none;box-shadow:0 6px 18px rgba(242,107,80,.4)}
 .sSave svg{width:18px;height:18px}
@@ -145,4 +145,31 @@ html.storyOpen .shell{visibility:hidden}
   .sTop{position:static}
   .sPanel{position:static;flex:1;max-height:none;min-height:0;background:transparent;-webkit-backdrop-filter:none;backdrop-filter:none;border:0;box-shadow:none;padding:6px 4px}
   .sDock{position:static;flex:none}
+}
+
+/* dock: tools, or Done + the text tools while editing a title */
+.sDockTools,.sDockEdit{display:flex;flex:1;gap:2px;min-width:0}
+.sDockTools[hidden],.sDockEdit[hidden]{display:none!important}
+.sDone{flex:0 0 64px!important;background:var(--accent)!important;color:#fff!important;border-radius:23px}
+.sEdNav{flex:1;min-width:0;display:flex}
+.sEdNav #toolNav{display:flex!important;flex:1;gap:2px;min-width:0;height:auto}
+.sEdNav #toolNav .back{display:none!important}
+.sEdNav #toolNav button{flex:1;min-width:0;min-height:0!important;margin:0!important;border:0;background:none;border-radius:23px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;font-size:10.5px;font-weight:600;color:rgba(246,233,215,.78);padding:0!important}
+.sEdNav #toolNav button svg{width:21px;height:21px}
+.sEdNav #toolNav button.on{background:rgba(246,233,215,.16);color:var(--text);box-shadow:none}
+.sEdit{gap:8px;max-height:min(46vh,380px)}
+.sEdHead{display:flex;align-items:baseline;gap:8px}.sEdHead b{font-size:15px}
+.sEdChips #layerChips{margin:0;flex-wrap:nowrap;overflow-x:auto}
+.sEdBody #toolBody{padding:0}
+.sLib{max-height:min(64vh,560px)}
+.sLib #tab-lib .stickyTop{position:static;background:none;padding:0;margin:0 0 8px}
+.sLib #tab-lib .grid{grid-template-columns:repeat(3,minmax(0,1fr))}
+@media (max-width:430px){.sSaveL{display:none}.sSave{width:42px;padding:0!important;justify-content:center}}
+@media (min-aspect-ratio: 1/1), (min-width: 900px){
+  .sEdNav{display:none}
+  .sEdit,.sLib{max-height:none}
+  .sSaveL{display:inline}
+}
+@media (min-aspect-ratio: 1/1), (min-width: 900px){
+  .sDone{flex:1 1 auto!important;flex-direction:row!important;gap:8px!important;font-size:14px!important}
 }

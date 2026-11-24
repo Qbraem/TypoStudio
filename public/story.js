@@ -48,7 +48,7 @@ const ASPECTS=[["orig","Original"],["4:5","4:5"],["1:1","1:1"],["3:4","3:4"],["9
 const FX=[["none","Original"],["warm","Warm film"],["faded","Faded"],["bw","B&W"],["golden","Golden"],["cool","Cool"]];
 
 /* ---------- document ---------- */
-function blank(){return{v:1,bg:{type:"gradient",grad:0,color:"#3B2416",photo:"copy",blur:22,dim:.18},layers:[],fx:{name:"none",amount:.7,grain:false,vig:false,leak:false}}}
+function blank(){return{v:1,bg:{type:"gradient",grad:0,color:"#3B2416",photo:null,blur:0,dim:0,z:1,ox:0,oy:0},layers:[],fx:{name:"none",amount:.7,grain:false,vig:false,leak:false}}}
 let S=blank();
 const ST={open:false,sel:null,tool:null,hist:[],fut:[],picking:false,editing:null,prevCur:null,pending:null,loaded:false,gesture:false};
 const IMG=new Map(); // key -> {src:canvas|img, w, h}
@@ -86,20 +86,21 @@ async function importFile(file){
   c.toBlob(b=>{if(b)DB.set("img:"+key,b).catch(()=>{})},"image/jpeg",.9);
   return key;
 }
-function pickFile(){return new Promise(res=>{const old=$s("sFileIn");if(old)old.remove();const i=document.createElement("input");i.type="file";i.accept="image/*";i.id="sFileIn";
+function pickFile(){return new Promise(res=>{const old=$s("stFileIn");if(old)old.remove();const i=document.createElement("input");i.type="file";i.accept="image/*";i.id="stFileIn";
   i.style.cssText="position:fixed;left:0;top:0;width:1px;height:1px;opacity:0;pointer-events:none";document.body.appendChild(i);
   i.onchange=()=>{const f=i.files&&i.files[0];i.remove();res(f||null)};i.addEventListener("cancel",()=>{i.remove();res(null)});i.click()})}
 
 /* ---------- layers ---------- */
 function newTitle(d){return{id:uidS(),t:"title",d:clone(d),x:SW/2,y:SH*.2,s:.82,rot:0,hidden:false}}
-function newPhoto(key){const n=S.layers.filter(L=>L.t==="photo").length;return{id:uidS(),t:"photo",key,x:SW/2+(n?((n%2)?90:-90):0),y:SH*.585+(n?50*n:0),w:SW*.6,rot:n?(n%2?5:-5):-3,frame:"polaroid",aspect:"4:5",shadow:true,cap:"",hidden:false}}
+function newPhoto(key){const n=S.layers.filter(L=>L.t==="photo").length;return{id:uidS(),t:"photo",key,x:SW/2+(n?((n%2)?80:-80):0),y:SH*.56+(n?50*n:0),w:SW*.52,rot:n?(n%2?5:-5):-4,frame:"rounded",aspect:"orig",shadow:true,cap:"",hidden:false}}
 const layerById=id=>S.layers.find(L=>L.id===id);
 const selL=()=>ST.sel?layerById(ST.sel):null;
 const firstPhoto=()=>S.layers.find(L=>L.t==="photo"&&!L.hidden&&IMG.has(L.key));
 
 /* ---------- history ---------- */
 function snapS(){ST.hist.push(JSON.stringify(S));if(ST.hist.length>60)ST.hist.shift();ST.fut=[];updTop()}
-function undoS(){if(!ST.hist.length)return;ST.fut.push(JSON.stringify(S));S=JSON.parse(ST.hist.pop());if(ST.sel&&!layerById(ST.sel))ST.sel=null;invalidate();changed(false);renderPanel();toast("Undone")}
+function undoS(){if(ST.editing){const h=hist.pop();if(h){cur=JSON.parse(h);const L=layerById(ST.editing);if(L){L.d=cur;ttCache.delete(L.id)}if(!layer())sel=Math.max(0,cur.layers.length-1);renderLayerChips();renderTool();draw();updTop()}return}
+  if(!ST.hist.length)return;ST.fut.push(JSON.stringify(S));S=JSON.parse(ST.hist.pop());if(ST.sel&&!layerById(ST.sel))ST.sel=null;invalidate();changed(false);renderPanel();toast("Undone")}
 function changed(save=true){if(save)persist();draw();updTop();syncEmpty()}
 
 /* ---------- colour science: CSS-filter matrices, mixed by amount ---------- */
@@ -136,20 +137,25 @@ function boxBlur(c,r){if(r<1)return;const x=c.getContext("2d"),w=c.width,h=c.hei
   for(let k=0;k<3;k++){pass(a,t,true);pass(t,a,false)}x.putImageData(d,0,0)}
 function cover(src,sw,sh,W,H,over=1){const c=document.createElement("canvas");c.width=W;c.height=H;const x=c.getContext("2d");x.imageSmoothingQuality="high";
   const f=Math.max(W/sw,H/sh)*over,dw=sw*f,dh=sh*f;x.drawImage(src,(W-dw)/2,(H-dh)/2,dw,dh);return c}
-const bgCache={key:"",c:null};
-function bgSource(){const b=S.bg;if(b.type!=="photo")return null;if(b.photo==="copy"){const p=firstPhoto();return p?{key:p.key,o:IMG.get(p.key)}:null}const o=IMG.get(b.photo);return o?{key:b.photo,o}:null}
-function bgCanvas(W,H){const src=bgSource();if(!src)return null;const b=S.bg,m=fxMatrix(S.fx.name,S.fx.amount);
-  const key=[src.key,b.blur,S.fx.name,S.fx.amount,W,H].join("|");if(bgCache.key===key)return bgCache.c;
-  const r=b.blur*W/SW;let c;
-  if(r<.8)c=cover(src.o.src,src.o.w,src.o.h,W,H);
-  else{const f=Math.max(1,r/3),w=Math.max(8,Math.round(W/f)),h=Math.max(8,Math.round(H/f));const sm=cover(src.o.src,src.o.w,src.o.h,w,h,1.08);boxBlur(sm,Math.max(1,Math.round(r/f)));
-    c=document.createElement("canvas");c.width=W;c.height=H;const x=c.getContext("2d");x.imageSmoothingQuality="high";x.drawImage(sm,0,0,W,H)}
-  applyMatrix(c,m);bgCache.key=key;bgCache.c=c;return c}
+const bgCache={key:"",c:null},baseCache={key:"",c:null};
+function bgSource(){const b=S.bg;if(b.type!=="photo")return null;if(b.photo==="copy"){const p=firstPhoto();return p?{key:p.key,o:IMG.get(p.key)}:null}const o=b.photo&&IMG.get(b.photo);return o?{key:b.photo,o}:null}
+function bgBase(src){const key=[src.key,S.fx.name,S.fx.amount].join("|");if(baseCache.key===key)return baseCache.c; // the photo with its effect, ≤1800px
+  const o=src.o,f=Math.min(1,1800/Math.max(o.w,o.h)),c=document.createElement("canvas");c.width=Math.round(o.w*f);c.height=Math.round(o.h*f);const x=c.getContext("2d");x.imageSmoothingQuality="high";x.drawImage(o.src,0,0,c.width,c.height);
+  applyMatrix(c,fxMatrix(S.fx.name,S.fx.amount));baseCache.key=key;baseCache.c=c;return c}
+function bgGeom(c,W,H){const b=S.bg,k=W/SW,z=Math.max(1,b.z||1),f=Math.max(W/c.width,H/c.height)*z,dw=c.width*f,dh=c.height*f,mx=(dw-W)/2,my=(dh-H)/2;
+  const ox=clamp((b.ox||0)*k,-mx,mx),oy=clamp((b.oy||0)*k,-my,my);return{x:(W-dw)/2+ox,y:(H-dh)/2+oy,w:dw,h:dh}}
+function clampBg(){const src=bgSource();if(!src)return;const c=bgBase(src),g=bgGeom(c,SW,SH);S.bg.ox=g.x+g.w/2-SW/2;S.bg.oy=g.y+g.h/2-SH/2}
+function drawBgPhoto(ctx,W,H){const src=bgSource();if(!src)return false;const c=bgBase(src),g=bgGeom(c,W,H),b=S.bg,r=(b.blur||0)*W/SW;
+  if(r<.8){ctx.imageSmoothingQuality="high";ctx.drawImage(c,g.x,g.y,g.w,g.h);return true}
+  const key=[baseCache.key,b.blur,W,H,Math.round(g.x),Math.round(g.y),Math.round(g.w)].join("|");
+  if(bgCache.key!==key){const f=Math.max(1,r/3),w=Math.max(8,Math.round(W/f)),h=Math.max(8,Math.round(H/f)),sm=document.createElement("canvas");sm.width=w;sm.height=h;
+    const x=sm.getContext("2d");x.imageSmoothingQuality="high";const m=1.06;x.drawImage(c,(g.x-(g.w*(m-1))/2)/f,(g.y-(g.h*(m-1))/2)/f,g.w*m/f,g.h*m/f);boxBlur(sm,Math.max(1,Math.round(r/f)));bgCache.key=key;bgCache.c=sm}
+  ctx.imageSmoothingQuality="high";ctx.drawImage(bgCache.c,0,0,W,H);return true}
 const phCache=new Map(); // photo key|fx|size -> filtered canvas
 function photoCanvas(L,iw,ih){const o=IMG.get(L.key);if(!o)return null;const m=fxMatrix(S.fx.name,S.fx.amount);
   const W=Math.max(8,Math.round(iw)),H=Math.max(8,Math.round(ih)),bw=Math.ceil(W/64)*64;const key=[L.key,L.aspect,S.fx.name,S.fx.amount,bw].join("|");
   let c=phCache.get(key);if(c)return c;const Hb=Math.round(bw*H/W);c=cover(o.src,o.w,o.h,bw,Hb);applyMatrix(c,m);if(phCache.size>24)phCache.clear();phCache.set(key,c);return c}
-function invalidate(){bgCache.key="";phCache.clear();ttCache.clear()}
+function invalidate(){bgCache.key="";baseCache.key="";phCache.clear();ttCache.clear()}
 
 /* ---------- title bitmaps (drawLayers draws with destination-out for cut-outs/texture, so each title gets its own canvas) ---------- */
 const ttCache=new Map();
@@ -183,8 +189,8 @@ function rrect(x,X,Y,W,H,r){x.beginPath();x.moveTo(X+r,Y);x.arcTo(X+W,Y,X+W,Y+H,
 function render(ctx,W,H,o={}){
   const k=W/SW,b=S.bg;ctx.save();ctx.clearRect(0,0,W,H);
   // background
-  const bc=b.type==="photo"?bgCanvas(W,H):null;
-  if(bc)ctx.drawImage(bc,0,0,W,H);
+  const bc=b.type==="photo"?drawBgPhoto(ctx,W,H):false;
+  if(bc){}
   else if(b.type==="color"){ctx.fillStyle=b.color;ctx.fillRect(0,0,W,H)}
   else{const g=GRADS[b.grad]||GRADS[0],lg=ctx.createLinearGradient(0,0,W*.35,H);lg.addColorStop(0,g[0]);lg.addColorStop(1,g[1]);ctx.fillStyle=lg;ctx.fillRect(0,0,W,H)}
   if(b.dim>0&&(bc||b.type!=="color")){ctx.fillStyle=`rgba(0,0,0,${b.dim})`;ctx.fillRect(0,0,W,H)}
@@ -217,102 +223,112 @@ function drawTitle(x,L,k){fontsFor(L);const px=L.s*SW*k/FRAME,t=titleBitmap(L,px
 
 /* ---------- on-screen canvas ---------- */
 let rq=false,guide=false;
-function draw(){if(rq||!ST.open)return;rq=true;requestAnimationFrame(()=>{rq=false;const cv=$s("sCanvas"),wrap=$s("sCanvasWrap");if(!cv||!wrap)return;
+function draw(){if(rq||!ST.open)return;rq=true;requestAnimationFrame(()=>{rq=false;const cv=$s("stCanvas"),wrap=$s("stCanvasWrap");if(!cv||!wrap)return;
   const r=wrap.getBoundingClientRect();if(r.width<10||r.height<10)return;
   let cw=r.width,ch=cw*16/9;if(ch>r.height){ch=r.height;cw=ch*9/16}cw=Math.floor(cw);ch=Math.floor(ch);
   cv.style.width=cw+"px";cv.style.height=ch+"px";
   const dpr=Math.min(2,window.devicePixelRatio||1),W=Math.round(cw*dpr),H=Math.round(ch*dpr);if(cv.width!==W||cv.height!==H){cv.width=W;cv.height=H}
-  const box=$s("sCanvasBox");box.style.width=cw+"px";box.style.height=ch+"px";
+  const box=$s("stCanvasBox");box.style.width=cw+"px";box.style.height=ch+"px";
   render(cv.getContext("2d"),W,H,{sel:true,dpr,guideX:guide,safe:ST.tool===null&&!ST.gesture&&!ST.sel});
   placeChrome(cw,ch,dpr)})}
 const fontReady=new Set();
 function fontsFor(L){const k=L.id+"|"+JSON.stringify(L.d);if(fontReady.has(k))return true;
   ensureFonts(L.d).then(()=>{if(fontReady.has(k))return;fontReady.add(k);ttCache.delete(L.id);draw()}).catch(()=>{});return false}
-function placeChrome(cw,ch,dpr){const L=selL(),del=$s("sDel"),mini=$s("sMini");if(!del)return;
-  if(!L||L.hidden){del.hidden=true;mini.hidden=true;return}
+function placeChrome(cw,ch,dpr){const L=selL(),del=$s("stDel"),mini=$s("stMini");if(!del)return;updTop();
+  if(!L||L.hidden||ST.editing||ST.picking){del.hidden=true;mini.hidden=true;return}
   const k=cw/SW,B=bounds(L,k*dpr),a=(L.rot||0)*Math.PI/180,co=Math.cos(a),si=Math.sin(a),p=10/k;
   const cx=B.dx+B.hw+p,cy=B.dy-B.hh-p;const X=(L.x+cx*co-cy*si)*k,Y=(L.y+cx*si+cy*co)*k;
   del.hidden=false;del.style.left=clamp(X,14,cw-14)+"px";del.style.top=clamp(Y,14,ch-14)+"px";
   // floating mini toolbar: just above the dock (iPhone / cover screen) or at the top of the canvas (Duo open)
   renderMini(L);const panelOpen=!!ST.tool&&!wide();mini.hidden=ST.gesture||panelOpen;if(mini.hidden)return;
-  const mh=mini.offsetHeight||46,mw=mini.offsetWidth||220,box=$s("sCanvasBox").getBoundingClientRect();
-  let my=10;if(!wide()){const d=$s("sDock").getBoundingClientRect();my=Math.min(ch-mh-10,d.top-box.top-mh-12)}
+  const mh=mini.offsetHeight||46,mw=mini.offsetWidth||220,box=$s("stCanvasBox").getBoundingClientRect();
+  let my=10;if(!wide()){const d=$s("stDock").getBoundingClientRect();my=Math.min(ch-mh-10,d.top-box.top-mh-12)}
   mini.style.top=my+"px";mini.style.left=clamp((cw-mw)/2,6,cw-mw-6)+"px"}
 
 /* ---------- hit test & gestures ---------- */
-function hit(px,py){const cv=$s("sCanvas"),k=cv.clientWidth/SW;
+function hit(px,py){const cv=$s("stCanvas"),k=cv.clientWidth/SW;
   for(let i=S.layers.length-1;i>=0;i--){const L=S.layers[i];if(L.hidden)continue;const B=bounds(L,k*Math.min(2,window.devicePixelRatio||1)),a=-(L.rot||0)*Math.PI/180,dx=px-L.x,dy=py-L.y;
     const lx=dx*Math.cos(a)-dy*Math.sin(a)-B.dx,ly=dx*Math.sin(a)+dy*Math.cos(a)-B.dy,pad=18;
     if(Math.abs(lx)<=B.hw+pad&&Math.abs(ly)<=B.hh+pad)return L}return null}
-function gestures(){const cv=$s("sCanvas"),pts=new Map();let g=null,lastTap={t:0,id:null};
+function gestures(){const cv=$s("stCanvas"),pts=new Map();let g=null,lastTap={t:0,id:null};
   const unit=e=>{const r=cv.getBoundingClientRect(),k=SW/r.width;return{x:(e.clientX-r.left)*k,y:(e.clientY-r.top)*k}};
   const two=()=>{const [a,b]=[...pts.values()];return{d:Math.hypot(b.x-a.x,b.y-a.y),a:Math.atan2(b.y-a.y,b.x-a.x),cx:(a.x+b.x)/2,cy:(a.y+b.y)/2}};
   cv.addEventListener("pointerdown",e=>{e.preventDefault();cv.setPointerCapture&&cv.setPointerCapture(e.pointerId);const u=unit(e);pts.set(e.pointerId,u);
     if(pts.size===1){const L=hit(u.x,u.y);
-      if(!L){if(ST.sel){ST.sel=null;renderPanel();draw()}g=null;return}
+      if(ST.editing&&(!L||L.id!==ST.editing)){finishEdit();g=null;return}
+      if(!L){const had=!!ST.sel;if(had){ST.sel=null;renderPanel();draw()}
+        g=bgSource()&&!ST.editing?{mode:"bg",sx:u.x,sy:u.y,ox:S.bg.ox||0,oy:S.bg.oy||0,snap:JSON.stringify(S),moved:false}:null;return}
       const now=Date.now();if(L.t==="title"&&lastTap.id===L.id&&now-lastTap.t<320){lastTap={t:0,id:null};editTitle(L.id);return}lastTap={t:now,id:L.id};
       if(ST.sel!==L.id){ST.sel=L.id;renderPanel()}g={mode:"drag",L,sx:u.x,sy:u.y,ox:L.x,oy:L.y,snap:JSON.stringify(S),moved:false};ST.gesture=false;draw()}
-    else if(pts.size===2){const L=selL()||(g&&g.L);if(!L)return;const t=two();g={mode:"pinch",L,d0:t.d,a0:t.a,cx:t.cx,cy:t.cy,ox:L.x,oy:L.y,w0:L.w,s0:L.s,r0:L.rot||0,snap:g?g.snap:JSON.stringify(S),moved:true};ST.gesture=true}});
+    else if(pts.size===2){if((g&&g.mode==="bg")||(!selL()&&bgSource()&&!ST.editing)){const t=two();g={mode:"bgpinch",d0:t.d,cx:t.cx,cy:t.cy,z0:S.bg.z||1,ox:S.bg.ox||0,oy:S.bg.oy||0,snap:g?g.snap:JSON.stringify(S),moved:true};ST.gesture=true;return}
+      const L=selL()||(g&&g.L);if(!L)return;const t=two();g={mode:"pinch",L,d0:t.d,a0:t.a,cx:t.cx,cy:t.cy,ox:L.x,oy:L.y,w0:L.w,s0:L.s,r0:L.rot||0,snap:g?g.snap:JSON.stringify(S),moved:true};ST.gesture=true}});
   cv.addEventListener("pointermove",e=>{if(!pts.has(e.pointerId))return;const u=unit(e);pts.set(e.pointerId,u);if(!g)return;
+    if(g.mode==="bg"&&pts.size===1){const dx=u.x-g.sx,dy=u.y-g.sy;if(!g.moved&&Math.hypot(dx,dy)<6)return;g.moved=true;ST.gesture=true;S.bg.ox=g.ox+dx;S.bg.oy=g.oy+dy;draw();return}
+    if(g.mode==="bgpinch"&&pts.size===2){const t=two();S.bg.z=clamp(g.z0*t.d/g.d0,1,5);S.bg.ox=g.ox+(t.cx-g.cx);S.bg.oy=g.oy+(t.cy-g.cy);draw();return}
     if(g.mode==="drag"&&pts.size===1){const dx=u.x-g.sx,dy=u.y-g.sy;if(!g.moved&&Math.hypot(dx,dy)<6)return;g.moved=true;ST.gesture=true;let nx=g.ox+dx;guide=Math.abs(nx-SW/2)<14;if(guide)nx=SW/2;g.L.x=clamp(nx,-SW*.3,SW*1.3);g.L.y=clamp(g.oy+dy,-SH*.2,SH*1.2);draw()}
     else if(g.mode==="pinch"&&pts.size===2){const t=two(),f=clamp(t.d/g.d0,.15,8);
       if(g.L.t==="photo")g.L.w=clamp(g.w0*f,SW*.12,SW*2.2);else g.L.s=clamp(g.s0*f,.12,3.2);
       let r=g.r0+(t.a-g.a0)*180/Math.PI;r=((r+180)%360+360)%360-180;for(const s of[0,90,-90,180,-180])if(Math.abs(r-s)<4)r=s;g.L.rot=r;
       g.L.x=g.ox+(t.cx-g.cx);g.L.y=g.oy+(t.cy-g.cy);draw()}});
-  const end=e=>{pts.delete(e.pointerId);if(pts.size===0){if(g&&g.moved){ST.hist.push(g.snap);if(ST.hist.length>60)ST.hist.shift();ST.fut=[];ST.gesture=false;guide=false;changed();
+  const end=e=>{pts.delete(e.pointerId);if(pts.size===0){if(g&&g.moved){if(g.mode==="bg"||g.mode==="bgpinch")clampBg();ST.hist.push(g.snap);if(ST.hist.length>60)ST.hist.shift();ST.fut=[];ST.gesture=false;guide=false;changed();
       if(ST.tool)renderPanel()}g=null;ST.gesture=false;guide=false;draw()}
+    else if(pts.size===1&&g&&g.mode==="bgpinch"){const [u]=[...pts.values()];g={mode:"bg",sx:u.x,sy:u.y,ox:S.bg.ox,oy:S.bg.oy,snap:g.snap,moved:true}}
     else if(pts.size===1&&g&&g.mode==="pinch"){const [u]=[...pts.values()];g={mode:"drag",L:g.L,sx:u.x,sy:u.y,ox:g.L.x,oy:g.L.y,snap:g.snap,moved:true}}};
   cv.addEventListener("pointerup",end);cv.addEventListener("pointercancel",end);
-  cv.addEventListener("wheel",e=>{const L=selL();if(!L)return;e.preventDefault();const f=Math.exp(-e.deltaY*.0015);if(L.t==="photo")L.w=clamp(L.w*f,SW*.12,SW*2.2);else L.s=clamp(L.s*f,.12,3.2);draw();clearTimeout(ST.wt);ST.wt=setTimeout(()=>changed(),300)},{passive:false})}
+  cv.addEventListener("wheel",e=>{const L=selL();if(!L){if(!bgSource())return;e.preventDefault();S.bg.z=clamp((S.bg.z||1)*Math.exp(-e.deltaY*.0015),1,5);draw();clearTimeout(ST.wt);ST.wt=setTimeout(()=>{clampBg();changed()},300);return}e.preventDefault();const f=Math.exp(-e.deltaY*.0015);if(L.t==="photo")L.w=clamp(L.w*f,SW*.12,SW*2.2);else L.s=clamp(L.s*f,.12,3.2);draw();clearTimeout(ST.wt);ST.wt=setTimeout(()=>changed(),300)},{passive:false})}
 
 /* ---------- UI ---------- */
 function build(){if($s("storyEd"))return;
   const el=document.createElement("div");el.className="storyEd hidden";el.id="storyEd";el.setAttribute("role","dialog");el.setAttribute("aria-label","Story editor");
   el.innerHTML=`
-  <div class="sStageCol"><div class="sCanvasWrap" id="sCanvasWrap"><div class="sCanvasBox" id="sCanvasBox"><canvas id="sCanvas" aria-label="Your story"></canvas>
-    <button class="sDel" id="sDel" hidden aria-label="Delete layer"><svg viewBox="0 0 12 12"><path d="M2 2l8 8M10 2l-8 8"/></svg></button>
-    <div class="sMini" id="sMini" hidden role="toolbar" aria-label="Layer tools"></div>
-    <button class="sEmpty" id="sEmpty" hidden><span class="sEmptyIc">${svg("photo",1.7)}</span><b>Add a photo</b><small>Your photo becomes the story, blurred behind and framed in front</small></button>
+  <div class="sStageCol"><div class="sCanvasWrap" id="stCanvasWrap"><div class="sCanvasBox" id="stCanvasBox"><canvas id="stCanvas" aria-label="Your story"></canvas>
+    <button class="sDel" id="stDel" hidden aria-label="Delete layer"><svg viewBox="0 0 12 12"><path d="M2 2l8 8M10 2l-8 8"/></svg></button>
+    <div class="sMini" id="stMini" hidden role="toolbar" aria-label="Layer tools"></div>
+    <button class="sEmpty" id="stEmpty" hidden><span class="sEmptyIc">${svg("photo",1.7)}</span><b>Add your photo</b><small>It fills your whole story, just like in Instagram</small></button>
   </div></div></div>
   <div class="sSide">
     <header class="sTop">
-      <button class="sBtn sGlass" id="sClose" aria-label="Close story">${svg("close",2.2)}</button>
-      <div class="sSeg sGlass" role="tablist" aria-label="Mode"><button role="tab" aria-selected="false" id="sToSticker">Sticker</button><button role="tab" aria-selected="true" class="on">Story</button></div>
+      <div class="sSeg sGlass" role="tablist" aria-label="Mode"><button role="tab" aria-selected="false" id="stToSticker">Typo Templates</button><button role="tab" aria-selected="true" class="on">Story Builder</button></div>
       <span class="sFlex"></span>
-      <button class="sBtn sGlass" id="sUndo" aria-label="Undo" disabled>${svg("undo",2.1)}</button>
-      <button class="sSave" id="sSave" aria-label="Save story">${svg("down",2.2)}<span>Save</span><i class="sLock" id="sLock">${svg("lock",2.6)}</i></button>
+      <button class="sBtn sGlass" id="stUndo" aria-label="Undo" disabled>${svg("undo",2.1)}</button>
+      <button class="sSave" id="stSave" aria-label="Save story">${svg("down",2.2)}<span class="sSaveL">Save</span><i class="sLock" id="stLock">${svg("lock",2.6)}</i></button>
     </header>
-    <section class="sPanel" id="sPanel" hidden></section>
-    <nav class="sDock sGlass" id="sDock" aria-label="Story tools">
-      ${[["bg","Background"],["photo","Photo"],["text","Text"],["fx","Effects"],["layers","Layers"]].map(([k,l])=>`<button data-tool="${k}" aria-pressed="false">${svg(k)}<span>${l}</span></button>`).join("")}
+    <section class="sPanel" id="stPanel" hidden></section>
+    <section class="sPanel sEdit" id="stEdit" hidden aria-label="Edit text"><div class="sEdHead"><b>Edit text</b><span class="sSub">Tap a line to change it</span></div><div class="sEdChips" id="stEdChips"></div><div class="sEdBody" id="stEdBody"></div></section>
+    <section class="sPanel sLib" id="stLib" hidden aria-label="Library"><div class="sHead"><b>Add a design</b><button class="sChip" id="stLibClose">Close</button></div><div id="stLibHost"></div></section>
+    <nav class="sDock sGlass" id="stDock" aria-label="Story tools">
+      <div class="sDockTools">${[["bg","Background"],["photo","Photo"],["text","Text"],["fx","Effects"],["layers","Layers"]].map(([k,l])=>`<button data-tool="${k}" aria-pressed="false">${svg(k)}<span>${l}</span></button>`).join("")}</div>
+      <div class="sDockEdit" id="stDockEdit" hidden><button class="sDone" id="stDone">${svg("check",2.4)}<span>Done</span></button><div class="sEdNav" id="stEdNav"></div></div>
     </nav>
   </div>`;
   document.body.appendChild(el);
-  $s("sClose").onclick=close;$s("sToSticker").onclick=close;$s("sUndo").onclick=undoS;
-  $s("sSave").onclick=()=>exportStory("save");
-  $s("sDock").addEventListener("click",e=>{const b=e.target.closest("button[data-tool]");if(!b)return;hapt();setTool(ST.tool===b.dataset.tool&&!wide()?null:b.dataset.tool)});
-  $s("sDel").addEventListener("click",e=>{e.stopPropagation();const L=selL();if(!L)return;snapS();S.layers=S.layers.filter(x=>x!==L);ST.sel=null;toast("Deleted · tap ↶ to undo");changed();renderPanel()});
-  $s("sEmpty").onclick=addPhoto;
-  $s("sMini").addEventListener("click",e=>{const b=e.target.closest("button[data-a]");if(!b)return;e.stopPropagation();miniAction(b.dataset.a)});
-  $s("sPanel").addEventListener("click",panelClick);$s("sPanel").addEventListener("input",panelInput);$s("sPanel").addEventListener("change",panelChange);
+  $s("stToSticker").onclick=close;$s("stUndo").onclick=undoS;
+  $s("stDone").onclick=()=>{hapt();finishEdit()};$s("stLibClose").onclick=()=>{hapt();stopPick()};
+  $s("stEdNav").addEventListener("click",e=>{const b=e.target.closest("button");if(!b)return;e.stopPropagation();if(b.dataset.gk){hapt();setToolGrp(b.dataset.gk);draw()}});
+  $s("stSave").onclick=()=>exportStory("save");
+  $s("stDock").addEventListener("click",e=>{const b=e.target.closest("button[data-tool]");if(!b)return;hapt();setTool(ST.tool===b.dataset.tool&&!wide()?null:b.dataset.tool)});
+  $s("stDel").addEventListener("click",e=>{e.stopPropagation();const L=selL();if(!L)return;snapS();S.layers=S.layers.filter(x=>x!==L);ST.sel=null;toast("Deleted · tap ↶ to undo");changed();renderPanel()});
+  $s("stEmpty").onclick=addBgPhoto;
+  $s("stMini").addEventListener("click",e=>{const b=e.target.closest("button[data-a]");if(!b)return;e.stopPropagation();miniAction(b.dataset.a)});
+  $s("stPanel").addEventListener("click",panelClick);$s("stPanel").addEventListener("input",panelInput);$s("stPanel").addEventListener("change",panelChange);
   gestures();
-  if(window.ResizeObserver)new ResizeObserver(()=>draw()).observe($s("sCanvasWrap"));
+  if(window.ResizeObserver)new ResizeObserver(()=>draw()).observe($s("stCanvasWrap"));
   WIDE.addEventListener&&WIDE.addEventListener("change",()=>{if(ST.open){if(wide()&&!ST.tool)ST.tool="bg";renderPanel();draw()}});
 }
 const wide=()=>WIDE.matches;
-function updTop(){if(!$s("sUndo"))return;$s("sUndo").disabled=!ST.hist.length;$s("sLock").hidden=canUse()}
-function syncEmpty(){const e=$s("sEmpty");if(e)e.hidden=S.layers.some(L=>L.t==="photo")}
+function updTop(){if(!$s("stUndo"))return;$s("stUndo").disabled=ST.editing?!hist.length:!ST.hist.length;$s("stLock").hidden=canUse()}
+function syncEmpty(){const e=$s("stEmpty");if(e)e.hidden=!!bgSource()||S.layers.some(L=>L.t==="photo")||S.bg.type!=="gradient"||!!ST.editing}
 function setTool(t){ST.tool=t;renderPanel();draw()}
-function renderMini(L){const m=$s("sMini");const key=L.id+L.t+(L.shadow?1:0);if(m.dataset.k===key)return;m.dataset.k=key;
+function renderMini(L){const m=$s("stMini");const key=L.id+L.t+(L.shadow?1:0);if(m.dataset.k===key)return;m.dataset.k=key;
   const b=(a,ic,l,on)=>`<button data-a="${a}"${on?' class="on"':""}>${svg(ic)}<span>${l}</span></button>`;
   const i=(a,ic,l)=>`<button data-a="${a}" class="io" aria-label="${l}">${svg(ic)}</button>`;
   m.innerHTML=L.t==="photo"?b("frame","frame","Frame")+b("crop","crop","Crop")+b("shadow","shadow","Shadow",L.shadow)+i("front","front","Bring to front")+i("back","back","Send to back")
     :b("edit","edit","Edit text")+i("dup","copy","Duplicate")+i("front","front","Bring to front")+i("back","back","Send to back")}
 function miniAction(a){const L=selL();if(!L)return;hapt();
-  if(a==="frame"||a==="crop"){setTool("photo");setTimeout(()=>{const s=$s("sPanel").querySelector(a==="crop"?"[data-sec=aspect]":"[data-sec=frame]");s&&s.scrollIntoView({block:"nearest"})},30);return}
+  if(a==="frame"||a==="crop"){setTool("photo");setTimeout(()=>{const s=$s("stPanel").querySelector(a==="crop"?"[data-sec=aspect]":"[data-sec=frame]");s&&s.scrollIntoView({block:"nearest"})},30);return}
   if(a==="edit"){editTitle(L.id);return}
   snapS();
-  if(a==="shadow"){L.shadow=!L.shadow;$s("sMini").dataset.k=""}
+  if(a==="shadow"){L.shadow=!L.shadow;$s("stMini").dataset.k=""}
   else if(a==="front"){S.layers=S.layers.filter(x=>x!==L);S.layers.push(L)}
   else if(a==="back"){S.layers=S.layers.filter(x=>x!==L);S.layers.unshift(L)}
   else if(a==="dup"){const n=JSON.parse(JSON.stringify(L));n.id=uidS();n.x+=40;n.y+=60;S.layers.push(n);ST.sel=n.id}
@@ -322,30 +338,32 @@ function thumbOf(key){const o=IMG.get(key);if(!o)return"";if(!o.thumb){const c=c
 function row(label,inner,sec){return`<div class="sRow"${sec?` data-sec="${sec}"`:""}>${label?`<div class="sLabel">${label}</div>`:""}${inner}</div>`}
 function chip(l,on,attrs){return`<button class="sChip${on?" on":""}" ${attrs}>${l}</button>`}
 function slider(label,name,v,min,max,step,fmt){return`<label class="sSlide"><span>${label}</span><input type="range" min="${min}" max="${max}" step="${step}" value="${v}" data-k="${name}"><output>${fmt(v)}</output></label>`}
-function renderPanel(){const p=$s("sPanel");if(!p)return;
-  document.querySelectorAll("#sDock button").forEach(b=>{const on=b.dataset.tool===ST.tool;b.classList.toggle("on",on);b.setAttribute("aria-pressed",on)});
+function renderPanel(){const p=$s("stPanel");if(!p)return;
+  const ed=!!ST.editing;$s("stEdit").hidden=!ed;$s("stDockEdit").hidden=!ed;document.querySelector("#storyEd .sDockTools").hidden=ed;$s("stLib").hidden=!ST.picking;syncEmpty();
+  if(ed||ST.picking){p.hidden=true;return}
+  document.querySelectorAll("#stDock button").forEach(b=>{const on=b.dataset.tool===ST.tool;b.classList.toggle("on",on);b.setAttribute("aria-pressed",on)});
   if(!ST.tool){p.hidden=true;return}p.hidden=false;let h="";const t=ST.tool,L=selL();
   if(t==="bg"){const b=S.bg;h+=`<div class="sHead"><b>Background</b><div class="sChips">${chip("Photo",b.type==="photo",'data-bgt="photo"')}${chip("Colour",b.type==="color",'data-bgt="color"')}${chip("Gradient",b.type==="gradient",'data-bgt="gradient"')}</div></div>`;
     if(b.type==="photo"){const fp=firstPhoto();let th="";
       if(fp)th+=`<button class="sThumb${b.photo==="copy"?" on":""}" data-bgp="copy" aria-label="Blurred copy of your photo"><img src="${thumbOf(fp.key)}" alt=""><i>Blur copy</i></button>`;
-      [...new Set(S.layers.filter(x=>x.t==="photo").map(x=>x.key))].filter(k=>IMG.has(k)).forEach(k=>{th+=`<button class="sThumb${b.photo===k?" on":""}" data-bgp="${k}"><img src="${thumbOf(k)}" alt=""></button>`});
+      [...new Set([S.bg.photo,...S.layers.filter(x=>x.t==="photo").map(x=>x.key)])].filter(k=>k&&k!=="copy"&&!k.startsWith("b:")&&IMG.has(k)).forEach(k=>{th+=`<button class="sThumb${b.photo===k?" on":""}" data-bgp="${k}"><img src="${thumbOf(k)}" alt=""></button>`});
       BUNDLED.forEach(n=>{th+=`<button class="sThumb${b.photo==="b:"+n?" on":""}" data-bgp="b:${n}"><img src="/img/th-${n}.jpg?v=3" alt=""></button>`});
-      th+=`<button class="sThumb add" data-act="bgUpload" aria-label="Upload a background">${svg("plus",2)}</button>`;
+      th=`<button class="sThumb add" data-act="bgUpload" aria-label="Upload your photo">${svg("plus",2)}</button>`+th;
       h+=row("",`<div class="sStrip">${th}</div>`)+slider("Blur","blur",b.blur,0,40,1,v=>v)+slider("Dim","dim",Math.round(b.dim*100),0,70,1,v=>v+"%")}
     else if(b.type==="color"){h+=row("",`<div class="sSw">${COLORS.map(c=>`<button class="sDot${b.color===c?" on":""}" data-col="${c}" style="background:${c}" aria-label="${c}"></button>`).join("")}<label class="sDot pick" aria-label="Pick a colour"><input type="color" value="${b.color}" data-k="color"></label></div>`)}
     else{h+=row("",`<div class="sSw">${GRADS.map((g,i)=>`<button class="sDot gr${b.grad===i?" on":""}" data-grad="${i}" style="background:linear-gradient(160deg,${g[0]},${g[1]})" aria-label="Gradient ${i+1}"></button>`).join("")}</div>`)+slider("Dim","dim",Math.round(b.dim*100),0,70,1,v=>v+"%")}}
   else if(t==="photo"){
-    if(L&&L.t==="photo"){h+=`<div class="sHead"><b>Photo</b><div class="sChips">${chip(svg("swap")+"Replace",false,'data-act="replace"')}${chip(svg("trash")+"Delete",false,'data-act="del" class="warn"')}</div></div>`;
+    if(L&&L.t==="photo"){h+=`<div class="sHead"><b>Photo sticker</b><div class="sChips">${chip(svg("swap")+"Replace",false,'data-act="replace"')}${chip(svg("trash")+"Delete",false,'data-act="del" class="warn"')}</div></div>`;
       h+=row("Frame",`<div class="sFrames">${FRAMES.map(([v,l])=>`<button class="sFrame f-${v}${L.frame===v?" on":""}" data-frame="${v}"><span><img src="${thumbOf(L.key)}" alt=""></span>${l}</button>`).join("")}</div>`,"frame");
       h+=row("Crop",`<div class="sChips wrap">${ASPECTS.map(([v,l])=>chip(l,(L.aspect||"orig")===v,`data-asp="${v}"`)).join("")}</div>`,"aspect");
       h+=`<div class="sRow sTogRow"><span>${svg("shadow")}Shadow</span><button class="sTog${L.shadow?" on":""}" role="switch" aria-checked="${L.shadow}" data-act="shadow" aria-label="Shadow"><i></i></button></div>`;
       if(L.frame==="polaroid")h+=row("Caption",`<input class="sInp" maxlength="40" placeholder="Write on the polaroid…" value="${(L.cap||"").replace(/"/g,"&quot;")}" data-k="cap">`)}
-    else{const ph=S.layers.filter(x=>x.t==="photo");h+=`<div class="sHead"><b>Photos</b></div>`;
-      h+=`<div class="sStrip">${ph.map(x=>`<button class="sThumb" data-selp="${x.id}"><img src="${thumbOf(x.key)}" alt=""></button>`).join("")}<button class="sThumb add big" data-act="addPhoto">${svg("plus",2)}<i>Add photo</i></button></div>`;
-      if(ph.length)h+=`<p class="sHint">Tap a photo on your story to frame, crop or move it. Pinch to resize, twist to rotate.</p>`}}
+    else{const ph=S.layers.filter(x=>x.t==="photo");h+=`<div class="sHead"><b>Photo stickers</b></div>`;
+      h+=`<div class="sStrip">${ph.map(x=>`<button class="sThumb" data-selp="${x.id}"><img src="${thumbOf(x.key)}" alt=""></button>`).join("")}<button class="sThumb add big" data-act="addPhoto">${svg("plus",2)}<i>Photo sticker</i></button></div>`;
+      h+=`<p class="sHint">${ph.length?"Tap a photo sticker on your story to frame, crop or move it. Pinch to resize, twist to rotate.":"Add an extra photo on top of your story, like a sticker. Your main photo is set under Background."}</p>`}}
   else if(t==="text"){h+=`<div class="sHead"><b>Text</b></div>`;
     if(L&&L.t==="title")h+=`<div class="sBig"><button class="sBigBtn pri" data-act="editT">${svg("edit")}<span><b>Edit this text</b><small>Change words, fonts and colours</small></span></button><button class="sBigBtn" data-act="dupT">${svg("copy")}<span><b>Duplicate</b><small>Use it twice</small></span></button></div>`;
-    h+=`<div class="sBig"><button class="sBigBtn" data-act="addCur"><span class="sCurTh" id="sCurTh"></span><span><b>Add current design</b><small>${(cur.name||"Your design").replace(/</g,"&lt;")}</small></span></button><button class="sBigBtn" data-act="pickLib">${svg("lib")}<span><b>Choose from Library</b><small>230+ designs</small></span></button></div>`;
+    h+=`<div class="sBig"><button class="sBigBtn" data-act="addCur"><span class="sCurTh" id="stCurTh"></span><span><b>Add current design</b><small>${(cur.name||"Your design").replace(/</g,"&lt;")}</small></span></button><button class="sBigBtn" data-act="pickLib">${svg("lib")}<span><b>Choose from Library</b><small>230+ designs</small></span></button></div>`;
     h+=`<p class="sHint">Tip: double-tap a title on your story to edit its text.</p>`}
   else if(t==="fx"){const f=S.fx,src=firstPhoto()||bgSource()&&{key:bgSource().key};
     h+=`<div class="sHead"><b>Effects</b><span class="sSub">On your photos &amp; background</span></div>`;
@@ -362,18 +380,18 @@ function renderPanel(){const p=$s("sPanel");if(!p)return;
     h+=`</div><button class="sReset" data-act="reset">Start a new story</button>`;p.innerHTML=h;layerThumbs();return}
   p.innerHTML=h;if(t==="text")curThumb()}
 function firstText(d){const l=(d.layers||[]).find(x=>x.text);return l?l.text:""}
-function curThumb(){const el=$s("sCurTh");if(!el)return;ensureFonts(cur).then(()=>{try{const c=drawExport(cur,.06);el.innerHTML="";el.appendChild(c)}catch(e){}})}
-function layerThumbs(){document.querySelectorAll("#sPanel canvas[data-tth]").forEach(c=>{const L=layerById(c.dataset.tth);if(!L)return;ensureFonts(L.d).then(()=>{try{const e=drawExport(L.d,.05),x=c.getContext("2d"),f=Math.min(88/e.width,88/e.height);x.clearRect(0,0,88,88);x.drawImage(e,(88-e.width*f)/2,(88-e.height*f)/2,e.width*f,e.height*f)}catch(err){}})})}
-function fxPreviews(key){const o=key&&IMG.get(key);document.querySelectorAll("#sPanel canvas[data-fxprev]").forEach(c=>{const x=c.getContext("2d");
+function curThumb(){const el=$s("stCurTh");if(!el)return;ensureFonts(cur).then(()=>{try{const c=drawExport(cur,.06);el.innerHTML="";el.appendChild(c)}catch(e){}})}
+function layerThumbs(){document.querySelectorAll("#stPanel canvas[data-tth]").forEach(c=>{const L=layerById(c.dataset.tth);if(!L)return;ensureFonts(L.d).then(()=>{try{const e=drawExport(L.d,.05),x=c.getContext("2d"),f=Math.min(88/e.width,88/e.height);x.clearRect(0,0,88,88);x.drawImage(e,(88-e.width*f)/2,(88-e.height*f)/2,e.width*f,e.height*f)}catch(err){}})})}
+function fxPreviews(key){const o=key&&IMG.get(key);document.querySelectorAll("#stPanel canvas[data-fxprev]").forEach(c=>{const x=c.getContext("2d");
   if(o){const cv=cover(o.src,o.w,o.h,96,128);applyMatrix(cv,fxMatrix(c.dataset.fxprev,c.dataset.fxprev==="none"?0:.85));x.drawImage(cv,0,0)}
   else{const g=x.createLinearGradient(0,0,96,128);g.addColorStop(0,"#E9B77C");g.addColorStop(1,"#3B2416");x.fillStyle=g;x.fillRect(0,0,96,128);const m=fxMatrix(c.dataset.fxprev,.85);if(m)applyMatrix(c,m)}})}
 
 async function panelClick(e){const b=e.target.closest("button,[data-lay]");if(!b)return;const L=selL(),d=b.dataset;hapt();
-  if(d.bgt){snapS();S.bg.type=d.bgt;if(d.bgt==="photo"&&!bgSource()){S.bg.photo=firstPhoto()?"copy":"b:golden";await ensureImg(S.bg.photo==="copy"?firstPhoto().key:S.bg.photo).catch(()=>{})}changed();renderPanel();return}
-  if(d.bgp){snapS();S.bg.photo=d.bgp;if(d.bgp!=="copy")await ensureImg(d.bgp).catch(()=>toast("Couldn't load that photo"));changed();renderPanel();return}
+  if(d.bgt){snapS();S.bg.type=d.bgt;if(d.bgt==="photo"&&!bgSource()){if(firstPhoto())S.bg.photo="copy";else{renderPanel();changed();return addBgPhoto()}}changed();renderPanel();return}
+  if(d.bgp){snapS();S.bg.photo=d.bgp;S.bg.z=1;S.bg.ox=0;S.bg.oy=0;if(d.bgp!=="copy")await ensureImg(d.bgp).catch(()=>toast("Couldn't load that photo"));changed();renderPanel();return}
   if(d.col){snapS();S.bg.color=d.col;changed();renderPanel();return}
   if(d.grad!=null){snapS();S.bg.grad=+d.grad;changed();renderPanel();return}
-  if(d.frame&&L){snapS();L.frame=d.frame;$s("sMini").dataset.k="";changed();renderPanel();return}
+  if(d.frame&&L){snapS();L.frame=d.frame;$s("stMini").dataset.k="";changed();renderPanel();return}
   if(d.asp&&L){snapS();L.aspect=d.asp;changed();renderPanel();return}
   if(d.selp){ST.sel=d.selp;renderPanel();draw();return}
   if(d.fx){snapS();S.fx.name=d.fx;changed();renderPanel();return}
@@ -383,10 +401,10 @@ async function panelClick(e){const b=e.target.closest("button,[data-lay]");if(!b
   if(d.lay){ST.sel=d.lay;renderPanel();draw();return}
   switch(d.act){
     case"addPhoto":return addPhoto();
-    case"bgUpload":{const f=await pickFile();if(!f)return;const k=await importFile(f);snapS();S.bg.type="photo";S.bg.photo=k;changed();renderPanel();return}
+    case"bgUpload":return addBgPhoto();
     case"replace":{if(!L)return;const f=await pickFile();if(!f)return;const k=await importFile(f);snapS();L.key=k;invalidate();changed();renderPanel();return}
     case"del":{if(!L)return;snapS();S.layers=S.layers.filter(x=>x!==L);ST.sel=null;changed();renderPanel();return}
-    case"shadow":{if(!L)return;snapS();L.shadow=!L.shadow;$s("sMini").dataset.k="";changed();renderPanel();return}
+    case"shadow":{if(!L)return;snapS();L.shadow=!L.shadow;$s("stMini").dataset.k="";changed();renderPanel();return}
     case"editT":return L&&editTitle(L.id);
     case"dupT":{if(!L)return;snapS();const n=JSON.parse(JSON.stringify(L));n.id=uidS();n.y+=160;S.layers.push(n);ST.sel=n.id;changed();renderPanel();return}
     case"addCur":{snapS();const n=newTitle(cur);n.y=S.layers.some(x=>x.t==="title")?SH*.78:SH*.2;S.layers.push(n);ST.sel=n.id;if(!wide())ST.tool=null;changed();renderPanel();toast("Added to your story");return}
@@ -402,25 +420,34 @@ function panelInput(e){const t=e.target,k=t.dataset.k;if(!k)return;if(!inpSnap)i
 function panelChange(e){if(e.target.dataset.k)commitInput()}
 function commitInput(){clearTimeout(inpT);if(inpSnap){ST.hist.push(inpSnap);if(ST.hist.length>60)ST.hist.shift();ST.fut=[];inpSnap=null;changed()}}
 
+async function addBgPhoto(){const f=await pickFile();if(!f)return;let k;try{k=await importFile(f)}catch(e){toast("Couldn't open that photo");return}
+  snapS();Object.assign(S.bg,{type:"photo",photo:k,blur:0,dim:0,z:1,ox:0,oy:0});invalidate();changed();renderPanel();hapt("MEDIUM")}
 async function addPhoto(){const f=await pickFile();if(!f)return;let k;try{k=await importFile(f)}catch(e){toast("Couldn't open that photo");return}
-  snapS();const first=!S.layers.some(x=>x.t==="photo");const L=newPhoto(k);
-  // keep titles on top: insert the photo below the first title
+  snapS();const L=newPhoto(k);
+  // photo stickers go under the titles
   const ti=S.layers.findIndex(x=>x.t==="title");if(ti>=0)S.layers.splice(ti,0,L);else S.layers.push(L);
-  if(first&&S.bg.type!=="color"){S.bg.type="photo";S.bg.photo="copy"}
   ST.sel=L.id;invalidate();changed();if(ST.tool==="photo"||wide())setTool("photo");else renderPanel();hapt("MEDIUM")}
 
-/* ---------- titles ⇄ the sticker editor ---------- */
-function startPick(){ST.picking=true;hide();if(typeof showTab==="function")showTab("lib");banner("Pick a design","Cancel",()=>{ST.picking=false;unbanner();show()})}
-function addPicked(d){if(!canUse()&&d.pro){openPaywall("save");return true}ST.picking=false;unbanner();snapS();const n=newTitle(d);n.y=S.layers.some(x=>x.t==="title")?SH*.78:SH*.2;S.layers.push(n);ST.sel=n.id;if(!wide())ST.tool=null;show();changed();renderPanel();toast("Added to your story");return true}
-function editTitle(id){const L=layerById(id);if(!L)return;ST.editing=id;ST.prevCur=clone(cur);ST.prevSource=typeof curSourceId!=="undefined"?curSourceId:null;
-  hide();cur=clone(L.d);try{curSourceId="story:"+id}catch(e){}if(typeof sel!=="undefined"){try{sel=firstTextLayer()}catch(e){}}
-  if(typeof hist!=="undefined")try{hist=[];updUndo()}catch(e){}
-  showTab("edit");schedulePreview();banner("Story title","Done",finishEdit,true)}
-function finishEdit(){const L=layerById(ST.editing);if(L){snapS();L.d=clone(cur);ttCache.delete(L.id)}ST.editing=null;
-  if(ST.prevCur){cur=ST.prevCur;try{curSourceId=ST.prevSource}catch(e){}ST.prevCur=null;try{hist=[];updUndo()}catch(e){}schedulePreview()}
-  unbanner();show();changed();renderPanel()}
-function banner(txt,btn,fn,pri){unbanner();const b=document.createElement("div");b.className="sBanner";b.id="sBanner";b.innerHTML=`<span>${txt}</span><button class="${pri?"pri":""}">${pri?svg("check",2.4):""}${btn}</button>`;b.querySelector("button").onclick=e=>{e.stopPropagation();hapt();fn()};document.body.appendChild(b)}
-function unbanner(){const b=$s("sBanner");if(b)b.remove()}
+/* ---------- titles: edit them right here, with the editor's own tools moved into the story ---------- */
+const HOME=new Map();
+function mount(id,host){const n=$(id);if(!n||!host)return;if(!HOME.has(id))HOME.set(id,{p:n.parentNode,nx:n.nextSibling,hid:n.classList.contains("hidden")});n.classList.remove("hidden");host.appendChild(n)}
+function unmount(id){const h=HOME.get(id),n=$(id);if(!h||!n)return;h.p.insertBefore(n,h.nx&&h.nx.parentNode===h.p?h.nx:null);if(h.hid)n.classList.add("hidden");HOME.delete(id)}
+function startPick(){stopEdit();ST.picking=true;ST.tool=null;mount("tab-lib",$s("stLibHost"));if(typeof renderLibrary==="function")renderLibrary();$s("stLib").hidden=false;$s("stPanel").hidden=true;renderPanel();draw()}
+function stopPick(){if(!ST.picking)return;ST.picking=false;unmount("tab-lib");$s("stLib").hidden=true;renderPanel();draw()}
+function addPicked(d){if(!canUse()&&d.pro){openPaywall("save");return true}stopPick();snapS();const n=newTitle(d);n.y=S.layers.some(x=>x.t==="title")?SH*.78:SH*.2;S.layers.push(n);ST.sel=n.id;if(!wide())ST.tool=null;changed();renderPanel();toast("Added to your story");return true}
+function editTitle(id){const L=layerById(id);if(!L)return;stopPick();if(ST.editing)finishEdit();snapS();
+  ST.editing=id;ST.sel=id;ST.ed={cur,sel,tab,hist,toolGrp,selShown};
+  cur=L.d;sel=firstTextLayer();selShown=true;hist=[];tab="edit";toolGrp=null;
+  mount("layerChips",$s("stEdChips"));mount("toolBody",$s("stEdBody"));mount("toolNav",$s("stEdNav"));
+  renderLayerChips();renderTool();ST.tool=null;renderPanel();draw()}
+function finishEdit(){if(!ST.editing)return;const L=layerById(ST.editing);if(L){L.d=cur;ttCache.delete(L.id)}
+  unmount("layerChips");unmount("toolBody");unmount("toolNav");
+  const e=ST.ed||{};cur=e.cur||cur;sel=e.sel||0;tab=e.tab||"lib";hist=e.hist||[];toolGrp=e.toolGrp||null;selShown=e.selShown!==false;ST.editing=null;ST.ed=null;
+  try{updUndo();if(tab==="edit"){renderLayerChips();renderTool()}schedulePreview()}catch(err){}
+  changed();renderPanel()}
+function stopEdit(){if(ST.editing)finishEdit()}
+// the editor's tools call schedulePreview(); while a story title is being edited, redraw the story too
+if(typeof schedulePreview==="function"){const sp=schedulePreview;schedulePreview=function(n){sp(n);if(ST.editing&&ST.open){const L=layerById(ST.editing);if(L){L.d=cur;ttCache.delete(L.id)}draw()}}}
 
 /* ---------- export ---------- */
 async function renderExport(){await Promise.all(S.layers.filter(L=>L.t==="title").map(L=>ensureFonts(L.d)));
@@ -428,7 +455,7 @@ async function renderExport(){await Promise.all(S.layers.filter(L=>L.t==="title"
   return new Promise(r=>c.toBlob(b=>r(b),"image/jpeg",.93))}
 async function exportStory(mode){
   if(!canUse()){ST.pending=mode;openPaywall("story");return}
-  const btn=$s("sSave");if(btn.classList.contains("busy"))return;btn.classList.add("busy");
+  const btn=$s("stSave");if(btn.classList.contains("busy"))return;btn.classList.add("busy");
   try{const blob=await renderExport();if(!blob)throw new Error("render");const name=`studio-typo-story-${Date.now().toString(36)}.jpg`;
     if(NATIVE&&NP.Filesystem){const w=await NP.Filesystem.writeFile({path:name,data:await blobToBase64(blob),directory:"CACHE"});
       if(mode==="share"){await NP.Share.share({files:[w.uri]})}
@@ -438,21 +465,21 @@ async function exportStory(mode){
       else{const u=URL.createObjectURL(blob),a=document.createElement("a");a.href=u;a.download=name;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(u),4000);saved(blob,"Downloaded ✓")}}}
   catch(e){toast("Couldn't save your story. Please try again.")}
   finally{btn.classList.remove("busy")}}
-function saved(blob,title){const u=URL.createObjectURL(blob);const w=document.createElement("div");w.className="sSaved";w.id="sSaved";
+function saved(blob,title){const u=URL.createObjectURL(blob);const w=document.createElement("div");w.className="sSaved";w.id="stSaved";
   w.innerHTML=`<div class="sSavedBox"><img src="${u}" alt="Your story"><div><b>${title||"Saved to Photos ✓"}</b><span>Your story is ready to post.</span>
-    <div class="sSavedBtns"><button class="pri" id="sOpenIg">Open Instagram</button><button id="sShare">${svg("share",2)}Share</button><button id="sSavedOk">Done</button></div></div></div>`;
+    <div class="sSavedBtns"><button class="pri" id="stOpenIg">Open Instagram</button><button id="stShare">${svg("share",2)}Share</button><button id="stSavedOk">Done</button></div></div></div>`;
   document.body.appendChild(w);const done=()=>{w.remove();URL.revokeObjectURL(u)};
-  w.onclick=e=>{if(e.target===w)done()};$s("sSavedOk").onclick=done;$s("sShare").onclick=()=>{done();exportStory("share")};
-  $s("sOpenIg").onclick=()=>{done();if(NATIVE)window.location.href="instagram://story-camera";else window.open("https://www.instagram.com/","_blank","noopener")}}
+  w.onclick=e=>{if(e.target===w)done()};$s("stSavedOk").onclick=done;$s("stShare").onclick=()=>{done();exportStory("share")};
+  $s("stOpenIg").onclick=()=>{done();if(NATIVE)window.location.href="instagram://story-camera";else window.open("https://www.instagram.com/","_blank","noopener")}}
 
 /* ---------- open / close ---------- */
 function show(){const el=$s("storyEd");el.classList.remove("hidden");ST.open=true;document.documentElement.classList.add("storyOpen");if(typeof syncGlass==="function")syncGlass();updTop();syncEmpty();renderPanel();draw()}
 function hide(){const el=$s("storyEd");if(el)el.classList.add("hidden");ST.open=false;document.documentElement.classList.remove("storyOpen");if(typeof syncGlass==="function")syncGlass()}
 async function open(){build();await loadDoc();if(wide()&&!ST.tool)ST.tool="bg";show();
   try{if(!localStorage.getItem("typoStudio.storyIntro")){localStorage.setItem("typoStudio.storyIntro","1");setTimeout(()=>toast("New: make your whole story here ✨"),400)}}catch(e){}}
-function close(){if(ST.picking){ST.picking=false;unbanner()}hide();persist();hapt()}
+function close(){stopEdit();stopPick();hide();persist();hapt()}
 function onPro(){updTop();if(isPro()&&ST.pending&&ST.open){const m=ST.pending;ST.pending=null;setTimeout(()=>exportStory(m),450)}}
 
-window.STORY={open,close,get picking(){return ST.picking},addPicked,get open_(){return ST.open},onPro};
+window.STORY={open,close,get picking(){return ST.picking&&ST.open},addPicked,get open_(){return ST.open},onPro};
 if(typeof PW_REASON==="object")PW_REASON.story="Saving stories is part of Studio Typo Pro";
 })();
