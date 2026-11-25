@@ -605,10 +605,10 @@ async function exportStory(mode){
   finally{btn.classList.remove("busy")}}
 function saved(blob,title){const u=URL.createObjectURL(blob);const w=document.createElement("div");w.className="sSaved";w.id="stSaved";
   w.innerHTML=`<div class="sSavedBox"><img src="${u}" alt="Your story"><div><b>${title||"Saved to Photos ✓"}</b><span>Your story is ready to post.</span>
-    <div class="sSavedBtns"><button class="pri" id="stOpenIg">Open Instagram</button><button id="stShare">${svg("share",2)}Share</button><button id="stSavedOk">Done</button></div></div></div>`;
+    <div class="sSavedBtns"><button class="pri" id="stOpenIg">${typeof IG_READY!=="undefined"&&IG_READY?"Post to Story":"Open Instagram"}</button><button id="stShare">${svg("share",2)}Share</button><button id="stSavedOk">Done</button></div></div></div>`;
   document.body.appendChild(w);const done=()=>{w.remove();URL.revokeObjectURL(u)};
   w.onclick=e=>{if(e.target===w)done()};$s("stSavedOk").onclick=done;$s("stShare").onclick=()=>{done();exportStory("share")};
-  $s("stOpenIg").onclick=()=>{done();if(NATIVE)window.location.href="instagram://story-camera";else window.open("https://www.instagram.com/","_blank","noopener")}}
+  $s("stOpenIg").onclick=async()=>{done();if(typeof IG_READY!=="undefined"&&IG_READY){igShare({background:await blobToBase64(blob)});return}if(NATIVE)window.location.href="instagram://story-camera";else window.open("https://www.instagram.com/","_blank","noopener")}}
 
 /* ---------- open / close ---------- */
 function show(){const el=$s("storyEd");el.classList.remove("hidden");ST.open=true;document.documentElement.classList.add("storyOpen");if(typeof syncGlass==="function")syncGlass();updTop();syncEmpty();renderPanel();draw()}

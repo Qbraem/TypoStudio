@@ -1473,8 +1473,9 @@ function schedulePreview(noExport){
   st.addEventListener("pointerup",up);st.addEventListener("pointercancel",up);
   st.addEventListener("dblclick",()=>{if(tab!=="edit"){view={...VIEW0};layoutSticker()}});
 })();
+let ownPhoto=null,igPending=false;
 $("bgRow").addEventListener("click",e=>{
-  const b=e.target.closest("[data-bg],[data-photo]");if(!b)return;
+  const b=e.target.closest("[data-bg],[data-photo]");if(!b)return;ownPhoto=null;
   document.querySelectorAll("#bgRow .bgBtn").forEach(x=>x.classList.toggle("on",x===b));
   const bg=$("stageBg");setCredit(b.dataset.photo);
   if(b.dataset.photo){bg.className="bg";bg.style.background="";bg.style.backgroundImage=`url('/img/bg-${b.dataset.photo}.jpg?v=3')`;bg.style.backgroundSize="cover";bg.style.backgroundPosition="center"}
@@ -1484,6 +1485,7 @@ $("photoIn").addEventListener("change",e=>{
   const f=e.target.files[0];if(!f)return;const url=URL.createObjectURL(f),bg=$("stageBg");
   bg.className="bg";bg.style.background="";bg.style.backgroundImage=`url("${url}")`;bg.style.backgroundSize="cover";bg.style.backgroundPosition="center";
   document.querySelectorAll("#bgRow .bgBtn").forEach(x=>x.classList.remove("on"));e.target.closest(".bgBtn").classList.add("on");setCredit(null);
+  ownPhoto=f;if(igPending){igPending=false;sendTemplateToIg()}
 });
 function showCoach(){try{if(localStorage.getItem("typoStudio.coach"))return}catch(e){}$("coach").classList.remove("hidden");$("coach").style.opacity=1;clearTimeout(showCoach._t);showCoach._t=setTimeout(hideCoach,6000)}
 function hideCoach(){const c=$("coach");if(c.classList.contains("hidden"))return;c.style.opacity=0;setTimeout(()=>c.classList.add("hidden"),400);try{localStorage.setItem("typoStudio.coach","1")}catch(e){}}
@@ -1942,6 +1944,17 @@ const CAP=window.Capacitor;
 const NATIVE=!!(CAP&&CAP.isNativePlatform&&CAP.isNativePlatform());
 const NP=NATIVE?(CAP.Plugins||{}):{};
 const API_BASE=NATIVE?"https://studio-typo.onrender.com":"";
+/* Instagram "Share to Stories": native bridge (webkit handler "igStory"). Active only when the app has a Meta App ID
+   (Info.plist FacebookAppID) and Instagram is installed; otherwise we fall back to opening the Instagram camera. */
+const IG_H=(()=>{try{return NATIVE&&window.webkit&&webkit.messageHandlers&&webkit.messageHandlers.igStory}catch(e){return null}})();
+let IG_READY=false,igCb=null;
+window.__igReady=ok=>{IG_READY=!!ok;document.documentElement.classList.toggle("igReady",IG_READY)};
+window.__igStoryDone=(ok,why)=>{const c=igCb;igCb=null;if(c)c({ok,why})};
+if(IG_H){try{IG_H.postMessage({cmd:"check"})}catch(e){}}
+function postToStory(o){return new Promise(res=>{if(!IG_H||!IG_READY)return res({ok:false,why:"unsupported"});igCb=res;try{IG_H.postMessage(o)}catch(e){igCb=null;res({ok:false,why:"post"})}setTimeout(()=>{if(igCb===res){igCb=null;res({ok:false,why:"timeout"})}},8000)})}
+function openIgCamera(){if(NATIVE)window.location.href="instagram://story-camera";else window.open("https://www.instagram.com/","_blank","noopener")}
+async function igShare(o){track("igshare");const r=await postToStory(o);if(r.ok){hapt("MEDIUM");return true}openIgCamera();return false}
+async function photoB64(file){const bmp=await createImageBitmap(file);const k=Math.min(1,1920/Math.max(bmp.width,bmp.height)),c=document.createElement("canvas");c.width=Math.round(bmp.width*k);c.height=Math.round(bmp.height*k);c.getContext("2d").drawImage(bmp,0,0,c.width,c.height);return blobToBase64(await new Promise(r=>c.toBlob(r,"image/jpeg",.9)))}
 const RC_API_KEY="appl_wbhzytteICaXmVxmADGZaIIAaPm"; // RevenueCat → Project → API keys → Apple App Store (public key)
 const RC_ENTITLEMENT="pro";
 let nativePro=false;const rcPackages={};
@@ -2109,6 +2122,7 @@ function afterSave(ex,title){
   let off=false;try{off=localStorage.getItem("typoStudio.afterSaveOff")==="1"}catch(e){}
   if(off){toast(title);return}
   $("asTitle").textContent=title;$("asImg").src=ex.url;$("asOff").checked=false;
+  if(IG_READY){$("afterSave").querySelector(".asNow").textContent=ownPhoto?"Post it on your photo in one tap":"Post it in one tap: pick your photo, done";$("afterSave").querySelector(".asSteps").hidden=true;$("asOpenIg").lastChild.textContent="Post to Instagram Story"}
   setTimeout(()=>$("afterSave").classList.remove("hidden"),NATIVE?250:400);
 }
 function closeAfterSave(){$("afterSave").classList.add("hidden");try{localStorage.setItem("typoStudio.afterSaveOff",$("asOff").checked?"1":"0")}catch(e){}}
@@ -2119,7 +2133,11 @@ $("liveSheet").addEventListener("click",e=>{if(e.target.id==="liveSheet")closeLi
 $("lvUnitTgl").onclick=()=>{LIVE.unit=liveUnit()==="C"?"F":"C";saveLive();$("lvUnit").textContent="°"+LIVE.unit;schedulePreview(true);updateLivePill()};
 $("afterSave").addEventListener("click",e=>{if(e.target.id==="afterSave")closeAfterSave()});
 $("asGuide").onclick=()=>{closeAfterSave();openHowto()};
-$("asOpenIg").onclick=()=>{closeAfterSave();if(NATIVE)window.location.href="instagram://story-camera";else window.open("https://www.instagram.com/","_blank","noopener")};
+// one tap: your photo as the Story background + the design as a sticker on top
+async function sendTemplateToIg(){const ex=exportCache.blob&&exportCache.key===JSON.stringify(cur)?exportCache:await buildExport();if(!ex)return;
+  const o={sticker:await blobToBase64(ex.blob)};if(ownPhoto){try{o.background=await photoB64(ownPhoto)}catch(e){}}if(!o.background){o.top="#2A1D15";o.bottom="#120D0A"}igShare(o)}
+$("asOpenIg").onclick=()=>{closeAfterSave();if(!IG_READY){openIgCamera();return}
+  if(ownPhoto){sendTemplateToIg();return}igPending=true;toast("Pick the photo for your Story");$("photoIn").click()};
 /* iOS-app bewaart rechtstreeks in Foto's: uitleg daarop afstemmen */
 if(NATIVE){const s2=document.querySelector(".htSteps li:nth-child(2) .htText span");if(s2)s2.innerHTML='Tap <em class="kbd">Save</em>: the PNG goes straight to your Photos. It\'s transparent: only the letters, no background.';const tip=document.querySelector(".htTip");if(tip)tip.style.display="none"}
 function openHowto(){$("howto").classList.remove("hidden");$("howto").querySelector(".pwBox").scrollTop=0}

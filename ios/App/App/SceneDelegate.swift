@@ -35,9 +35,44 @@ class MainViewController: CAPBridgeViewController, WKScriptMessageHandler {
 
     override func capacitorDidLoad() {
         webView?.configuration.userContentController.add(self, name: "glassBar")
+        webView?.configuration.userContentController.add(self, name: "igStory")
+    }
+
+    // MARK: Instagram "Share to Stories" (sticker + optional background via the pasteboard)
+    private func igDone(_ ok: Bool, _ why: String) {
+        let safe = why.replacingOccurrences(of: "'", with: "")
+        DispatchQueue.main.async {
+            self.webView?.evaluateJavaScript("window.__igStoryDone&&window.__igStoryDone(\(ok),'\(safe)')", completionHandler: nil)
+        }
+    }
+
+    private func shareToInstagram(_ body: [String: Any]) {
+        let appID = ((Bundle.main.object(forInfoDictionaryKey: "FacebookAppID") as? String) ?? "").trimmingCharacters(in: .whitespaces)
+        guard !appID.isEmpty, appID.allSatisfy({ $0.isNumber }) else { igDone(false, "noappid"); return }
+        guard let url = URL(string: "instagram-stories://share?source_application=\(appID)"),
+              UIApplication.shared.canOpenURL(url) else { igDone(false, "noinstagram"); return }
+        var item: [String: Any] = ["com.instagram.sharedSticker.appID": appID]
+        if let s = body["sticker"] as? String, let d = Data(base64Encoded: s) { item["com.instagram.sharedSticker.stickerImage"] = d }
+        if let b = body["background"] as? String, let d = Data(base64Encoded: b) { item["com.instagram.sharedSticker.backgroundImage"] = d }
+        if let t = body["top"] as? String { item["com.instagram.sharedSticker.backgroundTopColor"] = t }
+        if let t = body["bottom"] as? String { item["com.instagram.sharedSticker.backgroundBottomColor"] = t }
+        guard item.count > 1 else { igDone(false, "empty"); return }
+        UIPasteboard.general.setItems([item], options: [.expirationDate: Date().addingTimeInterval(300)])
+        UIApplication.shared.open(url, options: [:]) { ok in self.igDone(ok, ok ? "" : "openfailed") }
     }
 
     func userContentController(_ userContentController: WKUserContentController, didReceive message: WKScriptMessage) {
+        if message.name == "igStory" {
+            let body = (message.body as? [String: Any]) ?? [:]
+            if (body["cmd"] as? String) == "check" {
+                let appID = ((Bundle.main.object(forInfoDictionaryKey: "FacebookAppID") as? String) ?? "").trimmingCharacters(in: .whitespaces)
+                let ok = !appID.isEmpty && appID.allSatisfy({ $0.isNumber })
+                    && UIApplication.shared.canOpenURL(URL(string: "instagram-stories://share")!)
+                webView?.evaluateJavaScript("window.__igReady&&window.__igReady(\(ok))", completionHandler: nil)
+                return
+            }
+            shareToInstagram(body); return
+        }
         guard message.name == "glassBar", let body = message.body as? [String: Any] else { return }
         let cmd = (body["cmd"] as? String) ?? ""
         if cmd == "hide" {
