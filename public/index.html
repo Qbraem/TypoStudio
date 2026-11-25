@@ -577,7 +577,7 @@ html.native .modeSeg{background:rgba(40,31,25,.55);-webkit-backdrop-filter:blur(
 @media not all and (min-aspect-ratio: 1/1){@media (max-width:899px){.top .brand{display:none}}}
 @media (max-width:430px){#saveImgBtn .saveL{display:none}#saveImgBtn.iconbtn.pri{padding:0;width:44px}.top{gap:6px}}
 </style>
-<link rel="stylesheet" href="/story.css?v=6">
+<link rel="stylesheet" href="/story.css?v=7">
 </head>
 <body>
 <div class="shell">
@@ -1530,6 +1530,9 @@ function heartSvg(fill){return `<svg viewBox="0 0 24 24" fill="${fill?"currentCo
 function toggleFav(id){if(favs.has(id)){favs.delete(id);toast("Removed from favourites")}else{favs.add(id);toast("Added to favourites ♥")}try{localStorage.setItem("typoStudio.favs",JSON.stringify([...favs]))}catch(e){}}
 function updateFavChip(){const c=document.querySelector(".favChip");if(c)c.innerHTML=heartSvg(true)+(favs.size?`<span>${favs.size}</span>`:"")}
 let globalTop=[],localUse={};try{localUse=JSON.parse(localStorage.getItem("typoStudio.use")||"{}")}catch(e){}
+// anonymous usage counters (no IDs): one "active" ping per device per day, plus a few UI events
+function track(e){if(NATIVE||location.protocol.startsWith("http"))fetch(API_BASE+"/api/ev",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({e,p:NATIVE?"ios":"web"}),keepalive:true}).catch(()=>{})}
+function dailyPing(){try{if(new URLSearchParams(location.search).has("statsthumbs"))return;const d=new Date().toISOString().slice(0,10),last=localStorage.getItem("typoStudio.ping");if(last===d)return;localStorage.setItem("typoStudio.ping",d);track(last?"active":"new")}catch(e){}}
 function loadTrending(){if(NATIVE||location.protocol.startsWith("http"))fetch(API_BASE+"/api/trending").then(r=>r.json()).then(j=>{globalTop=(j.top||[]);if(activeCat==="Suggestions")renderLibrary()}).catch(()=>{})}
 function markUsed(d){if(!d||!d.seed&&!SEEDS.some(x=>x.id===curSourceId))return;const id=SEEDS.some(x=>x.id===curSourceId)?curSourceId:null;if(!id)return;
   localUse[id]=(localUse[id]||0)+1;try{localStorage.setItem("typoStudio.use",JSON.stringify(localUse))}catch(e){}
@@ -2029,7 +2032,7 @@ function proRow(label){return `<button class="lockRow" data-pw="feature"><span>$
 
 let pwPlan="yearly";
 const PW_REASON={save:"This design is part of Studio Typo Pro",feature:"This feature is part of Studio Typo Pro",orn:"This ornament is part of Studio Typo Pro"};
-function openPaywall(reason){
+function openPaywall(reason){track("paywall");
   const total=SEEDS.length,freeN=FREE_IDS.size;
   $("pwReason").textContent=PW_REASON[reason]||"";$("pwReason").classList.toggle("hidden",!PW_REASON[reason]);
   $("pwCount").textContent=`${Math.floor(total/10)*10}+`;
@@ -2122,7 +2125,7 @@ if(NATIVE){const s2=document.querySelector(".htSteps li:nth-child(2) .htText spa
 function openHowto(){$("howto").classList.remove("hidden");$("howto").querySelector(".pwBox").scrollTop=0}
 function closeHowto(){$("howto").classList.add("hidden");try{localStorage.setItem("typoStudio.howto","1")}catch(e){}}
 $("toStory").onclick=()=>{hapt();if(window.STORY)STORY.open()};
-$("helpBtn").onclick=openHowto;$("htClose").onclick=closeHowto;$("htDone").onclick=closeHowto;
+$("helpBtn").onclick=()=>{track("help");openHowto()};$("htClose").onclick=closeHowto;$("htDone").onclick=closeHowto;
 document.addEventListener("click",e=>{if(e.target.closest("[data-howto]")){$("modal").classList.add("hidden");openHowto()}});
 let firstSaveDone=false;try{firstSaveDone=!!localStorage.getItem("typoStudio.howto")}catch(e){}
 $("delX").addEventListener("click",e=>{e.stopPropagation();if(tab!=="edit"||!layer())return;snap();cur.layers.splice(sel,1);sel=Math.max(0,sel-1);toast("Deleted · tap ↶ to undo");change(()=>{},{chips:true,tool:true})});
@@ -2159,12 +2162,12 @@ if(GLASS_H){new MutationObserver(syncGlass).observe(document.body,{subtree:true,
   window.addEventListener("resize",syncGlass);if(window.visualViewport)visualViewport.addEventListener("resize",syncGlass);
   [300,1000,2500,5000].forEach(t=>setTimeout(syncGlass,t))}
 $("bgToggle").addEventListener("click",e=>{e.stopPropagation();hapt();setBgOpen(!$("stage").classList.contains("bgOpen"))});
-initNative();loadLocal();updateProUI();loadTrending();
+initNative();loadLocal();updateProUI();loadTrending();dailyPing();
 if(!onbSeen){openOnb();setTimeout(hideSplash,900)}else setTimeout(hideSplash,700);
 setDetent(1);setAppH();renderLibrary();
 document.fonts.ready.then(()=>{schedulePreview();renderLibrary()});
 </script>
 <script src="/stickers.js?v=2"></script>
-<script src="/story.js?v=6"></script>
+<script src="/story.js?v=7"></script>
 </body>
 </html>

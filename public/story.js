@@ -472,8 +472,9 @@ function renderPanel(){const p=$s("stPanel");if(!p)return;
       h+=`<div class="sRow sTogRow"><span>${svg("shadow")}Shadow</span><button class="sTog${L.shadow?" on":""}" role="switch" aria-checked="${L.shadow}" data-act="shadow" aria-label="Shadow"><i></i></button></div>`;
       if(L.frame==="polaroid")h+=row("Caption",`<input class="sInp" maxlength="40" placeholder="Write on the polaroid…" value="${(L.cap||"").replace(/"/g,"&quot;")}" data-k="cap">`)}
     else{const ph=S.layers.filter(x=>x.t==="photo");h+=`<div class="sHead"><b>Stickers</b><span class="sSub">Tap to add</span></div>`;
-      if(!STK_CATS.some(([c])=>c===ST.stkCat))ST.stkCat=STK_CATS[0][0];h+=`<div class="sChips sCats">${STK_CATS.map(([c,l])=>chip(l,ST.stkCat===c,`data-stkcat="${c}"`)).join("")}</div>`;
-      h+=`<div class="sStk">${stkOf(ST.stkCat).map(k=>`<button class="sStkBtn" data-stk="${k}"><span data-stkth="${k}"></span><i>${STK[k].name}</i></button>`).join("")}</div><div class="sLabel">Photo stickers</div>`;
+      if(!STK_CATS.some(([c])=>c===ST.stkCat))ST.stkCat=STK_CATS[0][0];h+=`<div class="sChips sCats">${STK_CATS.map(([c,l])=>chip(l,ST.stkCat===c,`data-stkcat="${c}"`)).join("")}${chip("Photos",ST.stkCat==="photos",`data-stkcat="photos"`)}</div>`;
+      h+=STK_CATS.map(([c,l])=>`<section class="sStkSec" data-sec="${c}"><div class="sLabel">${l}</div><div class="sStk">${stkOf(c).map(k=>`<button class="sStkBtn" data-stk="${k}"><span data-stkth="${k}"></span><i>${STK[k].name}</i></button>`).join("")}</div></section>`).join("");
+      h+=`<div class="sLabel sStkSec" data-sec="photos">Photo stickers</div>`;
       h+=`<div class="sStrip">${ph.map(x=>`<button class="sThumb" data-selp="${x.id}"><img src="${thumbOf(x.key)}" alt=""></button>`).join("")}<button class="sThumb add big" data-act="addPhoto">${svg("plus",2)}<i>Photo sticker</i></button></div>`;
       h+=`<p class="sHint">${ph.length?"Tap a photo sticker on your story to frame, crop or move it. Pinch to resize, twist to rotate.":"Add an extra photo on top of your story, like a sticker. Your main photo is set under Background."}</p>`}}
   else if(t==="text"){h+=`<div class="sHead"><b>Text</b></div>`;
@@ -494,8 +495,20 @@ function renderPanel(){const p=$s("stPanel");if(!p)return;
         <button data-lup="${x.id}" aria-label="Move up">${svg("up")}</button><button data-ldn="${x.id}" aria-label="Move down">${svg("dn")}</button>
         <button data-lvis="${x.id}" aria-label="${x.hidden?"Show":"Hide"}">${svg(x.hidden?"eyeOff":"eye")}</button></div>`});
     h+=`</div><button class="sReset" data-act="reset">Start a new story</button>`;p.innerHTML=h;layerThumbs();p.querySelectorAll("[data-lstk]").forEach(el=>el.appendChild(stkThumb(el.dataset.lstk)));return}
-  p.innerHTML=h;if(t==="text"){curThumb();titleThumbs()}if(t==="photo")stkThumbs()}
-function stkThumbs(){document.querySelectorAll("#stPanel [data-stkth]").forEach(el=>{if(el.firstChild)return;el.appendChild(stkThumb(el.dataset.stkth))});if(!stkFontsOk){stkFonts()}else ensureFonts(STK_FONTS).then(()=>document.querySelectorAll("#stPanel [data-stkth]").forEach(el=>{el.innerHTML="";el.appendChild(stkThumb(el.dataset.stkth))}))}
+  p.innerHTML=h;if(t==="text"){curThumb();titleThumbs()}if(t==="photo"){stkThumbs();stkGallery()}}
+let stkIO=null;
+function stkThumbs(){const p=$s("stPanel"),els=[...document.querySelectorAll("#stPanel [data-stkth]")];if(!els.length)return;
+  const fill=el=>{if(el.dataset.done)return;el.dataset.done="1";el.innerHTML="";el.appendChild(stkThumb(el.dataset.stkth))};
+  const go=()=>{if(stkIO)stkIO.disconnect();if(!("IntersectionObserver" in window)){els.forEach(fill);return}
+    stkIO=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){fill(e.target);stkIO.unobserve(e.target)}}),{root:p,rootMargin:"300px 0px"});els.forEach(el=>stkIO.observe(el))};
+  stkFonts();ensureFonts(STK_FONTS).then(go,go)}
+// one long list: sticky category chips jump to a section and follow the scroll
+function stkGallery(){const p=$s("stPanel"),bar=p.querySelector(".sCats");if(!bar)return;const secs=[...p.querySelectorAll(".sStkSec")];
+  const top=el=>el.getBoundingClientRect().top-p.getBoundingClientRect().top+p.scrollTop-bar.offsetHeight-10;
+  const mark=c=>{if(ST.stkCat===c&&bar.querySelector(".on")?.dataset.stkcat===c)return;ST.stkCat=c;bar.querySelectorAll("[data-stkcat]").forEach(b=>{const on=b.dataset.stkcat===c;b.classList.toggle("on",on);if(on)bar.scrollTo({left:b.offsetLeft-bar.clientWidth/2+b.offsetWidth/2,behavior:"smooth"})})};
+  stkGallery.jump=(c,smooth)=>{const sec=secs.find(x=>x.dataset.sec===c);if(!sec)return;p.scrollTo({top:Math.max(0,top(sec)),behavior:smooth?"smooth":"auto"});mark(c)};
+  let raf=0;p.onscroll=()=>{if(raf)return;raf=requestAnimationFrame(()=>{raf=0;if(!p.contains(bar))return;let cur=secs[0];for(const x of secs){if(top(x)<=p.scrollTop+4)cur=x}if(p.scrollTop+p.clientHeight>=p.scrollHeight-4)cur=secs[secs.length-1];mark(cur.dataset.sec)})};
+  if(ST.stkCat&&ST.stkCat!==(secs[0]&&secs[0].dataset.sec))stkGallery.jump(ST.stkCat,false)}
 function titleThumbs(){document.querySelectorAll("#stPanel [data-sttth]").forEach(el=>{const d=sTitles()[+el.dataset.sttth];if(!d)return;ensureFonts(d).then(()=>{try{const c=drawExport(d,.07);el.innerHTML="";el.appendChild(c)}catch(e){}})})}
 function firstText(d){const l=(d.layers||[]).find(x=>x.text);return l?l.text:""}
 function curThumb(){const el=$s("stCurTh");if(!el)return;ensureFonts(cur).then(()=>{try{const c=drawExport(cur,.06);el.innerHTML="";el.appendChild(c)}catch(e){}})}
@@ -511,7 +524,7 @@ async function panelClick(e){const b=e.target.closest("button,[data-lay]");if(!b
   if(d.grad!=null){snapS();S.bg.grad=+d.grad;changed();renderPanel();return}
   if(d.frame&&L){snapS();L.frame=d.frame;$s("stMini").dataset.k="";changed();renderPanel();return}
   if(d.asp&&L){snapS();L.aspect=d.asp;changed();renderPanel();return}
-  if(d.stkcat){ST.stkCat=d.stkcat;renderPanel();const c=document.querySelector(`#stPanel [data-stkcat="${d.stkcat}"]`);c&&c.scrollIntoView({block:"nearest",inline:"center"});return}
+  if(d.stkcat){stkGallery.jump&&stkGallery.jump(d.stkcat,true);return}
   if(d.stk){snapS();const n=newStk(d.stk);n.y=SH*(.42+((S.layers.filter(x=>x.t==="stk").length%3)*.08));S.layers.push(n);ST.sel=n.id;if(!wide())ST.tool=null;changed();renderPanel();toast(STK[d.stk].name+" added");return}
   if(d.paper&&L){snapS();L.paper=d.paper;changed();renderPanel();return}
   if(d.ink&&L){snapS();L.ink=d.ink;changed();renderPanel();return}
@@ -600,7 +613,7 @@ function saved(blob,title){const u=URL.createObjectURL(blob);const w=document.cr
 /* ---------- open / close ---------- */
 function show(){const el=$s("storyEd");el.classList.remove("hidden");ST.open=true;document.documentElement.classList.add("storyOpen");if(typeof syncGlass==="function")syncGlass();updTop();syncEmpty();renderPanel();draw()}
 function hide(){const el=$s("storyEd");if(el)el.classList.add("hidden");ST.open=false;document.documentElement.classList.remove("storyOpen");if(typeof syncGlass==="function")syncGlass()}
-async function open(){build();await loadDoc();if(wide()&&!ST.tool)ST.tool="bg";show();
+async function open(){if(typeof track==="function")track("story");build();await loadDoc();if(wide()&&!ST.tool)ST.tool="bg";show();
   try{if(!localStorage.getItem("typoStudio.storyIntro")){localStorage.setItem("typoStudio.storyIntro","1");setTimeout(()=>toast("New: make your whole story here ✨"),400)}}catch(e){}}
 function close(){stopEdit();stopPick();hide();persist();hapt()}
 function onPro(){updTop();if(isPro()&&ST.pending&&ST.open){const m=ST.pending;ST.pending=null;setTimeout(()=>exportStory(m),450)}}
