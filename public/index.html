@@ -376,10 +376,10 @@ input[type=range]::-moz-range-thumb{width:28px;height:28px;border-radius:50%;bac
   box-shadow:0 0 0 1.5px #1a120d;animation:proOn .35s cubic-bezier(.3,1.6,.5,1)}
 @keyframes proOn{from{transform:scale(0)}to{transform:scale(1)}}
 .proPill.static{height:26px;padding:0 10px;font-size:11px;vertical-align:middle;box-shadow:none}
-.proTag{display:inline-flex;align-items:center;gap:3px;height:20px;padding:0 7px;border-radius:10px;background:rgba(20,14,10,.62);color:#F3D58A;font-size:10px;font-weight:800;letter-spacing:.6px;backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);border:1px solid rgba(243,213,138,.35)}
+.proTag{display:inline-flex;align-items:center;gap:3px;height:20px;padding:0 7px;border-radius:10px;background:rgba(20,14,10,.8);color:#F3D58A;font-size:10px;font-weight:800;letter-spacing:.6px;border:1px solid rgba(243,213,138,.35)}
 .proTag svg{width:11px;height:11px}
 .card .proTag,.ornBtn .proTag{width:22px;height:22px;padding:0;justify-content:center;border-radius:11px}
-.favBtn{position:absolute;bottom:2px;right:2px;width:26px;height:26px;border-radius:13px;display:flex;align-items:center;justify-content:center;color:rgba(255,255,255,.85);background:rgba(20,14,10,.35);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px)}
+.favBtn{position:absolute;bottom:2px;right:2px;width:26px;height:26px;border-radius:13px;display:flex;align-items:center;justify-content:center;color:rgba(255,255,255,.85);background:rgba(20,14,10,.55)}
 .favBtn svg{width:14px;height:14px}.favBtn.on{color:#FF6B7F}
 .freeSw{gap:8px;padding:0 12px 0 8px}
 .freeSw .sw{width:34px;height:20px;border-radius:10px;background:#4a3a2e;position:relative;transition:background .2s;display:inline-block;flex:none}
@@ -1523,7 +1523,10 @@ function showTab(t){
 $("tabs").addEventListener("click",e=>{const b=e.target.closest("button");if(!b)return;if(b.dataset.gk){setToolGrp(b.dataset.gk);return}if(b.dataset.tab)showTab(b.dataset.tab)});
 
 /* ---------------- Bibliotheek ---------------- */
-let thumbJob=0;
+let thumbJob=0,thumbIO=null;
+// library thumbnails: drawn only when a card scrolls near the screen, and kept for re-use (saves CPU, GPU and battery)
+const THUMB=new Map();
+function thumbFor(d){if(d.seed&&THUMB.has(d.id))return Promise.resolve(THUMB.get(d.id));return ensureFonts(d).then(()=>{const c=drawExport(d,.14);if(d.seed)THUMB.set(d.id,c);return c})}
 function loadDesign(d){const onPhoto=document.querySelector("#bgRow .bgBtn.on[data-photo]");if(onPhoto){if(d.cat==="Holidays"&&onPhoto.dataset.photo!=="xmas")setPhoto("xmas");else if(d.cat!=="Holidays"&&onPhoto.dataset.photo==="xmas")setPhoto("golden")}cur=clone(d);curSourceId=d.id;sel=firstTextLayer();selShown=true;toolGrp=null;hist=[];updUndo();schedulePreview();updateLivePill();maybeRefreshLive()}
 /* ---------------- Favourites & suggestions ---------------- */
 let freeOnly=false;try{freeOnly=localStorage.getItem("typoStudio.freeOnly")==="1"}catch(e){}
@@ -1649,7 +1652,10 @@ function renderLibrary(){
     };
     grid.appendChild(b);return [b,d];
   });
-  (async()=>{for(const [b,d] of cards){if(job!==thumbJob)return;await ensureFonts(d);b.prepend(drawExport(d,.14));await new Promise(r=>setTimeout(r,0))}})();
+  if(thumbIO)thumbIO.disconnect();
+  const pend=new Map(cards),put=(b,d)=>thumbFor(d).then(c=>{if(job===thumbJob&&b.isConnected)b.prepend(c)}).catch(()=>{});
+  if(!("IntersectionObserver" in window))cards.forEach(([b,d])=>put(b,d));
+  else{thumbIO=new IntersectionObserver(es=>es.forEach(e=>{if(!e.isIntersecting)return;thumbIO.unobserve(e.target);const d=pend.get(e.target);if(d)put(e.target,d)}),{rootMargin:"500px 0px"});cards.forEach(([b])=>thumbIO.observe(b))}
 }
 $("newCatOk").onclick=()=>{const n=$("newCatName").value.trim();if(!n)return;if(!allCats().includes(n)){customCats.unshift(n);saveLocal()}
   $("newCatName").value="";$("newCatRow").classList.add("hidden");activeCat=n;renderLibrary()};
