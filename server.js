@@ -25,9 +25,51 @@ let counts = {};
 try { counts = JSON.parse(fs.readFileSync(COUNTS_FILE, "utf8")); } catch (e) {}
 let dirty = false;
 setInterval(() => { if (dirty) { dirty = false; fs.writeFile(COUNTS_FILE, JSON.stringify(counts), () => {}); } }, 30000);
+const dayKey = d => KEY + ":day:" + d.toISOString().slice(0, 10);
 async function addUse(id) {
   counts[id] = (counts[id] || 0) + 1; dirty = true;
-  if (UP_URL) { try { await redis(["HINCRBY", KEY, id, 1]); } catch (e) { console.error(e.message); } }
+  if (UP_URL) {
+    try { await redis(["HINCRBY", KEY, id, 1]); const dk = dayKey(new Date()); await redis(["HINCRBY", dk, id, 1]); await redis(["EXPIRE", dk, 400 * 86400]); }
+    catch (e) { console.error(e.message); }
+  }
+}
+async function hash(key) { if (!UP_URL) return key === KEY ? counts : {}; const flat = await redis(["HGETALL", key]) || []; const o = {}; for (let i = 0; i < flat.length; i += 2) o[flat[i]] = +flat[i + 1]; return o; }
+
+// ---- private stats page: /stats?key=STATS_KEY ----
+const STATS_KEY = process.env.STATS_KEY || "";
+let DESIGNS = [];
+try {
+  const src = fs.readFileSync(path.join(ROOT, "index.html"), "utf8"), seen = {};
+  for (const m of src.matchAll(/D\("([a-z]+\d+)","([^"]+)","([^"]+)"/g)) { const cat = m[2]; seen[cat] = (seen[cat] || 0) + 1; DESIGNS.push({ id: m[1], cat, name: m[3], free: seen[cat] <= 3 }); }
+} catch (e) { console.error("stats: cannot read designs", e.message); }
+const esc = s => String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+async function statsPage() {
+  const total = await hash(KEY), now = new Date(), days = [];
+  for (let i = 0; i < 14; i++) { const d = new Date(now - i * 86400e3); days.push({ d: d.toISOString().slice(0, 10), c: await hash(dayKey(d)) }); }
+  const sum = o => Object.values(o).reduce((a, b) => a + b, 0);
+  const w7 = {}; days.slice(0, 7).forEach(x => { for (const k in x.c) w7[k] = (w7[k] || 0) + x.c[k]; });
+  const byId = Object.fromEntries(DESIGNS.map(d => [d.id, d]));
+  const rows = Object.keys(total).map(id => ({ ...(byId[id] || { id, cat: "?", name: id }), n: total[id], w: w7[id] || 0 })).sort((a, b) => b.n - a.n || b.w - a.w);
+  const max = rows[0] ? rows[0].n : 1, never = DESIGNS.filter(d => !total[d.id]);
+  const cats = {}; rows.forEach(r => { cats[r.cat] = (cats[r.cat] || 0) + r.n; });
+  const catRows = Object.entries(cats).sort((a, b) => b[1] - a[1]), cmax = catRows[0] ? catRows[0][1] : 1;
+  const dmax = Math.max(1, ...days.map(x => sum(x.c)));
+  const tot = sum(total), wk = sum(w7);
+  return `<!doctype html><html lang=en><head><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1"><meta name=robots content=noindex><title>Studio Typo – stats</title><style>
+body{margin:0;background:#16100c;color:#f4e9dc;font:15px/1.4 -apple-system,system-ui,sans-serif;padding:22px 16px 60px;max-width:860px;margin:auto}
+h1{font-size:26px;margin:0 0 4px}h2{font-size:15px;text-transform:uppercase;letter-spacing:.08em;color:#e9b77c;margin:30px 0 10px}.sub{color:#a8957f;font-size:13px}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-top:18px}.card{background:#241a14;border-radius:16px;padding:14px}.card b{display:block;font-size:28px}.card span{color:#a8957f;font-size:13px}
+table{width:100%;border-collapse:collapse}td{padding:7px 6px;border-bottom:1px solid #2d221b;vertical-align:middle}td.n{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+.bar{height:8px;border-radius:5px;background:#f26b50;min-width:2px}.c{color:#a8957f;font-size:12px}.t{font-size:11px;padding:2px 7px;border-radius:9px;background:#3a2b21;color:#e9b77c}.t.f{background:#22382a;color:#9fd8a9}
+.days{display:flex;align-items:flex-end;gap:5px;height:90px}.days div{flex:1;background:#e9b77c;border-radius:4px 4px 0 0;position:relative}.days small{position:absolute;bottom:-18px;left:0;right:0;text-align:center;font-size:10px;color:#a8957f}
+details{background:#241a14;border-radius:14px;padding:10px 14px}summary{cursor:pointer;color:#e9b77c}.never{columns:2;font-size:13px;color:#cdbba7;margin-top:8px}
+</style></head><body><h1>Studio Typo – design stats</h1><div class=sub>Saves per design (web + app), anonymous. Updated ${esc(now.toISOString().slice(0, 16).replace("T", " "))} UTC</div>
+<div class=cards><div class=card><b>${tot}</b><span>saves in total</span></div><div class=card><b>${wk}</b><span>saves last 7 days</span></div><div class=card><b>${rows.length}</b><span>designs used</span></div><div class=card><b>${never.length}</b><span>never used (of ${DESIGNS.length})</span></div></div>
+<h2>Last 14 days</h2><div class=days>${days.slice().reverse().map(x => `<div style="height:${Math.max(2, sum(x.c) / dmax * 100)}%" title="${x.d}: ${sum(x.c)}"><small>${x.d.slice(8)}</small></div>`).join("")}</div>
+<h2 style="margin-top:38px">By category</h2><table>${catRows.map(([c, n]) => `<tr><td>${esc(c)}</td><td style="width:50%"><div class=bar style="width:${n / cmax * 100}%"></div></td><td class=n>${n}</td></tr>`).join("")}</table>
+<h2>Designs</h2><table><tr class=c><td>#</td><td>Design</td><td></td><td class=n>7 days</td><td class=n>Total</td></tr>${rows.map((r, i) => `<tr><td class=c>${i + 1}</td><td>${esc(r.name)} <span class=t${r.free ? " f" : ""}>${r.free ? "free" : "pro"}</span><div class=c>${esc(r.cat)} · ${esc(r.id)}</div></td><td style="width:30%"><div class=bar style="width:${r.n / max * 100}%"></div></td><td class=n>${r.w || ""}</td><td class=n><b>${r.n}</b></td></tr>`).join("")}</table>
+<h2>Never saved</h2><details><summary>${never.length} designs</summary><div class=never>${never.map(d => `<div>${esc(d.name)} <span class=c>${esc(d.cat)}</span></div>`).join("")}</div></details>
+</body></html>`;
 }
 let cache = { at: 0, top: [] };
 async function topUsed() {
@@ -65,6 +107,12 @@ http.createServer((req, res) => {
       list.push(now); recent.set(ip, list);
       addUse(id).finally(() => json(res, 200, { ok: true }));
     });
+    return;
+  }
+  if (url.pathname === "/stats") {
+    if (!STATS_KEY || url.searchParams.get("key") !== STATS_KEY) { res.writeHead(404, { "Content-Type": "text/plain" }); return res.end("Niet gevonden"); }
+    statsPage().then(html => { res.writeHead(200, { "Content-Type": "text/html; charset=utf-8", "Cache-Control": "no-store", "X-Robots-Tag": "noindex" }); res.end(html); })
+      .catch(e => { res.writeHead(500, { "Content-Type": "text/plain" }); res.end("stats error: " + e.message); });
     return;
   }
   if (url.pathname === "/healthz") { res.writeHead(200, { "Content-Type": "text/plain" }); return res.end("ok"); }
