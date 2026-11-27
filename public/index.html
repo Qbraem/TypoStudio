@@ -403,14 +403,9 @@ input[type=range]::-moz-range-thumb{width:28px;height:28px;border-radius:50%;bac
 .glIcon{width:44px;height:44px;border-radius:22px;background:linear-gradient(135deg,#F6DE9C,#C9963A)}
 .pwBtn{margin-top:4px;height:44px;padding:0 22px;border:0;border-radius:22px;background:linear-gradient(135deg,#F6DE9C,#C9963A);color:#3a2408;font-weight:800;font-size:15px}
 /* Advent calendar cards */
-.card.advLock{background:radial-gradient(circle at 30% 40%,rgba(255,255,255,.22) 0 .9px,transparent 1.4px) 0 0/46px 46px,linear-gradient(160deg,#24483a,#14291f)!important;border-color:#E9C46A40;display:flex;align-items:center;justify-content:center}
-.advBox{position:relative;width:64%;aspect-ratio:1;border-radius:12px;background:linear-gradient(145deg,#C62E2E,#8E1B1B);box-shadow:0 8px 18px rgba(0,0,0,.35),inset 0 1px 0 rgba(255,255,255,.25);display:flex;flex-direction:column;align-items:center;justify-content:center;color:#FFF6E6}
-.advBox::before,.advBox::after{content:"";position:absolute;background:linear-gradient(90deg,#F3D58A,#C9963A)}
-.advBox::before{left:calc(50% - 5px);top:0;bottom:0;width:10px}.advBox::after{top:calc(50% - 5px);left:0;right:0;height:10px}
-.advBox i{position:absolute;top:-13px;left:50%;width:34px;height:18px;transform:translateX(-50%);background:radial-gradient(ellipse at 25% 60%,#F3D58A 0 45%,transparent 47%),radial-gradient(ellipse at 75% 60%,#F3D58A 0 45%,transparent 47%)}
-.advBox b,.advBox em{position:relative;z-index:1;text-shadow:0 1px 3px rgba(0,0,0,.45)}
-.advBox b{font-family:"Playball",cursive;font-weight:400;font-size:34px;line-height:1;padding:2px 10px;border-radius:12px;background:#8E1B1B}
-.advBox em{font-style:normal;font-size:9.5px;font-weight:800;letter-spacing:1.4px;text-transform:uppercase;margin-top:5px;padding:2px 6px;border-radius:6px;background:#8E1B1B}
+.card.advLock{background:radial-gradient(circle at 30% 40%,rgba(255,255,255,.28) 0 .9px,transparent 1.4px) 0 0/46px 46px,radial-gradient(circle at 70% 70%,rgba(255,255,255,.18) 0 .8px,transparent 1.3px) 0 0/31px 31px,radial-gradient(110% 90% at 50% 25%,#2F5E48 0%,#1B3A2C 60%,#11261C 100%)!important;border-color:#E9C46A33;display:flex;align-items:center;justify-content:center}
+.advGift{width:auto;height:96%;max-width:96%;object-fit:contain;pointer-events:none;animation:nwPop .4s ease-out both}
+.advDay.soon{left:50%;transform:translateX(-50%);bottom:auto;top:7px;background:rgba(243,213,138,.18);color:#F3D58A;border:1px solid rgba(243,213,138,.4)}
 .card.advLock.shake{animation:advShake .45s}
 @keyframes advShake{20%{transform:rotate(-5deg)}40%{transform:rotate(5deg)}60%{transform:rotate(-3deg)}80%{transform:rotate(2deg)}}
 .advDay{position:absolute;left:8px;bottom:8px;padding:3px 8px;border-radius:10px;background:rgba(0,0,0,.35);color:#FFF6E6;font-size:10.5px;font-weight:800;letter-spacing:.4px}
@@ -613,6 +608,7 @@ html.native .modeSeg{background:rgba(40,31,25,.55);-webkit-backdrop-filter:blur(
 .modeSeg button{flex:none;padding:0 11px;white-space:nowrap;border:0;background:none;border-radius:999px;font-size:12.5px;font-weight:600;color:rgba(246,233,215,.72)}
 .modeSeg button.on{background:var(--text);color:#2a1d12;font-weight:700}
 .top .brand{flex:0 0 auto}.modeSeg{margin-right:auto}
+html.noBuilder .modeSeg{display:none}html.noBuilder .top .brand{display:block!important;flex:1}
 @media not all and (min-aspect-ratio: 1/1){@media (max-width:899px){.top .brand{display:none}}}
 @media (max-width:430px){#saveImgBtn .saveL{display:none}#saveImgBtn.iconbtn.pri{padding:0;width:44px}.top{gap:6px}}
 </style>
@@ -1233,7 +1229,9 @@ function seasonHidden(d){if(d.custom)return false;if(d.cat==="Thanksgiving")retu
 function allDesigns(){return [...custom,...SEEDS.filter(d=>!seasonHidden(d)),...ADVENT.filter(adventOpen)]}
 /* Advent calendar: 24 Christmas stickers, one unwraps per day. The list comes from the server (/api/advent), so designs can be
    added or changed without an app update; the copy bundled with the app is the fallback. engine = drawing features a design needs. */
-const ENGINE=2;let ADVENT=[],ADVENT_SRC="";
+const ENGINE=2;
+const FEAT_BUILDER=/[?&]builder/.test(location.search);document.documentElement.classList.toggle("noBuilder",!FEAT_BUILDER);
+let ADVENT=[],ADVENT_SRC="";
 function adventOk(j){return j&&Array.isArray(j.designs)?j.designs.filter(d=>d&&d.id&&Array.isArray(d.layers)&&(d.engine||1)<=ENGINE&&d.day>=1&&d.day<=24).map(d=>Object.assign(d,{cat:"Advent",seed:true})).sort((a,b)=>a.day-b.day):[]}
 try{ADVENT_SRC=localStorage.getItem("typoStudio.advent")||"";ADVENT=adventOk(JSON.parse(ADVENT_SRC||"null"))}catch(e){}
 function adventPreview(){return /[?&]advent=all/.test(location.search)}
@@ -1560,6 +1558,77 @@ Object.assign(ART_DRAW,{
   for(let i=0;i<22;i++){g.globalAlpha=.4+R()*.5;g.beginPath();g.arc(R()*100*u,R()*100*u,(.4+R()*.7)*u,0,7);g.fill()}g.globalAlpha=1}
 });
 
+/* Advent: every locked day is a wrapped present, painted like the stickers (gouache, paper grain), each in its own paper and ribbon,
+   with a hanging paper tag that carries the date */
+const GIFT_CACHE=new Map();
+const GIFT_WRAPS=[
+ {p:"#B3262B",pat:"dots",pc:"rgba(255,246,230,.9)",rib:"#F3D58A",bow:"#E2B85A"},
+ {p:"#1F4D3A",pat:"plaid",pc:"#B3202E",rib:"#FBF7EE",bow:"#FBF7EE"},
+ {p:"#C89A68",pat:"kraft",pc:"rgba(90,55,25,.22)",rib:"twine",bow:"#B3202E"},
+ {p:"#F6EEDD",pat:"stripes",pc:"#C8202F",rib:"#1F4D3A",bow:"#1F4D3A"},
+ {p:"#1F3A5C",pat:"stars",pc:"#F3D58A",rib:"#E2B85A",bow:"#E2B85A"},
+ {p:"#D9B45E",pat:"flakes",pc:"rgba(255,255,255,.85)",rib:"#9E1C26",bow:"#9E1C26"},
+ {p:"#7A1F2B",pat:"plaid",pc:"#2F6B4F",rib:"#F3D58A",bow:"#F3D58A"},
+ {p:"#E9DCC6",pat:"dots",pc:"#2F6B4F",rib:"#B3202E",bow:"#B3202E"}];
+const GIFT_SHAPES=[[70,46],[60,54],[76,40],[66,50]];
+function giftArt(day){if(GIFT_CACHE.has(day))return GIFT_CACHE.get(day);
+  const p=Promise.all([document.fonts.load('60px "Playball"'),document.fonts.load('700 20px "DM Sans"')]).catch(()=>{}).then(()=>{
+  const S=360,c=document.createElement("canvas");c.width=c.height=S;const g=c.getContext("2d"),u=S/100;
+  const W=GIFT_WRAPS[(day*3)%GIFT_WRAPS.length],[bw,bh]=GIFT_SHAPES[(day*7)%GIFT_SHAPES.length];
+  const base=93,x0=50-bw/2,y0=base-bh,lh=11,lx=x0-3,lw=bw+6,ly=y0-lh+1.5,cx=50;
+  let v=day*977+13;const R=()=>(v=(v*16807)%2147483647)/2147483647;
+  const star=(x,y,r)=>{g.beginPath();for(let i=0;i<10;i++){const a=-Math.PI/2+i*Math.PI/5,k=i%2?r*.45:r;g.lineTo(x+Math.cos(a)*k,y+Math.sin(a)*k)}g.closePath();g.fill()};
+  const pattern=(x,y,w,h)=>{g.save();g.beginPath();g.rect(x*u,y*u,w*u,h*u);g.clip();
+    if(W.pat==="dots"){g.fillStyle=W.pc;for(let yy=y+2,r=0;yy<y+h+4;yy+=6,r++)for(let xx=x+1+(r%2)*3;xx<x+w+4;xx+=6){g.beginPath();g.arc(xx*u,yy*u,1.05*u,0,7);g.fill()}}
+    else if(W.pat==="plaid"){g.fillStyle=W.pc;g.globalAlpha=.55;for(let k=x+1;k<x+w;k+=9)g.fillRect(k*u,y*u,3*u,h*u);for(let k=y+2;k<y+h;k+=9)g.fillRect(x*u,k*u,w*u,3*u);
+      g.globalAlpha=.3;g.fillStyle="#000";for(let k=x+5.5;k<x+w;k+=9)g.fillRect(k*u,y*u,.6*u,h*u);for(let k=y+6.5;k<y+h;k+=9)g.fillRect(x*u,k*u,w*u,.6*u)}
+    else if(W.pat==="stripes"){g.fillStyle=W.pc;g.translate((x+w/2)*u,(y+h/2)*u);g.rotate(-.7);for(let k=-70;k<70;k+=8)g.fillRect(k*u,-70*u,3*u,140*u)}
+    else if(W.pat==="stars"){g.fillStyle=W.pc;for(let yy=y+3,r=0;yy<y+h+4;yy+=8,r++)for(let xx=x+2+(r%2)*4;xx<x+w+4;xx+=8)star(xx*u,yy*u,1.6*u)}
+    else if(W.pat==="flakes"){g.strokeStyle=W.pc;g.lineWidth=.45*u;g.lineCap="round";for(let yy=y+4,r=0;yy<y+h+4;yy+=9,r++)for(let xx=x+3+(r%2)*4.5;xx<x+w+4;xx+=9)for(let k=0;k<3;k++){const a=k*Math.PI/3;g.beginPath();g.moveTo((xx-Math.cos(a)*1.8)*u,(yy-Math.sin(a)*1.8)*u);g.lineTo((xx+Math.cos(a)*1.8)*u,(yy+Math.sin(a)*1.8)*u);g.stroke()}}
+    else if(W.pat==="kraft"){g.strokeStyle=W.pc;g.lineWidth=.3*u;for(let i=0;i<90;i++){const xx=x+R()*w,yy=y+R()*h;g.beginPath();g.moveTo(xx*u,yy*u);g.lineTo((xx+2+R()*5)*u,(yy+(R()-.5)*1.4)*u);g.stroke()}}
+    // light from the upper left, shade on the right, shadow under the lid
+    let gr=g.createLinearGradient(x*u,0,(x+w)*u,0);gr.addColorStop(0,"rgba(255,255,255,.14)");gr.addColorStop(.55,"rgba(255,255,255,0)");gr.addColorStop(1,"rgba(0,0,0,.2)");g.fillStyle=gr;g.fillRect(x*u,y*u,w*u,h*u);
+    g.restore()};
+  const band=(x,y,w,h)=>{if(W.rib==="twine"){g.save();g.lineWidth=1.3*u;g.strokeStyle="#FBF7EE";g.beginPath();if(w<h){g.moveTo((x+w/2)*u,y*u);g.lineTo((x+w/2)*u,(y+h)*u)}else{g.moveTo(x*u,(y+h/2)*u);g.lineTo((x+w)*u,(y+h/2)*u)}g.stroke();g.setLineDash([1.4*u,1.4*u]);g.strokeStyle="#B3202E";g.stroke();g.restore();return}
+    gPaint(g,u,()=>g.rect(x*u,y*u,w*u,h*u),W.rib,{box:[x*u,y*u,w*u,h*u],hi:.35,lo:.15,ew:.4});g.fillStyle="rgba(255,255,255,.28)";if(w<h)g.fillRect((x+1)*u,y*u,.8*u,h*u);else g.fillRect(x*u,(y+1)*u,w*u,.8*u)};
+  const tilt=((day*37)%9-4)*.008;g.translate(50*u,base*u);g.rotate(tilt);g.translate(-50*u,-base*u);
+  // soft ground shadow
+  g.save();if("filter" in g)g.filter=`blur(${1.8*u}px)`;g.fillStyle="rgba(0,0,0,.4)";g.beginPath();g.ellipse(cx*u,(base+1)*u,(bw/2+5)*u,3.4*u,0,0,7);g.fill();g.restore();
+  // box
+  gPaint(g,u,()=>rrp(g,x0*u,y0*u,bw*u,bh*u,1.2*u),W.p,{box:[x0*u,y0*u,bw*u,bh*u],hi:.12,lo:.12,ew:.8});pattern(x0,y0,bw,bh);
+  const sh=g.createLinearGradient(0,y0*u,0,(y0+5)*u);sh.addColorStop(0,"rgba(0,0,0,.32)");sh.addColorStop(1,"rgba(0,0,0,0)");g.fillStyle=sh;g.fillRect(x0*u,y0*u,bw*u,5*u);
+  band(cx-3.5,y0,7,bh);band(x0,y0+bh*.5-3.5,bw,7);
+  // lid
+  gPaint(g,u,()=>rrp(g,lx*u,ly*u,lw*u,lh*u,1.6*u),W.p,{box:[lx*u,ly*u,lw*u,lh*u],hi:.18,lo:.1,ew:.8});pattern(lx,ly,lw,lh);
+  g.fillStyle="rgba(0,0,0,.18)";g.fillRect((lx+.6)*u,(ly+lh-1.3)*u,(lw-1.2)*u,1.3*u);band(cx-3.5,ly,7,lh);
+  // paper grain over the whole present
+  g.save();g.globalCompositeOperation="source-atop";g.globalAlpha=.5;g.drawImage(paperTex(),0,0,S,S);g.restore();
+  // bow (+ holly on kraft paper)
+  if(W.pat==="kraft")holly(g,u,(cx+9)*u,(ly+1.5)*u,7*u);
+  if(W.rib!=="twine"){const bc=W.bow,by=ly+.5,loop=(sd)=>gPaint(g,u,()=>{g.moveTo(cx*u,by*u);g.bezierCurveTo((cx+sd*4)*u,(by-15)*u,(cx+sd*19)*u,(by-14)*u,(cx+sd*14)*u,(by-3)*u);g.bezierCurveTo((cx+sd*11)*u,(by+1.5)*u,(cx+sd*4)*u,(by+1)*u,cx*u,by*u);g.closePath()},bc,{box:[(cx+Math.min(0,sd*20))*u,(by-15)*u,20*u,17*u],hi:.42,lo:.22,ew:.5});
+    const tail=(sd)=>gPaint(g,u,()=>{g.moveTo((cx-1)*u,by*u);g.quadraticCurveTo((cx+sd*5)*u,(by+6)*u,(cx+sd*8)*u,(by+12)*u);g.lineTo((cx+sd*5)*u,(by+11)*u);g.lineTo((cx+sd*4.5)*u,(by+14)*u);g.quadraticCurveTo((cx+sd*2)*u,(by+6)*u,(cx+1)*u,by*u);g.closePath()},bc,{box:[(cx+Math.min(0,sd*9))*u,by*u,9*u,14*u],hi:.3,lo:.25,ew:.5});
+    tail(-1);tail(1);loop(-1);loop(1);
+    g.strokeStyle="rgba(0,0,0,.18)";g.lineWidth=.5*u;[-1,1].forEach(sd=>{g.beginPath();g.moveTo((cx+sd*2)*u,(by-1)*u);g.quadraticCurveTo((cx+sd*8)*u,(by-8)*u,(cx+sd*12)*u,(by-4)*u);g.stroke()});
+    gPaint(g,u,()=>{g.ellipse(cx*u,by*u,3.2*u,2.8*u,0,0,7)},bc,{box:[(cx-3.5)*u,(by-3)*u,7*u,6*u],hi:.5,lo:.3,ew:.5})}
+  else bow(g,u,cx*u,(ly+.5)*u,11*u,W.bow);
+  // hanging tag with the date
+  const left=day%2===0,rot=left?-.2:.17,tw=34,th=25,tx=left?cx-bw*.23:cx+bw*.23,ty=y0+bh*.56,hx=-tw/2+5,
+        hw=[tx+(hx*Math.cos(rot))*1,ty+hx*Math.sin(rot)];
+  g.strokeStyle="#7A5A3A";g.lineWidth=.6*u;g.beginPath();g.moveTo(cx*u,(ly+2)*u);g.quadraticCurveTo(((cx+hw[0])/2)*u,((ly+hw[1])/2+6)*u,hw[0]*u,hw[1]*u);g.stroke();
+  g.save();g.translate(tx*u,ty*u);g.rotate(rot);
+  const T=()=>{const a=-tw/2,b=tw/2,t=-th/2,bo=th/2,k=6;g.moveTo(a*u,(t+k)*u);g.lineTo((a+k)*u,t*u);g.lineTo((b-1.2)*u,t*u);g.quadraticCurveTo(b*u,t*u,b*u,(t+1.2)*u);g.lineTo(b*u,(bo-1.2)*u);g.quadraticCurveTo(b*u,bo*u,(b-1.2)*u,bo*u);g.lineTo((a+k)*u,bo*u);g.lineTo(a*u,(bo-k)*u);g.closePath()};
+  g.save();g.shadowColor="rgba(0,0,0,.3)";g.shadowBlur=2.2*u;g.shadowOffsetY=.9*u;g.fillStyle="#FBF7EE";g.beginPath();T();g.fill();g.restore();
+  gPaint(g,u,T,"#FBF7EE",{box:[-tw/2*u,-th/2*u,tw*u,th*u],hi:.3,lo:.1,ew:.5});
+  g.save();g.beginPath();T();g.clip();g.globalAlpha=.55;g.drawImage(paperTex(),-tw/2*u,-th/2*u,S*.5,S*.5);g.restore();
+  g.strokeStyle="rgba(179,32,46,.55)";g.lineWidth=.35*u;g.setLineDash([1*u,.8*u]);g.strokeRect((-tw/2+8)*u,(-th/2+2)*u,(tw-10)*u,(th-4)*u);g.setLineDash([]);
+  g.fillStyle="#E9DCC6";g.beginPath();g.arc(hx*u,0,2.3*u,0,7);g.fill();g.fillStyle="#5A3E28";g.beginPath();g.arc(hx*u,0,1.1*u,0,7);g.fill();
+  g.textAlign="center";g.textBaseline="alphabetic";g.fillStyle="#9E1C26";g.font=`400 ${15*u}px "Playball"`;g.fillText(String(day),3*u,4.2*u);
+  g.fillStyle="#1F4D3A";g.font=`700 ${3.2*u}px "DM Sans"`;const lab="D E C";g.fillText(lab,3*u,9.6*u);
+  g.restore();
+  // a little snow resting on the lid
+  g.fillStyle="#FFFFFF";for(let i=0;i<7;i++){const x=lx+3+R()*(lw-6);if(Math.abs(x-cx)<6)continue;g.globalAlpha=.85;g.beginPath();g.ellipse(x*u,(ly+.3)*u,(1.2+R()*1.6)*u,(.7+R()*.5)*u,0,0,7);g.fill()}g.globalAlpha=1;
+  return c.toDataURL("image/png")});
+  GIFT_CACHE.set(day,p);return p}
 function bgPath(c,f,w,h){const W2=w/2,H2=h/2,P=Math.PI;
   if(f==="oval"){c.ellipse(0,0,W2,H2,0,0,2*P);return}
   if(f==="circle"){c.arc(0,0,Math.min(W2,H2),0,2*P);return}
@@ -1964,7 +2033,7 @@ function renderLibrary(){
   const today=adventDay();
   const cards=list.map(d=>{
     if(d.cat==="Advent"&&!adventOpen(d)){const b=document.createElement("button");b.className="card advLock";b.setAttribute("aria-label",`Day ${d.day}, opens on ${d.day} December`);
-      b.innerHTML=`<span class="advBox"><i></i><b>${d.day}</b><em>December</em></span>`;
+      b.innerHTML=d.day===adventDay(new Date(Date.now()+864e5))?'<span class="advDay soon">Tomorrow</span>':"";giftArt(d.day).then(src=>{if(!b.isConnected)return;const im=new Image();im.alt="";im.className="advGift";im.src=src;b.prepend(im)});
       b.onclick=()=>{hapt();toast(`🎁 This one opens on ${d.day} December`);b.classList.remove("shake");void b.offsetWidth;b.classList.add("shake")};grid.appendChild(b);return [b,null]}
     const b=document.createElement("button");const light=lum(d.colors.main)<.45;
     b.className="card"+(d.id===curSourceId?" sel":"");b.setAttribute("aria-label",d.name);
@@ -2482,7 +2551,7 @@ $("asOpenIg").onclick=()=>{closeAfterSave();if(!IG_READY){openIgCamera();return}
 if(NATIVE){const s2=document.querySelector(".htSteps li:nth-child(2) .htText span");if(s2)s2.innerHTML='Tap <em class="kbd">Save</em>: the PNG goes straight to your Photos. It\'s transparent: only the letters, no background.';const tip=document.querySelector(".htTip");if(tip)tip.style.display="none"}
 function openHowto(){$("howto").classList.remove("hidden");$("howto").querySelector(".pwBox").scrollTop=0}
 function closeHowto(){$("howto").classList.add("hidden");try{localStorage.setItem("typoStudio.howto","1")}catch(e){}}
-$("toStory").onclick=()=>{hapt();if(window.STORY)STORY.open()};
+$("toStory").onclick=()=>{hapt();if(FEAT_BUILDER&&window.STORY)STORY.open()};
 $("helpBtn").onclick=()=>{track("help");openHowto()};$("htClose").onclick=closeHowto;$("htDone").onclick=closeHowto;
 document.addEventListener("click",e=>{if(e.target.closest("[data-howto]")){$("modal").classList.add("hidden");openHowto()}});
 let firstSaveDone=false;try{firstSaveDone=!!localStorage.getItem("typoStudio.howto")}catch(e){}
@@ -2539,7 +2608,10 @@ if(!onbSeen){openOnb();setTimeout(hideSplash,900)}else setTimeout(hideSplash,700
 setDetent(1);setAppH();renderLibrary();
 document.fonts.ready.then(()=>{schedulePreview();renderLibrary()});
 </script>
-<script src="/stickers.js?v=2"></script>
-<script src="/story.js?v=7"></script>
+
+<script>
+/* Story Builder ships in a later update: hidden in 1.1 (preview with ?builder) */
+if(FEAT_BUILDER){const add=src=>new Promise(r=>{const e=document.createElement("script");e.src=src;e.onload=e.onerror=r;document.body.appendChild(e)});add("/stickers.js?v=2").then(()=>add("/story.js?v=7"))}
+</script>
 </body>
 </html>
