@@ -36,7 +36,7 @@ async function addUse(id) {
 async function hash(key) { if (!UP_URL) return key === KEY ? counts : {}; const flat = await redis(["HGETALL", key]) || []; const o = {}; for (let i = 0; i < flat.length; i += 2) o[flat[i]] = +flat[i + 1]; return o; }
 
 // ---- anonymous events: daily pings (active/new) and a few UI events, per platform ----
-const EVENTS = ["active", "new", "help", "paywall", "story", "igshare"], memEv = {};
+const EVENTS = ["active", "new", "help", "paywall", "story", "igshare", "advent", "news"], memEv = {};
 const evKey = d => KEY + ":ev:" + d.toISOString().slice(0, 10);
 async function addEvent(e, p) {
   const f = e + ":" + p, dk = evKey(new Date());
@@ -85,7 +85,7 @@ details{background:#241a14;border-radius:14px;padding:10px 14px}summary{cursor:p
 <div class=cards><div class=card><b>${tot}</b><span>saves in total</span></div><div class=card><b>${wk}</b><span>saves last 7 days</span></div><div class=card><b>${rows.length}</b><span>designs used</span></div><div class=card><b>${never.length}</b><span>never used (of ${DESIGNS.length})</span></div></div>
 <h2>Daily users</h2><div class=cards><div class=card><b>${users(today)}</b><span>users today</span></div><div class=card><b>${Math.round(s7(users) / 7 * 10) / 10}</b><span>avg per day (7 days)</span></div><div class=card><b>${s7(o => ev(o, "new"))}</b><span>new users (7 days)</span></div><div class=card><b>${users(today) ? Math.round(ev(today, "active", "ios") + ev(today, "new", "ios")) : 0}<small style="font-size:14px;color:#a8957f"> iOS</small> · ${ev(today, "active", "web") + ev(today, "new", "web")}<small style="font-size:14px;color:#a8957f"> web</small></b><span>today by platform</span></div></div>
 <div class=days style="margin-top:18px">${days.slice().reverse().map(x => { const u = users(x.e), i = ev(x.e, "active", "ios") + ev(x.e, "new", "ios"); return `<div style="height:${Math.max(2, u / umax * 100)}%;background:linear-gradient(#e9b77c ${u ? 100 - i / u * 100 : 100}%,#f26b50 0)" title="${x.d}: ${u} users (${i} iOS)"><small>${x.d.slice(8)}</small></div>`; }).join("")}</div><div class=sub style="margin-top:26px"><span style="color:#f26b50">■</span> iOS app <span style="color:#e9b77c;margin-left:10px">■</span> website · one count per device per day, no personal data</div>
-<h2>Actions</h2><table><tr class=c><td></td><td class=n>Today</td><td class=n>7 days</td><td class=n>Total</td></tr>${[["help", "Help (?) opened"], ["paywall", "Paywall shown"], ["story", "Story Builder opened"], ["igshare", "Post to Story tapped"]].map(([e, l]) => `<tr><td>${l}</td><td class=n>${ev(today, e)}</td><td class=n>${s7(o => ev(o, e))}</td><td class=n><b>${ev(evTot, e)}</b></td></tr>`).join("")}</table>
+<h2>Actions</h2><table><tr class=c><td></td><td class=n>Today</td><td class=n>7 days</td><td class=n>Total</td></tr>${[["help", "Help (?) opened"], ["paywall", "Paywall shown"], ["story", "Story Builder opened"], ["igshare", "Post to Story tapped"], ["news", "Christmas splash shown"], ["advent", "Advent calendar opened"]].map(([e, l]) => `<tr><td>${l}</td><td class=n>${ev(today, e)}</td><td class=n>${s7(o => ev(o, e))}</td><td class=n><b>${ev(evTot, e)}</b></td></tr>`).join("")}</table>
 <h2>Saves, last 14 days</h2><div class=days>${days.slice().reverse().map(x => `<div style="height:${Math.max(2, sum(x.c) / dmax * 100)}%" title="${x.d}: ${sum(x.c)}"><small>${x.d.slice(8)}</small></div>`).join("")}</div>
 <h2 style="margin-top:38px">By category</h2><table>${catRows.map(([c, n]) => `<tr><td>${esc(c)}</td><td style="width:50%"><div class=bar style="width:${n / cmax * 100}%"></div></td><td class=n>${n}</td></tr>`).join("")}</table>
 <h2>Designs</h2><table><tr class=c><td>#</td><td></td><td>Design</td><td class=bar></td><td class=n>7 days</td><td class=n>Total</td></tr>${rows.map((r, i) => `<tr><td class=c>${i + 1}</td><td class=th><span data-th="${esc(r.id)}"></span></td><td>${esc(r.name)} <span class=t${r.free ? " f" : ""}>${r.free ? "free" : "pro"}</span><div class=c>${esc(r.cat)} · ${esc(r.id)}</div></td><td class=bar style="width:30%"><div class=bar style="width:${r.n / max * 100}%"></div></td><td class=n>${r.w || ""}</td><td class=n><b>${r.n}</b></td></tr>`).join("")}</table>
@@ -93,7 +93,7 @@ details{background:#241a14;border-radius:14px;padding:10px 14px}summary{cursor:p
 <iframe id=app src="/?statsthumbs" style="position:absolute;width:390px;height:844px;left:-9999px;top:0;border:0" aria-hidden=true></iframe>
 <script>
 const f=document.getElementById("app");
-f.onload=()=>{let n=0;const t=setInterval(async()=>{const w=f.contentWindow;let S=null;try{S=w.eval('SEEDS')}catch(e){}if(!(S&&w.drawExport&&w.ensureFonts)){if(++n>40)clearInterval(t);return}clearInterval(t);
+f.onload=()=>{let n=0;const t=setInterval(async()=>{const w=f.contentWindow;let S=null;try{S=w.eval('SEEDS.concat(typeof ADVENT!=="undefined"?ADVENT:[])')}catch(e){}if(!(S&&w.drawExport&&w.ensureFonts)){if(++n>40)clearInterval(t);return}clearInterval(t);
   for(const el of document.querySelectorAll("[data-th]")){const d=S.find(x=>x.id===el.dataset.th);if(!d)continue;try{await w.ensureFonts(d);const c=w.drawExport(d,.16);el.style.backgroundImage="url("+c.toDataURL("image/png")+")"}catch(e){}}},250)};
 </script></body></html>`;
 }
@@ -153,6 +153,14 @@ http.createServer((req, res) => {
     if (!STATS_KEY || url.searchParams.get("key") !== STATS_KEY) { res.writeHead(404, { "Content-Type": "text/plain" }); return res.end("Niet gevonden"); }
     statsPage().then(html => { res.writeHead(200, { "Content-Type": "text/html; charset=utf-8", "Cache-Control": "no-store", "X-Robots-Tag": "noindex" }); res.end(html); })
       .catch(e => { res.writeHead(500, { "Content-Type": "text/plain" }); res.end("stats error: " + e.message); });
+    return;
+  }
+  // advent calendar designs: edit public/advent.json and redeploy, the app picks it up without an update
+  if (url.pathname === "/api/advent" && req.method === "GET") {
+    fs.readFile(path.join(ROOT, "advent.json"), "utf8", (err, data) => {
+      if (err) return json(res, 404, { ok: false });
+      res.writeHead(200, { "Content-Type": "application/json", "Cache-Control": "no-cache", "Access-Control-Allow-Origin": "*" }); res.end(data);
+    });
     return;
   }
   if (url.pathname === "/healthz") { res.writeHead(200, { "Content-Type": "text/plain" }); return res.end("ok"); }
