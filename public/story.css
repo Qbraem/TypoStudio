@@ -189,9 +189,9 @@ html.storyOpen .shell{visibility:hidden}
 }
 /* iPhone Duo open: the clock/battery sit in the top-right corner (iOS doesn't always report it) */
 @media (min-aspect-ratio:1/1){
-  html.native .sSide{margin-top:calc(max(var(--sat),28px) + 10px)}
-  html.native .sCanvasWrap{top:calc(max(var(--sat),28px) + 12px)}
-  html.native .sTop{padding-right:58px}
+  /* the clock only takes the top-right corner: the panel uses the full height and width, only its button row keeps clear of the clock */
+  html.native .sSide{margin-right:10px}
+  html.native .sTop{padding-right:max(58px, calc(var(--sar) - 4px))}
 }
 
 /* stickers + story titles */
