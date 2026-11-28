@@ -43,7 +43,7 @@ const svg=(k,w=1.9)=>`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
 const uidS=()=>Math.random().toString(36).slice(2,9);
 const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
 const BUNDLED=["golden","sunset","pier","pool","agave","xmas"];
-const GRADS=[["#3B2416","#F26B50"],["#1C1714","#E9B77C"],["#F6E9D7","#E9B77C"],["#7FC8E8","#F6E9D7"],["#111111","#3B2416"],["#D9473A","#F6B26B"],["#A8B89A","#F6E9D7"],["#2A2E45","#C98A4B"]];
+const GRADS=[["#3B2416","#F26B50"],["#1C1714","#E9B77C"],["#F6E9D7","#E9B77C"],["#7FC8E8","#F6E9D7"],["#111111","#3B2416"],["#D9473A","#F6B26B"],["#A8B89A","#F6E9D7"],["#2A2E45","#C98A4B"],["#2A1C14","#E4B27B"]];
 const COLORS=["#120D0A","#3B2416","#F6E9D7","#FFFFFF","#E9B77C","#F26B50","#D9473A","#7FC8E8","#A8B89A","#111111"];
 const FRAMES=[["none","None"],["rounded","Rounded"],["border","Border"],["polaroid","Polaroid"],["film","Film"]];
 const ASPECTS=[["orig","Original"],["4:5","4:5"],["1:1","1:1"],["3:4","3:4"],["9:16","9:16"],["16:9","16:9"]];
@@ -289,9 +289,9 @@ function storyTemplates(){if(typeof L!=="function"||typeof D!=="function")return
     T(D("tp2","Story","Four photos",[L("try this","Instrument Serif",120,0,-95),L("Cosy Season","Instrument Serif",235,0,45,{spacing:-4})],{colors:{main:"#EFE1CB",accent:"#FFFFFF"},shadow:60}),SW/2,SH/2,1)]},
   {id:"tbw",name:"B&W quote",bg:{type:"photo",photo:"b:pier",ph:true,dim:.22},fx:{name:"noir",amount:1,grain:true,vig:true},layers:[
     T(D("tp3","Story","B&W quote",[L("kinda magic to","Instrument Serif",150,0,-150,{spacing:-3}),L("slow down and","Instrument Serif",150,0,0,{spacing:-3}),L("enjoy december","Instrument Serif",150,0,150,{spacing:-3})],{colors:{main:"#F2C94C",accent:"#FFFFFF"},shadow:25}),SW/2,SH*.47,.95)]},
-  {id:"tfilm",name:"Photo dump",bg:{type:"color",color:"#14110F",dim:0},fx:{name:"warm",amount:.6,grain:true,vig:false},layers:[
-    P("b:golden",SW/2,SH*.345,SW*.7,{frame:"film",aspect:"4:3",lock:true}),P("b:sunset",SW/2,SH*.585,SW*.7,{frame:"film",aspect:"4:3",lock:true}),P("b:pool",SW/2,SH*.825,SW*.7,{frame:"film",aspect:"4:3",lock:true}),
-    T(D("tp4","Story","Photo dump",[L("december","Playball",210,0,-40,{color:"accent"}),L("PHOTO DUMP","DM Sans",46,0,90,{weight:700,spacing:18})],{colors:{main:"#F6E9D7",accent:"#E9B77C"}}),SW/2,SH*.115,.9)]},
+  {id:"tfilm",name:"Photo dump",bg:{type:"gradient",grad:8,dim:0},fx:{name:"warm",amount:.45,grain:true,vig:false},layers:[
+    P("b:coffee1",SW/2,595,755,{frame:"film",aspect:"755:430",lock:true}),P("b:coffee2",SW/2,1085,755,{frame:"film",aspect:"755:430",lock:true}),P("b:coffee3",SW/2,1575,755,{frame:"film",aspect:"755:430",lock:true}),
+    T(D("tp4","Story","Photo dump",[L("COFFEE","Archivo Black",170,0,-40,{spacing:8,color:"accent"}),L("PHOTO DUMP","DM Sans",48,0,72,{weight:700,spacing:14})],{colors:{main:"#F6E9D7",accent:"#E9B67F"}}),SW/2,210,.92)]},
   {id:"tpol",name:"Polaroids",bg:{type:"color",color:"#C9A57A",dim:0},fx:{name:"none",amount:.7,grain:true,vig:true},layers:[
     P("b:agave",SW*.35,SH*.4,SW*.5,{frame:"polaroid",aspect:"1:1",rot:-7,shadow:true,cap:"slow sunday"}),P("b:pool",SW*.65,SH*.73,SW*.5,{frame:"polaroid",aspect:"1:1",rot:6,shadow:true,cap:"best day"}),
     T(D("tp5","Story","Polaroids",[L("weekend notes","Caveat",190,0,0,{weight:700})],{colors:{main:"#2A1D14",accent:"#C4452F"}}),SW/2,SH*.17,.95)]},
@@ -419,7 +419,7 @@ function gestures(){const cv=$s("stCanvas"),pts=new Map();let g=null,lastTap={t:
           g={mode:"line",L,Ly,sx:q.x,sy:q.y,ox:Ly.x,oy:Ly.y,moved:false,hs:false};draw();return}g=null;return}
       if(!L){const had=!!ST.sel;if(had){ST.sel=null;renderPanel();draw()}
         g=bgSource()&&!ST.editing?{mode:"bg",sx:u.x,sy:u.y,ox:S.bg.ox||0,oy:S.bg.oy||0,snap:JSON.stringify(S),moved:false}:null;return}
-      const now=Date.now();if(L.t==="title"&&lastTap.id===L.id&&now-lastTap.t<320){lastTap={t:0,id:null};editTitle(L.id);return}lastTap={t:now,id:L.id};
+      const now=Date.now();if(L.t==="title"&&lastTap.id===L.id&&now-lastTap.t<320){lastTap={t:0,id:null};editTitle(L.id,u);ST.focusText=true;return}lastTap={t:now,id:L.id};
       if(ST.sel!==L.id){ST.sel=L.id;renderPanel()}g=L.lock?{mode:"pan",L,sx:u.x,sy:u.y,px0:L.px||0,py0:L.py||0,snap:JSON.stringify(S),moved:false}:{mode:"drag",L,sx:u.x,sy:u.y,ox:L.x,oy:L.y,snap:JSON.stringify(S),moved:false};ST.gesture=false;draw()}
     else if(pts.size===2){if((g&&g.mode==="bg")||(!selL()&&bgSource()&&!ST.editing)){const t=two();g={mode:"bgpinch",d0:t.d,cx:t.cx,cy:t.cy,z0:S.bg.z||1,ox:S.bg.ox||0,oy:S.bg.oy||0,snap:g?g.snap:JSON.stringify(S),moved:true};ST.gesture=true;return}
       const L=selL()||(g&&g.L);if(!L||L.lock)return;const t=two();g={mode:"pinch",L,d0:t.d,a0:t.a,cx:t.cx,cy:t.cy,ox:L.x,oy:L.y,w0:L.w,s0:L.s,r0:L.rot||0,snap:g?g.snap:JSON.stringify(S),moved:true};ST.gesture=true}});
@@ -435,7 +435,7 @@ function gestures(){const cv=$s("stCanvas"),pts=new Map();let g=null,lastTap={t:
       if(g.L.t!=="title")g.L.w=clamp(g.w0*f,SW*.08,SW*2.2);else g.L.s=clamp(g.s0*f,.12,3.2);
       let r=g.r0+(t.a-g.a0)*180/Math.PI;r=((r+180)%360+360)%360-180;for(const s of[0,90,-90,180,-180])if(Math.abs(r-s)<4)r=s;g.L.rot=r;
       g.L.x=g.ox+(t.cx-g.cx);g.L.y=g.oy+(t.cy-g.cy);draw()}});
-  const end=e=>{pts.delete(e.pointerId);if(pts.size===0&&g&&g.L&&g.L.ph&&!g.moved&&(g.mode==="pan"||g.mode==="drag")){const L=g.L;g=null;slotFill(L);return}if(pts.size===0&&g&&g.mode==="line"){if(g.moved){renderTool(true);updTop()}g=null;draw();return}if(pts.size===0){if(g&&g.moved){if(g.mode==="bg"||g.mode==="bgpinch")clampBg();ST.hist.push(g.snap);if(ST.hist.length>60)ST.hist.shift();ST.fut=[];ST.gesture=false;guide=false;changed();
+  const end=e=>{pts.delete(e.pointerId);if(ST.focusText){ST.focusText=false;focusWords()}if(pts.size===0&&g&&g.L&&g.L.ph&&!g.moved&&(g.mode==="pan"||g.mode==="drag")){const L=g.L;g=null;slotFill(L);return}if(pts.size===0&&g&&g.mode==="line"){if(g.moved){renderTool(true);updTop()}g=null;draw();return}if(pts.size===0){if(g&&g.moved){if(g.mode==="bg"||g.mode==="bgpinch")clampBg();ST.hist.push(g.snap);if(ST.hist.length>60)ST.hist.shift();ST.fut=[];ST.gesture=false;guide=false;changed();
       if(ST.tool)renderPanel()}g=null;ST.gesture=false;guide=false;draw()}
     else if(pts.size===1&&g&&g.mode==="bgpinch"){const [u]=[...pts.values()];g={mode:"bg",sx:u.x,sy:u.y,ox:S.bg.ox,oy:S.bg.oy,snap:g.snap,moved:true}}
     else if(pts.size===1&&g&&g.mode==="pinch"){const [u]=[...pts.values()];g={mode:"drag",L:g.L,sx:u.x,sy:u.y,ox:g.L.x,oy:g.L.y,snap:g.snap,moved:true}}};
@@ -658,11 +658,13 @@ function unmount(id){const h=HOME.get(id),n=$(id);if(!h||!n)return;h.p.insertBef
 function startPick(){stopEdit();ST.picking=true;ST.tool=null;mount("tab-lib",$s("stLibHost"));if(typeof renderLibrary==="function")renderLibrary();$s("stLib").hidden=false;$s("stPanel").hidden=true;renderPanel();draw()}
 function stopPick(){if(!ST.picking)return;ST.picking=false;unmount("tab-lib");$s("stLib").hidden=true;renderPanel();draw()}
 function addPicked(d){if(!canUse()&&d.pro){openPaywall("save");return true}stopPick();snapS();const n=newTitle(d);n.y=S.layers.some(x=>x.t==="title")?SH*.78:SH*.2;S.layers.push(n);ST.sel=n.id;if(!wide())ST.tool=null;changed();renderPanel();toast("Added to your story");return true}
-function editTitle(id){const L=layerById(id);if(!L)return;stopPick();if(ST.editing)finishEdit();snapS();
+/* at = the point you double-tapped: that line opens with its words ready to type */
+function editTitle(id,at){const L=layerById(id);if(!L)return;stopPick();if(ST.editing)finishEdit();snapS();
   ST.editing=id;ST.sel=id;ST.ed={cur,sel,tab,hist,toolGrp,selShown};
-  cur=L.d;sel=firstTextLayer();selShown=true;hist=[];tab="edit";toolGrp=null;
+  cur=L.d;sel=firstTextLayer();if(at){const i=lineAt(L,at.x,at.y);if(i>=0&&cur.layers[i]&&cur.layers[i].text!=null)sel=i}selShown=true;hist=[];tab="edit";toolGrp=null;
   mount("layerChips",$s("stEdChips"));mount("toolBody",$s("stEdBody"));mount("toolNav",$s("stEdNav"));
-  if(wide())toolGrp="text";renderLayerChips();renderTool();if(wide())setToolGrp("text");ST.tool=null;renderPanel();draw()}
+  if(wide()||at)toolGrp="text";renderLayerChips();renderTool();if(wide()||at){toolGrp=null;setToolGrp("text")}ST.tool=null;renderPanel();draw();if(at)focusWords()}
+function focusWords(){const t=document.getElementById("tText");if(!t)return;try{t.focus({preventScroll:true});const n=t.value.length;t.setSelectionRange(0,n)}catch(e){}}
 function finishEdit(){if(!ST.editing)return;const L=layerById(ST.editing);if(L){L.d=cur;ttCache.delete(L.id)}
   unmount("layerChips");unmount("toolBody");unmount("toolNav");
   const e=ST.ed||{};cur=e.cur||cur;sel=e.sel||0;tab=e.tab||"lib";hist=e.hist||[];toolGrp=e.toolGrp||null;selShown=e.selShown!==false;ST.editing=null;ST.ed=null;
