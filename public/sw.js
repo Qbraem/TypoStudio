@@ -1,6 +1,6 @@
 // Typo Studio service worker: app werkt ook offline
-const VERSION = "typo-v92";
-const SHELL = ["/", "/stickers.js?v=5", "/story.js?v=13", "/story.css?v=13", "/fonts/fonts.css?v=2", "/manifest.webmanifest", "/icons/icon-192.png", "/icons/icon-512.png", "/icons/apple-touch-icon.png",
+const VERSION = "typo-v94";
+const SHELL = ["/", "/stickers.js?v=5", "/story.js?v=15", "/story.css?v=15", "/fonts/fonts.css?v=2", "/manifest.webmanifest", "/icons/icon-192.png", "/icons/icon-512.png", "/icons/apple-touch-icon.png",
   "/img/bg-sunset.jpg", "/img/bg-pier.jpg", "/img/th-sunset.jpg", "/img/th-pier.jpg", "/img/bg-xmas.jpg", "/img/th-xmas.jpg", "/img/bg-pool.jpg", "/img/th-pool.jpg", "/img/bg-golden.jpg", "/img/th-golden.jpg", "/img/bg-agave.jpg", "/img/th-agave.jpg"];
 
 self.addEventListener("install", e => {

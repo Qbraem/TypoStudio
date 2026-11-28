@@ -257,3 +257,4 @@ html.storyOpen .shell{visibility:hidden}
 
 .sTplGrp{font:700 11px/1 system-ui,-apple-system,sans-serif;letter-spacing:.12em;text-transform:uppercase;opacity:.55;margin:14px 2px 8px}
 .sTplGrp:first-of-type{margin-top:4px}
+.sPanel>*{flex-shrink:0}

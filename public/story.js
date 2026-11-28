@@ -637,6 +637,8 @@ function miniAction(a){const L=selL();if(!L)return;hapt();
 function thumbOf(key){const o=IMG.get(key);if(!o)return"";if(!o.thumb){const c=cover(o.src,o.w,o.h,96,128);o.thumb=c.toDataURL("image/jpeg",.7)}return o.thumb}
 function row(label,inner,sec){return`<div class="sRow"${sec?` data-sec="${sec}"`:""}>${label?`<div class="sLabel">${label}</div>`:""}${inner}</div>`}
 function chip(l,on,attrs){return`<button class="sChip${on?" on":""}" ${attrs}>${l}</button>`}
+const hex6=c=>/^#[0-9a-f]{6}$/i.test(c||"")?c.toLowerCase():/^#[0-9a-f]{3}$/i.test(c||"")?("#"+[...c.slice(1)].map(x=>x+x).join("")).toLowerCase():"#ffffff";
+const pickDot=(k,v)=>`<label class="sDot pick" aria-label="Pick any colour"><input type="color" value="${hex6(v)}" data-k="${k}"></label>`;
 function slider(label,name,v,min,max,step,fmt){return`<label class="sSlide"><span>${label}</span><input type="range" min="${min}" max="${max}" step="${step}" value="${v}" data-k="${name}"><output>${fmt(v)}</output></label>`}
 function openSheet(){return["stPanel","stEdit","stLib"].map($s).find(x=>x&&!x.hidden)}
 function placeGrab(){const g=$s("stGrab");if(!g)return;const el=openSheet();if(!el||wide()){g.hidden=true;return}
@@ -675,14 +677,15 @@ function renderPanel(){setTimeout(placeGrab);const p=$s("stPanel");if(!p)return;
     h+=`<div class="sHead"><b>${def.name}</b><div class="sChips">${chip(svg("plus",2)+"Add",false,'data-act="stkAll"')}${chip(svg("copy")+"Duplicate",false,'data-act="dupS"')}${chip(svg("trash")+"Delete",false,'data-act="del" class="warn"')}</div></div>`;
     Object.keys(def.f).forEach(n=>{const v=String(L.f[n]==null?"":L.f[n]).replace(/&/g,"&amp;").replace(/</g,"&lt;");const big=def.big.includes(n)||/\n/.test(L.f[n]);
       h+=row(STK_FIELDS[n]||n,big?`<textarea class="sInp sTa" rows="${n==="text"&&L.kind==="note"?4:2}" data-k="f:${n}">${v}</textarea>`:`<input class="sInp sTx" maxlength="60" value="${v.replace(/"/g,"&quot;")}" data-k="f:${n}">`)});
-    const sw=(a,b,c)=>[...new Set([b,c,...a].filter(Boolean))];if(def.paper)h+=row(L.kind==="tape"?"Colour":"Paper",`<div class="sSw">${sw(PAPERS,def.paper,L.paper).map(c=>`<button class="sDot${L.paper===c?" on":""}" data-paper="${c}" style="background:${c}" aria-label="${c}"></button>`).join("")}</div>`);
-    if(!def.noInk&&!["frame","tape"].includes(L.kind))h+=row("Ink",`<div class="sSw">${sw(INKS,def.ink,L.ink).map(c=>`<button class="sDot${L.ink===c?" on":""}" data-ink="${c}" style="background:${c}" aria-label="${c}"></button>`).join("")}</div>`);
+    const sw=(a,b,c)=>[...new Set([b,c,...a].filter(Boolean))];if(def.paper)h+=row(L.kind==="tape"?"Colour":"Paper",`<div class="sSw">${sw(PAPERS,def.paper,L.paper).map(c=>`<button class="sDot${L.paper===c?" on":""}" data-paper="${c}" style="background:${c}" aria-label="${c}"></button>`).join("")}${pickDot("paper",L.paper)}</div>`);
+    if(!def.noInk&&!["frame","tape"].includes(L.kind))h+=row("Ink",`<div class="sSw">${sw(INKS,def.ink,L.ink).map(c=>`<button class="sDot${L.ink===c?" on":""}" data-ink="${c}" style="background:${c}" aria-label="${c}"></button>`).join("")}${pickDot("ink",L.ink)}</div>`);
     h+=`<div class="sRow sTogRow"><span>${svg("shadow")}Shadow</span><button class="sTog${L.shadow?" on":""}" role="switch" aria-checked="${L.shadow}" data-act="shadow" aria-label="Shadow"><i></i></button></div>`}
   else if(t==="photo"){
     if(L&&L.t==="photo"){h+=`<div class="sHead"><b>Photo sticker</b><div class="sChips">${chip(svg("swap")+"Replace",false,'data-act="replace"')}${chip(svg("trash")+"Delete",false,'data-act="del" class="warn"')}</div></div>`;
       h+=row("Frame",`<div class="sFrames">${FRAMES.map(([v,l])=>`<button class="sFrame f-${v}${L.frame===v?" on":""}" data-frame="${v}"><span><img src="${thumbOf(L.key)}" alt=""></span>${l}</button>`).join("")}</div>`,"frame");
       h+=row("Crop",`<div class="sChips wrap">${ASPECTS.map(([v,l])=>chip(l,(L.aspect||"orig")===v,`data-asp="${v}"`)).join("")}</div>`,"aspect");
       h+=`<div class="sRow sTogRow"><span>${svg("shadow")}Shadow</span><button class="sTog${L.shadow?" on":""}" role="switch" aria-checked="${L.shadow}" data-act="shadow" aria-label="Shadow"><i></i></button></div>`;
+      if(L.frame==="color"||L.frame==="oval"){const cur=L.rim||(L.frame==="oval"?"#F3E6CF":"#F2B940");h+=row("Frame colour",`<div class="sSw">${[...new Set([cur,"#F2B940","#F3E6CF","#FFFFFF","#111111","#C4452F","#23704A","#23336B","#F09AA3"])].map(c=>`<button class="sDot${cur===c?" on":""}" data-rim="${c}" style="background:${c}" aria-label="${c}"></button>`).join("")}${pickDot("rim",cur)}</div>`)}
       if(L.frame==="polaroid")h+=row("Caption",`<input class="sInp" maxlength="40" placeholder="Write on the polaroid…" value="${(L.cap||"").replace(/"/g,"&quot;")}" data-k="cap">`)}
     else{const ph=S.layers.filter(x=>x.t==="photo");h+=`<div class="sHead"><b>Stickers</b><span class="sSub">Tap to add</span></div>`;
       if(!STK_CATS.some(([c])=>c===ST.stkCat))ST.stkCat=STK_CATS[0][0];h+=`<div class="sChips sCats">${STK_CATS.map(([c,l])=>chip(l,ST.stkCat===c,`data-stkcat="${c}"`)).join("")}${chip("Photos",ST.stkCat==="photos",`data-stkcat="photos"`)}</div>`;
@@ -743,6 +746,7 @@ async function panelClick(e){const b=e.target.closest("button,[data-lay]");if(!b
   if(d.stk){snapS();const n=newStk(d.stk);n.y=SH*(.42+((S.layers.filter(x=>x.t==="stk").length%3)*.08));S.layers.push(n);ST.sel=n.id;if(!wide())ST.tool=null;changed();renderPanel();toast(STK[d.stk].name+" added");return}
   if(d.paper&&L){snapS();L.paper=d.paper;changed();renderPanel();return}
   if(d.ink&&L){snapS();L.ink=d.ink;changed();renderPanel();return}
+  if(d.rim&&L){snapS();L.rim=d.rim;changed();renderPanel();return}
   if(d.stt!=null){const tt=sTitles()[+d.stt];if(!tt)return;snapS();const n=newTitle(tt);n.y=S.layers.some(x=>x.t==="title")?SH*.72:SH*.22;S.layers.push(n);ST.sel=n.id;if(!wide())ST.tool=null;changed();renderPanel();toast("Added to your story");return}
   if(d.selp){ST.sel=d.selp;renderPanel();draw();return}
   if(d.fx){snapS();S.fx.name=d.fx;changed();renderPanel();return}
@@ -767,10 +771,10 @@ async function panelClick(e){const b=e.target.closest("button,[data-lay]");if(!b
 let inpT=0,inpSnap=null;
 function panelInput(e){const t=e.target,k=t.dataset.k;if(!k)return;if(!inpSnap)inpSnap=JSON.stringify(S);const L=selL();
   if(k==="blur"){S.bg.blur=+t.value}else if(k==="dim"){S.bg.dim=+t.value/100}else if(k==="amount"){S.fx.amount=+t.value/100}
-  else if(k==="cap"&&L){L.cap=t.value}else if(k.startsWith("f:")&&L&&L.f){L.f[k.slice(2)]=t.value}else if(k==="color"){S.bg.color=t.value}
+  else if(k==="cap"&&L){L.cap=t.value}else if(k.startsWith("f:")&&L&&L.f){L.f[k.slice(2)]=t.value}else if(k==="color"){S.bg.color=t.value}else if((k==="paper"||k==="ink"||k==="rim")&&L){L[k]=t.value.toUpperCase()}
   const o=t.parentElement&&t.parentElement.querySelector("output");if(o)o.textContent=k==="dim"?t.value+"%":t.value;
   draw();clearTimeout(inpT);inpT=setTimeout(commitInput,500)}
-function panelChange(e){if(e.target.dataset.k)commitInput()}
+function panelChange(e){const k=e.target.dataset.k;if(!k)return;commitInput();if(k==="paper"||k==="ink"||k==="rim"||k==="color")renderPanel()}
 function commitInput(){clearTimeout(inpT);if(inpSnap){ST.hist.push(inpSnap);if(ST.hist.length>60)ST.hist.shift();ST.fut=[];inpSnap=null;changed()}}
 
 async function addBgPhoto(){const f=await pickFile();if(!f)return;let k;try{k=await importFile(f)}catch(e){toast("Couldn't open that photo");return}
@@ -830,7 +834,7 @@ function saved(blob,title){const u=URL.createObjectURL(blob);const w=document.cr
 /* ---------- open / close ---------- */
 function show(){const el=$s("storyEd");el.classList.remove("hidden");ST.open=true;document.documentElement.classList.add("storyOpen");if(typeof syncGlass==="function")syncGlass();updTop();syncEmpty();renderPanel();draw()}
 function hide(){const el=$s("storyEd");if(el)el.classList.add("hidden");ST.open=false;document.documentElement.classList.remove("storyOpen");if(typeof syncGlass==="function")syncGlass()}
-async function open(){if(typeof track==="function")track("story");build();await loadDoc();const fresh=S.bg.type!=="photo"&&!S.layers.some(x=>x.t==="photo");if(fresh)ST.tool="tpl";else if(wide()&&!ST.tool)ST.tool="bg";show();
+async function open(){if(typeof track==="function")track("story");build();await loadDoc();ST.sel=null;ST.sheetH=0;ST.tool="tpl";ST.lastTool="tpl";show();
   try{if(!localStorage.getItem("typoStudio.storyIntro")){localStorage.setItem("typoStudio.storyIntro","1");setTimeout(()=>toast("New: make your whole story here ✨"),400)}}catch(e){}}
 function close(){stopEdit();stopPick();hide();persist();hapt()}
 function onPro(){updTop();if(isPro()&&ST.pending&&ST.open){const m=ST.pending;ST.pending=null;setTimeout(()=>exportStory(m),450)}}
