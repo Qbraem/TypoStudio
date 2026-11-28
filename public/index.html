@@ -1230,7 +1230,7 @@ function allDesigns(){return [...custom,...SEEDS.filter(d=>!seasonHidden(d)),...
 /* Advent calendar: 24 Christmas stickers, one unwraps per day. The list comes from the server (/api/advent), so designs can be
    added or changed without an app update; the copy bundled with the app is the fallback. engine = drawing features a design needs. */
 const ENGINE=2;
-const FEAT_BUILDER=!!(window.Capacitor&&Capacitor.isNativePlatform&&Capacitor.isNativePlatform())||/[?&]builder/.test(location.search); // 2.0: Story Builder in the iOS app; the website keeps it hiddendocument.documentElement.classList.toggle("noBuilder",!FEAT_BUILDER);
+const FEAT_BUILDER=!/[?&]nobuilder/.test(location.search); // 2.0: Story Builder on (the website is password protected)document.documentElement.classList.toggle("noBuilder",!FEAT_BUILDER);
 let ADVENT=[],ADVENT_SRC="";
 function adventOk(j){return j&&Array.isArray(j.designs)?j.designs.filter(d=>d&&d.id&&Array.isArray(d.layers)&&(d.engine||1)<=ENGINE&&d.day>=1&&d.day<=24).map(d=>Object.assign(d,{cat:"Advent",seed:true})).sort((a,b)=>a.day-b.day):[]}
 try{ADVENT_SRC=localStorage.getItem("typoStudio.advent")||"";ADVENT=adventOk(JSON.parse(ADVENT_SRC||"null"))}catch(e){}

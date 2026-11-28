@@ -45,6 +45,18 @@ async function addEvent(e, p) {
 }
 async function evHash(key) { if (!UP_URL) return memEv[key] || {}; return hash(key); }
 
+// ---- private web app: with SITE_PASSWORD set, "/" shows the public home page unless you are logged in ----
+const SITE_PASSWORD = process.env.SITE_PASSWORD || "";
+const crypto = require("crypto");
+const AUTH = SITE_PASSWORD ? crypto.createHash("sha256").update("studio-typo|" + SITE_PASSWORD).digest("hex") : "";
+const cookieOf = (req, name) => { const m = (req.headers.cookie || "").match(new RegExp("(?:^|;\\s*)" + name + "=([^;]+)")); return m ? m[1] : ""; };
+const authed = req => !SITE_PASSWORD || cookieOf(req, "st_auth") === AUTH;
+const tries = new Map(); // ip -> [count, since]
+const loginPage = msg => `<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex"><title>Login · Studio Typo</title>
+<style>body{margin:0;min-height:100vh;display:grid;place-items:center;background:#120d0a;color:#f6ece0;font:16px -apple-system,system-ui,sans-serif}form{width:min(320px,86vw);display:grid;gap:12px;text-align:center}
+input,button{font:inherit;padding:14px 16px;border-radius:14px;border:1px solid #3a2c22;background:#1f1712;color:inherit}button{background:#f6ece0;color:#2a1810;font-weight:700;border:0}p{color:#e9a08a;margin:0;min-height:1.2em}</style></head>
+<body><form method="post" action="/login"><b style="font-size:20px">Studio Typo</b><input type="password" name="pw" placeholder="Password" autocomplete="current-password" autofocus><button>Open the web app</button><p>${msg || ""}</p></form></body></html>`;
+
 // ---- private stats page: /stats?key=STATS_KEY ----
 const STATS_KEY = process.env.STATS_KEY || "";
 let DESIGNS = [];
@@ -163,10 +175,25 @@ http.createServer((req, res) => {
     });
     return;
   }
+  if (url.pathname === "/login" && req.method === "GET") { res.writeHead(200, { "Content-Type": "text/html; charset=utf-8", "Cache-Control": "no-store" }); return res.end(loginPage()); }
+  if (url.pathname === "/login" && req.method === "POST") {
+    const ip = (req.headers["x-forwarded-for"] || req.socket.remoteAddress || "").split(",")[0].trim(), now = Date.now();
+    let t = tries.get(ip); if (!t || now - t[1] > 15 * 60e3) t = [0, now]; tries.set(ip, t);
+    if (t[0] >= 8) { res.writeHead(429, { "Content-Type": "text/html; charset=utf-8" }); return res.end(loginPage("Too many tries, wait 15 minutes")); }
+    let body = ""; req.on("data", c => { body += c; if (body.length > 2000) req.destroy(); });
+    req.on("end", () => {
+      const pw = new URLSearchParams(body).get("pw") || "";
+      const ok = SITE_PASSWORD && pw.length === SITE_PASSWORD.length && crypto.timingSafeEqual(Buffer.from(pw), Buffer.from(SITE_PASSWORD));
+      if (!ok) { t[0]++; res.writeHead(401, { "Content-Type": "text/html; charset=utf-8" }); return res.end(loginPage("Wrong password")); }
+      res.writeHead(303, { "Set-Cookie": `st_auth=${AUTH}; Path=/; Max-Age=31536000; HttpOnly; Secure; SameSite=Lax`, Location: "/" }); res.end();
+    });
+    return;
+  }
+  if (url.pathname === "/logout") { res.writeHead(303, { "Set-Cookie": "st_auth=; Path=/; Max-Age=0", Location: "/" }); return res.end(); }
   if (url.pathname === "/healthz") { res.writeHead(200, { "Content-Type": "text/plain" }); return res.end("ok"); }
   if (req.method !== "GET" && req.method !== "HEAD") { res.writeHead(405); return res.end(); }
   let rel = decodeURIComponent(url.pathname);
-  if (rel === "/") rel = "/index.html";
+  if (rel === "/" || rel === "/index.html") rel = authed(req) ? "/index.html" : "/home.html";
   const file = path.normalize(path.join(ROOT, rel));
   if (!file.startsWith(ROOT)) { res.writeHead(403); return res.end(); }
   fs.readFile(file, (err, data) => {
