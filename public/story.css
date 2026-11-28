@@ -254,3 +254,6 @@ html.storyOpen .shell{visibility:hidden}
 /* "Add your photo" gives a short nudge right after you pick a template */
 @keyframes sNudge{0%,100%{transform:translateX(-50%) scale(1)}50%{transform:translateX(-50%) scale(1.07)}}
 .sSlotBtn.nudge{animation:sNudge .7s ease-in-out 3}
+
+.sTplGrp{font:700 11px/1 system-ui,-apple-system,sans-serif;letter-spacing:.12em;text-transform:uppercase;opacity:.55;margin:14px 2px 8px}
+.sTplGrp:first-of-type{margin-top:4px}

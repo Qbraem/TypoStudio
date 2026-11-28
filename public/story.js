@@ -21,6 +21,7 @@ const IC={
   layers:'<path d="M12 3l9 5-9 5-9-5z"/><path d="M3 13l9 5 9-5"/>',
   frame:'<rect x="4" y="3" width="16" height="18" rx="1.5"/><rect x="7" y="6" width="10" height="9"/>',
   crop:'<path d="M6 2v14a2 2 0 0 0 2 2h14"/><path d="M2 6h14a2 2 0 0 1 2 2v14"/>',
+  glow:'<circle cx="12" cy="12" r="4"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9l2.1 2.1M17 17l2.1 2.1M4.9 19.1L7 17M17 7l2.1-2.1"/>',
   shadow:'<rect x="3" y="3" width="13" height="13" rx="2"/><path d="M8 21h11a2 2 0 0 0 2-2V8"/>',
   front:'<rect x="8" y="8" width="12" height="12" rx="2"/><path d="M16 8V5a1 1 0 0 0-1-1H5a1 1 0 0 0-1 1v10a1 1 0 0 0 1 1h3"/>',
   back:'<rect x="4" y="4" width="12" height="12" rx="2"/><path d="M20 9v10a1 1 0 0 1-1 1H9"/>',
@@ -42,10 +43,10 @@ const IC={
 const svg=(k,w=1.9)=>`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="${w}" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${IC[k]}</svg>`;
 const uidS=()=>Math.random().toString(36).slice(2,9);
 const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
-const BUNDLED=["golden","sunset","pier","pool","agave","xmas"];
+const BUNDLED=["golden","sunset","pier","pool","agave","xmas","paper","kraft","redpaper","greenpaper","tartan"];
 const GRADS=[["#3B2416","#F26B50"],["#1C1714","#E9B77C"],["#F6E9D7","#E9B77C"],["#7FC8E8","#F6E9D7"],["#111111","#3B2416"],["#D9473A","#F6B26B"],["#A8B89A","#F6E9D7"],["#2A2E45","#C98A4B"],["#2A1C14","#E4B27B"]];
 const COLORS=["#120D0A","#3B2416","#F6E9D7","#FFFFFF","#E9B77C","#F26B50","#D9473A","#7FC8E8","#A8B89A","#111111"];
-const FRAMES=[["none","None"],["rounded","Rounded"],["border","Border"],["polaroid","Polaroid"],["film","Film"]];
+const FRAMES=[["none","None"],["rounded","Rounded"],["border","Border"],["polaroid","Polaroid"],["film","Film"],["stamp","Stamp"],["oval","Oval"]];
 const ASPECTS=[["orig","Original"],["4:5","4:5"],["1:1","1:1"],["3:4","3:4"],["9:16","9:16"],["16:9","16:9"]];
 const FX=[["none","Original"],["warm","Warm film"],["faded","Faded"],["bw","B&W"],["golden","Golden"],["cool","Cool"],["brownie","Brownie"],["film90","90s film"],["noir","Noir"]];
 
@@ -184,7 +185,7 @@ function trimO(c){const w=c.width,h=c.height,d=c.getContext("2d").getImageData(0
 /* ---------- geometry of a layer (in story units) ---------- */
 function aspectOf(L){const o=IMG.get(L.key);if(L.aspect==="orig"||!L.aspect)return o?o.w/o.h:1;const [a,b]=L.aspect.split(":").map(Number);return a/b}
 function photoBox(L){const w=L.w,h=w/aspectOf(L);let l=0,r=0,t=0,b=0;
-  if(L.frame==="polaroid"){l=r=t=w*.045;b=w*.2}else if(L.frame==="border"){l=r=t=b=w*.035}else if(L.frame==="film"){l=r=w*.075;t=b=w*.04}
+  if(L.frame==="polaroid"){l=r=t=w*.045;b=w*.2}else if(L.frame==="border"){l=r=t=b=w*.035}else if(L.frame==="film"){l=r=w*.075;t=b=w*.04}else if(L.frame==="stamp"){l=r=t=b=w*.07}else if(L.frame==="oval"){l=r=t=b=w*.035}
   return{w,h,l,r,t,b,W:w+l+r,H:h+t+b}}
 function bounds(L,k){ // half sizes + centre offset in story units
   if(L.t==="photo"){const B=photoBox(L);return{hw:B.W/2,hh:B.H/2,dx:0,dy:0}}
@@ -257,7 +258,7 @@ const STK_TRAVEL=["stamp","ministamp","sticky","note","ticket","postcard","frame
 if(window.STK_PACK)Object.assign(STK,window.STK_PACK({F,fit,lines,spaced,scallop,wave}));
 const STK_CATS=(window.STK_CATS||[["travel","Travel & paper"]]).filter(([c])=>Object.values(STK).some(d=>d.cat===c));
 const STK_ORDER=Object.keys(STK);const stkOf=c=>STK_ORDER.filter(k=>STK[k].cat===c&&!STK[k].hidden);
-const STK_FIELDS={top:"Top line",title:"Title",bottom:"Bottom lines",text:"Text",sign:"Signature",label:"Label",date:"Date",code:"Number",hello:"Greeting",place:"Place",msg:"Message",t1:"Time 1",t2:"Time 2",t3:"Time 3",d1:"Day 1",d2:"Day 2",d3:"Day 3"};
+const STK_FIELDS={to:"Address",from:"From",ring:"Ring text",mono:"Monogram",val:"Value",top:"Top line",title:"Title",bottom:"Bottom lines",text:"Text",sign:"Signature",label:"Label",date:"Date",code:"Number",hello:"Greeting",place:"Place",msg:"Message",t1:"Time 1",t2:"Time 2",t3:"Time 3",d1:"Day 1",d2:"Day 2",d3:"Day 3"};
 function newStk(kind){const k=STK[kind];return{id:uidS(),t:"stk",kind,x:SW/2,y:SH*.5,w:SW*k.w,rot:k.rot!=null?k.rot:kind==="tape"?-8:kind==="frame"?0:-3,paper:k.paper,ink:k.ink,f:clone(k.f),shadow:!k.noShadow&&kind!=="postmark"&&kind!=="tape",hidden:false}}
 const stCache=new Map();const STM=.1; // margin around a sticker canvas (room for shadows & postmarks)
 function stkBitmap(L,pxW){stkFonts();const def=STK[L.kind];if(!def)return null;const key=JSON.stringify([L.kind,L.paper,L.ink,L.f])+"|"+Math.round(pxW);let t=stCache.get(L.id);if(t&&t.key===key)return t;if(ST.gesture&&t)return t;
@@ -280,14 +281,56 @@ let STT=null;const sTitles=()=>STT||(STT=storyTitles());
    photo slots are marked ph:true and start with one of our sample photos; lock:true = a fixed cell, drag pans the photo inside it */
 function storyTemplates(){if(typeof L!=="function"||typeof D!=="function")return[];
   const T=(d,x,y,s)=>({t:"title",d,x,y,s,rot:0}),P=(key,x,y,w,o={})=>Object.assign({t:"photo",key,x,y,w,rot:0,frame:"none",aspect:"orig",shadow:false,cap:"",ph:true},o);
+  const K=(kind,x,y,w,o={})=>{if(!STK[kind])return null;const k=newStk(kind);Object.assign(k,{x,y,w:SW*w},o);if(o.f)k.f=Object.assign(clone(STK[kind].f),o.f);return k},PR=window.P;
   const cw=(SW-8)/2,ch=(SH-8)/2,cell=(key,c,r)=>P(key,cw/2+c*(cw+8),ch/2+r*(ch+8),cw,{aspect:`${Math.round(cw)}:${Math.round(ch)}`,lock:true});
   return[
-  {id:"t90",name:"90s movie",bg:{type:"photo",photo:"b:xmas",ph:true,dim:.12},fx:{name:"film90",amount:.85,grain:true,vig:true},layers:[
+  /* ---------- Christmas: nostalgic paper, film & post ---------- */
+  {id:"xscrap",grp:"xmas",name:"Scrapbook",bg:{type:"photo",photo:"b:paper",dim:0},fx:{name:"warm",amount:.25,grain:true,vig:true},layers:[
+    K("bookpage",230,1095,.5,{rot:-7}),K("bookpage",850,1110,.46,{rot:6}),K("bookpage",470,1700,.72,{rot:-2}),
+    K("lightstring",540,120,1.04,{rot:0}),
+    P("b:xmas",330,800,420,{frame:"border",aspect:"4:5",rot:-6,shadow:true}),P("b:coffee3",770,830,390,{frame:"border",aspect:"1:1",rot:5,shadow:true}),
+    P("b:coffee1",320,1330,400,{frame:"border",aspect:"1:1",rot:4,shadow:true}),P("b:golden",760,1440,420,{frame:"border",aspect:"4:5",rot:-4,shadow:true}),
+    K("tape",770,590,.26,{rot:-4,shadow:false}),K("bow",150,560,.2,{rot:-10}),K("bow",930,1210,.18,{rot:12}),K("twinkle",110,1120,.13,{rot:0,shadow:false}),K("gstar",150,1050,.12,{ink:"#C7322C",shadow:false}),
+    T(D("tx1","Story","Scrapbook",[L("Merry","Kaushan Script",170,-110,-80,{rotate:-6}),L("Christmas!","Kaushan Script",190,60,90,{rotate:-6})],{colors:{main:"#B3262B",accent:"#B3262B"}}),SW/2,330,1),
+    T(D("tx1b","Story","Scrapbook line",[L("home for the holidays","Nothing You Could Do",56,0,0)],{colors:{main:"#4A3A2E",accent:"#B3262B"}}),SW/2,1850,1)]},
+  {id:"xoval",grp:"xmas",name:"Oval card",bg:{type:"photo",photo:"b:redpaper",dim:0},fx:{name:"none",amount:.7,grain:true,vig:true},layers:[
+    P("b:xmas",SW/2,1020,540,{frame:"oval",aspect:"3:4",rim:"#F3E6CF"}),K("ringoval",SW/2,1020,.68,{rot:0,shadow:false}),
+    T(D("tx2","Story","Oval card",[L("MERRY CHRISTMAS","Italiana",104,0,-40,{spacing:12}),L("& a happy new year","Instrument Serif",62,0,60,{italic:true})],{colors:{main:"#F3E6CF",accent:"#F3E6CF"}}),SW/2,270,1),
+    T(D("tx2b","Story","Oval corners",[L("joy","Instrument Serif",58,-400,-20,{italic:true}),L("peace","Instrument Serif",58,390,-20,{italic:true})],{colors:{main:"#F3E6CF",accent:"#F3E6CF"}}),SW/2,560,1),
+    T(D("tx2c","Story","Oval corners 2",[L("love","Instrument Serif",58,-400,0,{italic:true}),L("2026","Instrument Serif",58,390,0,{italic:true})],{colors:{main:"#F3E6CF",accent:"#F3E6CF"}}),SW/2,1500,1),
+    T(D("tx2d","Story","Oval line",[L("from our home to yours","Nothing You Could Do",60,0,0)],{colors:{main:"#F3E6CF",accent:"#F3E6CF"}}),SW/2,1710,1)]},
+  {id:"xtree",grp:"xmas",name:"Polaroid tree",bg:{type:"photo",photo:"b:redpaper",dim:0},fx:{name:"none",amount:.7,grain:true,vig:true},layers:[
+    P("b:xmas",540,560,230,{frame:"polaroid",aspect:"1:1",rot:-3,shadow:true}),
+    P("b:coffee1",395,890,230,{frame:"polaroid",aspect:"1:1",rot:4,shadow:true}),P("b:golden",685,890,230,{frame:"polaroid",aspect:"1:1",rot:-4,shadow:true}),
+    P("b:coffee3",255,1220,230,{frame:"polaroid",aspect:"1:1",rot:-5,shadow:true}),P("b:sunset",540,1225,230,{frame:"polaroid",aspect:"1:1",rot:2,shadow:true}),P("b:coffee2",825,1220,230,{frame:"polaroid",aspect:"1:1",rot:5,shadow:true}),
+    K("gstar",540,300,.2,{rot:0,shadow:false}),K("gbauble",150,700,.14,{shadow:false}),K("gbow",930,650,.17,{rot:10,shadow:false}),K("gbauble",950,1000,.11,{rot:12,shadow:false}),K("twinkle",140,1000,.13,{ink:"#E2C37A",shadow:false}),
+    T(D("tx3","Story","Polaroid tree",[L("Merry Christmas","Great Vibes",165,0,0)],{colors:{main:"#E7C981",accent:"#E7C981"}}),SW/2,1510,1),
+    T(D("tx3b","Story","Tree line",[L("LOVE FROM ALL OF US","Italiana",46,0,0,{spacing:22})],{colors:{main:"#F3E6CF",accent:"#F3E6CF"}}),SW/2,1720,1)]},
+  {id:"xbright",grp:"xmas",name:"Merry & bright",bg:{type:"photo",photo:"b:paper",dim:0},fx:{name:"none",amount:.7,grain:true,vig:true},layers:[
+    P("b:xmas",560,1200,560,{frame:"polaroid",aspect:"4:5",rot:4,shadow:true}),K("tape",560,790,.3,{rot:-3,paper:"#C7322C",shadow:false}),
+    T(D("tx4","Story","Merry & bright",[L("everything","Great Vibes",130,-40,-150,{rotate:-4}),L("merry","Great Vibes",230,20,0,{rotate:-4}),L("& bright","Great Vibes",190,80,150,{rotate:-4})],{colors:{main:"#B3262B",accent:"#B3262B"}}),SW/2,440,1.08),
+    K("twinkle",190,260,.15,{shadow:false}),K("twinkle",900,520,.12,{rot:20,shadow:false}),K("twinkle",880,1640,.1,{shadow:false}),
+    T(D("tx4b","Story","Bright line",[L("SNOW  ·  COCOA  ·  CANDLELIGHT","DM Sans",30,0,0,{weight:700,spacing:30})],{colors:{main:"#B3262B",accent:"#B3262B"}}),SW/2,1800,1)]},
+  {id:"xglow",grp:"xmas",name:"Film glow",bg:{type:"color",color:"#120D0A",dim:0},fx:{name:"warm",amount:.5,grain:true,vig:true},layers:[
+    P("b:xmas",SW/2,SH/2,900,{frame:"film",aspect:"900:1540",lock:true}),
+    Object.assign(T(D("tx5","Story","Film glow",[L("Merry","Instrument Serif",240,0,-110),L("Christmas","Instrument Serif",240,0,90,{italic:true})],{colors:{main:"#FFF3DC",accent:"#FFF3DC"}}),SW/2,980,1),{glow:"#FFB45A"}),
+    T(D("tx5b","Story","Film line",[L("24.12  ·  CHRISTMAS EVE  ·  FILM 400","DM Mono",28,0,0,{spacing:10})],{colors:{main:"#F5D9A6",accent:"#F5D9A6"}}),SW/2,1560,1)]},
+  {id:"xsanta",grp:"xmas",name:"Dear Santa",bg:{type:"photo",photo:"b:tartan",dim:.1},fx:{name:"none",amount:.7,grain:true,vig:true},layers:[
+    K("envelope",620,510,.78,{rot:6}),K("xstamp",880,300,.2,{rot:9}),K("wavemark",640,340,.5,{rot:-8,shadow:false}),
+    K("letter",450,1150,.64,{rot:-4}),P("b:coffee3",300,1600,300,{frame:"border",aspect:"1:1",rot:-7,shadow:true}),K("wax",560,1400,.15,{rot:0}),
+    P("b:golden",800,1500,300,{frame:"border",aspect:"3:4",rot:8,shadow:true}),K("paperclip",860,1280,.07,{rot:12}),
+    T(D("tx6","Story","Dear Santa",[L("Dear Santa,","Great Vibes",200,0,0,{rotate:-5})],{colors:{main:"#F6EBD3",accent:"#F6EBD3"},shadow:45}),SW/2,160,1)]},
+  {id:"xspark",grp:"xmas",name:"Sparkle",bg:{type:"photo",photo:"b:xmas",ph:true,dim:.38},fx:{name:"warm",amount:.45,grain:true,vig:true},layers:[
+    K("ovalline",SW/2,880,.84,{rot:-5}),
+    T(D("tx7","Story","Sparkle",[L("MERRY","Italiana",64,0,-170,{spacing:40}),L("Christmas","Great Vibes",270,0,10)],{colors:{main:"#FFFFFF",accent:"#FFFFFF"},shadow:20}),SW/2,900,1),
+    T(D("tx7b","Story","Sparkle line",[L("a time for joy, love & cocoa","Instrument Serif",64,0,0,{italic:true})],{colors:{main:"#FFFFFF",accent:"#FFFFFF"},shadow:30}),SW/2,1235,1),
+    K("twinkle",240,640,.2,{ink:"#FFFFFF",shadow:false}),K("twinkle",860,1180,.14,{ink:"#FFFFFF",rot:15,shadow:false}),K("twinkle",880,560,.08,{ink:"#FFFFFF",shadow:false})]},
+  {id:"t90",grp:"xmas",name:"90s movie",bg:{type:"photo",photo:"b:xmas",ph:true,dim:.12},fx:{name:"film90",amount:.85,grain:true,vig:true},layers:[
     T(D("tp1","Story","90s movie",[L("MAKE THIS","Instrument Serif",150,0,-345,{spacing:-2}),L("DECEMBER","Instrument Serif",205,0,-180,{spacing:-3}),L("FEEL LIKE A","Instrument Serif",112,0,-45,{spacing:-1}),L("90's movie","Great Vibes",250,0,120,{color:"accent",rotate:-5})],{colors:{main:"#FFFFFF",accent:"#E5483A"},shadow:55}),SW/2,SH*.6,1.12)]},
   {id:"t4",name:"Four photos",bg:{type:"color",color:"#17110D",dim:0},fx:{name:"brownie",amount:.9,grain:true,vig:false},layers:[
     cell("b:agave",0,0),cell("b:golden",1,0),cell("b:pier",0,1),cell("b:xmas",1,1),
     T(D("tp2","Story","Four photos",[L("try this","Instrument Serif",120,0,-95),L("Cosy Season","Instrument Serif",235,0,45,{spacing:-4})],{colors:{main:"#EFE1CB",accent:"#FFFFFF"},shadow:60}),SW/2,SH/2,1)]},
-  {id:"tbw",name:"B&W quote",bg:{type:"photo",photo:"b:pier",ph:true,dim:.22},fx:{name:"noir",amount:1,grain:true,vig:true},layers:[
+  {id:"tbw",grp:"xmas",name:"B&W quote",bg:{type:"photo",photo:"b:pier",ph:true,dim:.22},fx:{name:"noir",amount:1,grain:true,vig:true},layers:[
     T(D("tp3","Story","B&W quote",[L("kinda magic to","Instrument Serif",150,0,-150,{spacing:-3}),L("slow down and","Instrument Serif",150,0,0,{spacing:-3}),L("enjoy december","Instrument Serif",150,0,150,{spacing:-3})],{colors:{main:"#F2C94C",accent:"#FFFFFF"},shadow:25}),SW/2,SH*.47,.95)]},
   {id:"tfilm",name:"Photo dump",bg:{type:"gradient",grad:8,dim:0},fx:{name:"warm",amount:.45,grain:true,vig:false},layers:[
     P("b:coffee1",SW/2,595,755,{frame:"film",aspect:"755:430",lock:true}),P("b:coffee2",SW/2,1085,755,{frame:"film",aspect:"755:430",lock:true}),P("b:coffee3",SW/2,1575,755,{frame:"film",aspect:"755:430",lock:true}),
@@ -297,8 +340,35 @@ function storyTemplates(){if(typeof L!=="function"||typeof D!=="function")return
     T(D("tp5","Story","Polaroids",[L("weekend notes","Caveat",190,0,0,{weight:700})],{colors:{main:"#2A1D14",accent:"#C4452F"}}),SW/2,SH*.17,.95)]},
   {id:"tmag",name:"Magazine",bg:{type:"photo",photo:"b:golden",ph:true,dim:.1},fx:{name:"warm",amount:.55,grain:false,vig:true},layers:[
     T(D("tp6","Story","Magazine",[L("WEEKEND","Gloock",200,0,0,{spacing:-3})],{colors:{main:"#FFFFFF",accent:"#F26B50"},shadow:25}),SW/2,SH*.12,.92),
-    T(D("tp7","Story","Magazine line",[L("ISSUE 12  ·  SLOW MORNINGS & GOLDEN HOURS","DM Sans",38,0,0,{weight:700,spacing:6})],{colors:{main:"#FFFFFF",accent:"#F26B50"},shadow:30}),SW/2,SH*.9,.95)]}
-  ]}
+    T(D("tp7","Story","Magazine line",[L("ISSUE 12  ·  SLOW MORNINGS & GOLDEN HOURS","DM Sans",38,0,0,{weight:700,spacing:6})],{colors:{main:"#FFFFFF",accent:"#F26B50"},shadow:30}),SW/2,SH*.9,.95)]},
+  /* ---------- Everyday: paper notes, post & collage ---------- */
+  {id:"gmorning",name:"Good morning",bg:{type:"photo",photo:"b:pier",ph:true,dim:0},fx:{name:"none",amount:.7,grain:true,vig:false},layers:[
+    K("gridnote",540,900,.8,{rot:-2}),K("paperclip",330,560,.075,{rot:-10}),
+    T(D("tg1","Story","Good morning",[L("GOOD","DM Serif Display",150,0,-80),L("MORNING","DM Serif Display",150,0,60)],{colors:{main:"#22301F",accent:"#22301F"}}),SW/2,840,1),
+    T(D("tg1b","Story","Morning line",[L("start your morning","Nothing You Could Do",54,0,-36),L("with a smile","Nothing You Could Do",54,0,34)],{colors:{main:"#333333",accent:"#333333"}}),SW/2,1080,1)]},
+  {id:"gcoffee",name:"Coffee & stories",bg:{type:"color",color:"#1C1A14",dim:0},fx:{name:"warm",amount:.5,grain:true,vig:true},layers:[
+    P("b:coffee1",SW/2,320,SW,{aspect:"1080:640",lock:true}),P("b:coffee4",SW/2,960,SW,{aspect:"1080:640",lock:true}),P("b:coffee3",SW/2,1600,SW,{aspect:"1080:640",lock:true}),
+    T(D("tg2","Story","Coffee & stories",[L("coffee","Instrument Serif",250,30,-70,{italic:true}),L("&","Great Vibes",130,-275,62,{color:"accent"}),L("STORIES","Archivo Black",110,90,70)],{colors:{main:"#FFFFFF",accent:"#FFFFFF"},shadow:40}),SW/2,960,1)]},
+  {id:"gstudio",name:"Journal page",bg:{type:"photo",photo:"b:paper",dim:0},fx:{name:"none",amount:.7,grain:true,vig:false},layers:[
+    P("b:sunset",SW/2,300,SW,{aspect:"1080:600",lock:true}),K("star8",900,600,.24,{rot:8,shadow:false}),
+    T(D("tg3","Story","Journal title",[PR("INSIDE\nTHE\nSTUDIO","Archivo Black",190,0,0,{width:900,lh:.9,align:"left"})],{colors:{main:"#2A1F1A",accent:"#2A1F1A"}}),SW/2,920,1),
+    T(D("tg3b","Story","Journal text",[PR("November 28th. This autumn went by so fast. I've had my head down in a few projects I'm really excited about and can't wait to share soon.\n\nLately I've been thinking about how easy it is to follow what everyone else is doing, instead of just making my own thing.","DM Mono",27,-235,0,{width:430,lh:1.3,align:"left"}),PR("On the life front: a slow December at home, long walks and maybe a trip south in spring.\n\nSo that's where I'm at. A lot of work, a lot of curiosity and a full coffee cup on the desk.","DM Mono",27,235,-62,{width:430,lh:1.3,align:"left"})],{colors:{main:"#2A1F1A",accent:"#2A1F1A"}}),SW/2,1460,1),
+    T(D("tg3c","Story","Signature",[L("Q.","Nothing You Could Do",60,0,0)],{colors:{main:"#2A1F1A",accent:"#2A1F1A"}}),640,1700,1),
+    T(D("tg3d","Story","Footer",[L("STUDIO NOTES","DM Sans",22,0,0,{weight:700,spacing:10})],{colors:{main:"#2A1F1A",accent:"#2A1F1A"}}),170,1860,1)]},
+  {id:"gstamp",name:"Stamp note",bg:{type:"photo",photo:"b:golden",ph:true,dim:.05},fx:{name:"warm",amount:.3,grain:true,vig:true},layers:[
+    K("postback",770,900,.52,{rot:6}),P("b:coffee3",460,1130,600,{frame:"stamp",aspect:"4:5",rot:-3,shadow:true}),
+    K("linednote",500,590,.7,{rot:-7,f:{text:"this could be us right now, tasting street food at the market"}}),K("paperclip",780,470,.075,{rot:10}),K("wavemark",560,1500,.5,{ink:"#FFFFFF",rot:-4,shadow:false}),
+    T(D("tg4","Story","Stamp top",[L("TRAVEL NOTES","DM Sans",30,0,0,{weight:700,spacing:24})],{colors:{main:"#FFFFFF",accent:"#FFFFFF"},shadow:30}),SW/2,170,1)]},
+  {id:"gpost",name:"Postcard",bg:{type:"photo",photo:"b:sunset",ph:true,dim:0},fx:{name:"none",amount:.7,grain:true,vig:false},layers:[
+    K("pcard",540,600,.88,{rot:-3,f:{title:"Postcard",from:"From the coast",msg:"golden hour every night,\nsalt in our hair,\nno plans at all"}}),
+    P("b:pier",590,1220,700,{frame:"stamp",aspect:"4:3",rot:2,shadow:true}),K("handarrow",190,1520,.2,{rot:170,shadow:false}),
+    T(D("tg5","Story","Postcard note",[L("best","Nothing You Could Do",50,0,-30),L("sunset ever","Nothing You Could Do",50,0,30)],{colors:{main:"#FFFFFF",accent:"#FFFFFF"},shadow:30}),330,1720,1),
+    T(D("tg5b","Story","Postcard note 2",[L("a must","Nothing You Could Do",46,0,-28),L("visit ♡","Nothing You Could Do",46,0,28)],{colors:{main:"#FFFFFF",accent:"#FFFFFF"},shadow:30}),810,1040,1)]},
+  {id:"gcollage",name:"Kraft collage",bg:{type:"photo",photo:"b:paper",dim:0},fx:{name:"none",amount:.7,grain:true,vig:false},layers:[
+    K("boarding",620,330,.8,{rot:-3}),K("kraftfolder",560,980,.84,{rot:-3}),K("mapbit",330,1330,.5,{rot:-6}),K("receipt",280,1560,.34,{rot:3}),
+    P("b:sunset",610,920,620,{frame:"polaroid",aspect:"1:1",rot:3,shadow:true}),K("goldseal",250,560,.28),K("tape",930,560,.22,{rot:40,paper:"#E7B9B5",shadow:false}),K("paperclip",320,1760,.07,{rot:-4}),
+    T(D("tg6","Story","Collage title",[L("wander","Kaushan Script",200,-20,-90,{rotate:-8}),L("more","Kaushan Script",200,60,80,{rotate:-8})],{colors:{main:"#FFFFFF",accent:"#FFFFFF"},shadow:20}),610,860,1)]},
+  ].map(t=>Object.assign(t,{layers:t.layers.filter(Boolean)}))}
 let TPL=null;const sTpls=()=>TPL||(TPL=storyTemplates());
 function tplDoc(t){const d=blank();Object.assign(d.bg,{type:"gradient",photo:null,blur:0,dim:0,z:1,ox:0,oy:0},clone(t.bg));Object.assign(d.fx,clone(t.fx));
   d.layers=t.layers.map(x=>Object.assign(clone(x),{id:uidS(),hidden:false}));d.tpl=t.id;return d}
@@ -312,14 +382,14 @@ function slotFill(target){const slots=phSlots();const t=target||slots[0];if(!t)r
     invalidate();changed();renderPanel();hapt("MEDIUM");const left=phSlots().length;if(left)toast(left===1?"One more photo to go":`${left} more photos to go`)})}
 async function applyTpl(i){const t=sTpls()[i];if(!t)return;
   const had=(S.layers.length||S.bg.type==="photo")&&!S.tpl;snapS();S=tplDoc(t);ST.sel=null;invalidate();if(!wide())ST.tool=null;
-  await Promise.all(tplKeys(S).map(k=>ensureImg(k).catch(()=>{})));await Promise.all(S.layers.filter(x=>x.t==="title").map(x=>ensureFonts(x.d).catch(()=>{})));
+  await Promise.all(tplKeys(S).map(k=>ensureImg(k).catch(()=>{})).concat([ensureFonts(STK_FONTS).catch(()=>{})]));await Promise.all(S.layers.filter(x=>x.t==="title").map(x=>ensureFonts(x.d).catch(()=>{})));
   changed();renderPanel();if(had)toast("Template added · tap ↶ to get your story back");
   const b=$s("stSlot");if(b){b.classList.remove("nudge");void b.offsetWidth;b.classList.add("nudge")}}
 const TPL_PREV=new Map();
 async function tplThumbs(){const els=[...document.querySelectorAll("#stPanel canvas[data-tplth]")];
   for(const c of els){const i=+c.dataset.tplth,t=sTpls()[i];if(!t)continue;
     let url=TPL_PREV.get(t.id);
-    if(!url){const d=tplDoc(t);await Promise.all(tplKeys(d).map(k=>ensureImg(k).catch(()=>{})));await Promise.all(d.layers.filter(x=>x.t==="title").map(x=>ensureFonts(x.d).catch(()=>{})));
+    if(!url){const d=tplDoc(t);await ensureFonts(STK_FONTS).catch(()=>{});stCache.clear();await Promise.all(tplKeys(d).map(k=>ensureImg(k).catch(()=>{})));await Promise.all(d.layers.filter(x=>x.t==="title").map(x=>ensureFonts(x.d).catch(()=>{})));
       const W=216,H=384,cv=document.createElement("canvas");cv.width=W;cv.height=H;const keep=S;try{S=d;render(cv.getContext("2d"),W,H)}finally{S=keep}
       invalidate();url=cv;TPL_PREV.set(t.id,url)}
     c.getContext("2d").drawImage(url,0,0,c.width,c.height)}
@@ -361,14 +431,24 @@ function drawPhoto(x,L,k){const B=photoBox(L),Wf=B.W*k,Hf=B.H*k,X=-Wf/2,Y=-Hf/2;
   const inner=[X+B.l*k,Y+B.t*k,B.w*k,B.h*k];
   if(L.frame==="polaroid"||L.frame==="border"){x.fillStyle=L.frame==="polaroid"?"#F7F1E6":"#FFFFFF";x.fillRect(X,Y,Wf,Hf)}
   else if(L.frame==="film"){x.fillStyle="#141210";x.fillRect(X,Y,Wf,Hf)}
+  else if(L.frame==="stamp"){x.fillStyle="#F6EFE2";x.beginPath();perfPath(x,X,Y,Wf,Hf,B.w*k*.022);x.fill()}
   const pc=photoCanvas(L,inner[2],inner[3]);
+  if(L.frame==="oval"){const [ix,iy,iw,ih]=inner;x.save();x.beginPath();x.ellipse(ix+iw/2,iy+ih/2,iw/2,ih/2,0,0,7);if(L.shadow){x.fillStyle="#000";x.fill()}x.shadowColor="transparent";x.clip();if(pc)x.drawImage(pc,...inner);else{x.fillStyle="#3a2a1f";x.fillRect(...inner)}
+    if(L.lock&&S.bg.dim>0&&pc){x.fillStyle=`rgba(0,0,0,${S.bg.dim})`;x.fillRect(...inner)}x.restore();
+    x.strokeStyle=L.rim||"#F3E6CF";x.lineWidth=Math.max(1,B.w*k*.006);x.beginPath();x.ellipse(0,0,Wf/2-x.lineWidth,Hf/2-x.lineWidth,0,0,7);x.stroke();return}
   if(L.frame==="rounded"){x.save();rrect(x,...inner,B.w*k*.06);if(L.shadow){x.fillStyle="#000";x.fill()}x.shadowColor="transparent";x.clip();if(pc)x.drawImage(pc,...inner);x.restore()}
   else{if(L.frame==="none"&&L.shadow&&pc){x.drawImage(pc,...inner)}x.shadowColor="transparent";if(pc)x.drawImage(pc,...inner);else{x.fillStyle="#3a2a1f";x.fillRect(...inner)}}
   x.shadowColor="transparent";
   if(L.lock&&S.bg.dim>0&&pc){x.fillStyle=`rgba(0,0,0,${S.bg.dim})`;x.fillRect(...inner)}
   if(L.frame==="film"){x.fillStyle="#E9DCC6";const n=Math.max(4,Math.round(B.H/90)),hw=B.l*k*.42,hh=hw*.72;for(let i=0;i<n;i++){const yy=Y+(i+.5)*Hf/n-hh/2;rrect(x,X+B.l*k*.29,yy,hw,hh,hh*.25);x.fill();rrect(x,X+Wf-B.r*k*.29-hw,yy,hw,hh,hh*.25);x.fill()}}
   if(L.frame==="polaroid"&&L.cap){x.fillStyle="#3a2a1f";x.textAlign="center";x.textBaseline="middle";const fs=B.w*k*.085;x.font=`${fs}px Yellowtail, cursive`;x.fillText(L.cap,0,Y+Hf-B.b*k*.5,B.w*k*.92)}}
-function drawTitle(x,L,k){fontsFor(L);const px=L.s*SW*k/FRAME,t=titleBitmap(L,px),f=px/t.px;x.drawImage(t.c,t.ox*f,t.oy*f,t.c.width*f,t.c.height*f)}
+function perfPath(x,X,Y,W,H,r){ // postage-stamp edge: rectangle with round bites
+  const side=(x0,y0,x1,y1)=>{const len=Math.hypot(x1-x0,y1-y0),n=Math.max(2,Math.round(len/(r*3.1))),dx=(x1-x0)/len,dy=(y1-y0)/len,step=len/n,a0=Math.atan2(dy,dx);
+    for(let i=0;i<n;i++){const cx=x0+dx*(i+.5)*step,cy=y0+dy*(i+.5)*step;x.lineTo(cx-dx*r,cy-dy*r);x.arc(cx,cy,r,a0+Math.PI,a0,true)}x.lineTo(x1,y1)};
+  x.moveTo(X,Y);side(X,Y,X+W,Y);side(X+W,Y,X+W,Y+H);side(X+W,Y+H,X,Y+H);side(X,Y+H,X,Y);x.closePath()}
+function drawTitle(x,L,k){fontsFor(L);const px=L.s*SW*k/FRAME,t=titleBitmap(L,px),f=px/t.px,a=[t.c,t.ox*f,t.oy*f,t.c.width*f,t.c.height*f];
+  if(L.glow){x.save();x.shadowColor=L.glow;x.shadowOffsetX=x.shadowOffsetY=0;x.shadowBlur=px*60;x.globalAlpha=.9;x.drawImage(...a);x.shadowBlur=px*18;x.drawImage(...a);x.restore()}
+  x.drawImage(...a)}
 
 /* ---------- on-screen canvas ---------- */
 let rq=false,guide=false;
@@ -487,18 +567,19 @@ const wide=()=>WIDE.matches;
 function updTop(){if(!$s("stUndo"))return;$s("stUndo").disabled=ST.editing?!hist.length:!ST.hist.length;$s("stLock").hidden=canUse()}
 function syncEmpty(){syncSlot();const e=$s("stEmpty");if(e)e.hidden=!!bgSource()||S.layers.some(L=>L.t==="photo")||S.bg.type!=="gradient"||!!ST.editing}
 function setTool(t){ST.tool=t;setTimeout(syncSlot);if(t)ST.lastTool=t;renderPanel();draw()}
-function renderMini(L){const m=$s("stMini");const key=L.id+L.t+(L.shadow?1:0)+(L.kind||"");if(m.dataset.k===key)return;m.dataset.k=key;
+function renderMini(L){const m=$s("stMini");const key=L.id+L.t+(L.shadow?1:0)+(L.glow?1:0)+(L.kind||"");if(m.dataset.k===key)return;m.dataset.k=key;
   const b=(a,ic,l,on)=>`<button data-a="${a}"${on?' class="on"':""}>${svg(ic)}<span>${l}</span></button>`;
   const i=(a,ic,l)=>`<button data-a="${a}" class="io" aria-label="${l}">${svg(ic)}</button>`;
   if(L.t==="stk"){m.innerHTML=b("sedit","edit",STK[L.kind]&&Object.keys(STK[L.kind].f).length?"Edit":"Colour")+b("shadow","shadow","Shadow",L.shadow)+i("dup","copy","Duplicate")+i("front","front","Bring to front")+i("back","back","Send to back");return}
   m.innerHTML=L.t==="photo"?b("frame","frame","Frame")+b("crop","crop","Crop")+b("shadow","shadow","Shadow",L.shadow)+i("front","front","Bring to front")+i("back","back","Send to back")
-    :b("edit","edit","Edit text")+i("dup","copy","Duplicate")+i("front","front","Bring to front")+i("back","back","Send to back")}
+    :b("edit","edit","Edit text")+b("glow","glow","Glow",!!L.glow)+i("dup","copy","Duplicate")+i("front","front","Bring to front")+i("back","back","Send to back")}
 function miniAction(a){const L=selL();if(!L)return;hapt();
   if(a==="frame"||a==="crop"){setTool("photo");setTimeout(()=>{const s=$s("stPanel").querySelector(a==="crop"?"[data-sec=aspect]":"[data-sec=frame]");s&&s.scrollIntoView({block:"nearest"})},30);return}
   if(a==="edit"){editTitle(L.id);return}
   if(a==="sedit"){setTool("photo");return}
   snapS();
   if(a==="shadow"){L.shadow=!L.shadow;$s("stMini").dataset.k=""}
+  if(a==="glow"){L.glow=L.glow?null:"#FFC982";$s("stMini").dataset.k=""}
   else if(a==="front"){S.layers=S.layers.filter(x=>x!==L);S.layers.push(L)}
   else if(a==="back"){S.layers=S.layers.filter(x=>x!==L);S.layers.unshift(L)}
   else if(a==="dup"){const n=JSON.parse(JSON.stringify(L));n.id=uidS();n.x+=40;n.y+=60;S.layers.push(n);ST.sel=n.id}
@@ -530,7 +611,7 @@ function renderPanel(){setTimeout(placeGrab);const p=$s("stPanel");if(!p)return;
   if(ed||ST.picking){p.hidden=true;return}
   document.querySelectorAll("#stDock button").forEach(b=>{const on=b.dataset.tool===ST.tool;b.classList.toggle("on",on);b.setAttribute("aria-pressed",on)});
   if(!ST.tool){p.hidden=true;return}p.hidden=false;let h="";const t=ST.tool,L=selL();
-  if(t==="tpl"){h+=`<div class="sHead"><b>Templates</b><span class="sSub">Tap one to try it with your photos</span></div><div class="sTpls">${sTpls().map((x,i)=>`<button class="sTpl${S.tpl===x.id?" on":""}" data-tpl="${i}"><canvas width="216" height="384" data-tplth="${i}"></canvas><span>${x.name}</span></button>`).join("")}</div>`;
+  if(t==="tpl"){h+=`<div class="sHead"><b>Templates</b><span class="sSub">Tap one to try it with your photos</span></div>${[["xmas","Christmas"],["","Everyday"]].map(([g,gl])=>`<div class="sTplGrp">${gl}</div><div class="sTpls">${sTpls().map((x,i)=>(x.grp||"")!==g?"":`<button class="sTpl${S.tpl===x.id?" on":""}" data-tpl="${i}"><canvas width="216" height="384" data-tplth="${i}"></canvas><span>${x.name}</span></button>`).join("")}</div>`).join("")}`;
     p.innerHTML=h;tplThumbs();return}
   if(t==="bg"){const b=S.bg;h+=`<div class="sHead"><b>Background</b><div class="sChips">${chip("Photo",b.type==="photo",'data-bgt="photo"')}${chip("Colour",b.type==="color",'data-bgt="color"')}${chip("Gradient",b.type==="gradient",'data-bgt="gradient"')}</div></div>`;
     if(b.type==="photo"){const fp=firstPhoto();let th="";
@@ -705,7 +786,9 @@ async function open(){if(typeof track==="function")track("story");build();await 
 function close(){stopEdit();stopPick();hide();persist();hapt()}
 function onPro(){updTop();if(isPro()&&ST.pending&&ST.open){const m=ST.pending;ST.pending=null;setTimeout(()=>exportStory(m),450)}}
 
-window.STORY={open,close,get picking(){return ST.picking&&ST.open},addPicked,get open_(){return ST.open},onPro,
+async function tplShot(i,W=540){const t=sTpls()[i];if(!t)return null;const d=tplDoc(t);await ensureFonts(STK_FONTS).catch(()=>{});stCache.clear();await Promise.all(tplKeys(d).map(k=>ensureImg(k).catch(()=>{})));await Promise.all(d.layers.filter(x=>x.t==="title").map(x=>ensureFonts(x.d).catch(()=>{})));
+  const H=Math.round(W*SH/SW),cv=document.createElement("canvas");cv.width=W;cv.height=H;const keep=S;try{S=d;render(cv.getContext("2d"),W,H)}finally{S=keep}invalidate();return cv.toDataURL("image/jpeg",.9)}
+window.STORY={tplShot,get tplIds(){return sTpls().map(t=>t.id)},open,close,get picking(){return ST.picking&&ST.open},addPicked,get open_(){return ST.open},onPro,
   sheet(cat,bg){return ensureFonts(STK_FONTS).then(()=>{const ks=cat?stkOf(cat):STK_ORDER,cols=4,cw=300,c=document.createElement("canvas");c.width=cols*cw;c.height=Math.ceil(ks.length/cols)*cw;const x=c.getContext("2d");x.fillStyle=bg||"#7a5a40";x.fillRect(0,0,c.width,c.height);
     ks.forEach((k,i)=>{const L=newStk(k),d=STK[k],W=200,H=W*d.r,sc=Math.min(1,240/H);x.save();x.translate((i%cols)*cw+cw/2,Math.floor(i/cols)*cw+cw/2-10);x.scale(sc,sc);x.rotate((L.rot||0)*Math.PI/180);if(L.shadow){x.shadowColor="rgba(0,0,0,.35)";x.shadowBlur=12;x.shadowOffsetY=5}const t=document.createElement("canvas");t.width=W;t.height=H;d.draw(t.getContext("2d"),W,H,L);x.drawImage(t,-W/2,-H/2);x.restore();x.fillStyle="#fff";x.font="14px sans-serif";x.textAlign="center";x.fillText(d.name,(i%cols)*cw+cw/2,Math.floor(i/cols)*cw+cw-8)});return c.toDataURL("image/png")})}};
 if(typeof PW_REASON==="object")PW_REASON.story="Saving stories is part of Studio Typo Pro";
