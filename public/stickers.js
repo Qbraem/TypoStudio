@@ -2,7 +2,7 @@
    Every sticker: {name,cat,r (h/w),w (share of story width),paper,ink,f (editable text),big,draw(x,W,H,L)} */
 /* 2.0: only Winter, Urban and Travel & paper are shown; the other packs stay (hidden) so saved stories keep working */
 window.STK_CATS=[["winter","Winter"],["urban","Urban"],["travel","Travel & paper"]];
-window.STK_PACK_FONTS=[["Nothing You Could Do",400],["DM Mono",400],["Italiana",400],["Instrument Serif",400],["DM Serif Display",400],["Great Vibes",400],["Gochi Hand",400],["Sansita Swashed",800],["Archivo Black",400],["Pacifico",400],["Yellowtail",400],["Satisfy",400],["Kaushan Script",400],["Shrikhand",400],["Fraunces",900],["Young Serif",400],["Rye",400],["Abril Fatface",400],["Bowlby One",400],["Fredoka",700],["Luckiest Guy",400],["Gochi Hand",400],["Sansita Swashed",800],["Sacramento",400],["Lilita One",400],["Anton",400],["Bagel Fat One",400],["Cherry Bomb One",400]];
+window.STK_PACK_FONTS=[["Playfair Display",400],["Pinyon Script",400],["Nothing You Could Do",400],["DM Mono",400],["Italiana",400],["Instrument Serif",400],["DM Serif Display",400],["Great Vibes",400],["Gochi Hand",400],["Sansita Swashed",800],["Archivo Black",400],["Pacifico",400],["Yellowtail",400],["Satisfy",400],["Kaushan Script",400],["Shrikhand",400],["Fraunces",900],["Young Serif",400],["Rye",400],["Abril Fatface",400],["Bowlby One",400],["Fredoka",700],["Luckiest Guy",400],["Gochi Hand",400],["Sansita Swashed",800],["Sacramento",400],["Lilita One",400],["Anton",400],["Bagel Fat One",400],["Cherry Bomb One",400]];
 window.STK_PACK=function(h){
 const {F,fit,spaced,scallop}=h,PI=Math.PI,E="#FFFFFF";
 const RB=["#E40303","#FF8C00","#FFED00","#008026","#24408E","#732982"];
@@ -60,7 +60,7 @@ const BLK=ff(400,"Archivo Black"),SANS=ff(700,"DM Sans"),SER=ff(400,"DM Serif Di
 
 /* ---- scrapbook kit (Winter & Urban, 2.0) ---- */
 const KRAFT="#C9A57A",CREAM="#F6EFE2",GOCHI=ff(400,"Gochi Hand"),SANSW=ff(800,"Sansita Swashed");
-const NYC=ff(400,"Nothing You Could Do");
+const NYC=ff(400,"Nothing You Could Do");const clamp2=(a,b,c)=>Math.max(b,Math.min(c,a));
 function perf(x,X,Y,W,H,r){const side=(x0,y0,x1,y1)=>{const len=Math.hypot(x1-x0,y1-y0),n=Math.max(2,Math.round(len/(r*3.1))),dx=(x1-x0)/len,dy=(y1-y0)/len,step=len/n,a0=Math.atan2(dy,dx);
   for(let i=0;i<n;i++){const cx=x0+dx*(i+.5)*step,cy=y0+dy*(i+.5)*step;x.lineTo(cx-dx*r,cy-dy*r);x.arc(cx,cy,r,a0+PI,a0,true)}x.lineTo(x1,y1)};x.moveTo(X,Y);side(X,Y,X+W,Y);side(X+W,Y,X+W,Y+H);side(X+W,Y+H,X,Y+H);side(X,Y+H,X,Y);x.closePath()}
 function para(x,txt,font,px,X,Y,maxW,maxH,lh){let p=px,ls=[];for(let k=0;k<40;k++){x.font=font(p);ls=[];String(txt==null?"":txt).split("\n").forEach(par=>{const ws=par.split(/ +/).filter(Boolean);if(!ws.length){ls.push("");return}let cur="";ws.forEach(w=>{const t=cur?cur+" "+w:w;if(cur&&x.measureText(t).width>maxW){ls.push(cur);cur=w}else cur=t});ls.push(cur)});if(ls.length*p*lh<=maxH)break;p*=.93}
@@ -82,6 +82,31 @@ const NEW={
 paperclip:{name:"Paper clip",cat:"travel",r:3,w:.075,paper:null,ink:"#A3A9AF",f:{},big:[],rot:0,
   draw(x,W,H,L){const u=W/100,pth=()=>{x.beginPath();x.moveTo(30*u,.3*H);x.lineTo(30*u,H-34*u);x.arc(50*u,H-34*u,20*u,PI,0,true);x.lineTo(70*u,30*u);x.arc(42*u,30*u,28*u,0,PI,true);x.lineTo(14*u,H-40*u);x.arc(50*u,H-40*u,36*u,PI,0,true);x.lineTo(86*u,.22*H)};
     x.save();x.lineCap="round";x.lineJoin="round";pth();x.strokeStyle=mix(L.ink,"#000000",.35);x.lineWidth=7.5*u;x.stroke();x.strokeStyle=L.ink;x.lineWidth=5.5*u;x.stroke();x.translate(-1.2*u,-.8*u);pth();x.strokeStyle="rgba(255,255,255,.75)";x.lineWidth=1.6*u;x.stroke();x.restore()}},
+cardnote:{name:"Paper note",cat:"travel",r:.62,w:.5,paper:"#F1EDE2",ink:"#2B2A28",f:{text:"a perfect day to slow down and enjoy every minute"},big:["text"],rot:-2,
+  draw(x,W,H,L){const u=W/100;const pg=()=>torn(x,2*u,2*u,W-4*u,H-4*u,141,1.8*u);x.beginPath();pg();x.fillStyle=L.paper;x.fill();x.fillStyle=L.ink;x.save();x.translate(14*u,0);x.rotate(-.02);para(x,L.f.text,NYC,8.5*u,0,H*.3,W-26*u,H*.62,1.25);x.restore();crease(x,W,H,141)}},
+daisy:{name:"Pressed flower",cat:"travel",r:1,w:.13,paper:"#FFF8E6",ink:"#E7B637",f:{},big:[],rot:0,
+  draw(x,W,H,L){const u=W/100,c=W/2;x.save();for(let i=0;i<16;i++){x.save();x.translate(c,c);x.rotate(i/16*2*PI+(i%2)*.1);x.beginPath();x.ellipse(0,-27*u,7*u,22*u,0,0,7);x.fillStyle=i%2?L.paper:mix(L.paper,"#D9CBA8",.35);x.fill();x.strokeStyle="rgba(160,140,100,.35)";x.lineWidth=.5*u;x.stroke();x.restore()}
+    const g=x.createRadialGradient(c-3*u,c-3*u,1*u,c,c,15*u);g.addColorStop(0,mix(L.ink,"#FFFFFF",.3));g.addColorStop(1,mix(L.ink,"#7A4A10",.35));x.beginPath();x.arc(c,c,14*u,0,7);x.fillStyle=g;x.fill();const r=rnd(5);x.fillStyle="rgba(120,70,10,.45)";for(let i=0;i<40;i++){const a=r()*2*PI,q=r()*12*u;x.fillRect(c+Math.cos(a)*q,c+Math.sin(a)*q,1*u,1*u)}x.restore()}},
+ripband:{name:"Torn edge",cat:"travel",r:.42,w:1.06,paper:"#F7F6F2",ink:"#DAD6CC",f:{},big:[],rot:0,noShadow:true,
+  draw(x,W,H,L){const u=W/100,v=H/100,r=rnd(151);const pts=[];let y=72*v,dv=0;for(let i=0;i<=160;i++){const t=i/160;dv=dv*.8+(r()-.5)*4.2*v;y=clamp2(y+dv,56*v,92*v);pts.push([t*W,y+(r()-.5)*1.4*v])}
+    const path=(dy)=>{x.beginPath();x.moveTo(0,0);x.lineTo(W,0);for(let i=pts.length-1;i>=0;i--){const[a,b]=pts[i];x.lineTo(a,b+dy)}x.closePath()};
+    path(2*v);x.fillStyle=L.ink;x.fill();path(0);x.fillStyle=L.paper;x.fill()}},
+pill:{name:"Name pill",cat:"travel",r:.32,w:.24,paper:"#3D3127",ink:"#EFE6D4",f:{text:"your name"},big:[],rot:0,noShadow:true,
+  draw(x,W,H,L){const u=W/100;x.beginPath();x.ellipse(W/2,H/2,W/2-1*u,H/2-1*u,0,0,7);x.fillStyle=L.paper;x.fill();x.fillStyle=L.ink;x.font=`italic ${H*.36}px "Instrument Serif", serif`;T(x,L.f.text,p=>`italic ${p}px "Instrument Serif", serif`,H*.36,W/2,H/2,W*.78)}},
+gridcard:{name:"Grid card",cat:"travel",r:1.12,w:.66,paper:"#EDEBE6",ink:"#3A3A3A",f:{left:"NOV",right:"WINTER",side:"2026",side2:"notes & edits",bottom:"ASK FOR INSPIRATION"},big:[],rot:0,
+  draw(x,W,H,L){const u=W/100,v=H/100;x.fillStyle=L.paper;x.fillRect(0,0,W,H);x.strokeStyle="rgba(0,0,0,.08)";x.lineWidth=.25*u;x.beginPath();for(let a=5*u;a<W;a+=5*u){x.moveTo(a,0);x.lineTo(a,H)}for(let b=5*u;b<H;b+=5*u){x.moveTo(0,b);x.lineTo(W,b)}x.stroke();
+    x.fillStyle=x.strokeStyle=L.ink;x.lineWidth=.3*u;const sm=p=>`${p}px "Playfair Display", serif`;x.font=sm(2.6*u);x.textBaseline="middle";x.textAlign="left";x.fillText(String(L.f.left).toUpperCase(),7*u,8*v);x.textAlign="right";x.fillText(String(L.f.right).toUpperCase(),W-7*u,8*v);
+    x.beginPath();x.moveTo(17*u,8*v);x.lineTo(46*u,8*v);x.moveTo(54*u,8*v);x.lineTo(W-22*u,8*v);x.stroke();x.beginPath();burst(x,50*u,8*v,1.6*u,.5*u,4);x.fill();
+    x.beginPath();x.moveTo(9*u,14*v);x.lineTo(9*u,92*v);x.lineTo(40*u,92*v);x.stroke();x.textAlign="center";x.fillText(String(L.f.bottom).toUpperCase(),W/2+6*u,92*v);
+    x.save();x.translate(9*u,40*v);x.rotate(-PI/2);x.font=`italic ${5*u}px "Playfair Display", serif`;x.fillStyle=L.paper;x.fillRect(-7*u,-3*u,14*u,6*u);x.fillStyle=L.ink;x.fillText(L.f.side,0,0);x.restore();
+    x.save();x.translate(W-9*u,40*v);x.rotate(PI/2);x.font=`${3.4*u}px "Playfair Display", serif`;x.fillText(L.f.side2,0,0);x.restore();crease(x,W,H,161)}},
+papertag:{name:"Paper label",cat:"travel",r:.2,w:.78,paper:"#F4F3EF",ink:"#222222",f:{text:"your name",sub:"STORY UPDATE"},big:[],rot:-1,
+  draw(x,W,H,L){const u=W/100,v=H/100;const pg=()=>torn(x,1.5*u,2*v,W-3*u,H-4*v,171,1.4*u);x.beginPath();pg();x.fillStyle=L.paper;x.fill();x.fillStyle=L.ink;
+    x.strokeStyle=L.ink;x.lineWidth=.5*u;x.strokeRect(6*u,38*v,8*u,24*v);x.beginPath();x.moveTo(6*u,38*v);x.lineTo(10*u,52*v);x.lineTo(14*u,38*v);x.stroke();
+    T(x,L.f.text,ff(400,"Nothing You Could Do"),9*u,52*u,46*v,64*u);x.font=`700 ${2.4*u}px "DM Sans", sans-serif`;x.textAlign="right";x.fillText(String(L.f.sub).toUpperCase(),W-12*u,80*v);crease(x,W,H,171)}},
+infobar:{name:"Info bar",cat:"travel",r:.2,w:.84,paper:null,ink:"#FFFFFF",f:{l:"S",r:"T",t1:"small edits, slow days",t2:"winter notes from home"},big:[],rot:0,noShadow:true,
+  draw(x,W,H,L){const u=W/100,v=H/100;x.strokeStyle=x.fillStyle=L.ink;x.lineWidth=.35*u;x.beginPath();RR(x,1*u,4*v,W-2*u,H-8*v,3*u);x.stroke();x.beginPath();x.moveTo(25*u,50*v);x.lineTo(75*u,50*v);x.stroke();
+    T(x,L.f.l,ff(400,"Instrument Serif"),11*u,10*u,50*v,12*u);T(x,L.f.r,ff(400,"Instrument Serif"),11*u,90*u,50*v,12*u);x.font=`${2.4*u}px "DM Sans", sans-serif`;S(x,L.f.t1,ff(400,"DM Sans"),2.4*u,50*u,32*v,.2*u,52*u);S(x,L.f.t2,ff(400,"DM Sans"),2.4*u,50*u,70*v,.2*u,52*u)}},
 gridnote:{name:"Grid paper",cat:"travel",r:.88,w:.66,paper:"#F6F5EF",ink:"#8FB0C4",f:{},big:[],rot:-2,
   draw(x,W,H,L){const u=W/100;const pg=()=>torn(x,2.5*u,2.5*u,W-5*u,H-5*u,31,2.8*u);x.beginPath();pg();x.fillStyle=L.paper;x.fill();
     x.save();clip(x,pg);x.strokeStyle=L.ink;x.globalAlpha=.6;x.lineWidth=.22*u;x.beginPath();const st=4.4*u;for(let a=st*.7;a<W;a+=st){x.moveTo(a,0);x.lineTo(a,H)}for(let b=st*.7;b<H;b+=st){x.moveTo(0,b);x.lineTo(W,b)}x.stroke();x.restore();crease(x,W,H,31);fold(x,W,H,u,31)}},

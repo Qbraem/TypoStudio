@@ -43,10 +43,10 @@ const IC={
 const svg=(k,w=1.9)=>`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="${w}" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${IC[k]}</svg>`;
 const uidS=()=>Math.random().toString(36).slice(2,9);
 const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
-const BUNDLED=["golden","sunset","pier","pool","agave","xmas","paper","kraft","redpaper","greenpaper","tartan"];
+const BUNDLED=["golden","sunset","pier","pool","agave","xmas","paper","kraft","redpaper","greenpaper","tartan","canvas","shade","scriptblue"];
 const GRADS=[["#3B2416","#F26B50"],["#1C1714","#E9B77C"],["#F6E9D7","#E9B77C"],["#7FC8E8","#F6E9D7"],["#111111","#3B2416"],["#D9473A","#F6B26B"],["#A8B89A","#F6E9D7"],["#2A2E45","#C98A4B"],["#2A1C14","#E4B27B"]];
 const COLORS=["#120D0A","#3B2416","#F6E9D7","#FFFFFF","#E9B77C","#F26B50","#D9473A","#7FC8E8","#A8B89A","#111111"];
-const FRAMES=[["none","None"],["rounded","Rounded"],["border","Border"],["polaroid","Polaroid"],["film","Film"],["stamp","Stamp"],["oval","Oval"]];
+const FRAMES=[["none","None"],["rounded","Rounded"],["border","Border"],["polaroid","Polaroid"],["film","Film"],["stamp","Stamp"],["oval","Oval"],["torn","Torn"],["color","Colour"]];
 const ASPECTS=[["orig","Original"],["4:5","4:5"],["1:1","1:1"],["3:4","3:4"],["9:16","9:16"],["16:9","16:9"]];
 const FX=[["none","Original"],["warm","Warm film"],["faded","Faded"],["bw","B&W"],["golden","Golden"],["cool","Cool"],["brownie","Brownie"],["film90","90s film"],["noir","Noir"]];
 
@@ -185,7 +185,7 @@ function trimO(c){const w=c.width,h=c.height,d=c.getContext("2d").getImageData(0
 /* ---------- geometry of a layer (in story units) ---------- */
 function aspectOf(L){const o=IMG.get(L.key);if(L.aspect==="orig"||!L.aspect)return o?o.w/o.h:1;const [a,b]=L.aspect.split(":").map(Number);return a/b}
 function photoBox(L){const w=L.w,h=w/aspectOf(L);let l=0,r=0,t=0,b=0;
-  if(L.frame==="polaroid"){l=r=t=w*.045;b=w*.2}else if(L.frame==="border"){l=r=t=b=w*.035}else if(L.frame==="film"){l=r=w*.075;t=b=w*.04}else if(L.frame==="stamp"){l=r=t=b=w*.07}else if(L.frame==="oval"){l=r=t=b=w*.035}
+  if(L.frame==="polaroid"){l=r=t=w*.045;b=w*.2}else if(L.frame==="border"){l=r=t=b=w*.035}else if(L.frame==="film"){l=r=w*.075;t=b=w*.04}else if(L.frame==="stamp"){l=r=t=b=w*.07}else if(L.frame==="oval"){l=r=t=b=w*.035}else if(L.frame==="torn"){l=r=t=b=w*.05}else if(L.frame==="color"){l=r=t=b=w*.035}
   return{w,h,l,r,t,b,W:w+l+r,H:h+t+b}}
 function bounds(L,k){ // half sizes + centre offset in story units
   if(L.t==="photo"){const B=photoBox(L);return{hw:B.W/2,hh:B.H/2,dx:0,dy:0}}
@@ -258,7 +258,7 @@ const STK_TRAVEL=["stamp","ministamp","sticky","note","ticket","postcard","frame
 if(window.STK_PACK)Object.assign(STK,window.STK_PACK({F,fit,lines,spaced,scallop,wave}));
 const STK_CATS=(window.STK_CATS||[["travel","Travel & paper"]]).filter(([c])=>Object.values(STK).some(d=>d.cat===c));
 const STK_ORDER=Object.keys(STK);const stkOf=c=>STK_ORDER.filter(k=>STK[k].cat===c&&!STK[k].hidden);
-const STK_FIELDS={to:"Address",from:"From",ring:"Ring text",mono:"Monogram",val:"Value",top:"Top line",title:"Title",bottom:"Bottom lines",text:"Text",sign:"Signature",label:"Label",date:"Date",code:"Number",hello:"Greeting",place:"Place",msg:"Message",t1:"Time 1",t2:"Time 2",t3:"Time 3",d1:"Day 1",d2:"Day 2",d3:"Day 3"};
+const STK_FIELDS={left:"Top left",right:"Top right",side:"Side",side2:"Side 2",sub:"Small line",l:"Left letter",r:"Right letter",t1:"Line 1",t2:"Line 2",to:"Address",from:"From",ring:"Ring text",mono:"Monogram",val:"Value",top:"Top line",title:"Title",bottom:"Bottom lines",text:"Text",sign:"Signature",label:"Label",date:"Date",code:"Number",hello:"Greeting",place:"Place",msg:"Message",t1:"Time 1",t2:"Time 2",t3:"Time 3",d1:"Day 1",d2:"Day 2",d3:"Day 3"};
 function newStk(kind){const k=STK[kind];return{id:uidS(),t:"stk",kind,x:SW/2,y:SH*.5,w:SW*k.w,rot:k.rot!=null?k.rot:kind==="tape"?-8:kind==="frame"?0:-3,paper:k.paper,ink:k.ink,f:clone(k.f),shadow:!k.noShadow&&kind!=="postmark"&&kind!=="tape",hidden:false}}
 const stCache=new Map();const STM=.1; // margin around a sticker canvas (room for shadows & postmarks)
 function stkBitmap(L,pxW){stkFonts();const def=STK[L.kind];if(!def)return null;const key=JSON.stringify([L.kind,L.paper,L.ink,L.f])+"|"+Math.round(pxW);let t=stCache.get(L.id);if(t&&t.key===key)return t;if(ST.gesture&&t)return t;
@@ -281,7 +281,7 @@ let STT=null;const sTitles=()=>STT||(STT=storyTitles());
    photo slots are marked ph:true and start with one of our sample photos; lock:true = a fixed cell, drag pans the photo inside it */
 function storyTemplates(){if(typeof L!=="function"||typeof D!=="function")return[];
   const T=(d,x,y,s)=>({t:"title",d,x,y,s,rot:0}),P=(key,x,y,w,o={})=>Object.assign({t:"photo",key,x,y,w,rot:0,frame:"none",aspect:"orig",shadow:false,cap:"",ph:true},o);
-  const K=(kind,x,y,w,o={})=>{if(!STK[kind])return null;const k=newStk(kind);Object.assign(k,{x,y,w:SW*w},o);if(o.f)k.f=Object.assign(clone(STK[kind].f),o.f);return k},PR=window.P;
+  const O=window.O,K=(kind,x,y,w,o={})=>{if(!STK[kind])return null;const k=newStk(kind);Object.assign(k,{x,y,w:SW*w},o);if(o.f)k.f=Object.assign(clone(STK[kind].f),o.f);return k},PR=window.P;
   const cw=(SW-8)/2,ch=(SH-8)/2,cell=(key,c,r)=>P(key,cw/2+c*(cw+8),ch/2+r*(ch+8),cw,{aspect:`${Math.round(cw)}:${Math.round(ch)}`,lock:true});
   return[
   /* ---------- Christmas: nostalgic paper, film & post ---------- */
@@ -325,7 +325,7 @@ function storyTemplates(){if(typeof L!=="function"||typeof D!=="function")return
     T(D("tx7","Story","Sparkle",[L("MERRY","Italiana",64,0,-170,{spacing:40}),L("Christmas","Great Vibes",270,0,10)],{colors:{main:"#FFFFFF",accent:"#FFFFFF"},shadow:20}),SW/2,900,1),
     T(D("tx7b","Story","Sparkle line",[L("a time for joy, love & cocoa","Instrument Serif",64,0,0,{italic:true})],{colors:{main:"#FFFFFF",accent:"#FFFFFF"},shadow:30}),SW/2,1235,1),
     K("twinkle",240,640,.2,{ink:"#FFFFFF",shadow:false}),K("twinkle",860,1180,.14,{ink:"#FFFFFF",rot:15,shadow:false}),K("twinkle",880,560,.08,{ink:"#FFFFFF",shadow:false})]},
-  {id:"t90",grp:"xmas",name:"90s movie",bg:{type:"photo",photo:"b:xmas",ph:true,dim:.12},fx:{name:"film90",amount:.85,grain:true,vig:true},layers:[
+  {id:"t90",grp:"xmas",name:"90s movie",bg:{type:"photo",photo:"b:xmas",ph:true,dim:.12,phy:.88},fx:{name:"film90",amount:.85,grain:true,vig:true},layers:[
     T(D("tp1","Story","90s movie",[L("MAKE THIS","Instrument Serif",150,0,-345,{spacing:-2}),L("DECEMBER","Instrument Serif",205,0,-180,{spacing:-3}),L("FEEL LIKE A","Instrument Serif",112,0,-45,{spacing:-1}),L("90's movie","Great Vibes",250,0,120,{color:"accent",rotate:-5})],{colors:{main:"#FFFFFF",accent:"#E5483A"},shadow:55}),SW/2,SH*.6,1.12)]},
   {id:"t4",name:"Four photos",bg:{type:"color",color:"#17110D",dim:0},fx:{name:"brownie",amount:.9,grain:true,vig:false},layers:[
     cell("b:agave",0,0),cell("b:golden",1,0),cell("b:pier",0,1),cell("b:xmas",1,1),
@@ -338,7 +338,7 @@ function storyTemplates(){if(typeof L!=="function"||typeof D!=="function")return
   {id:"tpol",name:"Polaroids",bg:{type:"color",color:"#C9A57A",dim:0},fx:{name:"none",amount:.7,grain:true,vig:true},layers:[
     P("b:agave",SW*.35,SH*.4,SW*.5,{frame:"polaroid",aspect:"1:1",rot:-7,shadow:true,cap:"slow sunday"}),P("b:pool",SW*.65,SH*.73,SW*.5,{frame:"polaroid",aspect:"1:1",rot:6,shadow:true,cap:"best day"}),
     T(D("tp5","Story","Polaroids",[L("weekend notes","Caveat",190,0,0,{weight:700})],{colors:{main:"#2A1D14",accent:"#C4452F"}}),SW/2,SH*.17,.95)]},
-  {id:"tmag",name:"Magazine",bg:{type:"photo",photo:"b:golden",ph:true,dim:.1},fx:{name:"warm",amount:.55,grain:false,vig:true},layers:[
+  {id:"tmag",name:"Magazine",bg:{type:"photo",photo:"b:golden",ph:true,dim:.1,phy:.7},fx:{name:"warm",amount:.55,grain:false,vig:true},layers:[
     T(D("tp6","Story","Magazine",[L("WEEKEND","Gloock",200,0,0,{spacing:-3})],{colors:{main:"#FFFFFF",accent:"#F26B50"},shadow:25}),SW/2,SH*.12,.92),
     T(D("tp7","Story","Magazine line",[L("ISSUE 12  ·  SLOW MORNINGS & GOLDEN HOURS","DM Sans",38,0,0,{weight:700,spacing:6})],{colors:{main:"#FFFFFF",accent:"#F26B50"},shadow:30}),SW/2,SH*.9,.95)]},
   /* ---------- Everyday: paper notes, post & collage ---------- */
@@ -359,7 +359,7 @@ function storyTemplates(){if(typeof L!=="function"||typeof D!=="function")return
     K("postback",770,900,.52,{rot:6}),P("b:coffee3",460,1130,600,{frame:"stamp",aspect:"4:5",rot:-3,shadow:true}),
     K("linednote",500,590,.7,{rot:-7,f:{text:"this could be us right now, tasting street food at the market"}}),K("paperclip",780,470,.075,{rot:10}),K("wavemark",560,1500,.5,{ink:"#FFFFFF",rot:-4,shadow:false}),
     T(D("tg4","Story","Stamp top",[L("TRAVEL NOTES","DM Sans",30,0,0,{weight:700,spacing:24})],{colors:{main:"#FFFFFF",accent:"#FFFFFF"},shadow:30}),SW/2,170,1)]},
-  {id:"gpost",name:"Postcard",bg:{type:"photo",photo:"b:sunset",ph:true,dim:0},fx:{name:"none",amount:.7,grain:true,vig:false},layers:[
+  {id:"gpost",name:"Postcard",bg:{type:"photo",photo:"b:sunset",ph:true,dim:0,phy:.88},fx:{name:"none",amount:.7,grain:true,vig:false},layers:[
     K("pcard",540,600,.88,{rot:-3,f:{title:"Postcard",from:"From the coast",msg:"golden hour every night,\nsalt in our hair,\nno plans at all"}}),
     P("b:pier",590,1220,700,{frame:"stamp",aspect:"4:3",rot:2,shadow:true}),K("handarrow",190,1520,.2,{rot:170,shadow:false}),
     T(D("tg5","Story","Postcard note",[L("best","Nothing You Could Do",50,0,-30),L("sunset ever","Nothing You Could Do",50,0,30)],{colors:{main:"#FFFFFF",accent:"#FFFFFF"},shadow:30}),330,1720,1),
@@ -368,13 +368,48 @@ function storyTemplates(){if(typeof L!=="function"||typeof D!=="function")return
     K("boarding",620,330,.8,{rot:-3}),K("kraftfolder",560,980,.84,{rot:-3}),K("mapbit",330,1330,.5,{rot:-6}),K("receipt",280,1560,.34,{rot:3}),
     P("b:sunset",610,920,620,{frame:"polaroid",aspect:"1:1",rot:3,shadow:true}),K("goldseal",250,560,.28),K("tape",930,560,.22,{rot:40,paper:"#E7B9B5",shadow:false}),K("paperclip",320,1760,.07,{rot:-4}),
     T(D("tg6","Story","Collage title",[L("wander","Kaushan Script",200,-20,-90,{rotate:-8}),L("more","Kaushan Script",200,60,80,{rotate:-8})],{colors:{main:"#FFFFFF",accent:"#FFFFFF"},shadow:20}),610,860,1)]},
+  {id:"gmood",name:"Cosy mood",bg:{type:"photo",photo:"b:golden",ph:true,dim:.05,phy:.885},fx:{name:"none",amount:.7,grain:true,vig:false},layers:[
+    P("b:coffee1",640,800,580,{frame:"torn",aspect:"4:3",rot:-1,shadow:true}),P("b:coffee4",400,1280,560,{frame:"torn",aspect:"5:4",rot:1,shadow:true}),P("b:coffee3",870,1270,250,{frame:"torn",aspect:"3:4",rot:3,shadow:true}),
+    K("cardnote",300,700,.46,{rot:-3}),K("paperclip",470,560,.06,{rot:6}),K("daisy",120,640,.12),
+    T(D("tm1","Story","Cosy mood top",[L("C","Great Vibes",330,-280,-10),L("OSY","Montserrat",210,90,0,{weight:800,spacing:-2})],{colors:{main:"#F7D15E",accent:"#F7D15E"},shadow:15}),SW/2,330,1),
+    T(D("tm2","Story","Cosy mood bottom",[L("M","Great Vibes",330,-300,-10),L("OOD","Montserrat",210,90,0,{weight:800,spacing:-2})],{colors:{main:"#F7D15E",accent:"#F7D15E"},shadow:15}),SW/2,1640,1)]},
+  {id:"gview",name:"Enjoy the view",bg:{type:"photo",photo:"b:canvas",dim:0},fx:{name:"warm",amount:.25,grain:true,vig:false},layers:[
+    P("b:pier",SW/2,1000,900,{aspect:"900:740"}),
+    T(D("tv1","Story","View title",[L("You will","DM Serif Display",200,-130,-110,{spacing:-6}),L("get there.","DM Serif Display",200,90,60,{spacing:-6}),O("line",560,130,160,{color:"main"})],{colors:{main:"#1C1A17",accent:"#1C1A17"}}),SW/2,560,1),
+    T(D("tv2","Story","View line",[L("but right now, you are here.","DM Serif Display",78,0,-40,{spacing:-3}),L("enjoy the view.","DM Serif Display",78,0,40,{spacing:-3})],{colors:{main:"#1C1A17",accent:"#1C1A17"}}),SW/2,1500,1),
+    K("pill",SW/2,1660,.26,{rot:0})]},
+  {id:"gdare",name:"Dare to dream",bg:{type:"photo",photo:"b:agave",ph:true,dim:.25,phy:.8},fx:{name:"none",amount:.7,grain:true,vig:true},layers:[
+    T(D("td1","Story","Dare",[L("DREAMS","Playfair Display",210,0,-80,{weight:400,spacing:2}),L("DON'T","Montserrat",34,-330,50,{weight:400}),L("WORK","Montserrat",34,-330,92,{weight:400}),L("UNLESS","Montserrat",34,-330,134,{weight:400}),L("you dare to","Great Vibes",150,90,100,{rotate:-3})],{colors:{main:"#E6C766",accent:"#E6C766"},shadow:25}),SW/2,880,1),
+    T(D("td2","Story","Dare footer",[L("YOUR STORY  ·  2026","Montserrat",30,0,0,{weight:400,spacing:12})],{colors:{main:"#FFFFFF",accent:"#FFFFFF"},shadow:30}),SW/2,1820,1)]},
+  {id:"groad",name:"Road trip",bg:{type:"photo",photo:"b:canvas",dim:0},fx:{name:"warm",amount:.25,grain:true,vig:false},layers:[
+    ...[0,1,2,3,4].map(i=>P(["b:pier","b:coffee1","b:agave","b:golden","b:coffee3"][i],215,192+i*384,340,{frame:"film",aspect:"340:357",lock:true})),
+    T(D("tr1","Story","Road trip",[L("ROAD TRIP","Anton",150,0,0,{spacing:1})],{colors:{main:"#A8211F",accent:"#A8211F"}}),728,700,1),
+    T(D("tr2","Story","Road trip text",[PR("Hit the road and let the journey surprise you. Open roads, wide views and spontaneous stops along the way. Here's to finding something new around every bend.","Montserrat",34,0,0,{width:560,lh:1.25,align:"justify",weight:400})],{colors:{main:"#A8211F",accent:"#A8211F"}}),728,930,1),
+    T(D("tr3","Story","Road trip date",[L("Spring 2027","Montserrat",38,0,0,{weight:800})],{colors:{main:"#A8211F",accent:"#A8211F"}}),565,1150,1)]},
+  {id:"gpeaks",name:"Mountains",bg:{type:"photo",photo:"b:paper",dim:0},fx:{name:"none",amount:.7,grain:true,vig:false},layers:[
+    P("b:golden",SW/2,330,SW,{aspect:"1080:700",lock:true}),P("b:pier",SW/2,1590,SW,{aspect:"1080:700",lock:true}),
+    K("ripband",SW/2,560,1.06,{rot:180,paper:"#EFE7D6",ink:"#D8CDB6"}),K("ripband",SW/2,1360,1.06,{rot:0,paper:"#EFE7D6",ink:"#D8CDB6"}),
+    T(D("tk1","Story","Mountains",[L("Some","Instrument Serif",64,0,-160),L("Mountains","Instrument Serif",230,0,-20,{spacing:-3}),L("are meant to be climbed slowly.","Instrument Serif",56,0,120,{italic:true})],{colors:{main:"#1C1A17",accent:"#1C1A17"}}),SW/2,960,1)]},
+  {id:"gtrust",name:"Trust your vision",bg:{type:"photo",photo:"b:shade",dim:0},fx:{name:"none",amount:.7,grain:true,vig:false},layers:[
+    T(D("tt1","Story","Trust",[L("TRUST","Gochi Hand",190,0,-190,{rotate:-2}),L("YOUR ·","Gochi Hand",190,10,0,{rotate:-2}),L("VISION","Gochi Hand",190,0,190,{rotate:-2})],{colors:{main:"#F4EFDC",accent:"#F4EFDC"},texture:.6}),SW/2,SH/2,1)]},
+  {id:"grest",name:"Take a rest",bg:{type:"photo",photo:"b:agave",ph:true,dim:0,phy:.5},fx:{name:"none",amount:.7,grain:true,vig:false},layers:[
+    K("ripband",SW/2,300,1.08,{rot:0}),K("ripband",SW/2,1680,1.08,{rot:180}),
+    T(D("tw1","Story","Rest title",[PR("Take a rest\nfor a moment","Montserrat",68,0,0,{width:640,lh:1.05,align:"left",weight:800})],{colors:{main:"#111111",accent:"#111111"}}),400,190,1),
+    T(D("tw2","Story","Rest sub",[PR("a little pause from\nthe busy days","Montserrat",30,0,0,{width:640,lh:1.3,align:"left",weight:400})],{colors:{main:"#111111",accent:"#111111"}}),400,300,1),
+    T(D("tw3","Story","Rest date",[L("28 11 26","Montserrat",44,0,0,{weight:800})],{colors:{main:"#111111",accent:"#111111"}}),870,1740,1),
+    T(D("tw4","Story","Rest mark",[L("Archive","Montserrat",40,0,-20,{weight:700}),L("vintage","Great Vibes",44,0,30)],{colors:{main:"#111111",accent:"#111111"}}),SW/2,1830,1)]},
+  {id:"gedit",name:"Editor's notes",bg:{type:"photo",photo:"b:scriptblue",dim:0},fx:{name:"none",amount:.7,grain:true,vig:false},layers:[
+    P("b:coffee1",SW/2,600,560,{frame:"color",aspect:"4:3",rim:"#F2B940",shadow:true}),
+    K("gridcard",SW/2,1110,.66,{rot:0}),K("papertag",SW/2,190,.78,{rot:-1}),K("paperclip",680,170,.06,{rot:-4,ink:"#E8B931"}),
+    T(D("te1","Story","Editor title",[L("slow days","Playfair Display",86,0,-50,{weight:400}),L("& small things","Playfair Display",86,0,50,{italic:true,weight:400})],{colors:{main:"#1E1E1E",accent:"#1E1E1E"}}),SW/2,1060,1),
+    K("infobar",SW/2,1800,.84,{rot:0})]},
   ].map(t=>Object.assign(t,{layers:t.layers.filter(Boolean)}))}
 let TPL=null;const sTpls=()=>TPL||(TPL=storyTemplates());
 function tplDoc(t){const d=blank();Object.assign(d.bg,{type:"gradient",photo:null,blur:0,dim:0,z:1,ox:0,oy:0},clone(t.bg));Object.assign(d.fx,clone(t.fx));
   d.layers=t.layers.map(x=>Object.assign(clone(x),{id:uidS(),hidden:false}));d.tpl=t.id;return d}
 function tplKeys(d){return[d.bg.type==="photo"&&d.bg.photo,...d.layers.filter(x=>x.t==="photo").map(x=>x.key)].filter(Boolean)}
 function phSlots(){const out=[];if(S.bg.type==="photo"&&S.bg.ph)out.push("bg");S.layers.forEach(x=>{if(x.t==="photo"&&x.ph&&!x.hidden)out.push(x)});return out}
-function syncSlot(){const b=$s("stSlot");if(!b)return;const n=phSlots().length;b.hidden=!n||!!ST.editing||ST.picking||(!!ST.tool&&!wide());if(n)b.querySelector("span").textContent=n===1?"Add your photo":`Add your photos · ${n} to go`}
+function syncSlot(){const b=$s("stSlot");if(!b)return;const n=phSlots().length;b.hidden=true; /* photos are added via the grey + on each slot */if(n)b.querySelector("span").textContent=n===1?"Add your photo":`Add your photos · ${n} to go`}
 /* opens the photo picker straight from the tap (iOS needs the tap), then puts the photo in the first open slot or the one you tapped */
 function slotFill(target){const slots=phSlots();const t=target||slots[0];if(!t)return;const pick=pickFile();
   pick.then(async f=>{if(!f)return;let k;try{k=await importFile(f)}catch(e){toast("Couldn't open that photo");return}snapS();
@@ -401,7 +436,11 @@ let grainTile=null;
 function grain(){if(grainTile)return grainTile;const c=document.createElement("canvas");c.width=c.height=256;const x=c.getContext("2d"),d=x.createImageData(256,256);
   for(let i=0;i<d.data.length;i+=4){const v=128+(Math.random()-.5)*190;d.data[i]=d.data[i+1]=d.data[i+2]=v;d.data[i+3]=255}x.putImageData(d,0,0);return grainTile=c}
 function rrect(x,X,Y,W,H,r){x.beginPath();x.moveTo(X+r,Y);x.arcTo(X+W,Y,X+W,Y+H,r);x.arcTo(X+W,Y+H,X,Y+H,r);x.arcTo(X,Y+H,X,Y,r);x.arcTo(X,Y,X+W,Y,r);x.closePath()}
-function render(ctx,W,H,o={}){
+let PHUI=false;const BGB={y:.83}; // where the + for an empty background sits
+/* empty photo slot in the editor: greyed sample + a clear white + */
+function phLook(x,X,Y,w,h){x.save();x.beginPath();x.rect(X,Y,w,h);x.clip();x.globalCompositeOperation="saturation";x.fillStyle="#808080";x.fillRect(X,Y,w,h);x.globalCompositeOperation="source-over";x.fillStyle="rgba(214,214,214,.5)";x.fillRect(X,Y,w,h);x.restore()}
+function phBadge(x,cx,cy,r){x.save();x.shadowColor="rgba(0,0,0,.3)";x.shadowBlur=r*.35;x.shadowOffsetY=r*.08;x.fillStyle="rgba(255,255,255,.96)";x.beginPath();x.arc(cx,cy,r,0,7);x.fill();x.shadowColor="transparent";x.strokeStyle="#3A3A3A";x.lineWidth=r*.13;x.lineCap="round";x.beginPath();x.moveTo(cx-r*.42,cy);x.lineTo(cx+r*.42,cy);x.moveTo(cx,cy-r*.42);x.lineTo(cx,cy+r*.42);x.stroke();x.restore()}
+function render(ctx,W,H,o={}){PHUI=!!o.sel;
   const k=W/SW,b=S.bg;ctx.save();ctx.clearRect(0,0,W,H);
   // background
   const bc=b.type==="photo"?drawBgPhoto(ctx,W,H):false;
@@ -409,6 +448,7 @@ function render(ctx,W,H,o={}){
   else if(b.type==="color"){ctx.fillStyle=b.color;ctx.fillRect(0,0,W,H)}
   else{const g=GRADS[b.grad]||GRADS[0],lg=ctx.createLinearGradient(0,0,W*.35,H);lg.addColorStop(0,g[0]);lg.addColorStop(1,g[1]);ctx.fillStyle=lg;ctx.fillRect(0,0,W,H)}
   if(b.dim>0&&(bc||b.type!=="color")){ctx.fillStyle=`rgba(0,0,0,${b.dim})`;ctx.fillRect(0,0,W,H)}
+  if(PHUI&&bc&&b.ph&&!ST.editing){phLook(ctx,0,0,W,H);const r=Math.min(W,H)*.075;ctx.save();ctx.font=`600 ${r*.42}px system-ui,-apple-system,sans-serif`;ctx.textAlign="center";ctx.textBaseline="middle";ctx.fillStyle="rgba(255,255,255,.95)";ctx.shadowColor="rgba(0,0,0,.35)";ctx.shadowBlur=r*.3;ctx.fillText("Tap + for your photo",W/2,H*(S.bg.phy||BGB.y)+r*1.65);ctx.restore();phBadge(ctx,W/2,H*(S.bg.phy||BGB.y),r)}
   // layers
   for(const L of S.layers){if(L.hidden)continue;ctx.save();ctx.translate(L.x*k,L.y*k);ctx.rotate((L.rot||0)*Math.PI/180);
     if(L.t==="photo")drawPhoto(ctx,L,k);else if(L.t==="stk")drawStk(ctx,L,k);else drawTitle(ctx,L,k);ctx.restore()}
@@ -418,7 +458,7 @@ function render(ctx,W,H,o={}){
   if(S.fx.grain){const p=ctx.createPattern(grain(),"repeat"),sc=Math.max(.6,k*1.6);ctx.save();ctx.globalAlpha=.16;ctx.globalCompositeOperation="overlay";ctx.scale(sc,sc);ctx.fillStyle=p;ctx.fillRect(0,0,W/sc,H/sc);ctx.restore()}
   // editor-only overlays
   if(o.sel&&!ST.editing){const badge=(cx,cy,r)=>{ctx.save();ctx.fillStyle="rgba(20,14,10,.55)";ctx.beginPath();ctx.arc(cx,cy,r,0,7);ctx.fill();ctx.strokeStyle="#FFF6E6";ctx.lineWidth=r*.12;ctx.lineCap="round";ctx.beginPath();ctx.moveTo(cx-r*.4,cy);ctx.lineTo(cx+r*.4,cy);ctx.moveTo(cx,cy-r*.4);ctx.lineTo(cx,cy+r*.4);ctx.stroke();ctx.restore()};
-    for(const L of S.layers)if(L.t==="photo"&&L.ph&&!L.hidden){const B=photoBox(L);ctx.save();ctx.translate(L.x*k,L.y*k);badge(0,(B.dy||0)*k,Math.min(B.w,B.h)*k*.1);ctx.restore()}}
+    }
   if(o.sel&&ST.editing){const L=layerById(ST.editing);if(L)drawLineSel(ctx,L,k,o.dpr)}
   else if(o.sel){const L=selL();if(L&&!L.hidden){const B=bounds(L,k),p=10*(o.dpr||1);ctx.save();ctx.translate(L.x*k,L.y*k);ctx.rotate((L.rot||0)*Math.PI/180);
     const X=(B.dx-B.hw)*k-p,Y=(B.dy-B.hh)*k-p,w=B.hw*2*k+2*p,h=B.hh*2*k+2*p;ctx.lineWidth=1.5*(o.dpr||1);ctx.setLineDash([6*(o.dpr||1),5*(o.dpr||1)]);
@@ -431,17 +471,26 @@ function drawPhoto(x,L,k){const B=photoBox(L),Wf=B.W*k,Hf=B.H*k,X=-Wf/2,Y=-Hf/2;
   const inner=[X+B.l*k,Y+B.t*k,B.w*k,B.h*k];
   if(L.frame==="polaroid"||L.frame==="border"){x.fillStyle=L.frame==="polaroid"?"#F7F1E6":"#FFFFFF";x.fillRect(X,Y,Wf,Hf)}
   else if(L.frame==="film"){x.fillStyle="#141210";x.fillRect(X,Y,Wf,Hf)}
+  else if(L.frame==="torn"){const sd=hashS(L.id);x.fillStyle="#E9E5DC";x.beginPath();tornP(x,X,Y,Wf,Hf,sd,B.w*k*.022);x.fill();x.shadowColor="transparent";x.fillStyle="#FBFAF6";x.beginPath();tornP(x,X+B.w*k*.006,Y+B.w*k*.006,Wf-B.w*k*.012,Hf-B.w*k*.012,sd+7,B.w*k*.02);x.fill()}
+  else if(L.frame==="color"){x.fillStyle=L.rim||"#F2B940";x.beginPath();rrect(x,X,Y,Wf,Hf,B.w*k*.06);x.fill()}
   else if(L.frame==="stamp"){x.fillStyle="#F6EFE2";x.beginPath();perfPath(x,X,Y,Wf,Hf,B.w*k*.022);x.fill()}
   const pc=photoCanvas(L,inner[2],inner[3]);
   if(L.frame==="oval"){const [ix,iy,iw,ih]=inner;x.save();x.beginPath();x.ellipse(ix+iw/2,iy+ih/2,iw/2,ih/2,0,0,7);if(L.shadow){x.fillStyle="#000";x.fill()}x.shadowColor="transparent";x.clip();if(pc)x.drawImage(pc,...inner);else{x.fillStyle="#3a2a1f";x.fillRect(...inner)}
-    if(L.lock&&S.bg.dim>0&&pc){x.fillStyle=`rgba(0,0,0,${S.bg.dim})`;x.fillRect(...inner)}x.restore();
+    if(L.lock&&S.bg.dim>0&&pc){x.fillStyle=`rgba(0,0,0,${S.bg.dim})`;x.fillRect(...inner)}if(PHUI&&L.ph){phLook(x,...inner);phBadge(x,0,0,Math.max(14,Math.min(inner[2],inner[3])*.13))}x.restore();
     x.strokeStyle=L.rim||"#F3E6CF";x.lineWidth=Math.max(1,B.w*k*.006);x.beginPath();x.ellipse(0,0,Wf/2-x.lineWidth,Hf/2-x.lineWidth,0,0,7);x.stroke();return}
+  if(L.frame==="torn"||L.frame==="color"){x.save();x.shadowColor="transparent";x.beginPath();if(L.frame==="torn")tornP(x,...inner,hashS(L.id)+3,B.w*k*.012);else rrect(x,...inner,B.w*k*.035);x.clip();if(pc)x.drawImage(pc,...inner);else{x.fillStyle="#3a2a1f";x.fillRect(...inner)}
+    if(L.lock&&S.bg.dim>0&&pc){x.fillStyle=`rgba(0,0,0,${S.bg.dim})`;x.fillRect(...inner)}if(PHUI&&L.ph){phLook(x,...inner);phBadge(x,inner[0]+inner[2]/2,inner[1]+inner[3]/2,Math.max(14,Math.min(inner[2],inner[3])*.13))}x.restore();return}
   if(L.frame==="rounded"){x.save();rrect(x,...inner,B.w*k*.06);if(L.shadow){x.fillStyle="#000";x.fill()}x.shadowColor="transparent";x.clip();if(pc)x.drawImage(pc,...inner);x.restore()}
   else{if(L.frame==="none"&&L.shadow&&pc){x.drawImage(pc,...inner)}x.shadowColor="transparent";if(pc)x.drawImage(pc,...inner);else{x.fillStyle="#3a2a1f";x.fillRect(...inner)}}
   x.shadowColor="transparent";
+  if(PHUI&&L.ph&&L.frame!=="oval"){phLook(x,...inner);phBadge(x,inner[0]+inner[2]/2,inner[1]+inner[3]/2,Math.max(14,Math.min(inner[2],inner[3])*.13))}
   if(L.lock&&S.bg.dim>0&&pc){x.fillStyle=`rgba(0,0,0,${S.bg.dim})`;x.fillRect(...inner)}
   if(L.frame==="film"){x.fillStyle="#E9DCC6";const n=Math.max(4,Math.round(B.H/90)),hw=B.l*k*.42,hh=hw*.72;for(let i=0;i<n;i++){const yy=Y+(i+.5)*Hf/n-hh/2;rrect(x,X+B.l*k*.29,yy,hw,hh,hh*.25);x.fill();rrect(x,X+Wf-B.r*k*.29-hw,yy,hw,hh,hh*.25);x.fill()}}
   if(L.frame==="polaroid"&&L.cap){x.fillStyle="#3a2a1f";x.textAlign="center";x.textBaseline="middle";const fs=B.w*k*.085;x.font=`${fs}px Yellowtail, cursive`;x.fillText(L.cap,0,Y+Hf-B.b*k*.5,B.w*k*.92)}}
+function hashS(t){let h=7;for(const c of String(t||""))h=(h*31+c.charCodeAt(0))%2147483647;return h||1}
+function tornP(x,X,Y,W,H,seed,j){let s=seed%2147483646+1;const r=()=>(s=(s*16807)%2147483647)/2147483647,per=2*(W+H),n=Math.max(24,Math.round(per/(j*1.6)));
+  for(let i=0;i<n;i++){const d=i/n*per;let px,py;if(d<W){px=X+d;py=Y}else if(d<W+H){px=X+W;py=Y+d-W}else if(d<2*W+H){px=X+W-(d-W-H);py=Y+H}else{px=X;py=Y+H-(d-2*W-H)}
+    const ox=(px===X?1:px===X+W?-1:0),oy=(py===Y?1:py===Y+H?-1:0),q=r()*j;i?x.lineTo(px+ox*q,py+oy*q):x.moveTo(px+ox*q,py+oy*q)}x.closePath()}
 function perfPath(x,X,Y,W,H,r){ // postage-stamp edge: rectangle with round bites
   const side=(x0,y0,x1,y1)=>{const len=Math.hypot(x1-x0,y1-y0),n=Math.max(2,Math.round(len/(r*3.1))),dx=(x1-x0)/len,dy=(y1-y0)/len,step=len/n,a0=Math.atan2(dy,dx);
     for(let i=0;i<n;i++){const cx=x0+dx*(i+.5)*step,cy=y0+dy*(i+.5)*step;x.lineTo(cx-dx*r,cy-dy*r);x.arc(cx,cy,r,a0+Math.PI,a0,true)}x.lineTo(x1,y1)};
@@ -515,7 +564,7 @@ function gestures(){const cv=$s("stCanvas"),pts=new Map();let g=null,lastTap={t:
       if(g.L.t!=="title")g.L.w=clamp(g.w0*f,SW*.08,SW*2.2);else g.L.s=clamp(g.s0*f,.12,3.2);
       let r=g.r0+(t.a-g.a0)*180/Math.PI;r=((r+180)%360+360)%360-180;for(const s of[0,90,-90,180,-180])if(Math.abs(r-s)<4)r=s;g.L.rot=r;
       g.L.x=g.ox+(t.cx-g.cx);g.L.y=g.oy+(t.cy-g.cy);draw()}});
-  const end=e=>{pts.delete(e.pointerId);if(ST.focusText){ST.focusText=false;focusWords()}if(pts.size===0&&g&&g.L&&g.L.ph&&!g.moved&&(g.mode==="pan"||g.mode==="drag")){const L=g.L;g=null;slotFill(L);return}if(pts.size===0&&g&&g.mode==="line"){if(g.moved){renderTool(true);updTop()}g=null;draw();return}if(pts.size===0){if(g&&g.moved){if(g.mode==="bg"||g.mode==="bgpinch")clampBg();ST.hist.push(g.snap);if(ST.hist.length>60)ST.hist.shift();ST.fut=[];ST.gesture=false;guide=false;changed();
+  const end=e=>{pts.delete(e.pointerId);if(ST.focusText){ST.focusText=false;focusWords()}if(pts.size===0&&g&&g.L&&g.L.ph&&!g.moved&&(g.mode==="pan"||g.mode==="drag")){const L=g.L;g=null;slotFill(L);return}if(pts.size===0&&g&&g.mode==="bg"&&!g.moved&&S.bg.ph&&S.bg.type==="photo"&&Math.hypot(g.sx-SW/2,g.sy-SH*(S.bg.phy||BGB.y))<SW*.16){g=null;slotFill("bg");return}if(pts.size===0&&g&&g.mode==="line"){if(g.moved){renderTool(true);updTop()}g=null;draw();return}if(pts.size===0){if(g&&g.moved){if(g.mode==="bg"||g.mode==="bgpinch")clampBg();ST.hist.push(g.snap);if(ST.hist.length>60)ST.hist.shift();ST.fut=[];ST.gesture=false;guide=false;changed();
       if(ST.tool)renderPanel()}g=null;ST.gesture=false;guide=false;draw()}
     else if(pts.size===1&&g&&g.mode==="bgpinch"){const [u]=[...pts.values()];g={mode:"bg",sx:u.x,sy:u.y,ox:S.bg.ox,oy:S.bg.oy,snap:g.snap,moved:true}}
     else if(pts.size===1&&g&&g.mode==="pinch"){const [u]=[...pts.values()];g={mode:"drag",L:g.L,sx:u.x,sy:u.y,ox:g.L.x,oy:g.L.y,snap:g.snap,moved:true}}};
