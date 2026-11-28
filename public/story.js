@@ -312,9 +312,9 @@ function slotFill(target){const slots=phSlots();const t=target||slots[0];if(!t)r
     invalidate();changed();renderPanel();hapt("MEDIUM");const left=phSlots().length;if(left)toast(left===1?"One more photo to go":`${left} more photos to go`)})}
 async function applyTpl(i){const t=sTpls()[i];if(!t)return;
   const had=(S.layers.length||S.bg.type==="photo")&&!S.tpl;snapS();S=tplDoc(t);ST.sel=null;invalidate();if(!wide())ST.tool=null;
-  slotFill(); // picker opens right away
   await Promise.all(tplKeys(S).map(k=>ensureImg(k).catch(()=>{})));await Promise.all(S.layers.filter(x=>x.t==="title").map(x=>ensureFonts(x.d).catch(()=>{})));
-  changed();renderPanel();if(had)toast("Template added · tap ↶ to get your story back")}
+  changed();renderPanel();if(had)toast("Template added · tap ↶ to get your story back");
+  const b=$s("stSlot");if(b){b.classList.remove("nudge");void b.offsetWidth;b.classList.add("nudge")}}
 const TPL_PREV=new Map();
 async function tplThumbs(){const els=[...document.querySelectorAll("#stPanel canvas[data-tplth]")];
   for(const c of els){const i=+c.dataset.tplth,t=sTpls()[i];if(!t)continue;
@@ -517,20 +517,20 @@ function grabber(){const ed=$s("storyEd");let d=null;
   const start=(e,el)=>{d={y:e.clientY,h:el.getBoundingClientRect().height,el,id:e.pointerId,moved:false};ed.classList.add("dragging")};
   $s("stGrab").addEventListener("pointerdown",e=>{const el=openSheet();if(!el)return;e.preventDefault();e.currentTarget.setPointerCapture&&e.currentTarget.setPointerCapture(e.pointerId);start(e,el)});
   ed.addEventListener("pointerdown",e=>{if(d||wide())return;const head=e.target.closest(".sHead,.sEdHead");if(!head||e.target.closest("button,input,textarea,select,label"))return;const el=openSheet();if(!el||!el.contains(head))return;start(e,el)});
-  const max=()=>Math.max(220,(innerHeight-120)*.86);
+  const max=()=>{const top=$s("stDock")?($s("stDock").getBoundingClientRect().top-12):innerHeight-100,hd=document.querySelector("#storyEd .sTop"),hb=hd?hd.getBoundingClientRect().bottom+10:80;return Math.max(220,top-hb)};
   ed.addEventListener("pointermove",e=>{if(!d||e.pointerId!==d.id)return;const dy=e.clientY-d.y;if(!d.moved&&Math.abs(dy)<4)return;d.moved=true;
     const h=Math.min(max(),Math.max(60,d.h-dy));d.el.style.height=h+"px";d.el.style.maxHeight="none";placeGrab.raf||(placeGrab.raf=requestAnimationFrame(()=>{placeGrab.raf=0;const g=$s("stGrab"),r=d&&d.el.getBoundingClientRect(),o=ed.getBoundingClientRect();if(r)g.style.top=(r.top-o.top)+"px"}))},{passive:true});
   const end=e=>{if(!d||e.pointerId!==d.id)return;const el=d.el,moved=d.moved;d=null;ed.classList.remove("dragging");if(!moved)return;
     const h=el.getBoundingClientRect().height;
     if(h<130){ST.sheetH=0;el.style.height="";el.style.maxHeight="";if(ST.editing)finishEdit();else if(ST.picking)stopPick();else setTool(null);hapt();return}
-    const snaps=[.32,.5,.78].map(f=>Math.round(Math.min(max(),(innerHeight-120)*f)));ST.sheetH=snaps.reduce((a,b)=>Math.abs(b-h)<Math.abs(a-h)?b:a);hapt();placeGrab()};
+    const snaps=[.4,.65,1].map(f=>Math.round(max()*f));ST.sheetH=snaps.reduce((a,b)=>Math.abs(b-h)<Math.abs(a-h)?b:a);hapt();placeGrab()};
   ed.addEventListener("pointerup",end);ed.addEventListener("pointercancel",end)}
 function renderPanel(){setTimeout(placeGrab);const p=$s("stPanel");if(!p)return;
   const ed=!!ST.editing;if(wide()&&!ed&&!ST.picking&&!ST.tool)ST.tool=ST.lastTool||"bg";$s("stEdit").dataset.g=toolGrp||"";$s("stEdit").hidden=!ed||(!wide()&&!toolGrp);$s("stEdTip").hidden=!ed||wide()||!!toolGrp;$s("stDockEdit").hidden=!ed;document.querySelector("#storyEd .sDockTools").hidden=ed;$s("stLib").hidden=!ST.picking;syncEmpty();
   if(ed||ST.picking){p.hidden=true;return}
   document.querySelectorAll("#stDock button").forEach(b=>{const on=b.dataset.tool===ST.tool;b.classList.toggle("on",on);b.setAttribute("aria-pressed",on)});
   if(!ST.tool){p.hidden=true;return}p.hidden=false;let h="";const t=ST.tool,L=selL();
-  if(t==="tpl"){h+=`<div class="sHead"><b>Templates</b><span class="sSub">Tap one, then add your photo</span></div><div class="sTpls">${sTpls().map((x,i)=>`<button class="sTpl${S.tpl===x.id?" on":""}" data-tpl="${i}"><canvas width="216" height="384" data-tplth="${i}"></canvas><span>${x.name}</span></button>`).join("")}</div>`;
+  if(t==="tpl"){h+=`<div class="sHead"><b>Templates</b><span class="sSub">Tap one to try it with your photos</span></div><div class="sTpls">${sTpls().map((x,i)=>`<button class="sTpl${S.tpl===x.id?" on":""}" data-tpl="${i}"><canvas width="216" height="384" data-tplth="${i}"></canvas><span>${x.name}</span></button>`).join("")}</div>`;
     p.innerHTML=h;tplThumbs();return}
   if(t==="bg"){const b=S.bg;h+=`<div class="sHead"><b>Background</b><div class="sChips">${chip("Photo",b.type==="photo",'data-bgt="photo"')}${chip("Colour",b.type==="color",'data-bgt="color"')}${chip("Gradient",b.type==="gradient",'data-bgt="gradient"')}</div></div>`;
     if(b.type==="photo"){const fp=firstPhoto();let th="";

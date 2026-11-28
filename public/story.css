@@ -228,10 +228,9 @@ html.storyOpen .shell{visibility:hidden}
   html.native .sSeg .lg{display:none}html.native .sSeg .sm{display:inline}
   html.native .sSaveL{display:none}html.native .sSave{width:42px;padding:0!important;justify-content:center}
 }}
-@container sside (max-width: 360px){
-  .sSeg .lg{display:none}.sSeg .sm{display:inline}
-  .sSaveL{display:none}.sSave{width:42px;padding:0!important;justify-content:center}
-}
+.sTop{container-type:inline-size;container-name:stop}
+@container stop (max-width: 400px){.sSaveL{display:none}.sSave{width:42px;padding:0!important;justify-content:center}}
+@container stop (max-width: 330px){.sSeg .lg{display:none}.sSeg .sm{display:inline}}
 .sDock{container-type:inline-size;container-name:sdock}
 @container sdock (max-width: 480px){
   .sDock .lg{display:none}.sDock .sm{display:inline}
@@ -248,3 +247,10 @@ html.storyOpen .shell{visibility:hidden}
   .sGrab[hidden]{display:none}
   .storyEd.dragging .sPanel,.storyEd.dragging .sEdit,.storyEd.dragging .sLib{transition:none}
 }}
+
+/* the panel never scrolls sideways; the category chips line up with the panel padding in the side column */
+.sPanel{overflow-x:hidden}
+@media (min-aspect-ratio: 1/1), (min-width: 900px){.sPanel{padding-top:0!important}.sCats{top:0;margin:0 -4px;padding:8px 4px 10px;background:#1c1612}.sPanel>.sHead:first-child{margin-top:6px}}
+/* "Add your photo" gives a short nudge right after you pick a template */
+@keyframes sNudge{0%,100%{transform:translateX(-50%) scale(1)}50%{transform:translateX(-50%) scale(1.07)}}
+.sSlotBtn.nudge{animation:sNudge .7s ease-in-out 3}

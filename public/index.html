@@ -600,6 +600,7 @@ input[type=range]::-moz-range-thumb{width:28px;height:28px;border-radius:50%;bac
   html.native .stage .igTop{padding-top:calc(var(--satMin) + 6px)}
   html.native .stage.ig .credit,html.native .stage.ig .livePill{top:calc(var(--satMin) + 56px)}
   html.native .paywall .pwClose,html.native .htBox .pwClose{top:calc(var(--satMin) + 8px)}
+  html.native #cats{margin-right:56px} /* chips stay clear of the battery ring under the clock */
 }
 
 /* Sticker | Story switch (1.1) */
@@ -612,7 +613,7 @@ html.noBuilder .modeSeg{display:none}html.noBuilder .top .brand{display:block!im
 @media not all and (min-aspect-ratio: 1/1){@media (max-width:899px){.top .brand{display:none}}}
 @media (max-width:430px){#saveImgBtn .saveL{display:none}#saveImgBtn.iconbtn.pri{padding:0;width:44px}.top{gap:6px}}
 </style>
-<link rel="stylesheet" href="/story.css?v=10">
+<link rel="stylesheet" href="/story.css?v=11">
 </head>
 <body>
 <div class="shell">
@@ -2617,7 +2618,7 @@ document.fonts.ready.then(()=>{schedulePreview();renderLibrary()});
 
 <script>
 /* Story Builder ships in a later update: hidden in 1.1 (preview with ?builder) */
-if(FEAT_BUILDER){const add=src=>new Promise(r=>{const e=document.createElement("script");e.src=src;e.onload=e.onerror=r;document.body.appendChild(e)});add("/stickers.js?v=2").then(()=>add("/story.js?v=10"))}
+if(FEAT_BUILDER){const add=src=>new Promise(r=>{const e=document.createElement("script");e.src=src;e.onload=e.onerror=r;document.body.appendChild(e)});add("/stickers.js?v=2").then(()=>add("/story.js?v=11"))}
 </script>
 </body>
 </html>
