@@ -210,3 +210,12 @@ html.storyOpen .shell{visibility:hidden}
 .sStkSec{display:flex;flex-direction:column;gap:10px;scroll-margin-top:60px}
 .sStkSec>.sLabel{padding-top:4px}
 .sCats .sChip{height:32px;flex:none;font-size:12px!important}
+
+/* templates */
+.sTpls{display:grid;grid-template-columns:repeat(auto-fill,minmax(96px,1fr));gap:10px;padding:2px 2px 6px}
+.sTpl{display:flex;flex-direction:column;gap:6px;align-items:center;background:none;border:0;color:inherit;font:600 12px/1.2 inherit;padding:0}
+.sTpl canvas{width:100%;aspect-ratio:9/16;height:auto;border-radius:14px;background:#241a14;box-shadow:0 6px 16px rgba(0,0,0,.3);outline:2px solid transparent;outline-offset:2px;transition:outline-color .2s}
+.sTpl.on canvas{outline-color:var(--accent)}
+.sSlotBtn{position:absolute;left:50%;bottom:16px;transform:translateX(-50%);z-index:3;display:flex;align-items:center;gap:8px;padding:11px 18px 11px 14px!important;border-radius:999px;border:0;background:var(--accent)!important;color:#fff;font:700 14px/1 inherit;white-space:nowrap;box-shadow:0 10px 26px rgba(0,0,0,.35)}
+.sSlotBtn svg{width:18px;height:18px}
+.sSlotBtn[hidden]{display:none}

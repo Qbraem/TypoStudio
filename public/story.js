@@ -8,6 +8,7 @@
 const SW=1080,SH=1920;
 const $s=id=>document.getElementById(id);
 const IC={
+  tpl:'<rect x="3.5" y="3.5" width="7" height="7" rx="1.5"/><rect x="13.5" y="3.5" width="7" height="7" rx="1.5"/><rect x="3.5" y="13.5" width="7" height="7" rx="1.5"/><rect x="13.5" y="13.5" width="7" height="7" rx="1.5"/>',
   close:'<path d="M6 6l12 12M18 6L6 18"/>',
   undo:'<path d="M9 14L4 9l5-5"/><path d="M4 9h10.5a5.5 5.5 0 0 1 0 11H11"/>',
   down:'<path d="M12 3v12"/><path d="m7 10 5 5 5-5"/><path d="M5 21h14"/>',
@@ -46,7 +47,7 @@ const GRADS=[["#3B2416","#F26B50"],["#1C1714","#E9B77C"],["#F6E9D7","#E9B77C"],[
 const COLORS=["#120D0A","#3B2416","#F6E9D7","#FFFFFF","#E9B77C","#F26B50","#D9473A","#7FC8E8","#A8B89A","#111111"];
 const FRAMES=[["none","None"],["rounded","Rounded"],["border","Border"],["polaroid","Polaroid"],["film","Film"]];
 const ASPECTS=[["orig","Original"],["4:5","4:5"],["1:1","1:1"],["3:4","3:4"],["9:16","9:16"],["16:9","16:9"]];
-const FX=[["none","Original"],["warm","Warm film"],["faded","Faded"],["bw","B&W"],["golden","Golden"],["cool","Cool"]];
+const FX=[["none","Original"],["warm","Warm film"],["faded","Faded"],["bw","B&W"],["golden","Golden"],["cool","Cool"],["brownie","Brownie"],["film90","90s film"],["noir","Noir"]];
 
 /* ---------- document ---------- */
 function blank(){return{v:1,bg:{type:"gradient",grad:0,color:"#3B2416",photo:null,blur:0,dim:0,z:1,ox:0,oy:0},layers:[],fx:{name:"none",amount:.7,grain:false,vig:false,leak:false}}}
@@ -122,7 +123,10 @@ const PRESET={
   faded:[M.con(.8),M.sat(.75),M.bri(1.05),M.lift(26)],
   bw:[M.sat(0),M.con(1.12)],
   golden:[M.sepia(.5),M.sat(1.5),M.hue(-8),M.bri(1.04)],
-  cool:[M.sat(.88),M.tint(.93,1,1.09),M.con(1.04),M.lift(6)]
+  cool:[M.sat(.88),M.tint(.93,1,1.09),M.con(1.04),M.lift(6)],
+  brownie:[M.sepia(.42),M.sat(.82),M.con(.9),M.lift(20),M.tint(1.05,.98,.88),M.bri(.96)],
+  film90:[M.sepia(.22),M.sat(1.12),M.con(.86),M.lift(24),M.tint(1.06,1,.9),M.bri(1.02)],
+  noir:[M.sat(0),M.con(1.32),M.bri(.94),M.lift(6)]
 };
 function fxMatrix(name,amt){const ops=PRESET[name]||[];if(!ops.length||amt<=0)return null;let m=I3();for(const o of ops)m=mul(o,m);const id=I3();return m.map((v,i)=>id[i]+(v-id[i])*amt)}
 function applyMatrix(c,m){if(!m)return c;const x=c.getContext("2d"),d=x.getImageData(0,0,c.width,c.height),p=d.data;
@@ -136,8 +140,8 @@ function boxBlur(c,r){if(r<1)return;const x=c.getContext("2d"),w=c.width,h=c.hei
       for(let i=-r;i<=r;i++){const q=idx(i);sr+=src[q];sg+=src[q+1];sb+=src[q+2]}
       for(let i=0;i<n;i++){const o=idx(i);dst[o]=sr/div;dst[o+1]=sg/div;dst[o+2]=sb/div;dst[o+3]=255;const qa=idx(i+r+1),qb=idx(i-r);sr+=src[qa]-src[qb];sg+=src[qa+1]-src[qb+1];sb+=src[qa+2]-src[qb+2]}}};
   for(let k=0;k<3;k++){pass(a,t,true);pass(t,a,false)}x.putImageData(d,0,0)}
-function cover(src,sw,sh,W,H,over=1){const c=document.createElement("canvas");c.width=W;c.height=H;const x=c.getContext("2d");x.imageSmoothingQuality="high";
-  const f=Math.max(W/sw,H/sh)*over,dw=sw*f,dh=sh*f;x.drawImage(src,(W-dw)/2,(H-dh)/2,dw,dh);return c}
+function cover(src,sw,sh,W,H,over=1,fx=0,fy=0){const c=document.createElement("canvas");c.width=W;c.height=H;const x=c.getContext("2d");x.imageSmoothingQuality="high";
+  const f=Math.max(W/sw,H/sh)*over,dw=sw*f,dh=sh*f;x.drawImage(src,(W-dw)/2+fx*(dw-W)/2,(H-dh)/2+fy*(dh-H)/2,dw,dh);return c}
 const bgCache={key:"",c:null},baseCache={key:"",c:null};
 function bgSource(){const b=S.bg;if(b.type!=="photo")return null;if(b.photo==="copy"){const p=firstPhoto();return p?{key:p.key,o:IMG.get(p.key)}:null}const o=b.photo&&IMG.get(b.photo);return o?{key:b.photo,o}:null}
 function bgBase(src){const key=[src.key,S.fx.name,S.fx.amount].join("|");if(baseCache.key===key)return baseCache.c; // the photo with its effect, ≤1800px
@@ -154,8 +158,8 @@ function drawBgPhoto(ctx,W,H){const src=bgSource();if(!src)return false;const c=
   ctx.imageSmoothingQuality="high";ctx.drawImage(bgCache.c,0,0,W,H);return true}
 const phCache=new Map(); // photo key|fx|size -> filtered canvas
 function photoCanvas(L,iw,ih){const o=IMG.get(L.key);if(!o)return null;const m=fxMatrix(S.fx.name,S.fx.amount);
-  const W=Math.max(8,Math.round(iw)),H=Math.max(8,Math.round(ih)),bw=Math.ceil(W/64)*64;const key=[L.key,L.aspect,S.fx.name,S.fx.amount,bw].join("|");
-  let c=phCache.get(key);if(c)return c;const Hb=Math.round(bw*H/W);c=cover(o.src,o.w,o.h,bw,Hb);applyMatrix(c,m);if(phCache.size>24)phCache.clear();phCache.set(key,c);return c}
+  const W=Math.max(8,Math.round(iw)),H=Math.max(8,Math.round(ih)),bw=Math.ceil(W/64)*64;const key=[L.key,L.aspect,S.fx.name,S.fx.amount,bw,(L.px||0).toFixed(3),(L.py||0).toFixed(3)].join("|");
+  let c=phCache.get(key);if(c)return c;const Hb=Math.round(bw*H/W);c=cover(o.src,o.w,o.h,bw,Hb,1,L.px||0,L.py||0);applyMatrix(c,m);if(phCache.size>24)phCache.clear();phCache.set(key,c);return c}
 function invalidate(){bgCache.key="";baseCache.key="";phCache.clear();ttCache.clear();if(typeof stCache!=="undefined")stCache.clear()}
 
 /* ---------- title bitmaps (drawLayers draws with destination-out for cut-outs/texture, so each title gets its own canvas) ---------- */
@@ -268,6 +272,55 @@ function storyTitles(){if(typeof L!=="function"||typeof D!=="function")return[];
   D("sx5","Story","Coffee thoughts",[L("Coffee thoughts","DM Sans",40,0,-230,{weight:700,spacing:16,upper:true,color:"accent"}),L("Your urgency","Homemade Apple",105,0,-85),L("isn't always","Homemade Apple",105,0,45),L("their emergency.","Homemade Apple",105,0,175)],{colors:{main:"#FFFFFF",accent:"#E9B77C"}})
 ]}
 let STT=null;const sTitles=()=>STT||(STT=storyTitles());
+/* ---------- story templates: a full layout, you only add your photo(s) ----------
+   photo slots are marked ph:true and start with one of our sample photos; lock:true = a fixed cell, drag pans the photo inside it */
+function storyTemplates(){if(typeof L!=="function"||typeof D!=="function")return[];
+  const T=(d,x,y,s)=>({t:"title",d,x,y,s,rot:0}),P=(key,x,y,w,o={})=>Object.assign({t:"photo",key,x,y,w,rot:0,frame:"none",aspect:"orig",shadow:false,cap:"",ph:true},o);
+  const cw=(SW-8)/2,ch=(SH-8)/2,cell=(key,c,r)=>P(key,cw/2+c*(cw+8),ch/2+r*(ch+8),cw,{aspect:`${Math.round(cw)}:${Math.round(ch)}`,lock:true});
+  return[
+  {id:"t90",name:"90s movie",bg:{type:"photo",photo:"b:xmas",ph:true,dim:.12},fx:{name:"film90",amount:.85,grain:true,vig:true},layers:[
+    T(D("tp1","Story","90s movie",[L("MAKE THIS","Instrument Serif",150,0,-345,{spacing:-2}),L("DECEMBER","Instrument Serif",205,0,-180,{spacing:-3}),L("FEEL LIKE A","Instrument Serif",112,0,-45,{spacing:-1}),L("90's movie","Great Vibes",250,0,120,{color:"accent",rotate:-5})],{colors:{main:"#FFFFFF",accent:"#E5483A"},shadow:55}),SW/2,SH*.6,1.12)]},
+  {id:"t4",name:"Four photos",bg:{type:"color",color:"#17110D",dim:0},fx:{name:"brownie",amount:.9,grain:true,vig:false},layers:[
+    cell("b:agave",0,0),cell("b:golden",1,0),cell("b:pier",0,1),cell("b:xmas",1,1),
+    T(D("tp2","Story","Four photos",[L("try this","Instrument Serif",120,0,-95),L("Cosy Season","Instrument Serif",235,0,45,{spacing:-4})],{colors:{main:"#EFE1CB",accent:"#FFFFFF"},shadow:60}),SW/2,SH/2,1)]},
+  {id:"tbw",name:"B&W quote",bg:{type:"photo",photo:"b:pier",ph:true,dim:.22},fx:{name:"noir",amount:1,grain:true,vig:true},layers:[
+    T(D("tp3","Story","B&W quote",[L("kinda magic to","Instrument Serif",150,0,-150,{spacing:-3}),L("slow down and","Instrument Serif",150,0,0,{spacing:-3}),L("enjoy december","Instrument Serif",150,0,150,{spacing:-3})],{colors:{main:"#F2C94C",accent:"#FFFFFF"},shadow:25}),SW/2,SH*.47,.95)]},
+  {id:"tfilm",name:"Photo dump",bg:{type:"color",color:"#14110F",dim:0},fx:{name:"warm",amount:.6,grain:true,vig:false},layers:[
+    P("b:golden",SW/2,SH*.345,SW*.7,{frame:"film",aspect:"4:3",lock:true}),P("b:sunset",SW/2,SH*.585,SW*.7,{frame:"film",aspect:"4:3",lock:true}),P("b:pool",SW/2,SH*.825,SW*.7,{frame:"film",aspect:"4:3",lock:true}),
+    T(D("tp4","Story","Photo dump",[L("december","Playball",210,0,-40,{color:"accent"}),L("PHOTO DUMP","DM Sans",46,0,90,{weight:700,spacing:18})],{colors:{main:"#F6E9D7",accent:"#E9B77C"}}),SW/2,SH*.115,.9)]},
+  {id:"tpol",name:"Polaroids",bg:{type:"color",color:"#C9A57A",dim:0},fx:{name:"none",amount:.7,grain:true,vig:true},layers:[
+    P("b:agave",SW*.35,SH*.4,SW*.5,{frame:"polaroid",aspect:"1:1",rot:-7,shadow:true,cap:"slow sunday"}),P("b:pool",SW*.65,SH*.73,SW*.5,{frame:"polaroid",aspect:"1:1",rot:6,shadow:true,cap:"best day"}),
+    T(D("tp5","Story","Polaroids",[L("weekend notes","Caveat",190,0,0,{weight:700})],{colors:{main:"#2A1D14",accent:"#C4452F"}}),SW/2,SH*.17,.95)]},
+  {id:"tmag",name:"Magazine",bg:{type:"photo",photo:"b:golden",ph:true,dim:.1},fx:{name:"warm",amount:.55,grain:false,vig:true},layers:[
+    T(D("tp6","Story","Magazine",[L("WEEKEND","Gloock",200,0,0,{spacing:-3})],{colors:{main:"#FFFFFF",accent:"#F26B50"},shadow:25}),SW/2,SH*.12,.92),
+    T(D("tp7","Story","Magazine line",[L("ISSUE 12  ·  SLOW MORNINGS & GOLDEN HOURS","DM Sans",38,0,0,{weight:700,spacing:6})],{colors:{main:"#FFFFFF",accent:"#F26B50"},shadow:30}),SW/2,SH*.9,.95)]}
+  ]}
+let TPL=null;const sTpls=()=>TPL||(TPL=storyTemplates());
+function tplDoc(t){const d=blank();Object.assign(d.bg,{type:"gradient",photo:null,blur:0,dim:0,z:1,ox:0,oy:0},clone(t.bg));Object.assign(d.fx,clone(t.fx));
+  d.layers=t.layers.map(x=>Object.assign(clone(x),{id:uidS(),hidden:false}));d.tpl=t.id;return d}
+function tplKeys(d){return[d.bg.type==="photo"&&d.bg.photo,...d.layers.filter(x=>x.t==="photo").map(x=>x.key)].filter(Boolean)}
+function phSlots(){const out=[];if(S.bg.type==="photo"&&S.bg.ph)out.push("bg");S.layers.forEach(x=>{if(x.t==="photo"&&x.ph&&!x.hidden)out.push(x)});return out}
+function syncSlot(){const b=$s("stSlot");if(!b)return;const n=phSlots().length;b.hidden=!n||!!ST.editing||ST.picking||(!!ST.tool&&!wide());if(n)b.querySelector("span").textContent=n===1?"Add your photo":`Add your photos · ${n} to go`}
+/* opens the photo picker straight from the tap (iOS needs the tap), then puts the photo in the first open slot or the one you tapped */
+function slotFill(target){const slots=phSlots();const t=target||slots[0];if(!t)return;const pick=pickFile();
+  pick.then(async f=>{if(!f)return;let k;try{k=await importFile(f)}catch(e){toast("Couldn't open that photo");return}snapS();
+    if(t==="bg"){Object.assign(S.bg,{photo:k,ph:false,z:1,ox:0,oy:0})}else{t.key=k;t.ph=false;t.px=0;t.py=0}
+    invalidate();changed();renderPanel();hapt("MEDIUM");const left=phSlots().length;if(left)toast(left===1?"One more photo to go":`${left} more photos to go`)})}
+async function applyTpl(i){const t=sTpls()[i];if(!t)return;
+  const had=(S.layers.length||S.bg.type==="photo")&&!S.tpl;snapS();S=tplDoc(t);ST.sel=null;invalidate();if(!wide())ST.tool=null;
+  slotFill(); // picker opens right away
+  await Promise.all(tplKeys(S).map(k=>ensureImg(k).catch(()=>{})));await Promise.all(S.layers.filter(x=>x.t==="title").map(x=>ensureFonts(x.d).catch(()=>{})));
+  changed();renderPanel();if(had)toast("Template added · tap ↶ to get your story back")}
+const TPL_PREV=new Map();
+async function tplThumbs(){const els=[...document.querySelectorAll("#stPanel canvas[data-tplth]")];
+  for(const c of els){const i=+c.dataset.tplth,t=sTpls()[i];if(!t)continue;
+    let url=TPL_PREV.get(t.id);
+    if(!url){const d=tplDoc(t);await Promise.all(tplKeys(d).map(k=>ensureImg(k).catch(()=>{})));await Promise.all(d.layers.filter(x=>x.t==="title").map(x=>ensureFonts(x.d).catch(()=>{})));
+      const W=216,H=384,cv=document.createElement("canvas");cv.width=W;cv.height=H;const keep=S;try{S=d;render(cv.getContext("2d"),W,H)}finally{S=keep}
+      invalidate();url=cv;TPL_PREV.set(t.id,url)}
+    c.getContext("2d").drawImage(url,0,0,c.width,c.height)}
+  draw()}
+
 
 /* ---------- renderer ---------- */
 let grainTile=null;
@@ -290,6 +343,8 @@ function render(ctx,W,H,o={}){
   if(S.fx.vig){const g=ctx.createRadialGradient(W/2,H/2,Math.min(W,H)*.35,W/2,H/2,Math.hypot(W,H)*.56);g.addColorStop(0,"rgba(0,0,0,0)");g.addColorStop(1,"rgba(0,0,0,.6)");ctx.fillStyle=g;ctx.fillRect(0,0,W,H)}
   if(S.fx.grain){const p=ctx.createPattern(grain(),"repeat"),sc=Math.max(.6,k*1.6);ctx.save();ctx.globalAlpha=.16;ctx.globalCompositeOperation="overlay";ctx.scale(sc,sc);ctx.fillStyle=p;ctx.fillRect(0,0,W/sc,H/sc);ctx.restore()}
   // editor-only overlays
+  if(o.sel&&!ST.editing){const badge=(cx,cy,r)=>{ctx.save();ctx.fillStyle="rgba(20,14,10,.55)";ctx.beginPath();ctx.arc(cx,cy,r,0,7);ctx.fill();ctx.strokeStyle="#FFF6E6";ctx.lineWidth=r*.12;ctx.lineCap="round";ctx.beginPath();ctx.moveTo(cx-r*.4,cy);ctx.lineTo(cx+r*.4,cy);ctx.moveTo(cx,cy-r*.4);ctx.lineTo(cx,cy+r*.4);ctx.stroke();ctx.restore()};
+    for(const L of S.layers)if(L.t==="photo"&&L.ph&&!L.hidden){const B=photoBox(L);ctx.save();ctx.translate(L.x*k,L.y*k);badge(0,(B.dy||0)*k,Math.min(B.w,B.h)*k*.1);ctx.restore()}}
   if(o.sel&&ST.editing){const L=layerById(ST.editing);if(L)drawLineSel(ctx,L,k,o.dpr)}
   else if(o.sel){const L=selL();if(L&&!L.hidden){const B=bounds(L,k),p=10*(o.dpr||1);ctx.save();ctx.translate(L.x*k,L.y*k);ctx.rotate((L.rot||0)*Math.PI/180);
     const X=(B.dx-B.hw)*k-p,Y=(B.dy-B.hh)*k-p,w=B.hw*2*k+2*p,h=B.hh*2*k+2*p;ctx.lineWidth=1.5*(o.dpr||1);ctx.setLineDash([6*(o.dpr||1),5*(o.dpr||1)]);
@@ -306,6 +361,7 @@ function drawPhoto(x,L,k){const B=photoBox(L),Wf=B.W*k,Hf=B.H*k,X=-Wf/2,Y=-Hf/2;
   if(L.frame==="rounded"){x.save();rrect(x,...inner,B.w*k*.06);if(L.shadow){x.fillStyle="#000";x.fill()}x.shadowColor="transparent";x.clip();if(pc)x.drawImage(pc,...inner);x.restore()}
   else{if(L.frame==="none"&&L.shadow&&pc){x.drawImage(pc,...inner)}x.shadowColor="transparent";if(pc)x.drawImage(pc,...inner);else{x.fillStyle="#3a2a1f";x.fillRect(...inner)}}
   x.shadowColor="transparent";
+  if(L.lock&&S.bg.dim>0&&pc){x.fillStyle=`rgba(0,0,0,${S.bg.dim})`;x.fillRect(...inner)}
   if(L.frame==="film"){x.fillStyle="#E9DCC6";const n=Math.max(4,Math.round(B.H/90)),hw=B.l*k*.42,hh=hw*.72;for(let i=0;i<n;i++){const yy=Y+(i+.5)*Hf/n-hh/2;rrect(x,X+B.l*k*.29,yy,hw,hh,hh*.25);x.fill();rrect(x,X+Wf-B.r*k*.29-hw,yy,hw,hh,hh*.25);x.fill()}}
   if(L.frame==="polaroid"&&L.cap){x.fillStyle="#3a2a1f";x.textAlign="center";x.textBaseline="middle";const fs=B.w*k*.085;x.font=`${fs}px Yellowtail, cursive`;x.fillText(L.cap,0,Y+Hf-B.b*k*.5,B.w*k*.92)}}
 function drawTitle(x,L,k){fontsFor(L);const px=L.s*SW*k/FRAME,t=titleBitmap(L,px),f=px/t.px;x.drawImage(t.c,t.ox*f,t.oy*f,t.c.width*f,t.c.height*f)}
@@ -360,20 +416,22 @@ function gestures(){const cv=$s("stCanvas"),pts=new Map();let g=null,lastTap={t:
       if(!L){const had=!!ST.sel;if(had){ST.sel=null;renderPanel();draw()}
         g=bgSource()&&!ST.editing?{mode:"bg",sx:u.x,sy:u.y,ox:S.bg.ox||0,oy:S.bg.oy||0,snap:JSON.stringify(S),moved:false}:null;return}
       const now=Date.now();if(L.t==="title"&&lastTap.id===L.id&&now-lastTap.t<320){lastTap={t:0,id:null};editTitle(L.id);return}lastTap={t:now,id:L.id};
-      if(ST.sel!==L.id){ST.sel=L.id;renderPanel()}g={mode:"drag",L,sx:u.x,sy:u.y,ox:L.x,oy:L.y,snap:JSON.stringify(S),moved:false};ST.gesture=false;draw()}
+      if(ST.sel!==L.id){ST.sel=L.id;renderPanel()}g=L.lock?{mode:"pan",L,sx:u.x,sy:u.y,px0:L.px||0,py0:L.py||0,snap:JSON.stringify(S),moved:false}:{mode:"drag",L,sx:u.x,sy:u.y,ox:L.x,oy:L.y,snap:JSON.stringify(S),moved:false};ST.gesture=false;draw()}
     else if(pts.size===2){if((g&&g.mode==="bg")||(!selL()&&bgSource()&&!ST.editing)){const t=two();g={mode:"bgpinch",d0:t.d,cx:t.cx,cy:t.cy,z0:S.bg.z||1,ox:S.bg.ox||0,oy:S.bg.oy||0,snap:g?g.snap:JSON.stringify(S),moved:true};ST.gesture=true;return}
-      const L=selL()||(g&&g.L);if(!L)return;const t=two();g={mode:"pinch",L,d0:t.d,a0:t.a,cx:t.cx,cy:t.cy,ox:L.x,oy:L.y,w0:L.w,s0:L.s,r0:L.rot||0,snap:g?g.snap:JSON.stringify(S),moved:true};ST.gesture=true}});
+      const L=selL()||(g&&g.L);if(!L||L.lock)return;const t=two();g={mode:"pinch",L,d0:t.d,a0:t.a,cx:t.cx,cy:t.cy,ox:L.x,oy:L.y,w0:L.w,s0:L.s,r0:L.rot||0,snap:g?g.snap:JSON.stringify(S),moved:true};ST.gesture=true}});
   cv.addEventListener("pointermove",e=>{if(!pts.has(e.pointerId))return;const u=unit(e);pts.set(e.pointerId,u);if(!g)return;
     if(g.mode==="line"&&pts.size===1){const q=toDesign(g.L,u.x,u.y),dx=q.x-g.sx,dy=q.y-g.sy;if(!g.moved&&Math.hypot(dx,dy)*g.L.s*SW/FRAME<6)return;if(!g.moved){g.moved=true;snap()}
       g.Ly.x=Math.round(g.ox+dx);g.Ly.y=Math.round(g.oy+dy);ttCache.delete(g.L.id);draw();return}
     if(g.mode==="bg"&&pts.size===1){const dx=u.x-g.sx,dy=u.y-g.sy;if(!g.moved&&Math.hypot(dx,dy)<6)return;g.moved=true;ST.gesture=true;S.bg.ox=g.ox+dx;S.bg.oy=g.oy+dy;draw();return}
     if(g.mode==="bgpinch"&&pts.size===2){const t=two();S.bg.z=clamp(g.z0*t.d/g.d0,1,5);S.bg.ox=g.ox+(t.cx-g.cx);S.bg.oy=g.oy+(t.cy-g.cy);draw();return}
+    if(g.mode==="pan"&&pts.size===1){const dx=u.x-g.sx,dy=u.y-g.sy;if(!g.moved&&Math.hypot(dx,dy)<6)return;g.moved=true;ST.gesture=true;const o=IMG.get(g.L.key),B=photoBox(g.L);
+      if(o){const f=Math.max(B.w/o.w,B.h/o.h),mx=(o.w*f-B.w)/2,my=(o.h*f-B.h)/2;g.L.px=mx>1?clamp(g.px0+dx/mx,-1,1):0;g.L.py=my>1?clamp(g.py0+dy/my,-1,1):0}draw();return}
     if(g.mode==="drag"&&pts.size===1){const dx=u.x-g.sx,dy=u.y-g.sy;if(!g.moved&&Math.hypot(dx,dy)<6)return;g.moved=true;ST.gesture=true;let nx=g.ox+dx;guide=Math.abs(nx-SW/2)<14;if(guide)nx=SW/2;g.L.x=clamp(nx,-SW*.3,SW*1.3);g.L.y=clamp(g.oy+dy,-SH*.2,SH*1.2);draw()}
     else if(g.mode==="pinch"&&pts.size===2){const t=two(),f=clamp(t.d/g.d0,.15,8);
       if(g.L.t!=="title")g.L.w=clamp(g.w0*f,SW*.08,SW*2.2);else g.L.s=clamp(g.s0*f,.12,3.2);
       let r=g.r0+(t.a-g.a0)*180/Math.PI;r=((r+180)%360+360)%360-180;for(const s of[0,90,-90,180,-180])if(Math.abs(r-s)<4)r=s;g.L.rot=r;
       g.L.x=g.ox+(t.cx-g.cx);g.L.y=g.oy+(t.cy-g.cy);draw()}});
-  const end=e=>{pts.delete(e.pointerId);if(pts.size===0&&g&&g.mode==="line"){if(g.moved){renderTool(true);updTop()}g=null;draw();return}if(pts.size===0){if(g&&g.moved){if(g.mode==="bg"||g.mode==="bgpinch")clampBg();ST.hist.push(g.snap);if(ST.hist.length>60)ST.hist.shift();ST.fut=[];ST.gesture=false;guide=false;changed();
+  const end=e=>{pts.delete(e.pointerId);if(pts.size===0&&g&&g.L&&g.L.ph&&!g.moved&&(g.mode==="pan"||g.mode==="drag")){const L=g.L;g=null;slotFill(L);return}if(pts.size===0&&g&&g.mode==="line"){if(g.moved){renderTool(true);updTop()}g=null;draw();return}if(pts.size===0){if(g&&g.moved){if(g.mode==="bg"||g.mode==="bgpinch")clampBg();ST.hist.push(g.snap);if(ST.hist.length>60)ST.hist.shift();ST.fut=[];ST.gesture=false;guide=false;changed();
       if(ST.tool)renderPanel()}g=null;ST.gesture=false;guide=false;draw()}
     else if(pts.size===1&&g&&g.mode==="bgpinch"){const [u]=[...pts.values()];g={mode:"bg",sx:u.x,sy:u.y,ox:S.bg.ox,oy:S.bg.oy,snap:g.snap,moved:true}}
     else if(pts.size===1&&g&&g.mode==="pinch"){const [u]=[...pts.values()];g={mode:"drag",L:g.L,sx:u.x,sy:u.y,ox:g.L.x,oy:g.L.y,snap:g.snap,moved:true}}};
@@ -387,6 +445,7 @@ function build(){if($s("storyEd"))return;
   <div class="sStageCol"><div class="sCanvasWrap" id="stCanvasWrap"><div class="sCanvasBox" id="stCanvasBox"><canvas id="stCanvas" aria-label="Your story"></canvas>
     <button class="sDel" id="stDel" hidden aria-label="Delete layer"><svg viewBox="0 0 12 12"><path d="M2 2l8 8M10 2l-8 8"/></svg></button>
     <div class="sMini" id="stMini" hidden role="toolbar" aria-label="Layer tools"></div>
+    <button class="sSlotBtn" id="stSlot" hidden>${svg("plus",2.4)}<span>Add your photo</span></button>
     <button class="sEmpty" id="stEmpty" hidden><span class="sEmptyIc">${svg("photo",1.7)}</span><b>Add your photo</b><small>It fills your whole story, just like in Instagram</small></button>
   </div></div></div>
   <div class="sSide">
@@ -401,7 +460,7 @@ function build(){if($s("storyEd"))return;
     <div class="sEdTip" id="stEdTip" hidden>Tap a line on your story, then pick a tool</div>
     <section class="sPanel sLib" id="stLib" hidden aria-label="Library"><div class="sHead"><b>Add a design</b><button class="sChip" id="stLibClose">Close</button></div><div id="stLibHost"></div></section>
     <nav class="sDock sGlass" id="stDock" aria-label="Story tools">
-      <div class="sDockTools">${[["bg","Background"],["photo","Stickers"],["text","Text"],["fx","Effects"],["layers","Layers"]].map(([k,l])=>`<button data-tool="${k}" aria-pressed="false">${svg(k==="photo"?"stk":k)}<span>${l}</span></button>`).join("")}</div>
+      <div class="sDockTools">${[["tpl","Templates"],["bg","Background"],["photo","Stickers"],["text","Text"],["fx","Effects"],["layers","Layers"]].map(([k,l])=>`<button data-tool="${k}" aria-pressed="false">${svg(k==="photo"?"stk":k)}<span>${l}</span></button>`).join("")}</div>
       <div class="sDockEdit" id="stDockEdit" hidden><button class="sDone" id="stDone">${svg("check",2.4)}<span>Done</span></button><div class="sEdNav" id="stEdNav"></div></div>
     </nav>
   </div>`;
@@ -412,7 +471,7 @@ function build(){if($s("storyEd"))return;
   $s("stSave").onclick=()=>exportStory("save");
   $s("stDock").addEventListener("click",e=>{const b=e.target.closest("button[data-tool]");if(!b)return;hapt();setTool(ST.tool===b.dataset.tool&&!wide()?null:b.dataset.tool)});
   $s("stDel").addEventListener("click",e=>{e.stopPropagation();const L=selL();if(!L)return;snapS();S.layers=S.layers.filter(x=>x!==L);ST.sel=null;toast("Deleted · tap ↶ to undo");changed();renderPanel()});
-  $s("stEmpty").onclick=addBgPhoto;
+  $s("stEmpty").onclick=addBgPhoto;$s("stSlot").onclick=e=>{e.stopPropagation();hapt();slotFill()};
   $s("stMini").addEventListener("click",e=>{const b=e.target.closest("button[data-a]");if(!b)return;e.stopPropagation();miniAction(b.dataset.a)});
   $s("stPanel").addEventListener("click",panelClick);$s("stPanel").addEventListener("input",panelInput);$s("stPanel").addEventListener("change",panelChange);
   gestures();
@@ -421,8 +480,8 @@ function build(){if($s("storyEd"))return;
 }
 const wide=()=>WIDE.matches;
 function updTop(){if(!$s("stUndo"))return;$s("stUndo").disabled=ST.editing?!hist.length:!ST.hist.length;$s("stLock").hidden=canUse()}
-function syncEmpty(){const e=$s("stEmpty");if(e)e.hidden=!!bgSource()||S.layers.some(L=>L.t==="photo")||S.bg.type!=="gradient"||!!ST.editing}
-function setTool(t){ST.tool=t;if(t)ST.lastTool=t;renderPanel();draw()}
+function syncEmpty(){syncSlot();const e=$s("stEmpty");if(e)e.hidden=!!bgSource()||S.layers.some(L=>L.t==="photo")||S.bg.type!=="gradient"||!!ST.editing}
+function setTool(t){ST.tool=t;setTimeout(syncSlot);if(t)ST.lastTool=t;renderPanel();draw()}
 function renderMini(L){const m=$s("stMini");const key=L.id+L.t+(L.shadow?1:0)+(L.kind||"");if(m.dataset.k===key)return;m.dataset.k=key;
   const b=(a,ic,l,on)=>`<button data-a="${a}"${on?' class="on"':""}>${svg(ic)}<span>${l}</span></button>`;
   const i=(a,ic,l)=>`<button data-a="${a}" class="io" aria-label="${l}">${svg(ic)}</button>`;
@@ -449,6 +508,8 @@ function renderPanel(){const p=$s("stPanel");if(!p)return;
   if(ed||ST.picking){p.hidden=true;return}
   document.querySelectorAll("#stDock button").forEach(b=>{const on=b.dataset.tool===ST.tool;b.classList.toggle("on",on);b.setAttribute("aria-pressed",on)});
   if(!ST.tool){p.hidden=true;return}p.hidden=false;let h="";const t=ST.tool,L=selL();
+  if(t==="tpl"){h+=`<div class="sHead"><b>Templates</b><span class="sSub">Tap one, then add your photo</span></div><div class="sTpls">${sTpls().map((x,i)=>`<button class="sTpl${S.tpl===x.id?" on":""}" data-tpl="${i}"><canvas width="216" height="384" data-tplth="${i}"></canvas><span>${x.name}</span></button>`).join("")}</div>`;
+    p.innerHTML=h;tplThumbs();return}
   if(t==="bg"){const b=S.bg;h+=`<div class="sHead"><b>Background</b><div class="sChips">${chip("Photo",b.type==="photo",'data-bgt="photo"')}${chip("Colour",b.type==="color",'data-bgt="color"')}${chip("Gradient",b.type==="gradient",'data-bgt="gradient"')}</div></div>`;
     if(b.type==="photo"){const fp=firstPhoto();let th="";
       if(fp)th+=`<button class="sThumb${b.photo==="copy"?" on":""}" data-bgp="copy" aria-label="Blurred copy of your photo"><img src="${thumbOf(fp.key)}" alt=""><i>Blur copy</i></button>`;
@@ -484,6 +545,7 @@ function renderPanel(){const p=$s("stPanel");if(!p)return;
     h+=`<p class="sHint">Tip: double-tap a title on your story to edit its text.</p>`}
   else if(t==="fx"){const f=S.fx,src=firstPhoto()||bgSource()&&{key:bgSource().key};
     h+=`<div class="sHead"><b>Effects</b><span class="sSub">On your photos &amp; background</span></div>`;
+    h+=slider("Darken","dim",Math.round(S.bg.dim*100),0,70,1,v=>v+"%")+`<p class="sHint" style="margin-top:-4px">Makes your photo darker so titles stand out.</p>`;
     h+=`<div class="sStrip fx">${FX.map(([v,l])=>`<button class="sFx${f.name===v?" on":""}" data-fx="${v}"><canvas width="96" height="128" data-fxprev="${v}"></canvas><span>${l}</span></button>`).join("")}</div>`;
     if(f.name!=="none")h+=slider("Amount","amount",Math.round(f.amount*100),0,100,1,v=>v);
     h+=`<div class="sChips">${chip(svg("grain")+"Grain",f.grain,'data-fxt="grain"')}${chip(svg("vig")+"Vignette",f.vig,'data-fxt="vig"')}${chip(svg("sun")+"Light leak",f.leak,'data-fxt="leak"')}</div>`;
@@ -518,8 +580,9 @@ function fxPreviews(key){const o=key&&IMG.get(key);document.querySelectorAll("#s
   else{const g=x.createLinearGradient(0,0,96,128);g.addColorStop(0,"#E9B77C");g.addColorStop(1,"#3B2416");x.fillStyle=g;x.fillRect(0,0,96,128);const m=fxMatrix(c.dataset.fxprev,.85);if(m)applyMatrix(c,m)}})}
 
 async function panelClick(e){const b=e.target.closest("button,[data-lay]");if(!b)return;const L=selL(),d=b.dataset;hapt();
+  if(d.tpl!=null)return applyTpl(+d.tpl);
   if(d.bgt){snapS();S.bg.type=d.bgt;if(d.bgt==="photo"&&!bgSource()){if(firstPhoto())S.bg.photo="copy";else{renderPanel();changed();return addBgPhoto()}}changed();renderPanel();return}
-  if(d.bgp){snapS();S.bg.photo=d.bgp;S.bg.z=1;S.bg.ox=0;S.bg.oy=0;if(d.bgp!=="copy")await ensureImg(d.bgp).catch(()=>toast("Couldn't load that photo"));changed();renderPanel();return}
+  if(d.bgp){snapS();S.bg.photo=d.bgp;S.bg.ph=false;S.bg.z=1;S.bg.ox=0;S.bg.oy=0;if(d.bgp!=="copy")await ensureImg(d.bgp).catch(()=>toast("Couldn't load that photo"));changed();renderPanel();return}
   if(d.col){snapS();S.bg.color=d.col;changed();renderPanel();return}
   if(d.grad!=null){snapS();S.bg.grad=+d.grad;changed();renderPanel();return}
   if(d.frame&&L){snapS();L.frame=d.frame;$s("stMini").dataset.k="";changed();renderPanel();return}
@@ -538,7 +601,7 @@ async function panelClick(e){const b=e.target.closest("button,[data-lay]");if(!b
   switch(d.act){
     case"addPhoto":return addPhoto();
     case"bgUpload":return addBgPhoto();
-    case"replace":{if(!L)return;const f=await pickFile();if(!f)return;const k=await importFile(f);snapS();L.key=k;invalidate();changed();renderPanel();return}
+    case"replace":{if(!L)return;const f=await pickFile();if(!f)return;const k=await importFile(f);snapS();L.key=k;L.ph=false;L.px=0;L.py=0;invalidate();changed();renderPanel();return}
     case"del":{if(!L)return;snapS();S.layers=S.layers.filter(x=>x!==L);ST.sel=null;changed();renderPanel();return}
     case"shadow":{if(!L)return;snapS();L.shadow=!L.shadow;$s("stMini").dataset.k="";changed();renderPanel();return}
     case"stkAll":{ST.sel=null;renderPanel();draw();return}
@@ -559,7 +622,7 @@ function panelChange(e){if(e.target.dataset.k)commitInput()}
 function commitInput(){clearTimeout(inpT);if(inpSnap){ST.hist.push(inpSnap);if(ST.hist.length>60)ST.hist.shift();ST.fut=[];inpSnap=null;changed()}}
 
 async function addBgPhoto(){const f=await pickFile();if(!f)return;let k;try{k=await importFile(f)}catch(e){toast("Couldn't open that photo");return}
-  snapS();Object.assign(S.bg,{type:"photo",photo:k,blur:0,dim:0,z:1,ox:0,oy:0});invalidate();changed();renderPanel();hapt("MEDIUM")}
+  snapS();Object.assign(S.bg,{type:"photo",photo:k,ph:false,blur:0,dim:0,z:1,ox:0,oy:0});invalidate();changed();renderPanel();hapt("MEDIUM")}
 async function addPhoto(){const f=await pickFile();if(!f)return;let k;try{k=await importFile(f)}catch(e){toast("Couldn't open that photo");return}
   snapS();const L=newPhoto(k);
   // photo stickers go under the titles
@@ -613,7 +676,7 @@ function saved(blob,title){const u=URL.createObjectURL(blob);const w=document.cr
 /* ---------- open / close ---------- */
 function show(){const el=$s("storyEd");el.classList.remove("hidden");ST.open=true;document.documentElement.classList.add("storyOpen");if(typeof syncGlass==="function")syncGlass();updTop();syncEmpty();renderPanel();draw()}
 function hide(){const el=$s("storyEd");if(el)el.classList.add("hidden");ST.open=false;document.documentElement.classList.remove("storyOpen");if(typeof syncGlass==="function")syncGlass()}
-async function open(){if(typeof track==="function")track("story");build();await loadDoc();if(wide()&&!ST.tool)ST.tool="bg";show();
+async function open(){if(typeof track==="function")track("story");build();await loadDoc();const fresh=S.bg.type!=="photo"&&!S.layers.some(x=>x.t==="photo");if(fresh)ST.tool="tpl";else if(wide()&&!ST.tool)ST.tool="bg";show();
   try{if(!localStorage.getItem("typoStudio.storyIntro")){localStorage.setItem("typoStudio.storyIntro","1");setTimeout(()=>toast("New: make your whole story here ✨"),400)}}catch(e){}}
 function close(){stopEdit();stopPick();hide();persist();hapt()}
 function onPro(){updTop();if(isPro()&&ST.pending&&ST.open){const m=ST.pending;ST.pending=null;setTimeout(()=>exportStory(m),450)}}
