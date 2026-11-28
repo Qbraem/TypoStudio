@@ -437,6 +437,18 @@ input[type=range]::-moz-range-thumb{width:28px;height:28px;border-radius:50%;bac
 .nwCount{font-size:12px;font-weight:700;color:#F3D58A;letter-spacing:.3px;margin-bottom:14px}
 .nwGo{width:100%;height:50px;border-radius:25px;font-size:16px}
 .nwLater{display:block;margin:6px auto 0;color:rgba(255,246,230,.7)}
+.tnCard{background:radial-gradient(circle at 20% 30%,rgba(255,255,255,.35) 0 1px,transparent 1.6px) 0 0/53px 53px,radial-gradient(120% 70% at 50% 0%,#7A5236 0%,#3E281B 55%,#1F140E 100%);border-color:rgba(243,213,138,.3)}
+.tnArt{position:relative;height:250px;margin:0 -24px 4px}
+.tnArt img{position:absolute;left:50%;top:54%;width:120px;border-radius:10px;box-shadow:0 12px 26px rgba(0,0,0,.45);animation:nwPop .6s cubic-bezier(.2,1.4,.4,1) both}
+.tnArt img:nth-child(1){transform:translate(-128%,-48%) rotate(-10deg);animation-delay:.2s}
+.tnArt img:nth-child(2){transform:translate(28%,-48%) rotate(9deg);animation-delay:.3s}
+.tnArt img:nth-child(3){transform:translate(-50%,-52%);width:132px;z-index:1;animation-delay:.08s}
+.tnCard h2 i{font-size:38px}
+.tnSteps{list-style:none;margin:16px auto 16px;padding:0;max-width:310px;text-align:left;display:grid;gap:9px}
+.tnSteps li{display:flex;align-items:center;gap:11px;font-size:14px;line-height:1.3;color:rgba(255,246,230,.9)}
+.tnSteps b{flex:none;width:26px;height:26px;border-radius:13px;display:grid;place-items:center;background:rgba(243,213,138,.18);color:#F3D58A;font-size:13px}
+.tnSteps em{font-style:normal;color:#F3D58A;font-weight:700}
+.tnPlus{margin:0 4px;display:inline-grid;place-items:center;width:20px;height:20px;border-radius:10px;background:#FFF;color:#333;font-weight:800;font-size:15px;line-height:1;vertical-align:-4px;box-shadow:0 0 0 3px rgba(160,160,160,.5)}
 .paywall{position:fixed;inset:0;z-index:50;background:rgba(0,0,0,.6);display:flex;justify-content:center;align-items:stretch}
 .pwBox{position:relative;width:100%;max-width:480px;height:100%;overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;background:radial-gradient(120% 60% at 50% 0%,#3a2614 0%,#160f0b 60%);box-shadow:0 0 60px rgba(0,0,0,.6)}
 @media(min-width:700px) and (min-height:760px){.paywall{align-items:center}.pwBox{height:auto;max-height:92vh;border-radius:26px}}
@@ -764,6 +776,22 @@ html.noBuilder .modeSeg{display:none}html.noBuilder .top .brand{display:block!im
     <div class="nwCount" id="nwCount"></div>
     <button class="pwBtn nwGo" id="nwGo"></button>
     <button class="htLink nwLater" id="nwLater">Maybe later</button>
+  </div>
+</div>
+<div class="news tnews hidden" id="tnews" role="dialog" aria-modal="true" aria-labelledby="tnTitle">
+  <div class="nwCard tnCard">
+    <button class="pwClose nwClose" id="tnClose" aria-label="Close"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+    <div class="tnArt" id="tnArt"></div>
+    <div class="nwKicker">NEW · STORY BUILDER</div>
+    <h2 id="tnTitle">Introducing<br><i>complete</i> story templates</h2>
+    <p>Whole Story designs with photo frames, type and scrapbook stickers. Pick one, add your photos and it's ready to post.</p>
+    <ol class="tnSteps">
+      <li><b>1</b><span>Pick a template, from <em>Christmas</em> to <em>Everyday</em></span></li>
+      <li><b>2</b><span>Tap a grey <span class="tnPlus">+</span> to add your own photo</span></li>
+      <li><b>3</b><span>Double-tap any text to make it yours</span></li>
+    </ol>
+    <button class="pwBtn nwGo" id="tnGo">Try a template</button>
+    <button class="htLink nwLater" id="tnLater">Maybe later</button>
   </div>
 </div>
 <div class="paywall hidden" id="howto" role="dialog" aria-modal="true" aria-labelledby="htTitle">
@@ -2602,11 +2630,21 @@ if(GLASS_H){new MutationObserver(syncGlass).observe(document.body,{subtree:true,
   window.addEventListener("resize",syncGlass);if(window.visualViewport)visualViewport.addEventListener("resize",syncGlass);
   [300,1000,2500,5000].forEach(t=>setTimeout(syncGlass,t))}
 $("bgToggle").addEventListener("click",e=>{e.stopPropagation();hapt();setBgOpen(!$("stage").classList.contains("bgOpen"))});
+/* "New" splash for the story templates (2.0): once, never on top of onboarding or the advent splash */
+const TPL_NEWS_KEY="tpl20";
+function tplNewsMaybe(){if(!window.STORY||!STORY.tplShot||/[?&]statsthumbs/.test(location.search))return;const force=/[?&]tplnews/.test(location.search);let seen="",adv="";try{seen=localStorage.getItem("typoStudio.tplnews")||"";adv=localStorage.getItem("typoStudio.news")||""}catch(e){}
+  if(!force&&(!onbSeen||seen===TPL_NEWS_KEY))return;
+  setTimeout(()=>{if(!force&&(!$("news").classList.contains("hidden")||(typeof adventSeason==="function"&&adventSeason()&&adv!==NEWS_KEY)||(STORY.open_)))return;openTplNews()},1500)}
+async function openTplNews(){const ids=STORY.tplIds,pick=(typeof adventSeason==="function"&&adventSeason())?["gmood","xsanta","xscrap"]:["gmood","gpost","gstudio"];const art=$("tnArt");art.innerHTML="";
+  for(const t of pick){const i=ids.indexOf(t);if(i<0)continue;const im=new Image();im.alt="";art.appendChild(im);STORY.tplShot(i,264).then(u=>{if(u)im.src=u}).catch(()=>{})}
+  $("tnews").classList.remove("hidden");track("tplnews");try{localStorage.setItem("typoStudio.tplnews",TPL_NEWS_KEY)}catch(e){}}
+function closeTplNews(go){$("tnews").classList.add("hidden");if(go&&window.STORY)STORY.open()}
+$("tnGo").onclick=()=>{hapt();closeTplNews(true)};$("tnLater").onclick=$("tnClose").onclick=()=>closeTplNews(false);$("tnews").addEventListener("click",e=>{if(e.target.id==="tnews")closeTplNews(false)});
 /* "New" splash for the advent calendar: once per season, never on top of onboarding */
 const NEWS_KEY="advent26";
 function newsMaybe(){if(!adventSeason()||!ADVENT.length||!onbSeen||/[?&]statsthumbs/.test(location.search))return;let seen="";try{seen=localStorage.getItem("typoStudio.news")||""}catch(e){}
   if(seen===NEWS_KEY&&!/[?&]news/.test(location.search))return;setTimeout(openNews,900)}
-function openNews(){if(!ADVENT.length)return;const day=adventDay(),pickDay=Math.max(1,day),byDay=k=>ADVENT.find(d=>d.day===k);
+function openNews(){if(!ADVENT.length||!$("tnews").classList.contains("hidden"))return;const day=adventDay(),pickDay=Math.max(1,day),byDay=k=>ADVENT.find(d=>d.day===k);
   const centre=byDay(pickDay)||ADVENT[0],side=[5,6,4,3,8,2].map(byDay).filter(d=>d&&d!==centre).slice(0,2);
   const art=$("nwArt");art.innerHTML="";[...side,centre].forEach(d=>{const c=document.createElement("canvas");art.appendChild(c);ensureFonts(d).then(()=>{const x=drawExport(d,.34);c.width=x.width;c.height=x.height;c.getContext("2d").drawImage(x,0,0)}).catch(()=>{})});
   $("nwText").textContent=day?"A new hand-painted Christmas sticker unwraps every day until Christmas Eve. Free for everyone.":"Starting 1 December, a new hand-painted Christmas sticker unwraps every day until Christmas Eve. Free for everyone.";
@@ -2624,7 +2662,7 @@ document.fonts.ready.then(()=>{schedulePreview();renderLibrary()});
 
 <script>
 /* Story Builder ships in a later update: hidden in 1.1 (preview with ?builder) */
-if(FEAT_BUILDER){const add=src=>new Promise(r=>{const e=document.createElement("script");e.src=src;e.onload=e.onerror=r;document.body.appendChild(e)});add("/stickers.js?v=5").then(()=>add("/story.js?v=15"))}
+if(FEAT_BUILDER){const add=src=>new Promise(r=>{const e=document.createElement("script");e.src=src;e.onload=e.onerror=r;document.body.appendChild(e)});add("/stickers.js?v=5").then(()=>add("/story.js?v=15")).then(tplNewsMaybe)}
 </script>
 </body>
 </html>
