@@ -294,7 +294,7 @@ function storyTemplates(){if(typeof L!=="function"||typeof D!=="function")return
     T(D("tx1","Story","Scrapbook",[L("Merry","Kaushan Script",170,-110,-80,{rotate:-6}),L("Christmas!","Kaushan Script",190,60,90,{rotate:-6})],{colors:{main:"#B3262B",accent:"#B3262B"}}),SW/2,330,1),
     T(D("tx1b","Story","Scrapbook line",[L("home for the holidays","Nothing You Could Do",56,0,0)],{colors:{main:"#4A3A2E",accent:"#B3262B"}}),SW/2,1850,1)]},
   {id:"xoval",grp:"xmas",name:"Oval card",bg:{type:"photo",photo:"b:redpaper",dim:0},fx:{name:"none",amount:.7,grain:true,vig:true},layers:[
-    P("b:xmas",SW/2,1020,540,{frame:"oval",aspect:"3:4",rim:"#F3E6CF"}),K("ringoval",SW/2,1020,.68,{rot:0,shadow:false}),
+    K("ringoval",SW/2,1020,.68,{rot:0,shadow:false}),P("b:xmas",SW/2,1020,540,{frame:"oval",aspect:"3:4",rim:"#F3E6CF"}),
     T(D("tx2","Story","Oval card",[L("MERRY CHRISTMAS","Italiana",104,0,-40,{spacing:12}),L("& a happy new year","Instrument Serif",62,0,60,{italic:true})],{colors:{main:"#F3E6CF",accent:"#F3E6CF"}}),SW/2,270,1),
     T(D("tx2b","Story","Oval corners",[L("joy","Instrument Serif",58,-400,-20,{italic:true}),L("peace","Instrument Serif",58,390,-20,{italic:true})],{colors:{main:"#F3E6CF",accent:"#F3E6CF"}}),SW/2,560,1),
     T(D("tx2c","Story","Oval corners 2",[L("love","Instrument Serif",58,-400,0,{italic:true}),L("2026","Instrument Serif",58,390,0,{italic:true})],{colors:{main:"#F3E6CF",accent:"#F3E6CF"}}),SW/2,1500,1),
@@ -535,6 +535,8 @@ function drawLineSel(ctx,L,k,dpr){const t=ttCache.get(L.id),i=sel,Ly=L.d.layers[
 
 /* ---------- hit test & gestures ---------- */
 function hit(px,py){const cv=$s("stCanvas"),k=cv.clientWidth/SW;
+  // the grey + of an empty photo slot always wins, even under text or stickers
+  for(let i=S.layers.length-1;i>=0;i--){const L=S.layers[i];if(L.hidden||L.t!=="photo"||!L.ph)continue;const B=photoBox(L),r=Math.max(70,Math.min(B.w,B.h)*.2);if(Math.hypot(px-L.x,py-L.y)<=r)return L}
   for(let i=S.layers.length-1;i>=0;i--){const L=S.layers[i];if(L.hidden)continue;const B=bounds(L,k*Math.min(2,window.devicePixelRatio||1)),a=-(L.rot||0)*Math.PI/180,dx=px-L.x,dy=py-L.y;
     const lx=dx*Math.cos(a)-dy*Math.sin(a)-B.dx,ly=dx*Math.sin(a)+dy*Math.cos(a)-B.dy,pad=18;
     if(Math.abs(lx)<=B.hw+pad&&Math.abs(ly)<=B.hh+pad)return L}return null}
