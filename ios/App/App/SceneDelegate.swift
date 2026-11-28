@@ -1,6 +1,7 @@
 import UIKit
 import Capacitor
 import WebKit
+import PhotosUI
 
 class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     var window: UIWindow?
@@ -31,11 +32,13 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 /// so it does not depend on Capacitor plugin registration.
 class MainViewController: CAPBridgeViewController, WKScriptMessageHandler {
     private var glassBar: GlassBarView?
+    private var pickId = ""
     private var topView: GlassTopView?
 
     override func capacitorDidLoad() {
         webView?.configuration.userContentController.add(self, name: "glassBar")
         webView?.configuration.userContentController.add(self, name: "igStory")
+        webView?.configuration.userContentController.add(self, name: "pickPhoto")
     }
 
     // MARK: Instagram "Share to Stories" (sticker + optional background via the pasteboard)
@@ -62,6 +65,11 @@ class MainViewController: CAPBridgeViewController, WKScriptMessageHandler {
     }
 
     func userContentController(_ userContentController: WKUserContentController, didReceive message: WKScriptMessage) {
+        if message.name == "pickPhoto" {
+            let body = (message.body as? [String: Any]) ?? [:]
+            presentPhotoPicker((body["id"] as? String) ?? "")
+            return
+        }
         if message.name == "igStory" {
             let body = (message.body as? [String: Any]) ?? [:]
             if (body["cmd"] as? String) == "check" {
@@ -396,6 +404,53 @@ final class GlassBarView: UIView, UITabBarDelegate {
             UIView.animate(withDuration: 0.45, delay: 0, usingSpringWithDamping: 0.72, initialSpringVelocity: 0.4, options: [.beginFromCurrentState, .allowUserInteraction], animations: apply)
         } else {
             apply()
+        }
+    }
+}
+
+
+// MARK: - Studio Typo: photo picker straight into the photo library (no "Photo Library / Take Photo / Choose File" menu)
+extension MainViewController: PHPickerViewControllerDelegate {
+    func presentPhotoPicker(_ id: String) {
+        pickId = id.replacingOccurrences(of: "'", with: "")
+        var config = PHPickerConfiguration()
+        config.filter = .images
+        config.selectionLimit = 1
+        config.preferredAssetRepresentationMode = .current
+        let picker = PHPickerViewController(configuration: config)
+        picker.delegate = self
+        present(picker, animated: true)
+    }
+
+    func picker(_ picker: PHPickerViewController, didFinishPicking results: [PHPickerResult]) {
+        picker.dismiss(animated: true)
+        let id = pickId
+        guard let provider = results.first?.itemProvider, provider.canLoadObject(ofClass: UIImage.self) else {
+            photoPicked(id, nil)
+            return
+        }
+        provider.loadObject(ofClass: UIImage.self) { [weak self] object, _ in
+            guard let self = self else { return }
+            guard let image = object as? UIImage, image.size.width > 0, image.size.height > 0 else {
+                self.photoPicked(id, nil)
+                return
+            }
+            let maxSide: CGFloat = 2160
+            let scale = min(1, maxSide / max(image.size.width, image.size.height))
+            let size = CGSize(width: floor(image.size.width * scale), height: floor(image.size.height * scale))
+            let format = UIGraphicsImageRendererFormat.default()
+            format.scale = 1
+            let resized = UIGraphicsImageRenderer(size: size, format: format).image { _ in
+                image.draw(in: CGRect(origin: .zero, size: size))
+            }
+            self.photoPicked(id, resized.jpegData(compressionQuality: 0.9)?.base64EncodedString())
+        }
+    }
+
+    private func photoPicked(_ id: String, _ base64: String?) {
+        DispatchQueue.main.async {
+            let arg = base64.map { "'data:image/jpeg;base64,\($0)'" } ?? "null"
+            self.webView?.evaluateJavaScript("window.__photoPicked&&window.__photoPicked('\(id)',\(arg))", completionHandler: nil)
         }
     }
 }

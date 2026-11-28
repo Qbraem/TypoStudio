@@ -612,7 +612,7 @@ html.noBuilder .modeSeg{display:none}html.noBuilder .top .brand{display:block!im
 @media not all and (min-aspect-ratio: 1/1){@media (max-width:899px){.top .brand{display:none}}}
 @media (max-width:430px){#saveImgBtn .saveL{display:none}#saveImgBtn.iconbtn.pri{padding:0;width:44px}.top{gap:6px}}
 </style>
-<link rel="stylesheet" href="/story.css?v=8">
+<link rel="stylesheet" href="/story.css?v=9">
 </head>
 <body>
 <div class="shell">
@@ -1872,12 +1872,18 @@ $("bgRow").addEventListener("click",e=>{
   if(b.dataset.photo){bg.className="bg";bg.style.background="";bg.style.backgroundImage=`url('/img/bg-${b.dataset.photo}.jpg?v=3')`;bg.style.backgroundSize="cover";bg.style.backgroundPosition="center"}
   else{bg.style.backgroundImage="";bg.className="bg bg-"+b.dataset.bg}
 });
-$("photoIn").addEventListener("change",e=>{
-  const f=e.target.files[0];if(!f)return;const url=URL.createObjectURL(f),bg=$("stageBg");
+/* in the iOS app the photo picker opens straight into the photo library (no "Photo Library / Take Photo / Choose File" menu) */
+const nativePickH=()=>window.webkit&&window.webkit.messageHandlers&&window.webkit.messageHandlers.pickPhoto;
+function nativePhoto(){return new Promise(res=>{const id="p"+Date.now();
+  window.__photoPicked=(i,data)=>{if(i!==id)return;window.__photoPicked=null;if(!data)return res(null);fetch(data).then(r=>r.blob()).then(res).catch(()=>res(null))};
+  try{nativePickH().postMessage({id})}catch(e){res(null)}})}
+function pickOwnPhoto(){if(nativePickH())nativePhoto().then(b=>b&&useOwnPhoto(b));else $("photoIn").click()}
+function useOwnPhoto(f){const url=URL.createObjectURL(f),bg=$("stageBg");
   bg.className="bg";bg.style.background="";bg.style.backgroundImage=`url("${url}")`;bg.style.backgroundSize="cover";bg.style.backgroundPosition="center";
-  document.querySelectorAll("#bgRow .bgBtn").forEach(x=>x.classList.remove("on"));e.target.closest(".bgBtn").classList.add("on");setCredit(null);
-  ownPhoto=f;if(igPending){igPending=false;sendTemplateToIg()}
-});
+  document.querySelectorAll("#bgRow .bgBtn").forEach(x=>x.classList.remove("on"));$("photoIn").closest(".bgBtn").classList.add("on");setCredit(null);
+  ownPhoto=f;if(igPending){igPending=false;sendTemplateToIg()}}
+$("photoIn").addEventListener("change",e=>{const f=e.target.files[0];if(f)useOwnPhoto(f)});
+$("photoIn").closest("label").addEventListener("click",e=>{if(!nativePickH())return;e.preventDefault();pickOwnPhoto()});
 function showCoach(){try{if(localStorage.getItem("typoStudio.coach"))return}catch(e){}$("coach").classList.remove("hidden");$("coach").style.opacity=1;clearTimeout(showCoach._t);showCoach._t=setTimeout(hideCoach,6000)}
 function hideCoach(){const c=$("coach");if(c.classList.contains("hidden"))return;c.style.opacity=0;setTimeout(()=>c.classList.add("hidden"),400);try{localStorage.setItem("typoStudio.coach","1")}catch(e){}}
 
@@ -2546,7 +2552,7 @@ $("asGuide").onclick=()=>{closeAfterSave();openHowto()};
 async function sendTemplateToIg(){const ex=exportCache.blob&&exportCache.key===JSON.stringify(cur)?exportCache:await buildExport();if(!ex)return;
   const o={sticker:await blobToBase64(ex.blob)};if(ownPhoto){try{o.background=await photoB64(ownPhoto)}catch(e){}}if(!o.background){o.top="#2A1D15";o.bottom="#120D0A"}igShare(o)}
 $("asOpenIg").onclick=()=>{closeAfterSave();if(!IG_READY){openIgCamera();return}
-  if(ownPhoto){sendTemplateToIg();return}igPending=true;toast("Pick the photo for your Story");$("photoIn").click()};
+  if(ownPhoto){sendTemplateToIg();return}igPending=true;toast("Pick the photo for your Story");pickOwnPhoto()};
 /* iOS-app bewaart rechtstreeks in Foto's: uitleg daarop afstemmen */
 if(NATIVE){const s2=document.querySelector(".htSteps li:nth-child(2) .htText span");if(s2)s2.innerHTML='Tap <em class="kbd">Save</em>: the PNG goes straight to your Photos. It\'s transparent: only the letters, no background.';const tip=document.querySelector(".htTip");if(tip)tip.style.display="none"}
 function openHowto(){$("howto").classList.remove("hidden");$("howto").querySelector(".pwBox").scrollTop=0}
@@ -2611,7 +2617,7 @@ document.fonts.ready.then(()=>{schedulePreview();renderLibrary()});
 
 <script>
 /* Story Builder ships in a later update: hidden in 1.1 (preview with ?builder) */
-if(FEAT_BUILDER){const add=src=>new Promise(r=>{const e=document.createElement("script");e.src=src;e.onload=e.onerror=r;document.body.appendChild(e)});add("/stickers.js?v=2").then(()=>add("/story.js?v=8"))}
+if(FEAT_BUILDER){const add=src=>new Promise(r=>{const e=document.createElement("script");e.src=src;e.onload=e.onerror=r;document.body.appendChild(e)});add("/stickers.js?v=2").then(()=>add("/story.js?v=9"))}
 </script>
 </body>
 </html>

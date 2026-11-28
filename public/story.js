@@ -88,7 +88,11 @@ async function importFile(file){
   c.toBlob(b=>{if(b)DB.set("img:"+key,b).catch(()=>{})},"image/jpeg",.9);
   return key;
 }
-function pickFile(){return new Promise(res=>{const old=$s("stFileIn");if(old)old.remove();const i=document.createElement("input");i.type="file";i.accept="image/*";i.id="stFileIn";
+const nativePick=()=>window.webkit&&window.webkit.messageHandlers&&window.webkit.messageHandlers.pickPhoto;
+function pickFile(){if(nativePick())return new Promise(res=>{const id="p"+Date.now();
+    window.__photoPicked=(i,data)=>{if(i!==id)return;window.__photoPicked=null;if(!data)return res(null);fetch(data).then(r=>r.blob()).then(res).catch(()=>res(null))};
+    try{nativePick().postMessage({id})}catch(e){res(null)}});
+  return new Promise(res=>{const old=$s("stFileIn");if(old)old.remove();const i=document.createElement("input");i.type="file";i.accept="image/*";i.id="stFileIn";
   i.style.cssText="position:fixed;left:0;top:0;width:1px;height:1px;opacity:0;pointer-events:none";document.body.appendChild(i);
   i.onchange=()=>{const f=i.files&&i.files[0];i.remove();res(f||null)};i.addEventListener("cancel",()=>{i.remove();res(null)});i.click()})}
 
@@ -450,17 +454,18 @@ function build(){if($s("storyEd"))return;
   </div></div></div>
   <div class="sSide">
     <header class="sTop">
-      <div class="sSeg sGlass" role="tablist" aria-label="Mode"><button role="tab" aria-selected="false" id="stToSticker">Typo Templates</button><button role="tab" aria-selected="true" class="on">Story Builder</button></div>
+      <div class="sSeg sGlass" role="tablist" aria-label="Mode"><button role="tab" aria-selected="false" id="stToSticker"><span class="lg">Typo Templates</span><span class="sm">Typo</span></button><button role="tab" aria-selected="true" class="on"><span class="lg">Story Builder</span><span class="sm">Story</span></button></div>
       <span class="sFlex"></span>
       <button class="sBtn sGlass" id="stUndo" aria-label="Undo" disabled>${svg("undo",2.1)}</button>
       <button class="sSave" id="stSave" aria-label="Save story">${svg("down",2.2)}<span class="sSaveL">Save</span><i class="sLock" id="stLock">${svg("lock",2.6)}</i></button>
     </header>
+    <div class="sGrab" id="stGrab" hidden aria-hidden="true"></div>
     <section class="sPanel" id="stPanel" hidden></section>
     <section class="sPanel sEdit" id="stEdit" hidden aria-label="Edit text"><div class="sEdChips" id="stEdChips" hidden></div><div class="sEdBody" id="stEdBody"></div></section>
     <div class="sEdTip" id="stEdTip" hidden>Tap a line on your story, then pick a tool</div>
     <section class="sPanel sLib" id="stLib" hidden aria-label="Library"><div class="sHead"><b>Add a design</b><button class="sChip" id="stLibClose">Close</button></div><div id="stLibHost"></div></section>
     <nav class="sDock sGlass" id="stDock" aria-label="Story tools">
-      <div class="sDockTools">${[["tpl","Templates"],["bg","Background"],["photo","Stickers"],["text","Text"],["fx","Effects"],["layers","Layers"]].map(([k,l])=>`<button data-tool="${k}" aria-pressed="false">${svg(k==="photo"?"stk":k)}<span>${l}</span></button>`).join("")}</div>
+      <div class="sDockTools">${[["tpl","Templates"],["bg","Background","Backdrop"],["photo","Stickers"],["text","Text"],["fx","Effects"],["layers","Layers"]].map(([k,l,sm])=>`<button data-tool="${k}" aria-pressed="false" aria-label="${l}">${svg(k==="photo"?"stk":k)}<span class="lg">${l}</span><span class="sm">${sm||l}</span></button>`).join("")}</div>
       <div class="sDockEdit" id="stDockEdit" hidden><button class="sDone" id="stDone">${svg("check",2.4)}<span>Done</span></button><div class="sEdNav" id="stEdNav"></div></div>
     </nav>
   </div>`;
@@ -474,7 +479,7 @@ function build(){if($s("storyEd"))return;
   $s("stEmpty").onclick=addBgPhoto;$s("stSlot").onclick=e=>{e.stopPropagation();hapt();slotFill()};
   $s("stMini").addEventListener("click",e=>{const b=e.target.closest("button[data-a]");if(!b)return;e.stopPropagation();miniAction(b.dataset.a)});
   $s("stPanel").addEventListener("click",panelClick);$s("stPanel").addEventListener("input",panelInput);$s("stPanel").addEventListener("change",panelChange);
-  gestures();
+  gestures();grabber();
   if(window.ResizeObserver)new ResizeObserver(()=>draw()).observe($s("stCanvasWrap"));
   WIDE.addEventListener&&WIDE.addEventListener("change",()=>{if(ST.open){if(wide()&&!ST.tool)ST.tool="bg";renderPanel();draw()}});
 }
@@ -503,7 +508,24 @@ function thumbOf(key){const o=IMG.get(key);if(!o)return"";if(!o.thumb){const c=c
 function row(label,inner,sec){return`<div class="sRow"${sec?` data-sec="${sec}"`:""}>${label?`<div class="sLabel">${label}</div>`:""}${inner}</div>`}
 function chip(l,on,attrs){return`<button class="sChip${on?" on":""}" ${attrs}>${l}</button>`}
 function slider(label,name,v,min,max,step,fmt){return`<label class="sSlide"><span>${label}</span><input type="range" min="${min}" max="${max}" step="${step}" value="${v}" data-k="${name}"><output>${fmt(v)}</output></label>`}
-function renderPanel(){const p=$s("stPanel");if(!p)return;
+function openSheet(){return["stPanel","stEdit","stLib"].map($s).find(x=>x&&!x.hidden)}
+function placeGrab(){const g=$s("stGrab");if(!g)return;const el=openSheet();if(!el||wide()){g.hidden=true;return}
+  if(ST.sheetH){el.style.height=ST.sheetH+"px";el.style.maxHeight="none"}else{el.style.height="";el.style.maxHeight=""}
+  g.hidden=false;requestAnimationFrame(()=>{const r=el.getBoundingClientRect(),o=$s("storyEd").getBoundingClientRect();g.style.top=(r.top-o.top)+"px";g.style.left=(r.left-o.left)+"px";g.style.width=r.width+"px"})}
+/* drag the panel by its grabber (or its title row): taller, shorter, or all the way down to close */
+function grabber(){const ed=$s("storyEd");let d=null;
+  const start=(e,el)=>{d={y:e.clientY,h:el.getBoundingClientRect().height,el,id:e.pointerId,moved:false};ed.classList.add("dragging")};
+  $s("stGrab").addEventListener("pointerdown",e=>{const el=openSheet();if(!el)return;e.preventDefault();e.currentTarget.setPointerCapture&&e.currentTarget.setPointerCapture(e.pointerId);start(e,el)});
+  ed.addEventListener("pointerdown",e=>{if(d||wide())return;const head=e.target.closest(".sHead,.sEdHead");if(!head||e.target.closest("button,input,textarea,select,label"))return;const el=openSheet();if(!el||!el.contains(head))return;start(e,el)});
+  const max=()=>Math.max(220,(innerHeight-120)*.86);
+  ed.addEventListener("pointermove",e=>{if(!d||e.pointerId!==d.id)return;const dy=e.clientY-d.y;if(!d.moved&&Math.abs(dy)<4)return;d.moved=true;
+    const h=Math.min(max(),Math.max(60,d.h-dy));d.el.style.height=h+"px";d.el.style.maxHeight="none";placeGrab.raf||(placeGrab.raf=requestAnimationFrame(()=>{placeGrab.raf=0;const g=$s("stGrab"),r=d&&d.el.getBoundingClientRect(),o=ed.getBoundingClientRect();if(r)g.style.top=(r.top-o.top)+"px"}))},{passive:true});
+  const end=e=>{if(!d||e.pointerId!==d.id)return;const el=d.el,moved=d.moved;d=null;ed.classList.remove("dragging");if(!moved)return;
+    const h=el.getBoundingClientRect().height;
+    if(h<130){ST.sheetH=0;el.style.height="";el.style.maxHeight="";if(ST.editing)finishEdit();else if(ST.picking)stopPick();else setTool(null);hapt();return}
+    const snaps=[.32,.5,.78].map(f=>Math.round(Math.min(max(),(innerHeight-120)*f)));ST.sheetH=snaps.reduce((a,b)=>Math.abs(b-h)<Math.abs(a-h)?b:a);hapt();placeGrab()};
+  ed.addEventListener("pointerup",end);ed.addEventListener("pointercancel",end)}
+function renderPanel(){setTimeout(placeGrab);const p=$s("stPanel");if(!p)return;
   const ed=!!ST.editing;if(wide()&&!ed&&!ST.picking&&!ST.tool)ST.tool=ST.lastTool||"bg";$s("stEdit").dataset.g=toolGrp||"";$s("stEdit").hidden=!ed||(!wide()&&!toolGrp);$s("stEdTip").hidden=!ed||wide()||!!toolGrp;$s("stDockEdit").hidden=!ed;document.querySelector("#storyEd .sDockTools").hidden=ed;$s("stLib").hidden=!ST.picking;syncEmpty();
   if(ed||ST.picking){p.hidden=true;return}
   document.querySelectorAll("#stDock button").forEach(b=>{const on=b.dataset.tool===ST.tool;b.classList.toggle("on",on);b.setAttribute("aria-pressed",on)});
