@@ -368,8 +368,8 @@ function storyTemplates(){if(typeof L!=="function"||typeof D!=="function")return
     K("boarding",620,330,.8,{rot:-3}),K("kraftfolder",560,980,.84,{rot:-3}),K("mapbit",330,1330,.5,{rot:-6}),K("receipt",280,1560,.34,{rot:3}),
     P("b:sunset",610,920,620,{frame:"polaroid",aspect:"1:1",rot:3,shadow:true}),K("goldseal",250,560,.28),K("tape",930,560,.22,{rot:40,paper:"#E7B9B5",shadow:false}),K("paperclip",320,1760,.07,{rot:-4}),
     T(D("tg6","Story","Collage title",[L("wander","Kaushan Script",200,-20,-90,{rotate:-8}),L("more","Kaushan Script",200,60,80,{rotate:-8})],{colors:{main:"#FFFFFF",accent:"#FFFFFF"},shadow:20}),610,860,1)]},
-  {id:"gmood",name:"Cosy mood",bg:{type:"photo",photo:"b:golden",ph:true,dim:.05,phy:.885},fx:{name:"none",amount:.7,grain:true,vig:false},layers:[
-    P("b:coffee1",640,800,580,{frame:"torn",aspect:"4:3",rot:-1,shadow:true}),P("b:coffee4",400,1280,560,{frame:"torn",aspect:"5:4",rot:1,shadow:true}),P("b:coffee3",870,1270,250,{frame:"torn",aspect:"3:4",rot:3,shadow:true}),
+  {id:"gmood",name:"Cosy mood",bg:{type:"photo",photo:"b:golden",ph:true,dim:.05,phx:.91,phy:.556},fx:{name:"none",amount:.7,grain:true,vig:false},layers:[
+    P("b:coffee1",600,800,580,{frame:"torn",aspect:"4:3",rot:-1,shadow:true}),P("b:coffee4",400,1280,560,{frame:"torn",aspect:"5:4",rot:1,shadow:true}),P("b:coffee3",870,1300,250,{frame:"torn",aspect:"3:4",rot:3,shadow:true}),
     K("cardnote",300,700,.46,{rot:-3}),K("paperclip",470,560,.06,{rot:6}),K("daisy",120,640,.12),
     T(D("tm1","Story","Cosy mood top",[L("C","Great Vibes",330,-280,-10),L("OSY","Montserrat",210,90,0,{weight:800,spacing:-2})],{colors:{main:"#F7D15E",accent:"#F7D15E"},shadow:15}),SW/2,330,1),
     T(D("tm2","Story","Cosy mood bottom",[L("M","Great Vibes",330,-300,-10),L("OOD","Montserrat",210,90,0,{weight:800,spacing:-2})],{colors:{main:"#F7D15E",accent:"#F7D15E"},shadow:15}),SW/2,1640,1)]},
@@ -448,7 +448,7 @@ function render(ctx,W,H,o={}){PHUI=!!o.sel;
   else if(b.type==="color"){ctx.fillStyle=b.color;ctx.fillRect(0,0,W,H)}
   else{const g=GRADS[b.grad]||GRADS[0],lg=ctx.createLinearGradient(0,0,W*.35,H);lg.addColorStop(0,g[0]);lg.addColorStop(1,g[1]);ctx.fillStyle=lg;ctx.fillRect(0,0,W,H)}
   if(b.dim>0&&(bc||b.type!=="color")){ctx.fillStyle=`rgba(0,0,0,${b.dim})`;ctx.fillRect(0,0,W,H)}
-  if(PHUI&&bc&&b.ph&&!ST.editing){phLook(ctx,0,0,W,H);const r=Math.min(W,H)*.075;ctx.save();ctx.font=`600 ${r*.42}px system-ui,-apple-system,sans-serif`;ctx.textAlign="center";ctx.textBaseline="middle";ctx.fillStyle="rgba(255,255,255,.95)";ctx.shadowColor="rgba(0,0,0,.35)";ctx.shadowBlur=r*.3;ctx.fillText("Tap + for your photo",W/2,H*(S.bg.phy||BGB.y)+r*1.65);ctx.restore();phBadge(ctx,W/2,H*(S.bg.phy||BGB.y),r)}
+  if(PHUI&&bc&&b.ph&&!ST.editing){phLook(ctx,0,0,W,H);const r=Math.min(W,H)*.075;ctx.save();ctx.font=`600 ${r*.42}px system-ui,-apple-system,sans-serif`;ctx.textAlign="center";ctx.textBaseline="middle";ctx.fillStyle="rgba(255,255,255,.95)";ctx.shadowColor="rgba(0,0,0,.35)";ctx.shadowBlur=r*.3;if(!b.phx)ctx.fillText("Tap + for your photo",W/2,H*(S.bg.phy||BGB.y)+r*1.65);ctx.restore();phBadge(ctx,W*(b.phx||.5),H*(S.bg.phy||BGB.y),b.phx?r*.75:r)}
   // layers
   for(const L of S.layers){if(L.hidden)continue;ctx.save();ctx.translate(L.x*k,L.y*k);ctx.rotate((L.rot||0)*Math.PI/180);
     if(L.t==="photo")drawPhoto(ctx,L,k);else if(L.t==="stk")drawStk(ctx,L,k);else drawTitle(ctx,L,k);ctx.restore()}
@@ -564,7 +564,7 @@ function gestures(){const cv=$s("stCanvas"),pts=new Map();let g=null,lastTap={t:
       if(g.L.t!=="title")g.L.w=clamp(g.w0*f,SW*.08,SW*2.2);else g.L.s=clamp(g.s0*f,.12,3.2);
       let r=g.r0+(t.a-g.a0)*180/Math.PI;r=((r+180)%360+360)%360-180;for(const s of[0,90,-90,180,-180])if(Math.abs(r-s)<4)r=s;g.L.rot=r;
       g.L.x=g.ox+(t.cx-g.cx);g.L.y=g.oy+(t.cy-g.cy);draw()}});
-  const end=e=>{pts.delete(e.pointerId);if(ST.focusText){ST.focusText=false;focusWords()}if(pts.size===0&&g&&g.L&&g.L.ph&&!g.moved&&(g.mode==="pan"||g.mode==="drag")){const L=g.L;g=null;slotFill(L);return}if(pts.size===0&&g&&g.mode==="bg"&&!g.moved&&S.bg.ph&&S.bg.type==="photo"&&Math.hypot(g.sx-SW/2,g.sy-SH*(S.bg.phy||BGB.y))<SW*.16){g=null;slotFill("bg");return}if(pts.size===0&&g&&g.mode==="line"){if(g.moved){renderTool(true);updTop()}g=null;draw();return}if(pts.size===0){if(g&&g.moved){if(g.mode==="bg"||g.mode==="bgpinch")clampBg();ST.hist.push(g.snap);if(ST.hist.length>60)ST.hist.shift();ST.fut=[];ST.gesture=false;guide=false;changed();
+  const end=e=>{pts.delete(e.pointerId);if(ST.focusText){ST.focusText=false;focusWords()}if(pts.size===0&&g&&g.L&&g.L.ph&&!g.moved&&(g.mode==="pan"||g.mode==="drag")){const L=g.L;g=null;slotFill(L);return}if(pts.size===0&&g&&g.mode==="bg"&&!g.moved&&S.bg.ph&&S.bg.type==="photo"&&Math.hypot(g.sx-SW*(S.bg.phx||.5),g.sy-SH*(S.bg.phy||BGB.y))<SW*.16){g=null;slotFill("bg");return}if(pts.size===0&&g&&g.mode==="line"){if(g.moved){renderTool(true);updTop()}g=null;draw();return}if(pts.size===0){if(g&&g.moved){if(g.mode==="bg"||g.mode==="bgpinch")clampBg();ST.hist.push(g.snap);if(ST.hist.length>60)ST.hist.shift();ST.fut=[];ST.gesture=false;guide=false;changed();
       if(ST.tool)renderPanel()}g=null;ST.gesture=false;guide=false;draw()}
     else if(pts.size===1&&g&&g.mode==="bgpinch"){const [u]=[...pts.values()];g={mode:"bg",sx:u.x,sy:u.y,ox:S.bg.ox,oy:S.bg.oy,snap:g.snap,moved:true}}
     else if(pts.size===1&&g&&g.mode==="pinch"){const [u]=[...pts.values()];g={mode:"drag",L:g.L,sx:u.x,sy:u.y,ox:g.L.x,oy:g.L.y,snap:g.snap,moved:true}}};
