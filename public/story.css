@@ -40,9 +40,9 @@ html.storyOpen .shell{visibility:hidden}
 .sSave.busy span::after{content:"…"}
 .sLock{position:absolute;right:-4px;top:-5px;width:19px;height:19px;border-radius:50%;background:#E9C46A;color:#2a1d12;display:grid;place-items:center;box-shadow:0 1px 4px rgba(0,0,0,.4)}
 .sLock svg{width:11px;height:11px}.sLock[hidden]{display:none}
-.sDock{position:absolute;left:calc(12px + var(--sal));right:calc(12px + var(--sarL));bottom:calc(var(--sab) + 12px);height:66px;padding:5px;border-radius:30px;display:flex;gap:2px;z-index:5}
-.sDock button{flex:1;min-width:0;border-radius:23px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;font-size:10.5px!important;font-weight:600!important;color:rgba(246,233,215,.78)!important}
-.sDock button svg{width:21px;height:21px}
+.sDock{position:absolute;left:calc(12px + var(--sal));right:calc(12px + var(--sarL));bottom:calc(var(--sab) + 12px);height:64px;padding:5px;border-radius:32px;display:flex;gap:3px;z-index:5}
+.sDock button{flex:1;min-width:0;border-radius:27px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;padding:0 4px!important;font-size:9.5px!important;font-weight:600!important;letter-spacing:.1px;color:rgba(246,233,215,.72)!important}
+.sDock button svg{width:20px;height:20px}
 .sDock button.on{background:rgba(246,233,215,.16)!important;color:var(--text)!important}
 .sPanel{position:absolute;left:calc(12px + var(--sal));right:calc(12px + var(--sarL));bottom:calc(var(--sab) + 88px);max-height:min(50vh,420px);overflow:auto;-webkit-overflow-scrolling:touch;border-radius:26px;padding:14px 14px 16px;z-index:6;
   background:rgba(32,24,19,.66);-webkit-backdrop-filter:blur(26px) saturate(1.7);backdrop-filter:blur(26px) saturate(1.7);border:1px solid rgba(255,255,255,.13);box-shadow:inset 0 1px 0 rgba(255,255,255,.14),0 14px 40px rgba(0,0,0,.45);display:flex;flex-direction:column;gap:13px;overscroll-behavior:contain}
@@ -150,11 +150,11 @@ html.storyOpen .shell{visibility:hidden}
 /* dock: tools, or Done + the text tools while editing a title */
 .sDockTools,.sDockEdit{display:flex;flex:1;gap:2px;min-width:0}
 .sDockTools[hidden],.sDockEdit[hidden]{display:none!important}
-.sDone{flex:0 0 64px!important;background:var(--accent)!important;color:#fff!important;border-radius:23px}
+.sDone{flex:0 0 64px!important;background:var(--accent)!important;color:#fff!important;border-radius:27px}
 .sEdNav{flex:1;min-width:0;display:flex}
 .sEdNav #toolNav{display:flex!important;flex:1;gap:2px;min-width:0;height:auto}
 .sEdNav #toolNav .back{display:none!important}
-.sEdNav #toolNav button{flex:1;min-width:0;min-height:0!important;margin:0!important;border:0;background:none;border-radius:23px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;font-size:10.5px;font-weight:600;color:rgba(246,233,215,.78);padding:0!important}
+.sEdNav #toolNav button{flex:1;min-width:0;min-height:0!important;margin:0!important;border:0;background:none;border-radius:27px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;font-size:10.5px;font-weight:600;color:rgba(246,233,215,.78);padding:0!important}
 .sEdNav #toolNav button svg{width:21px;height:21px}
 .sEdNav #toolNav button.on{background:rgba(246,233,215,.16);color:var(--text);box-shadow:none}
 .sEdit{gap:8px;max-height:min(46vh,380px)}
@@ -235,7 +235,7 @@ html.storyOpen .shell{visibility:hidden}
 .sDock{container-type:inline-size;container-name:sdock}
 @container sdock (max-width: 480px){
   .sDock .lg{display:none}.sDock .sm{display:inline}
-  .sDock button{font-size:10px!important;letter-spacing:-.1px}
+  .sDock button{font-size:9px!important;letter-spacing:0}
 }
 .sDock button span{white-space:nowrap;max-width:100%;overflow:hidden;text-overflow:ellipsis}
 
